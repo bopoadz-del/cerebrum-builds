@@ -1,0 +1,37 @@
+{
+  "capabilities": [
+    {
+      "block_ids": [],
+      "description": "Core car dealership workflows and data model",
+      "id": "car_dealership_core",
+      "required": true,
+      "strategy_hint": "GENERATE"
+    },
+    {
+      "block_ids": [
+        "audit"
+      ],
+      "description": "Audit capability (reused from the block store)",
+      "id": "audit",
+      "required": true,
+      "strategy_hint": "REUSE"
+    }
+  ],
+  "connectors": [],
+  "drafting_mode": "keyword_fallback",
+  "drafting_note": "LLM drafting disabled",
+  "edge_profile": "standard",
+  "factory_scenario": "CREATE_PRODUCT",
+  "human_authority": true,
+  "n_required": 2,
+  "product_id": "car-dealership",
+  "product_name": "Car Dealership Platform",
+  "schema_version": "product_blueprint.v1",
+  "summary": "Build a car dealership platform: vehicle inventory, sales pipeline, finance/lease quotes, service appointments, customer CRM, and document packs for deals. Kit-backed automotive. Manufacture from Cerebrum-Blocks Store blocks only \u2014 never clone an external dealership/FinanceOps/The_Fork product repo. Pilot-ready with tests.",
+  "ui_modules": [
+    "command_center",
+    "operational_chat",
+    "resident_engineer"
+  ],
+  "vertical": "car_dealership"
+}

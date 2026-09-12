@@ -1,0 +1,46 @@
+{
+  "blocks": {
+    "audit": {
+      "commit": "a372e769e05e47dc4dbc274f7d83eebf29a836f1",
+      "image_pin": "refused_unverified",
+      "integrity": {
+        "absent": [],
+        "files_hashed": 2,
+        "findings": [],
+        "has_digests": true,
+        "mismatched": [],
+        "signed_unverified": true,
+        "verified": true
+      },
+      "path": "vendor/blocks/audit",
+      "source": "cerebrum-blocks"
+    }
+  },
+  "kits": {
+    "platform": {
+      "blocks": [
+        "audit"
+      ],
+      "files_copied": 0,
+      "path": "kits/platform",
+      "source": "synthesized-from-factory-shelf"
+    }
+  },
+  "runtime": {
+    "commit": "a372e769e05e47dc4dbc274f7d83eebf29a836f1",
+    "files": [
+      "vendor/cerebrum/__init__.py",
+      "vendor/cerebrum/blocks/__init__.py",
+      "vendor/cerebrum/blocks/audit.py",
+      "vendor/cerebrum/core/__init__.py",
+      "vendor/cerebrum/core/universal_base.py"
+    ],
+    "for_blocks": [
+      "audit"
+    ],
+    "lazy_foreign_imports": [],
+    "path": "vendor/cerebrum",
+    "source": "cerebrum-blocks"
+  },
+  "schema": "blocks.lock.v1"
+}

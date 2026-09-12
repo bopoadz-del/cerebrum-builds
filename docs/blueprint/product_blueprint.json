@@ -1,0 +1,37 @@
+{
+  "capabilities": [
+    {
+      "block_ids": [],
+      "description": "Core product workflows and data model",
+      "id": "product_core",
+      "required": true,
+      "strategy_hint": "GENERATE"
+    },
+    {
+      "block_ids": [
+        "audit"
+      ],
+      "description": "Audit capability (reused from the block store)",
+      "id": "audit",
+      "required": true,
+      "strategy_hint": "REUSE"
+    }
+  ],
+  "connectors": [],
+  "drafting_mode": "keyword_fallback",
+  "drafting_note": "LLM drafting disabled",
+  "edge_profile": "standard",
+  "factory_scenario": "CREATE_PRODUCT",
+  "human_authority": true,
+  "n_required": 2,
+  "product_id": "product",
+  "product_name": "Product Platform",
+  "schema_version": "product_blueprint.v1",
+  "summary": "Build Cerebrum FinanceOps FP&A for mid-market finance \u2014 chart of accounts, budget vs actual. Manufacture from Cerebrum-Blocks Store only.",
+  "ui_modules": [
+    "command_center",
+    "operational_chat",
+    "resident_engineer"
+  ],
+  "vertical": "product"
+}

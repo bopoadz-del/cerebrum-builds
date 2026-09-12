@@ -1,0 +1,46 @@
+{
+  "capabilities": [
+    {
+      "block_ids": [],
+      "description": "Core finance ops workflows and data model",
+      "id": "finance_ops_core",
+      "required": true,
+      "strategy_hint": "GENERATE"
+    },
+    {
+      "block_ids": [
+        "team"
+      ],
+      "description": "Team capability (reused from the block store)",
+      "id": "team",
+      "required": true,
+      "strategy_hint": "REUSE"
+    },
+    {
+      "block_ids": [
+        "audit"
+      ],
+      "description": "Audit capability (reused from the block store)",
+      "id": "audit",
+      "required": true,
+      "strategy_hint": "REUSE"
+    }
+  ],
+  "connectors": [],
+  "drafting_mode": "keyword_fallback",
+  "drafting_note": "LLM drafting disabled",
+  "edge_profile": "standard",
+  "factory_scenario": "CREATE_PRODUCT",
+  "human_authority": true,
+  "n_required": 3,
+  "product_id": "finance-ops",
+  "product_name": "Finance Ops Platform",
+  "schema_version": "product_blueprint.v1",
+  "summary": "Build Cerebrum FinanceOps: FP&A foundation for a mid-market finance team \u2014 chart of accounts, budget vs actual, cash forecast, close checklist, and a governed document intake for board packs. Kit-backed finance_ops. Pilot-ready platform with tests.",
+  "ui_modules": [
+    "command_center",
+    "operational_chat",
+    "resident_engineer"
+  ],
+  "vertical": "finance_ops"
+}

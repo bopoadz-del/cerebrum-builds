@@ -11,6 +11,7 @@ from fastapi.responses import FileResponse, HTMLResponse
 from fastapi.staticfiles import StaticFiles
 
 from app.auth import install_cors
+from app.rag_routes import router as rag_router
 from app.routes import router as capability_router
 from app.store import db_path, ensure_schema, reset_connection, storage_root
 
@@ -52,6 +53,7 @@ app = FastAPI(
 )
 install_cors(app)
 app.include_router(capability_router)
+app.include_router(rag_router)
 
 if STATIC_DIR.is_dir():
     app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")

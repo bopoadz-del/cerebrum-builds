@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Product Platform</title>
+  <style>
+    :root { font-family: "IBM Plex Sans", "Segoe UI", sans-serif; background: #14181d; color: #eef2f6; }
+    body { margin: 0; }
+    header { padding: 1.2rem 1.5rem; border-bottom: 1px solid #2b3644; }
+    h1 { margin: 0; font-size: 1.4rem; }
+    p.sub { margin: 0.35rem 0 0; color: #9aa8b8; }
+    nav { display: flex; flex-wrap: wrap; gap: 0.4rem; padding: 0.8rem 1.5rem; }
+    nav button { background: #1d2630; color: #eef2f6; border: 1px solid #3a4b5e; padding: 0.35rem 0.7rem; cursor: pointer; }
+    nav button.active { background: #2a7a4b; }
+    main { padding: 1rem 1.5rem 3rem; }
+    label { display: block; margin: 0.6rem 0 0.2rem; }
+    input, textarea { width: 100%; max-width: 36rem; background: #0d1116; color: #eef2f6; border: 1px solid #3a4b5e; padding: 0.4rem; }
+    button.act { margin-top: 0.8rem; background: #2a7a4b; color: #fff; border: 0; padding: 0.5rem 1rem; cursor: pointer; }
+    pre { background: #0d1116; padding: 0.8rem; overflow: auto; }
+    .mods { display: grid; gap: 0.6rem; grid-template-columns: repeat(auto-fill, minmax(14rem, 1fr)); }
+    .card { border: 1px solid #2b3644; padding: 0.7rem; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Product Platform</h1>
+    <p class="sub">Cerebrum FinanceOps FP&A — operator / admin</p>
+  </header>
+  <nav id="nav"></nav>
+  <main>
+    <section id="command_center" class="panel">
+      <h2>Command center</h2>
+      <div class="mods" id="modules"></div>
+    </section>
+    <section id="live" class="panel">
+      <h2 id="cap-title">product_core</h2>
+      <label>Reference <input id="reference" value="sample" /></label>
+      <label>Status <input id="status" value="open" /></label>
+      <button class="act" id="post-btn" type="button">POST create</button>
+      <button class="act" id="get-btn" type="button">GET records</button>
+      <pre id="out">Ready.</pre>
+    </section>
+    <section id="operational_chat" class="panel">
+      <h2>Operational chat — board document packs</h2>
+      <label>Title <input id="rag-title" value="Budget vs actual pack" /></label>
+      <label>Text <textarea id="rag-text" rows="3">Chart of accounts and budget vs actual for the mid-market finance close.</textarea></label>
+      <button class="act" id="ingest-btn" type="button">Ingest pack</button>
+      <label>Query <input id="rag-q" value="budget vs actual" /></label>
+      <button class="act" id="query-btn" type="button">Query packs</button>
+    </section>
+    <section id="resident_engineer" class="panel">
+      <h2>Resident engineer</h2>
+      <p class="sub">Same live POST/GET routes. No second API.</p>
+    </section>
+  </main>
+  <script>
+    const CAPS = ["product_core", "audit"];
+    const UI = ["command_center", "operational_chat", "resident_engineer"];
+    const MAP = {
+      command_center: "product_core",
+      operational_chat: "product_core",
+      resident_engineer: "audit"
+    };
+    let current = "product_core";
+    const nav = document.getElementById("nav");
+    const modules = document.getElementById("modules");
+    UI.forEach((name) => {
+      const b = document.createElement("button");
+      b.textContent = name;
+      b.onclick = () => select(MAP[name] || "product_core", b);
+      nav.appendChild(b);
+      const card = document.createElement("div");
+      card.className = "card";
+      card.textContent = name;
+      modules.appendChild(card);
+    });
+    CAPS.forEach((name) => {
+      const card = document.createElement("div");
+      card.className = "card";
+      card.textContent = name;
+      modules.appendChild(card);
+    });
+    function select(id, btn) {
+      current = id;
+      document.getElementById("cap-title").textContent = id;
+      [...nav.children].forEach((el) => el.classList.remove("active"));
+      if (btn) btn.classList.add("active");
+    }
+    document.getElementById("post-btn").onclick = async () => {
+      const body = {
+        reference: document.getElementById("reference").value || "sample",
+        status: document.getElementById("status").value || "open"
+      };
+      const res = await fetch("/v1/" + current, {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify(body)
+      });
+      document.getElementById("out").textContent = JSON.stringify(await res.json(), null, 2);
+    };
+    document.getElementById("get-btn").onclick = async () => {
+      const res = await fetch("/v1/" + current);
+      document.getElementById("out").textContent = JSON.stringify(await res.json(), null, 2);
+    };
+    document.getElementById("ingest-btn").onclick = async () => {
+      const res = await fetch("/v1/rag/ingest", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({
+          layer: 1,
+          doc_id: document.getElementById("reference").value || "sample",
+          title: document.getElementById("rag-title").value,
+          text: document.getElementById("rag-text").value
+        })
+      });
+      document.getElementById("out").textContent = JSON.stringify(await res.json(), null, 2);
+    };
+    document.getElementById("query-btn").onclick = async () => {
+      const q = encodeURIComponent(document.getElementById("rag-q").value || "budget");
+      const res = await fetch("/v1/rag/query?q=" + q);
+      document.getElementById("out").textContent = JSON.stringify(await res.json(), null, 2);
+    };
+  </script>
+</body>
+</html>

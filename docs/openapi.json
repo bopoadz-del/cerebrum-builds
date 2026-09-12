@@ -1,0 +1,136 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Product Platform",
+    "description": "Cerebrum FinanceOps FP&A — chart of accounts, budget vs actual",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/v1/admin/export": {
+      "get": {
+        "summary": "Admin Export",
+        "operationId": "admin_export_v1_admin_export_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/{capability_id}": {
+      "post": {
+        "summary": "Post Capability",
+        "operationId": "post_capability_v1__capability_id__post",
+        "parameters": [
+          {
+            "name": "capability_id",
+            "in": "path",
+            "required": true,
+            "schema": {"type": "string"}
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {"type": "object", "additionalProperties": true}
+            }
+          }
+        },
+        "responses": {
+          "200": {"description": "Successful Response"},
+          "422": {"description": "Validation Error"}
+        }
+      },
+      "get": {
+        "summary": "Get Capability",
+        "operationId": "get_capability_v1__capability_id__get",
+        "parameters": [
+          {
+            "name": "capability_id",
+            "in": "path",
+            "required": true,
+            "schema": {"type": "string"}
+          }
+        ],
+        "responses": {
+          "200": {"description": "Successful Response"}
+        }
+      }
+    },
+    "/v1": {
+      "get": {
+        "summary": "List Capabilities",
+        "operationId": "list_capabilities_v1_get",
+        "responses": {"200": {"description": "Successful Response"}}
+      }
+    },
+    "/v1/rag/ingest": {
+      "post": {
+        "summary": "Rag Ingest",
+        "operationId": "rag_ingest_v1_rag_ingest_post",
+        "responses": {"200": {"description": "Successful Response"}}
+      }
+    },
+    "/v1/steward/rag/ingest": {
+      "post": {
+        "summary": "Steward Rag Ingest",
+        "operationId": "steward_rag_ingest_v1_steward_rag_ingest_post",
+        "responses": {"200": {"description": "Successful Response"}}
+      }
+    },
+    "/v1/rag/query": {
+      "get": {
+        "summary": "Rag Query",
+        "operationId": "rag_query_v1_rag_query_get",
+        "responses": {"200": {"description": "Successful Response"}}
+      },
+      "post": {
+        "summary": "Rag Query Post",
+        "operationId": "rag_query_post_v1_rag_query_post",
+        "responses": {"200": {"description": "Successful Response"}}
+      }
+    },
+    "/v1/steward/rag/query": {
+      "get": {
+        "summary": "Steward Rag Query",
+        "operationId": "steward_rag_query_v1_steward_rag_query_get",
+        "responses": {"200": {"description": "Successful Response"}}
+      },
+      "post": {
+        "summary": "Steward Rag Query Post",
+        "operationId": "steward_rag_query_post_v1_steward_rag_query_post",
+        "responses": {"200": {"description": "Successful Response"}}
+      }
+    },
+    "/health": {
+      "get": {
+        "summary": "Health",
+        "operationId": "health_health_get",
+        "responses": {"200": {"description": "Successful Response"}}
+      }
+    },
+    "/": {
+      "get": {
+        "summary": "Ui Index",
+        "operationId": "ui_index__get",
+        "responses": {"200": {"description": "Successful Response"}}
+      }
+    },
+    "/ui": {
+      "get": {
+        "summary": "Ui Alias",
+        "operationId": "ui_alias_ui_get",
+        "responses": {"200": {"description": "Successful Response"}}
+      }
+    }
+  }
+}

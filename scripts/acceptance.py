@@ -16,6 +16,11 @@ if str(ROOT) not in sys.path:
 
 os.environ.setdefault("STORAGE_PATH", str(ROOT / "data"))
 os.environ.setdefault("VECTOR_DB_URL", "")
+# Runtime-only acceptance secret. The app has no git-default fallback.
+if not (os.environ.get("API_TOKEN") or os.environ.get("CEREBRUM_API_TOKEN") or "").strip():
+    os.environ["API_TOKEN"] = "acceptance-financeops-admin"
+_AUTH_TOKEN = (os.environ.get("API_TOKEN") or os.environ.get("CEREBRUM_API_TOKEN") or "").strip()
+AUTH_HEADERS = {"Authorization": f"Bearer {_AUTH_TOKEN}"}
 
 FLOOR = (
     "no_token_401",
@@ -56,7 +61,9 @@ def main() -> int:
             )
         )
 
-        missing = client.post("/v1/product_core", json={"status": "open"})
+        missing = client.post(
+            "/v1/product_core", json={"status": "open"}, headers=AUTH_HEADERS
+        )
         results.append(
             _line(
                 "PASS" if missing.status_code == 422 else "FAIL",
@@ -66,7 +73,9 @@ def main() -> int:
         )
 
         bad_enum = client.post(
-            "/v1/product_core", json={"reference": "sample", "status": "bogus"}
+            "/v1/product_core",
+            json={"reference": "sample", "status": "bogus"},
+            headers=AUTH_HEADERS,
         )
         results.append(
             _line(
@@ -93,6 +102,7 @@ def main() -> int:
                 "title": "Budget vs actual close",
                 "text": "Chart of accounts and budget vs actual for the finance close.",
             },
+            headers=AUTH_HEADERS,
         )
         query = client.get("/v1/rag/query", params={"q": "budget vs actual close"})
         hit = (
@@ -124,6 +134,28 @@ def main() -> int:
                 "PASS" if health.status_code == 200 else "FAIL",
                 "docker_health_200",
                 f"GET /health -> {health.status_code}",
+            )
+        )
+
+        open_post = client.post(
+            "/v1/product_core", json={"reference": "sample", "status": "open"}
+        )
+        results.append(
+            _line(
+                "PASS" if open_post.status_code == 401 else "FAIL",
+                "mutating_no_token_401",
+                f"open POST -> {open_post.status_code}",
+            )
+        )
+        open_ingest = client.post(
+            "/v1/rag/ingest",
+            json={"layer": 1, "doc_id": "denied", "title": "x", "text": "budget vs actual"},
+        )
+        results.append(
+            _line(
+                "PASS" if open_ingest.status_code == 401 else "FAIL",
+                "rag_write_no_token_401",
+                f"open ingest -> {open_ingest.status_code}",
             )
         )
 

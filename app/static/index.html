@@ -37,6 +37,7 @@
       <h2 id="cap-title">product_core</h2>
       <label>Reference <input id="reference" value="sample" /></label>
       <label>Status <input id="status" value="open" /></label>
+      <label>Operator token <input id="api-token" type="password" placeholder="API_TOKEN" autocomplete="off" /></label>
       <button class="act" id="post-btn" type="button">POST create</button>
       <button class="act" id="get-btn" type="button">GET records</button>
       <pre id="out">Ready.</pre>
@@ -87,6 +88,12 @@
       [...nav.children].forEach((el) => el.classList.remove("active"));
       if (btn) btn.classList.add("active");
     }
+    function authHeaders() {
+      const headers = {"Content-Type": "application/json"};
+      const token = (document.getElementById("api-token").value || "").trim();
+      if (token) headers["X-API-Token"] = token;
+      return headers;
+    }
     document.getElementById("post-btn").onclick = async () => {
       const body = {
         reference: document.getElementById("reference").value || "sample",
@@ -94,7 +101,7 @@
       };
       const res = await fetch("/v1/" + current, {
         method: "POST",
-        headers: {"Content-Type": "application/json"},
+        headers: authHeaders(),
         body: JSON.stringify(body)
       });
       document.getElementById("out").textContent = JSON.stringify(await res.json(), null, 2);
@@ -106,7 +113,7 @@
     document.getElementById("ingest-btn").onclick = async () => {
       const res = await fetch("/v1/rag/ingest", {
         method: "POST",
-        headers: {"Content-Type": "application/json"},
+        headers: authHeaders(),
         body: JSON.stringify({
           layer: 1,
           doc_id: document.getElementById("reference").value || "sample",

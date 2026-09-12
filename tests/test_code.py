@@ -64,6 +64,29 @@ def test_actions_init_has_no_eager_reexport() -> None:
     assert "from app.actions import" not in text
 
 
+def test_product_core_missing_amounts_stay_absent(isolated_storage: Path) -> None:
+    from app.actions.product_core import handle
+
+    result = handle(
+        {
+            "reference": "6100",
+            "status": "open",
+            "account_name": "opex payroll",
+        }
+    )
+    assert result["ok"] is True
+    bva = result["record"]["budget_vs_actual"]
+    assert bva["budget"] is None
+    assert bva["actual"] is None
+    assert bva["variance"] is None
+    assert bva["variance_pct"] is None
+    assert bva["inputs_complete"] is False
+    cash = result["record"]["cash_forecast"]
+    assert cash["opening"] is None
+    assert cash["outflows"] is None
+    assert cash["closing"] is None
+
+
 def test_product_core_computes_budget_variance(isolated_storage: Path) -> None:
     from app.actions.product_core import handle
 
@@ -111,3 +134,98 @@ def test_admin_export_fail_closed(monkeypatch: pytest.MonkeyPatch) -> None:
     assert denied_wrong.status_code == 401
     assert allowed.status_code == 200
     assert allowed.json().get("ok") is True
+    assert allowed.json().get("principal") == {"subject": "operator", "role": "admin"}
+
+
+def test_mutating_routes_fail_closed(monkeypatch: pytest.MonkeyPatch, isolated_storage: Path) -> None:
+    from fastapi.testclient import TestClient
+
+    from app.main import app
+
+    monkeypatch.setenv("API_TOKEN", "financeops-admin")
+    with TestClient(app) as client:
+        denied = client.post("/v1/product_core", json={"reference": "sample", "status": "open"})
+        denied_ingest = client.post(
+            "/v1/rag/ingest",
+            json={"layer": 1, "doc_id": "x", "title": "x", "text": "budget vs actual"},
+        )
+        allowed = client.post(
+            "/v1/product_core",
+            json={"reference": "sample", "status": "open"},
+            headers={"x-api-token": "financeops-admin"},
+        )
+    assert denied.status_code == 401
+    assert denied_ingest.status_code == 401
+    assert allowed.status_code == 200
+    assert allowed.json().get("ok") is not False
+    assert allowed.json().get("actor") == "operator"
+
+
+def test_cors_allowlist_refuses_wildcard(monkeypatch: pytest.MonkeyPatch) -> None:
+    from app.auth import cors_allowlist
+
+    monkeypatch.delenv("CORS_ALLOWLIST", raising=False)
+    assert cors_allowlist() == []
+
+    monkeypatch.setenv("CORS_ALLOWLIST", "*,https://finance.example,http://localhost:8000")
+    assert "*" not in cors_allowlist()
+    assert cors_allowlist() == ["https://finance.example", "http://localhost:8000"]
+
+
+def test_cors_preflight_empty_deny(monkeypatch: pytest.MonkeyPatch, isolated_storage: Path) -> None:
+    from fastapi.testclient import TestClient
+
+    from app.main import app
+
+    monkeypatch.delenv("CORS_ALLOWLIST", raising=False)
+    with TestClient(app) as client:
+        denied = client.options(
+            "/v1/product_core",
+            headers={
+                "Origin": "https://evil.example",
+                "Access-Control-Request-Method": "POST",
+            },
+        )
+        listed = client.options(
+            "/v1/product_core",
+            headers={
+                "Origin": "http://localhost:8000",
+                "Access-Control-Request-Method": "POST",
+            },
+        )
+    assert denied.headers.get("access-control-allow-origin") is None
+    assert listed.headers.get("access-control-allow-origin") is None
+
+    monkeypatch.setenv("CORS_ALLOWLIST", "http://localhost:8000")
+    with TestClient(app) as client:
+        allowed = client.options(
+            "/v1/product_core",
+            headers={
+                "Origin": "http://localhost:8000",
+                "Access-Control-Request-Method": "POST",
+            },
+        )
+        starred = client.options(
+            "/v1/product_core",
+            headers={
+                "Origin": "*",
+                "Access-Control-Request-Method": "POST",
+            },
+        )
+    assert allowed.headers.get("access-control-allow-origin") == "http://localhost:8000"
+    assert starred.headers.get("access-control-allow-origin") is None
+
+
+def test_audit_input_requires_principal() -> None:
+    from app.auth import Principal, bind_principal, reset_principal
+    from app.block_inputs import audit_input
+
+    reset_principal()
+    with pytest.raises(RuntimeError, match="authenticated principal required"):
+        audit_input({"reference": "sample", "status": "open", "user_id": "attacker"})
+
+    bind_principal(Principal(subject="operator", role="admin"))
+    bound = audit_input({"reference": "sample", "status": "open", "user_id": "attacker"})
+    assert bound["user_id"] == "operator"
+    assert bound["details"]["actor"] == "operator"
+    assert bound["details"]["claimed_actor"]["user_id"] == "attacker"

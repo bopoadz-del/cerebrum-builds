@@ -74,3 +74,47 @@ def test_health_and_ui(client: TestClient) -> None:
     ui = client.get("/")
     assert ui.status_code == 200
     assert "Product Platform" in ui.text
+
+
+def test_writes_require_token(anon_client: TestClient) -> None:
+    denied_core = anon_client.post(
+        "/v1/product_core", json={"reference": "sample", "status": "open"}
+    )
+    denied_audit = anon_client.post(
+        "/v1/audit", json={"reference": "sample", "status": "open"}
+    )
+    denied_ingest = anon_client.post(
+        "/v1/rag/ingest",
+        json={"layer": 1, "doc_id": "denied", "title": "x", "text": "budget vs actual"},
+    )
+    denied_steward = anon_client.post(
+        "/v1/steward/rag/ingest",
+        json={"layer": 1, "doc_id": "denied", "title": "x", "text": "budget vs actual"},
+    )
+    assert denied_core.status_code == 401
+    assert denied_audit.status_code == 401
+    assert denied_ingest.status_code == 401
+    assert denied_steward.status_code == 401
+
+
+def test_audit_ignores_forged_client_actor(client: TestClient) -> None:
+    payload = _sample_payload("audit")
+    payload["actor"] = "forged-admin"
+    payload["user_id"] = "attacker"
+    payload["principal"] = "spoofed"
+    response = client.post("/v1/audit", json=payload)
+    assert response.status_code == 200
+    body = response.json()
+    assert body.get("ok") is not False, body
+    assert body.get("actor") == "operator"
+    assert body.get("actor_role") == "admin"
+    record = body.get("record") or {}
+    assert record.get("actor") == "operator"
+    assert record.get("actor_role") == "admin"
+    assert record.get("user_id") != "attacker"
+    claimed = record.get("claimed_actor") or {}
+    assert claimed.get("actor") == "forged-admin"
+    blocks = (body.get("blocks") or {}).get("audit") or {}
+    inner = blocks.get("result") if isinstance(blocks, dict) else {}
+    if isinstance(inner, dict) and inner.get("user_id"):
+        assert inner.get("user_id") == "operator"

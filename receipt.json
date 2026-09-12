@@ -1,0 +1,53 @@
+{
+  "schema": "factory_receipt.v1",
+  "product_id": "cerebrum-steward",
+  "product_name": "Cerebrum Steward",
+  "authored_handlers": [
+    "composed_ops_loop",
+    "dual_rag_estate_docs",
+    "dual_rag_sop",
+    "estate_maintenance",
+    "estate_registry",
+    "evidence_capture",
+    "evidence_verifier",
+    "house_manual_sop",
+    "human_authority_gate",
+    "portfolio_rollup",
+    "preventive_maintenance",
+    "principal_dashboard",
+    "property_onboarding",
+    "readiness_engine",
+    "staff_scheduling",
+    "vendor_budget"
+  ],
+  "cli_authored_ids": [
+    "composed_ops_loop",
+    "dual_rag_estate_docs",
+    "dual_rag_sop",
+    "estate_maintenance",
+    "estate_registry",
+    "evidence_capture",
+    "evidence_verifier",
+    "house_manual_sop",
+    "human_authority_gate",
+    "portfolio_rollup",
+    "preventive_maintenance",
+    "principal_dashboard",
+    "property_onboarding",
+    "readiness_engine",
+    "staff_scheduling",
+    "vendor_budget"
+  ],
+  "pilot_ready": true,
+  "level": "STORE_GREEN",
+  "gates": {
+    "code": "CODE_GREEN",
+    "product": "STORE_GREEN",
+    "store": "FOUNDING_CUSTOMER_READY"
+  },
+  "phases": {
+    "backend": true,
+    "frontend_rag": true,
+    "integration": true
+  }
+}

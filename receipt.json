@@ -1,0 +1,7 @@
+{
+  "schema": "cli_receipt.v1",
+  "cli_authored_ids": [
+    "audit",
+    "product_core"
+  ]
+}

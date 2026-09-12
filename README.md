@@ -1,2 +1,3 @@
 # cerebrum-builds
-Factory CLI-pivot build scratch store (branches per session). Store gate runs here.
+
+Private Factory CLI-pivot scratch store. One branch per session. Store gate = GHA docker + acceptance.py (not Render).

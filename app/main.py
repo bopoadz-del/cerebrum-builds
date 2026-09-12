@@ -10,6 +10,7 @@ from fastapi import FastAPI, HTTPException
 from fastapi.responses import FileResponse, HTMLResponse
 from fastapi.staticfiles import StaticFiles
 
+from app.rag_routes import router as rag_router
 from app.routes import router as capability_router
 from app.store import db_path, ensure_schema, reset_connection, storage_root
 
@@ -46,6 +47,10 @@ app = FastAPI(
     lifespan=lifespan,
 )
 app.include_router(capability_router)
+app.include_router(rag_router)
+
+if STATIC_DIR.is_dir():
+    app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
 
 
 @app.get("/health")
@@ -58,3 +63,28 @@ def health() -> dict:
     except Exception as exc:
         raise HTTPException(status_code=503, detail=f"schema unavailable: {exc}") from exc
     return {"ok": True, "status": "ok", "storage": str(root), "db": str(db_path())}
+
+
+@app.get("/", response_class=HTMLResponse)
+def ui_index() -> HTMLResponse:
+    index = STATIC_DIR / "index.html"
+    if index.is_file():
+        return HTMLResponse(index.read_text(encoding="utf-8"))
+    raise HTTPException(status_code=503, detail="ui missing")
+
+
+@app.get("/ui", response_class=HTMLResponse)
+def ui_alias() -> HTMLResponse:
+    return ui_index()
+
+
+@app.get("/openapi.json", include_in_schema=False)
+def committed_openapi_fallback():
+    committed = Path(__file__).resolve().parents[1] / "openapi.json"
+    if committed.is_file():
+        return FileResponse(committed)
+    docs_copy = Path(__file__).resolve().parents[1] / "docs" / "openapi.json"
+    if docs_copy.is_file():
+        return FileResponse(docs_copy)
+    return app.openapi()
+

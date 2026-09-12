@@ -1,0 +1,8 @@
+{
+  "schema": "cli_receipt.v1",
+  "cli_authored_ids": [
+    "audit",
+    "finance_ops_core",
+    "team"
+  ]
+}

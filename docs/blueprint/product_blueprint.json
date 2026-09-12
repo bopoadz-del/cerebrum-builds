@@ -1,0 +1,202 @@
+{
+  "capabilities": [
+    {
+      "block_ids": [
+        "estate_registry",
+        "database",
+        "storage",
+        "validation"
+      ],
+      "description": "Multi-property, multi-country property & asset registry with ownership boundaries, validation, and durable storage.\n",
+      "id": "estate_registry",
+      "required": true,
+      "strategy_hint": "COMPOSE"
+    },
+    {
+      "block_ids": [
+        "estate_maintenance"
+      ],
+      "description": "Maintenance schedules and work-order intelligence from the asset register",
+      "id": "estate_maintenance",
+      "required": true,
+      "strategy_hint": "REUSE"
+    },
+    {
+      "block_ids": [
+        "evidence_verifier"
+      ],
+      "description": "Verify operational evidence without leaking PII into learning",
+      "id": "evidence_verifier",
+      "required": true,
+      "strategy_hint": "REUSE"
+    },
+    {
+      "block_ids": [
+        "readiness_engine"
+      ],
+      "description": "Property readiness gates before guest or staff activation",
+      "id": "readiness_engine",
+      "required": true,
+      "strategy_hint": "REUSE"
+    },
+    {
+      "block_ids": [
+        "portfolio_rollup"
+      ],
+      "description": "Roll up readiness and maintenance signals across the estate portfolio",
+      "id": "portfolio_rollup",
+      "required": true,
+      "strategy_hint": "REUSE"
+    },
+    {
+      "block_ids": [
+        "document_engine",
+        "knowledge",
+        "vector_search"
+      ],
+      "description": "Per-property + global House Manual / SOP engine \u2014 versioned standards corpus indexed for dual RAG Layer 1.\n",
+      "id": "house_manual_sop",
+      "required": true,
+      "strategy_hint": "COMPOSE"
+    },
+    {
+      "block_ids": [
+        "formula_executor",
+        "audit",
+        "notification"
+      ],
+      "description": "Vendor contracts, rates, spend tracking, and renegotiation flags with audit trail.\n",
+      "id": "vendor_budget",
+      "required": true,
+      "strategy_hint": "COMPOSE"
+    },
+    {
+      "block_ids": [
+        "estate_maintenance",
+        "workflow",
+        "event_bus",
+        "queue"
+      ],
+      "description": "Asset register \u2192 maintenance calendar \u2192 work orders \u2192 escalation via workflow bus.\n",
+      "id": "preventive_maintenance",
+      "required": true,
+      "strategy_hint": "COMPOSE"
+    },
+    {
+      "block_ids": [
+        "workflow",
+        "team",
+        "notification"
+      ],
+      "description": "Household staff scheduling & task management for teams of 10+ \u2014 shifts, assignments, performance notes.\n",
+      "id": "staff_scheduling",
+      "required": true,
+      "strategy_hint": "COMPOSE"
+    },
+    {
+      "block_ids": [
+        "dashboard",
+        "analytics",
+        "portfolio_rollup"
+      ],
+      "description": "Principal portfolio health, delivery status, and escalation paths \u2014 no surprises reach the principal.\n",
+      "id": "principal_dashboard",
+      "required": true,
+      "strategy_hint": "COMPOSE"
+    },
+    {
+      "block_ids": [
+        "spec_analyzer",
+        "recommendation_template",
+        "readiness_engine"
+      ],
+      "description": "Template-driven new-property onboarding \u2014 apply the estate framework to a new asset.\n",
+      "id": "property_onboarding",
+      "required": true,
+      "strategy_hint": "COMPOSE"
+    },
+    {
+      "block_ids": [
+        "knowledge",
+        "vector_search",
+        "document_engine"
+      ],
+      "description": "Dual RAG Layer 1 \u2014 SOP / House Manual / global standards corpus (separately indexed).\n",
+      "id": "dual_rag_sop",
+      "required": true,
+      "strategy_hint": "COMPOSE"
+    },
+    {
+      "block_ids": [
+        "knowledge",
+        "vector_search",
+        "document_engine"
+      ],
+      "description": "Dual RAG Layer 2 \u2014 the estate's own documents, separately indexed from SOP corpus.\n",
+      "id": "dual_rag_estate_docs",
+      "required": true,
+      "strategy_hint": "COMPOSE"
+    },
+    {
+      "block_ids": [
+        "estate_registry",
+        "estate_maintenance",
+        "readiness_engine"
+      ],
+      "description": "Compose registry + maintenance + readiness into an ops loop",
+      "id": "composed_ops_loop",
+      "required": true,
+      "strategy_hint": "COMPOSE"
+    },
+    {
+      "block_ids": [
+        "capture",
+        "evidence_verifier"
+      ],
+      "description": "Capture supporting evidence artifacts",
+      "id": "evidence_capture",
+      "required": true,
+      "strategy_hint": "COMPOSE"
+    },
+    {
+      "block_ids": [],
+      "description": "Human authority confirmation surface (kernel GENERATE)",
+      "id": "human_authority_gate",
+      "required": true,
+      "strategy_hint": "GENERATE"
+    }
+  ],
+  "connectors": [
+    "cmms_stub",
+    "iot_stub",
+    "document_vault_stub",
+    "smart_home_placeholder"
+  ],
+  "drafting_mode": "golden_steward",
+  "drafting_note": "LLM drafting disabled",
+  "edge_profile": "edge_on_prem",
+  "factory_scenario": "CREATE_PRODUCT",
+  "human_authority": true,
+  "n_required": 16,
+  "product_id": "cerebrum-steward",
+  "product_name": "Cerebrum Steward",
+  "schema_version": "product_blueprint.v1",
+  "summary": "Remote Asset & Estate Operations Platform \u2014 generated by CerebrumDev.ai Factory from the private_estate_operations kit and dual-registered Store blocks. Multi-property / multi-country registry, House Manual SOP engine, vendor & budget, preventive maintenance, household staff scheduling, principal dashboard, new-property onboarding, and dual RAG (SOP corpus + estate documents). Smart-home/IoT connectors are honest placeholders only.\n",
+  "ui_modules": [
+    "command_center",
+    "principal_dashboard",
+    "estate_registry",
+    "house_manual",
+    "maintenance",
+    "vendors",
+    "staff",
+    "readiness",
+    "onboarding",
+    "portfolio",
+    "evidence",
+    "dual_rag",
+    "operational_chat",
+    "resident_engineer"
+  ],
+  "vertical": "estate"
+}

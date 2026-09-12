@@ -1,0 +1,18 @@
+{
+  "blocks": [
+    "audit",
+    "dashboard"
+  ],
+  "id": "platform",
+  "name": "Platform",
+  "product_blocks": [
+    "audit",
+    "dashboard"
+  ],
+  "source": "synthesized-from-factory-shelf",
+  "vendored_blocks": {
+    "audit": "vendor/blocks/audit",
+    "dashboard": "vendor/blocks/dashboard"
+  },
+  "version": "1.0.0"
+}

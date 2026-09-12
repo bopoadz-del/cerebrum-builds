@@ -8,9 +8,11 @@ import re
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
-from fastapi import APIRouter, HTTPException, Query
+from fastapi import APIRouter, HTTPException, Query, Request
 from pydantic import BaseModel, Field
 
+from app.auth import require_operator
+from app.block_inputs import record_mutation_audit
 from app.store import storage_root
 
 router = APIRouter()
@@ -65,7 +67,8 @@ def _read_index() -> List[Dict[str, Any]]:
 
 
 @router.post("/v1/rag/ingest")
-def rag_ingest(body: RagIngestBody) -> Dict[str, Any]:
+def rag_ingest(body: RagIngestBody, request: Request) -> Dict[str, Any]:
+    principal = require_operator(request)
     record = {
         "doc_id": body.doc_id,
         "title": body.title,
@@ -73,16 +76,39 @@ def rag_ingest(body: RagIngestBody) -> Dict[str, Any]:
         "layer": body.layer,
         "property_id": body.property_id,
         "index": DEAL_PACK_INDEX,
+        "retrieval": "lexical_jsonl",
+        "actor": principal.subject,
+        "actor_role": principal.role,
     }
     path = _index_path()
     with path.open("a", encoding="utf-8") as handle:
         handle.write(json.dumps(record, ensure_ascii=False) + "\n")
-    return {"ok": True, "ingested": True, "doc_id": body.doc_id, "layer": body.layer}
+    record_mutation_audit(
+        principal,
+        action="rag_ingest",
+        resource=body.doc_id,
+        details={
+            "status": "open",
+            "capability": "rag_ingest",
+            "category": "data_access",
+            "layer": body.layer,
+            "retrieval": "lexical_jsonl",
+        },
+    )
+    return {
+        "ok": True,
+        "ingested": True,
+        "doc_id": body.doc_id,
+        "layer": body.layer,
+        "retrieval": "lexical_jsonl",
+        "actor": principal.subject,
+        "actor_role": principal.role,
+    }
 
 
 @router.post("/v1/steward/rag/ingest")
-def steward_rag_ingest(body: RagIngestBody) -> Dict[str, Any]:
-    return rag_ingest(body)
+def steward_rag_ingest(body: RagIngestBody, request: Request) -> Dict[str, Any]:
+    return rag_ingest(body, request)
 
 
 @router.get("/v1/rag/query")
@@ -105,6 +131,7 @@ def rag_query(
         "query": q,
         "hits": hits[:top_k],
         "hit_count": min(len(hits), top_k),
+        "retrieval": "lexical_jsonl",
     }
 
 

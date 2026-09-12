@@ -74,3 +74,16 @@ def test_health_and_ui(client: TestClient) -> None:
     ui = client.get("/")
     assert ui.status_code == 200
     assert "Car Dealership Platform" in ui.text
+    assert "OPERATOR_TOKEN" in ui.text
+
+
+def test_core_quote_and_actor_on_schema_sample(client: TestClient) -> None:
+    payload = _sample_payload("car_dealership_core")
+    response = client.post("/v1/car_dealership_core", json=payload)
+    assert response.status_code == 200
+    body = response.json()
+    assert body.get("ok") is not False
+    assert body.get("actor") == "operator"
+    quote = (body.get("record") or {}).get("finance_quote") or {}
+    assert quote.get("monthly", 0) > 0
+    assert quote.get("monthly") != 0

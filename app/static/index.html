@@ -25,7 +25,7 @@
 <body>
   <header>
     <h1>Car Dealership Platform</h1>
-    <p class="sub">Cerebrum automotive — operator / admin</p>
+    <p class="sub">Cerebrum automotive — operator / admin. Mutations require a bearer operator token.</p>
   </header>
   <nav id="nav"></nav>
   <main>
@@ -35,8 +35,12 @@
     </section>
     <section id="live" class="panel">
       <h2 id="cap-title">car_dealership_core</h2>
+      <label>Operator token <input id="operator-token" type="password" autocomplete="off" placeholder="OPERATOR_TOKEN" /></label>
       <label>Reference <input id="reference" value="sample" /></label>
       <label>Status <input id="status" value="open" /></label>
+      <label>VIN <input id="vin" value="sample" /></label>
+      <label>Customer <input id="customer_name" value="sample" /></label>
+      <label>Deal type <input id="deal_type" value="retail" /></label>
       <button class="act" id="post-btn" type="button">POST create</button>
       <button class="act" id="get-btn" type="button">GET records</button>
       <pre id="out">Ready.</pre>
@@ -87,14 +91,23 @@
       [...nav.children].forEach((el) => el.classList.remove("active"));
       if (btn) btn.classList.add("active");
     }
+    function authHeaders() {
+      const headers = {"Content-Type": "application/json"};
+      const token = (document.getElementById("operator-token").value || "").trim();
+      if (token) headers["Authorization"] = "Bearer " + token;
+      return headers;
+    }
     document.getElementById("post-btn").onclick = async () => {
       const body = {
         reference: document.getElementById("reference").value || "sample",
-        status: document.getElementById("status").value || "open"
+        status: document.getElementById("status").value || "open",
+        vin: document.getElementById("vin").value || "sample",
+        customer_name: document.getElementById("customer_name").value || "sample",
+        deal_type: document.getElementById("deal_type").value || "retail"
       };
       const res = await fetch("/v1/" + current, {
         method: "POST",
-        headers: {"Content-Type": "application/json"},
+        headers: authHeaders(),
         body: JSON.stringify(body)
       });
       document.getElementById("out").textContent = JSON.stringify(await res.json(), null, 2);
@@ -106,7 +119,7 @@
     document.getElementById("ingest-btn").onclick = async () => {
       const res = await fetch("/v1/rag/ingest", {
         method: "POST",
-        headers: {"Content-Type": "application/json"},
+        headers: authHeaders(),
         body: JSON.stringify({
           layer: 1,
           doc_id: document.getElementById("reference").value || "sample",

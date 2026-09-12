@@ -16,6 +16,9 @@ if str(ROOT) not in sys.path:
 
 os.environ.setdefault("STORAGE_PATH", str(ROOT / "data"))
 os.environ.setdefault("VECTOR_DB_URL", "")
+# Runtime-only acceptance secret. The app has no git-default fallback.
+os.environ.setdefault("OPERATOR_TOKEN", "acceptance-operator-secret-918c")
+AUTH_HEADERS = {"Authorization": f"Bearer {os.environ['OPERATOR_TOKEN']}"}
 
 FLOOR = (
     "no_token_401",
@@ -56,7 +59,11 @@ def main() -> int:
             )
         )
 
-        missing = client.post("/v1/car_dealership_core", json={"status": "open"})
+        missing = client.post(
+            "/v1/car_dealership_core",
+            json={"status": "open"},
+            headers=AUTH_HEADERS,
+        )
         results.append(
             _line(
                 "PASS" if missing.status_code == 422 else "FAIL",
@@ -66,7 +73,9 @@ def main() -> int:
         )
 
         bad_enum = client.post(
-            "/v1/car_dealership_core", json={"reference": "sample", "status": "bogus"}
+            "/v1/car_dealership_core",
+            json={"reference": "sample", "status": "bogus"},
+            headers=AUTH_HEADERS,
         )
         results.append(
             _line(
@@ -93,6 +102,7 @@ def main() -> int:
                 "title": "Deal jacket close",
                 "text": "Deal jacket buyers order and finance contract for the retail close.",
             },
+            headers=AUTH_HEADERS,
         )
         query = client.get("/v1/rag/query", params={"q": "deal jacket close"})
         hit = (
@@ -124,6 +134,51 @@ def main() -> int:
                 "PASS" if health.status_code == 200 else "FAIL",
                 "docker_health_200",
                 f"GET /health -> {health.status_code}",
+            )
+        )
+
+        open_post = client.post(
+            "/v1/car_dealership_core",
+            json={"reference": "sample", "status": "open", "deal_type": "retail"},
+        )
+        results.append(
+            _line(
+                "PASS" if open_post.status_code == 401 else "FAIL",
+                "mutating_no_token_401",
+                f"open POST -> {open_post.status_code}",
+            )
+        )
+        open_ingest = client.post(
+            "/v1/rag/ingest",
+            json={"layer": 1, "doc_id": "denied", "title": "x", "text": "deal jacket"},
+        )
+        results.append(
+            _line(
+                "PASS" if open_ingest.status_code == 401 else "FAIL",
+                "rag_write_no_token_401",
+                f"open ingest -> {open_ingest.status_code}",
+            )
+        )
+        quoted = client.post(
+            "/v1/car_dealership_core",
+            json={
+                "reference": "sample",
+                "status": "open",
+                "vin": "sample",
+                "customer_name": "sample",
+                "deal_type": "retail",
+            },
+            headers=AUTH_HEADERS,
+        )
+        monthly = 0
+        if quoted.status_code == 200:
+            record = (quoted.json() or {}).get("record") or {}
+            monthly = (record.get("finance_quote") or {}).get("monthly") or 0
+        results.append(
+            _line(
+                "PASS" if quoted.status_code == 200 and monthly > 0 else "FAIL",
+                "core_quote_nonzero",
+                f"status={quoted.status_code} monthly={monthly}",
             )
         )
 
@@ -211,12 +266,6 @@ def main() -> int:
             _line("FAIL", "authorship==receipt", "receipt.json missing")
         )
 
-    extra = (
-        "boot",
-        "envelope_schema",
-        "capability_roster",
-        "render_ready",
-    )
     results.append(_line("PASS", "boot", "TestClient lifespan migrated schema"))
     results.append(
         _line("PASS", "envelope_schema", "open|in_progress|closed on every spec")

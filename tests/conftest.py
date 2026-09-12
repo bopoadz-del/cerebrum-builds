@@ -17,6 +17,9 @@ def pytest_configure(config: pytest.Config) -> None:
     config.addinivalue_line("markers", "not_pilot: code-gate imports, routes, and handlers")
 
 
+OPERATOR_SECRET = "pytest-operator-secret-918c"
+
+
 @pytest.fixture
 def isolated_storage(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Path:
     root = tmp_path / "storage"
@@ -31,7 +34,23 @@ def isolated_storage(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Path:
 
 
 @pytest.fixture
-def client(isolated_storage: Path) -> TestClient:
+def operator_secret(monkeypatch: pytest.MonkeyPatch) -> str:
+    monkeypatch.setenv("OPERATOR_TOKEN", OPERATOR_SECRET)
+    monkeypatch.delenv("ADMIN_TOKEN", raising=False)
+    return OPERATOR_SECRET
+
+
+@pytest.fixture
+def client(isolated_storage: Path, operator_secret: str) -> TestClient:
+    from app.main import app
+
+    with TestClient(app) as test_client:
+        test_client.headers.update({"Authorization": f"Bearer {operator_secret}"})
+        yield test_client
+
+
+@pytest.fixture
+def anon_client(isolated_storage: Path, operator_secret: str) -> TestClient:
     from app.main import app
 
     with TestClient(app) as test_client:

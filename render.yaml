@@ -11,3 +11,9 @@ services:
         value: /var/data
       - key: PYTHONUNBUFFERED
         value: "1"
+      - key: OPERATOR_TOKEN
+        sync: false
+      - key: ADMIN_TOKEN
+        sync: false
+      - key: CORS_ALLOWLIST
+        sync: false

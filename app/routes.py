@@ -7,6 +7,8 @@ from typing import Any, Dict
 from fastapi import APIRouter, HTTPException, Request
 from fastapi.responses import JSONResponse
 
+from app.auth import require_operator
+from app.block_inputs import record_mutation_audit
 from app.dispatch import load_handler
 from app.schema import RESERVED_FIELDS, REQUIRED_CAPABILITY_IDS, SPECS, STATUS_VALUES, get_spec
 from app.store import list_all, save as store_save
@@ -16,10 +18,12 @@ router = APIRouter()
 
 @router.get("/v1/admin/export")
 def admin_export(request: Request) -> Dict[str, Any]:
-    token = request.headers.get("authorization") or request.headers.get("x-api-token")
-    if not token:
-        raise HTTPException(status_code=401, detail="token required")
-    return {"ok": True, "capabilities": list(REQUIRED_CAPABILITY_IDS)}
+    principal = require_operator(request)
+    return {
+        "ok": True,
+        "capabilities": list(REQUIRED_CAPABILITY_IDS),
+        "principal": principal.as_dict(),
+    }
 
 
 def _validate_payload(capability_id: str, payload: Dict[str, Any]) -> Dict[str, Any]:
@@ -53,10 +57,18 @@ def _validate_payload(capability_id: str, payload: Dict[str, Any]) -> Dict[str, 
 
 
 @router.post("/v1/{capability_id}")
-def post_capability(capability_id: str, request_payload: Dict[str, Any]) -> Dict[str, Any]:
+def post_capability(
+    capability_id: str, request_payload: Dict[str, Any], request: Request
+) -> Dict[str, Any]:
+    principal = require_operator(request)
     if capability_id not in SPECS:
         raise HTTPException(status_code=404, detail="unknown capability")
     payload = _validate_payload(capability_id, request_payload)
+    payload = {
+        **payload,
+        "actor": principal.subject,
+        "actor_role": principal.role,
+    }
     spec = get_spec(capability_id)
     handle = load_handler(capability_id)
     try:
@@ -71,8 +83,22 @@ def post_capability(capability_id: str, request_payload: Dict[str, Any]) -> Dict
     if result.get("ok") is False:
         return result
     store_save(spec["entity"], payload)
+    record_mutation_audit(
+        principal,
+        action=f"mutate:{capability_id}",
+        resource=str(payload.get("reference") or "sample"),
+        details={
+            "status": payload.get("status", "open"),
+            "capability": capability_id,
+            "vin": payload.get("vin"),
+            "deal_type": payload.get("deal_type"),
+            "category": "admin",
+        },
+    )
     result.setdefault("ok", True)
     result.setdefault("capability", capability_id)
+    result.setdefault("actor", principal.subject)
+    result.setdefault("actor_role", principal.role)
     return result
 
 

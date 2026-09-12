@@ -10,6 +10,7 @@ from fastapi import FastAPI, HTTPException
 from fastapi.responses import FileResponse, HTMLResponse
 from fastapi.staticfiles import StaticFiles
 
+from app.auth import install_cors
 from app.rag_routes import router as rag_router
 from app.routes import router as capability_router
 from app.store import db_path, ensure_schema, reset_connection, storage_root
@@ -46,6 +47,7 @@ app = FastAPI(
     description="Cerebrum FinanceOps FP&A — chart of accounts, budget vs actual",
     lifespan=lifespan,
 )
+install_cors(app)
 app.include_router(capability_router)
 app.include_router(rag_router)
 

@@ -13,3 +13,7 @@ services:
         value: "1"
       - key: API_TOKEN
         sync: false
+      - key: CEREBRUM_API_TOKEN
+        sync: false
+      - key: CORS_ALLOWLIST
+        sync: false

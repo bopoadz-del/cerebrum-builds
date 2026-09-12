@@ -8,6 +8,7 @@ from fastapi import APIRouter, HTTPException, Request
 from fastapi.responses import JSONResponse
 
 from app.auth import require_admin_token
+from app.block_inputs import bind_payload_principal, record_mutation_audit
 from app.dispatch import load_handler
 from app.schema import RESERVED_FIELDS, REQUIRED_CAPABILITY_IDS, SPECS, STATUS_VALUES, get_spec
 from app.store import list_all, save as store_save
@@ -17,8 +18,12 @@ router = APIRouter()
 
 @router.get("/v1/admin/export")
 def admin_export(request: Request) -> Dict[str, Any]:
-    require_admin_token(request)
-    return {"ok": True, "capabilities": list(REQUIRED_CAPABILITY_IDS)}
+    principal = require_admin_token(request)
+    return {
+        "ok": True,
+        "capabilities": list(REQUIRED_CAPABILITY_IDS),
+        "principal": principal.as_dict(),
+    }
 
 
 def _validate_payload(capability_id: str, payload: Dict[str, Any]) -> Dict[str, Any]:
@@ -52,10 +57,15 @@ def _validate_payload(capability_id: str, payload: Dict[str, Any]) -> Dict[str, 
 
 
 @router.post("/v1/{capability_id}")
-def post_capability(capability_id: str, request_payload: Dict[str, Any]) -> Dict[str, Any]:
+def post_capability(
+    capability_id: str, request_payload: Dict[str, Any], request: Request
+) -> Dict[str, Any]:
+    principal = require_admin_token(request)
     if capability_id not in SPECS:
         raise HTTPException(status_code=404, detail="unknown capability")
-    payload = _validate_payload(capability_id, request_payload)
+    payload = bind_payload_principal(
+        _validate_payload(capability_id, request_payload), principal
+    )
     spec = get_spec(capability_id)
     handle = load_handler(capability_id)
     try:
@@ -70,8 +80,22 @@ def post_capability(capability_id: str, request_payload: Dict[str, Any]) -> Dict
     if result.get("ok") is False:
         return result
     store_save(spec["entity"], payload)
+    record_mutation_audit(
+        principal,
+        action=f"mutate:{capability_id}",
+        resource=str(payload.get("reference") or "sample"),
+        details={
+            "status": payload.get("status", "open"),
+            "capability": capability_id,
+            "period": payload.get("period"),
+            "account_name": payload.get("account_name"),
+            "category": "admin",
+        },
+    )
     result.setdefault("ok", True)
     result.setdefault("capability", capability_id)
+    result.setdefault("actor", principal.subject)
+    result.setdefault("actor_role", principal.role)
     return result
 
 

@@ -7,6 +7,7 @@ from typing import Any, Dict
 from fastapi import APIRouter, HTTPException, Request
 from fastapi.responses import JSONResponse
 
+from app.auth import require_admin_token
 from app.dispatch import load_handler
 from app.schema import RESERVED_FIELDS, REQUIRED_CAPABILITY_IDS, SPECS, STATUS_VALUES, get_spec
 from app.store import list_all, save as store_save
@@ -16,9 +17,7 @@ router = APIRouter()
 
 @router.get("/v1/admin/export")
 def admin_export(request: Request) -> Dict[str, Any]:
-    token = request.headers.get("authorization") or request.headers.get("x-api-token")
-    if not token:
-        raise HTTPException(status_code=401, detail="token required")
+    require_admin_token(request)
     return {"ok": True, "capabilities": list(REQUIRED_CAPABILITY_IDS)}
 
 

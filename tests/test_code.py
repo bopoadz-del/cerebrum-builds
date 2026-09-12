@@ -62,3 +62,52 @@ def test_actions_init_has_no_eager_reexport() -> None:
         encoding="utf-8"
     )
     assert "from app.actions import" not in text
+
+
+def test_product_core_computes_budget_variance(isolated_storage: Path) -> None:
+    from app.actions.product_core import handle
+
+    result = handle(
+        {
+            "reference": "6100",
+            "status": "open",
+            "account_name": "opex payroll",
+            "period": "2026-09",
+            "budget_amount": 100,
+            "actual_amount": 80,
+        }
+    )
+    assert result["ok"] is True
+    bva = result["record"]["budget_vs_actual"]
+    assert bva["variance"] == -20
+    assert bva["direction"] == "favorable"
+    assert bva["inputs_complete"] is True
+    cash = result["record"]["cash_forecast"]
+    assert cash["opening"] == 100
+    assert cash["outflows"] == 80
+    assert cash["closing"] == 20
+    assert cash["inflows"] is None
+
+
+def test_admin_export_fail_closed(monkeypatch: pytest.MonkeyPatch) -> None:
+    from fastapi.testclient import TestClient
+
+    from app.main import app
+
+    monkeypatch.delenv("API_TOKEN", raising=False)
+    monkeypatch.delenv("CEREBRUM_API_TOKEN", raising=False)
+    with TestClient(app) as client:
+        denied_missing = client.get("/v1/admin/export")
+        denied_placeholder = client.get(
+            "/v1/admin/export", headers={"x-api-token": "sample"}
+        )
+    assert denied_missing.status_code == 401
+    assert denied_placeholder.status_code == 401
+
+    monkeypatch.setenv("API_TOKEN", "financeops-admin")
+    with TestClient(app) as client:
+        denied_wrong = client.get("/v1/admin/export", headers={"x-api-token": "nope"})
+        allowed = client.get("/v1/admin/export", headers={"x-api-token": "financeops-admin"})
+    assert denied_wrong.status_code == 401
+    assert allowed.status_code == 200
+    assert allowed.json().get("ok") is True

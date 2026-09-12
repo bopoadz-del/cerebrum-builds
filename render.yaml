@@ -11,3 +11,5 @@ services:
         value: /var/data
       - key: PYTHONUNBUFFERED
         value: "1"
+      - key: API_TOKEN
+        sync: false

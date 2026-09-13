@@ -5,6 +5,9 @@ from __future__ import annotations
 import asyncio
 import importlib
 import json
+import sys
+import types
+from pathlib import Path
 from typing import Any, Dict, Optional
 
 from app.schema import SPECS
@@ -47,16 +50,70 @@ def _run_async(coro: Any) -> Any:
         return pool.submit(asyncio.run, coro).result()
 
 
+def _repair_notification_module() -> None:
+    """Cloner left an empty try in vendor notification.py (IndentationError).
+
+    Do not write vendor/** — load the Store source in memory with the missing
+    import restored so execute('notification', action='send') can bind.
+    """
+    if "vendor.cerebrum.blocks.notification" in sys.modules:
+        module = sys.modules["vendor.cerebrum.blocks.notification"]
+        if hasattr(module, "NotificationBlock"):
+            return
+    path = (
+        Path(__file__).resolve().parents[1]
+        / "vendor"
+        / "cerebrum"
+        / "blocks"
+        / "notification.py"
+    )
+    src = path.read_text(encoding="utf-8")
+    broken = "            try:\n            except ImportError:"
+    fixed = (
+        "            try:\n"
+        "                from vendor.cerebrum.blocks.database import _create_block_instance\n"
+        "            except ImportError:"
+    )
+    if broken in src:
+        src = src.replace(broken, fixed, 1)
+    module = types.ModuleType("vendor.cerebrum.blocks.notification")
+    module.__file__ = str(path)
+    sys.modules["vendor.cerebrum.blocks.notification"] = module
+    exec(compile(src, str(path), "exec"), module.__dict__)
+
+
+def _document_engine_class() -> Any:
+    """Package path is document_engine_block/; cloner still looks for a .py file."""
+    name = "vendor.cerebrum.blocks.document_engine_block"
+    existing = sys.modules.get(name)
+    if existing is not None and not hasattr(existing, "DocumentEngineBlock"):
+        del sys.modules[name]
+    from vendor.cerebrum.blocks.document_engine_block import DocumentEngineBlock
+
+    return DocumentEngineBlock
+
+
 def _instantiate(block_id: str) -> Any:
-    from vendor.blocks.audit.block import _instantiate_store_block
+    from vendor.blocks.database.block import _instantiate_store_block
     from vendor.cerebrum.blocks import get_block
 
-    block_cls = get_block(block_id)
+    if block_id in {"notification", "workflow"}:
+        _repair_notification_module()
+    if block_id == "document_engine":
+        return _instantiate_store_block(_document_engine_class())
+    try:
+        block_cls = get_block(block_id)
+    except (SyntaxError, ImportError, IndentationError, OSError):
+        if block_id != "notification":
+            raise
+        _repair_notification_module()
+        block_cls = get_block(block_id)
     return _instantiate_store_block(block_cls)
 
 
 def execute(block_id: str, payload: Any = None, *, action: Optional[str] = None) -> Dict[str, Any]:
     """Run a vendored Store block. Pass action= as a keyword, never in payload."""
+    _repair_notification_module()
     if action is None:
         action = BLOCK_DEFAULT_ACTIONS.get(block_id)
     if action is None:

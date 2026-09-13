@@ -31,44 +31,46 @@ Contracts you must honour on every capability you write:
   invent a second, stricter contract the spec cannot express.
 - Offline platform: no network, no HTTP store callbacks, channel "mcp" only.
 - WRITER gate writer_behaviour POSTs a payload built from each capability's own FIELDS + CONSTRAINTS (allowed_values[0], status=open, channel=email, generic str='sample'). Every handler must accept that payload. Declaring a stricter contract than the spec produces 'no capability accepted its own schema'.
-- REUSE keep-path handlers must accept a schema-sample POST. Populate BLOCK_DEFAULT_ACTIONS from block.json / the factory Store map (including formula_executor, vector_search, capture, spec_analyzer, storage, and estate_registry) and pass action= as a keyword (action=BLOCK_DEFAULT_ACTIONS.get(block_id)). execute() with action=None is 'Unknown action: None'. Workflow step_0 without step.action is workflow: step_0 (event_bus): error. Store workflow reads input['result'] — a schema-sample POST that omits it fails as "workflow: RuntimeError: 'result'". Photographed roster: patient_records_management, appointment_scheduling, prescription_management, billing_and_invoicing, client_communication_portal.
-- PRODUCT one-record round-trip POSTs a schema-sample payload then re-reads store.list_all(entity) and GET /v1/{capability_id}. A miss is 'did not remember a record they were given'. Every capability must persist that record to its alembic entity via store.save(ENTITY, payload) (factory-grounded persist). Keyword-fallback veterinary_care_core, audit, dashboard are persistable capabilities.
-- PRODUCT test_every_capability_route_accepts_payload POSTs a schema-sample payload then runs bound blocks. A capability that binds workflow + event_bus (appointment_scheduling) must prepare EACH event_bus step including Store step_0, step_1 and step_2+ (block=event_bus, action=publish, topic, payload dict, message, channel=mcp, tool=event_bus) — never forward the raw sample as 'input': payload. Exact shape: {"block": "event_bus", "action": "publish", "input": {"topic": "<str>", "payload": {}, "message": "<str>", "channel": "mcp", "tool": "event_bus"}}.
-- Fail-closed auth HotelOps H: claimed_actor only (client actor/user_id is not identity); CORS allowlist refuses `*`.
-- Never edit sealed paths: vendor/**, vendor_blocks/**, vendor_blocks_mirror/**, blocks.lock.json, build_ledger.jsonl, .git/**. Call Store blocks via execute(action=...). Do not patch vendor. formula_executor is Store-listed but not vendored in this platform — do not invent the module; compute dose/invoice math in app/domain.py.
+- REUSE keep-path handlers must accept a schema-sample POST. Populate BLOCK_DEFAULT_ACTIONS from block.json / the factory Store map (including formula_executor, vector_search, capture, spec_analyzer, storage, and estate_registry) and pass action= as a keyword (action=BLOCK_DEFAULT_ACTIONS.get(block_id)). execute() with action=None is 'Unknown action: None'. Workflow step_0 without step.action is workflow: step_0 (event_bus): error. Store workflow reads input['result'] — a schema-sample POST that omits it fails as "workflow: RuntimeError: 'result'". CLONER must not rewrite assignment targets: name['result'] = becoming a .get() call fails as 'SyntaxError: cannot assign to function call' (queue / formula_executor). fail-closed keep original must still rewrite reads or TESTER refuses appointment_scheduling rejected a payload built from its own schema: "workflow: RuntimeError: 'result'". That miss is reuse/accept miss: HALT before TESTER. Photographed roster: patient_records_management, appointment_scheduling, prescription_management, billing_and_invoicing, client_communication_portal.
+- PRODUCT one-record round-trip POSTs a schema-sample payload then re-reads store.list_all(entity) and GET /v1/{capability_id}. A miss is 'did not remember a record they were given'. Every capability must persist that record to its alembic entity via store.save(ENTITY, payload) (factory-grounded persist). POST POST raised OperationalError: no such table: <entity> is a miss. WRITER isolates STORAGE_PATH; PRODUCT must too — a leftover ./data/platform.db already at 0001_baseline is not a pass. Keyword-fallback veterinary_care_core, audit, dashboard are persistable capabilities.
+- PRODUCT test_every_capability_route_accepts_payload POSTs a schema-sample payload then runs bound blocks. A capability that binds workflow + event_bus (appointment_scheduling / appointment_booking / automated_reminders / reminders_notifications style) must prepare EACH event_bus step including Store step_0, step_1 and step_2+ (block=event_bus, action=publish, topic, payload dict, message, channel=mcp, tool=event_bus) — never forward the raw sample as 'input': payload. Unprepared steps fail as 'workflow: step_N (event_bus): error'. An event_bus-first child fails as 'workflow: step_0 (event_bus): error'. An unprepared first factory child also fails as 'workflow: step_1 (event_bus): error'. A prepared step_1 plus an unprepared step_2 still fails as 'workflow: step_2 (event_bus): error' (schema sample refused (event_bus workflow step)). The factory wrap is not keep/done. WRITER emits a factory-grounded prepared event_bus step — do not execute("workflow", payload) with the raw schema sample. Store workflow / kit shim reads input['result'] or out['result'] — a schema-sample POST that omits it fails as "workflow: RuntimeError: 'result'". prepare_block_input and the keep-path emit MUST attach result from the first prepared step. CLONER must not rewrite assignment targets: name['result'] = becoming a .get() call fails as 'SyntaxError: cannot assign to function call'. fail-closed keep original must still rewrite reads or TESTER refuses appointment_scheduling rejected a payload built from its own schema: "workflow: RuntimeError: 'result'". Exact shape: {"block": "event_bus", "action": "publish", "input": {"topic": "<str>", "payload": {}, "message": "<str>", "channel": "mcp", "tool": "event_bus"}}.
 
-This brief is the horizon. Recovery session `sess_69f28c0d8bc540e9` (PATHS_VIOLATED after vendor/** + build_ledger.jsonl). Start from main tip that includes airport PR #11 and REPLACE all airport/retail product code with veterinary-care.
+This brief is the horizon. The user message is the compiled whole-job brief
+(TARGET / STEP 0 INVENTORY / DO / ACCEPTANCE) — not one handle(), one spec,
+or one route. One FACTORY_CODE_CLI writer; three gated phases (backend →
+frontend+RAG → integration) with STOP / checkpoint between them. Fail-closed:
+phase N acceptance before phase N+1. Resume skips landed writer phases.
+A stage wall may hard-stop you so the factory can inspect what was achieved;
+that stop is not permission to ship a scaffold.
 
 # C-BRIEF TEMPLATE
-revision: 2026-09-13
-owner_shape: veterinary_care
+revision: 2026-09-04
+owner_shape: aviation
 fill: deterministic (registry + block.json + domain pack + intake blueprint)
 llm_writes_brief: never
-session_id: sess_69f28c0d8bc540e9
-product_id: veterinary-care
-product_name: Veterinary Care Platform / VetCare Hub
+
+Changes to this file require a new dated revision AND the lettings golden
+reproduced (same capability roster, same compiled-brief fingerprint).
 
 ==================================================
 TARGET
 ==================================================
 
-Booted veterinary_care platform: Veterinary Care Platform (VetCare Hub).
-A clinic-operations hub for veterinary practice operators. It centralizes
-patient charts, appointment slots, prescriptions, invoices, and client
-messages so a small clinic can run a pilot without a full PIMS.
+Booted hospitality platform: Hotel Booking Platform.
+A comprehensive platform for hotel booking that enables guests to search, compare, and reserve rooms while providing hoteliers with tools to manage inventory, pricing, and reservations. It serves travelers, hotel staff, and administrators with a seamless booking experience and efficient property management.
 
-Who it is for: clinic operators
+Who it is for: hospitality operators
 Roles: operator, admin
 
-Capabilities (photographed keyword-fallback roster — use these ids):
-- veterinary_care_core [REUSE]: persist entity  blocks=['analytics']
-- patient_records_management [REUSE]: dual-registered  blocks=['knowledge', 'vector_search', 'memory']
-- appointment_scheduling [REUSE]: workflow + event_bus (prepared step_0/1/2 + result)  blocks=['workflow', 'event_bus', 'notification', 'queue']
-- prescription_management [REUSE]: hole-fill  blocks=['validation', 'analytics']  (formula_executor not vendored — domain dose math)
-- billing_and_invoicing [REUSE]: hole-fill  blocks=['validation', 'notification', 'queue']  (formula_executor not vendored — domain invoice math)
-- client_communication_portal [REUSE]: dual-registered  blocks=['notification', 'event_bus', 'knowledge']
-- audit [REUSE]: persistable when bound  blocks=['audit']
-- dashboard [REUSE]: persistable when bound  blocks=['dashboard', 'analytics']
+Capabilities:
+- booking_management [REUSE]: dual-registered  blocks=['workflow', 'database', 'notification', 'queue']
+- property_management [REUSE]: dual-registered  blocks=['database', 'storage', 'document_engine']
+- dynamic_pricing [REUSE]: dual-registered  blocks=['formula_executor', 'analytics']
+- review_management [REUSE]: dual-registered  blocks=['database', 'analytics', 'notification']
+- analytics_dashboard [REUSE]: dual-registered  blocks=['dashboard', 'analytics', 'database']
+- notification_system [REUSE]: dual-registered  blocks=['notification', 'queue', 'workflow']
+- search_recommendation [REUSE]: dual-registered  blocks=['vector_search', 'recommendation_template', 'analytics']
+
 
 ==================================================
 CUT 1 — STEP 0 INVENTORY + STOP
@@ -76,37 +78,31 @@ CUT 1 — STEP 0 INVENTORY + STOP
 
 Coder: list what the Store already provides. REUSE by exact block id, verified present — flag missing, never assume.
 
-Vendored in this platform (vendor.cerebrum.blocks._BLOCK_DEFS): analytics, audit, capture, dashboard, document_engine, event_bus, file_hasher, knowledge, memory, notification, queue, recommendation_template, storage, team, validation, vector_search, workflow
+Store registry (exact ids, verified): analytics, audit, capture, dashboard, database, document_engine, estate_maintenance, estate_registry, event_bus, evidence_verifier, file_hasher, formula_executor, knowledge, memory, notification, portfolio_rollup, queue, readiness_engine, recommendation_template, spec_analyzer, storage, team, validation, vector_search, workflow
 
-Store registry (exact ids, verified listed): analytics, audit, capture, dashboard, database, document_engine, estate_maintenance, estate_registry, event_bus, evidence_verifier, file_hasher, formula_executor, knowledge, memory, notification, portfolio_rollup, queue, readiness_engine, recommendation_template, spec_analyzer, storage, team, validation, vector_search, workflow
-
-REUSE (verified present AND vendored — emit handler source):
-- veterinary_care_core: REUSE ['analytics'] — emit app/actions/veterinary_care_core.py
-- patient_records_management: REUSE ['knowledge', 'vector_search', 'memory'] — emit app/actions/patient_records_management.py
-- appointment_scheduling: REUSE ['workflow', 'event_bus', 'notification', 'queue'] — emit app/actions/appointment_scheduling.py (prepared event_bus steps)
-- prescription_management: REUSE ['validation', 'analytics'] — emit app/actions/prescription_management.py
-- billing_and_invoicing: REUSE ['validation', 'notification', 'queue'] — emit app/actions/billing_and_invoicing.py
-- client_communication_portal: REUSE ['notification', 'event_bus', 'knowledge'] — emit app/actions/client_communication_portal.py
-- audit: REUSE ['audit'] — persistable capability — emit app/actions/audit.py
-- dashboard: REUSE ['dashboard', 'analytics'] — persistable capability — emit app/actions/dashboard.py
+REUSE (verified present):
+- booking_management: REUSE ['workflow', 'database', 'notification', 'queue'] (verified present in Store registry; handler source factory-grounded event_bus workflow; emit app/actions/booking_management.py)
+- property_management: REUSE ['database', 'storage', 'document_engine'] (verified present in Store registry; handler source factory-grounded persist; emit app/actions/property_management.py)
+- dynamic_pricing: REUSE ['formula_executor', 'analytics'] (verified present in Store registry; handler source factory-grounded persist; emit app/actions/dynamic_pricing.py)
+- review_management: REUSE ['database', 'analytics', 'notification'] (verified present in Store registry; handler source factory-grounded persist; emit app/actions/review_management.py)
+- analytics_dashboard: REUSE ['dashboard', 'analytics', 'database'] (verified present in Store registry; handler source factory-grounded persist; emit app/actions/analytics_dashboard.py)
+- notification_system: REUSE ['notification', 'queue', 'workflow'] (verified present in Store registry; handler source factory-grounded event_bus workflow; emit app/actions/notification_system.py)
+- search_recommendation: REUSE ['vector_search', 'recommendation_template', 'analytics'] (verified present in Store registry; handler source factory-grounded persist; emit app/actions/search_recommendation.py)
 
 GAPS (you author; do not invent a block id):
 - (none)
 
-MISSING claimed REUSE (do not bind — not vendored in this platform):
-- formula_executor (Store-listed; no vendor.cerebrum.blocks.formula_executor)
-- database (Store-listed; not in _BLOCK_DEFS)
-- readiness_engine, estate_maintenance, estate_registry, evidence_verifier, spec_analyzer, portfolio_rollup
-
 WORK ITEMS (C-BRIEF hole-fill; GENERATE gaps plus REUSE that still need handlers):
-- veterinary_care_core: REUSE hole-fill — persist / BLOCK_DEFAULT_ACTIONS / clinic load score
-- patient_records_management: REUSE hole-fill — vector_search keyword action=search
-- appointment_scheduling: REUSE hole-fill — prepared event_bus step_0, step_1, step_2 + result
-- prescription_management: REUSE hole-fill — domain daily_dose_mg (not persist stub 0)
-- billing_and_invoicing: REUSE hole-fill — domain invoice total (not persist stub 0)
-- client_communication_portal: REUSE hole-fill — MCP notify envelope
-- audit: REUSE hole-fill — persist one record to entity audit
-- dashboard: REUSE hole-fill — persist one record to entity dashboard
+- booking_management: REUSE hole-fill — bind persist / event_bus / BLOCK_DEFAULT_ACTIONS; do not skip because inventory_gaps is empty
+- property_management: REUSE hole-fill — bind persist / event_bus / BLOCK_DEFAULT_ACTIONS; do not skip because inventory_gaps is empty
+- dynamic_pricing: REUSE hole-fill — bind persist / event_bus / BLOCK_DEFAULT_ACTIONS; do not skip because inventory_gaps is empty
+- review_management: REUSE hole-fill — bind persist / event_bus / BLOCK_DEFAULT_ACTIONS; do not skip because inventory_gaps is empty
+- analytics_dashboard: REUSE hole-fill — bind persist / event_bus / BLOCK_DEFAULT_ACTIONS; do not skip because inventory_gaps is empty
+- notification_system: REUSE hole-fill — bind persist / event_bus / BLOCK_DEFAULT_ACTIONS; do not skip because inventory_gaps is empty
+- search_recommendation: REUSE hole-fill — bind persist / event_bus / BLOCK_DEFAULT_ACTIONS; do not skip because inventory_gaps is empty
+
+MISSING claimed REUSE (runner HALTS here if any):
+- (none)
 
 CUT 1 is read-only. Stop after this inventory. Do not build yet.
 
@@ -115,38 +111,48 @@ CUT 1 is read-only. Stop after this inventory. Do not build yet.
 CUT 2 — RUNNER VALIDATE
 ==================================================
 
-CUT 2 — runner validates ids against the vendored registry (not the coder).
-Claimed REUSE that is not present HALTS before WRITER build.
-Verified present: analytics, knowledge, vector_search, memory, workflow, event_bus, notification, queue, validation, audit, dashboard
-Missing (flagged, not bound): formula_executor, database
+CUT 2 — runner validates ids against the registry (not the coder).
+Claimed REUSE that is not present HALTS before WRITER build, not at CLONER.
+Verified present: workflow, database, notification, queue, database, storage, document_engine, formula_executor, analytics, database, analytics, notification, dashboard, analytics, database, notification, queue, workflow, vector_search, recommendation_template, analytics
+Missing:
 
 
 ==================================================
 CUT 3 — BUILD (DO)
 ==================================================
 
-C-BRIEF / FACTORY_CODE_CLI owns this workspace even when STEP 0 is 100% REUSE.
-Bind and write real handlers for every capability — deepen REUSE (persist,
-constructed block inputs, BLOCK_DEFAULT_ACTIONS, prepared event_bus steps).
-Do not re-implement a verified Store block from scratch — bind the registry-verified ids.
-Every verified REUSE row must emit a loadable app/actions/{capability_id}.py.
+C-BRIEF / FACTORY_CODE_CLI owns this workspace even when STEP 0 is 100% REUSE/COMPOSE (no GENERATE gaps). Bind and write real handlers for every capability — deepen REUSE/COMPOSE (persist, constructed block inputs, BLOCK_DEFAULT_ACTIONS, prepared event_bus steps). Do not leave deterministic templates. Do not skip the CLI because inventory_gaps is empty. Do not re-implement a verified Store block from scratch — bind the registry-verified ids.
+Every verified REUSE row must emit a loadable app/actions/{capability_id}.py (factory persist / event_bus envelope — the registry-verified handler source). A REUSE claim without that source is a GAP or HALT — do not reach writer_behaviour with ModuleNotFoundError.
 Invocation contracts: pass action= as a keyword, never inside the payload dict.
 Prefer action=BLOCK_DEFAULT_ACTIONS.get(block_id).
+REUSE keep-path emit MUST populate BLOCK_DEFAULT_ACTIONS — execute() with action=None is Unknown action: None.
 Call execute() for EVERY id in BLOCK_IDS.
-Call execute() from app.dispatch only. Do not import app.actions, app.routes, or app.main from a handler.
-The factory owns app/actions/__init__.py — do not rewrite it with eager re-exports.
-If you assign a block, you feed it — construct block inputs; do not demand block-specific keys from the caller.
+Call execute() from app.dispatch only. Do not import app.actions, app.routes, or app.main from a handler. The factory owns app/actions/__init__.py — do not rewrite it with 'from app.actions import <capability>' eager re-exports. That circular import (live VetCare pet_records_management) makes writer_behaviour halt as workspace does not import before route honesty.
+If you assign a block, you feed it — construct block inputs; do not demand block-specific keys (topic, sql/table, file paths, team_id, channel, steps) from the caller.
+Declare vocabularies on the spec (schema), not in prose.
 Envelope status vocabulary (schema-enforced): open | in_progress | closed.
+
+WRITER gate writer_behaviour (baseline, before PRODUCT):
+The harness POSTs /v1/{capability_id} with a payload built from
+that capability's own FIELDS + CONSTRAINTS. A route or handle()
+that refuses that payload before execute() fails the gate with:
+  no capability accepted its own schema
+Accept means HTTP 200 and not ok:false before a block is reached.
+If you need a field, type, or vocabulary, declare it on the spec
+so the sample includes it (allowed_values[0], bounds, format).
+Do not invent a second, stricter contract the spec cannot express.
+Do not require block-specific keys (topic, sql/table, file paths,
+team_id, channel, steps) from the caller — construct those inputs.
 
 Sampling rules (must match writer_behaviour probe _value):
 - CONSTRAINTS.allowed_values[0] when declared
-- status / *_status → open
+- status / *_status → open (envelope open | in_progress | closed)
 - channel / *_channel → email (never the word sample)
 - datetime / *_at / *_datetime → 2026-09-03T10:00:00
 - date / *_date → 2026-09-03
 - time / *_time → 10:00:00
-- email-shaped names → sample@example.com (writer) / guest@example.com (PRODUCT)
-- int/float → min if set else 1 (min=0 samples as 0)
+- email-shaped names → sample@example.com
+- int/float → min if set else 1 (min=0 samples as 0 in the probe)
 - bool → false
 - otherwise the word sample
 
@@ -154,105 +160,553 @@ Every capability's model already carries this envelope; the gate
 POSTs it plus samples for any extra FIELDS you declare:
 {"reference": "sample", "status": "open"}
 
-appointment_scheduling MUST emit factory-grounded prepared event_bus steps
-for step_0, step_1, and step_2. Workflow input MUST include result.
-Do not execute("workflow", payload) with the raw schema sample.
+PRODUCT / writer_behaviour schema-sample accept (REUSE keep-path):
+The harness POSTs /v1/{capability_id} with a payload built from
+that capability's own FIELDS + CONSTRAINTS, then runs bound
+blocks. A keep-path handler that calls execute() with no
+action= keyword (or action=None) fails as 'Unknown action'
+/ 'Unknown action: None'. Workflow children without
+step.action fail as workflow: step_0 (event_bus): error
+(schema sample refused (event_bus workflow step)). Store workflow / kit shim
+reads input['result'] / out['result']; a schema-sample POST
+that omits it fails as workflow: RuntimeError: 'result'.
+prepare_block_input and keep-path emit MUST attach result from
+the first prepared step so accept-payload can persist.
+CLONER emit_result_key_access rewrites reads of name['result']
+only — assignment targets must stay subscripts. Rewriting
+name['result'] = into a .get() call fails as SyntaxError: cannot assign to function call
+(live queue.py ~189 / formula_executor ~242).
+fail-closed keep original must still rewrite reads — a whole-module keep of the
+original Store workflow.py leaves envelope['result'] /
+input['result'] as KeyError → workflow: RuntimeError: 'result'
+(appointment_scheduling rejected a payload built from its own schema).
 
-factory-grounded persist:
+factory-grounded REUSE emit MUST populate BLOCK_DEFAULT_ACTIONS
+from vendored block.json (workspace vendor/, then factory
+vendor_blocks_mirror / CEREBRUM_BLOCKS_ROOT action default or
+options[0]) or the factory-known Store map. formula_executor
+(and formula_executor_v2) must harvest a keyword action.
+vector_search must harvest a keyword action (Store operation
+default search) even when registry block.json has no action
+input. capture must harvest a keyword action (Store-green
+extract, sess_d10dfc28) even when registry / live vendor
+block.json has no action input. Pass action= as a keyword —
+never inside the payload dict.
+Prefer action=BLOCK_DEFAULT_ACTIONS.get(block_id).
+
+Photographed VetCare Hub REUSE roster (sess_bb870f4fb29042f2 /
+sess_8259e197749b4441):
+- patient_records_management
+- appointment_scheduling
+- prescription_management
+- billing_and_invoicing
+- client_communication_portal
+Those ids are keep-path handlers, not per-cap micro-shots.
+prescription_management / billing_and_invoicing bind
+formula_executor — a missing default is reuse/accept miss.
+patient_records_management binds vector_search — a missing
+default is the sess_8259e197749b4441 reuse/accept miss.
+estate-operations maintenance_and_work_order_management /
+security_and_access_logging bind capture — a missing default
+is the sess_e8e4ab66e6dd4765 reuse/accept miss.
+Steward property_onboarding binds spec_analyzer /
+recommendation_template / readiness_engine — a missing
+default is the sess_5782f2264e0e4ff4 reuse/accept miss
+(independent of the ~1490s phase wall).
+Steward estate_registry binds storage — a missing default
+is the sess_5782f2264e0e4ff4 run3 reuse/accept miss
+(tip 4120a07; independent of factory budget ramp).
+A miss is reuse/accept miss: HALT before TESTER, do not burn
+three PRODUCT reworks on Unknown action.
+
+PRODUCT gate one-record round-trip (after WRITER, before STORE):
+The harness boots the product (TestClient lifespan runs alembic)
+on an isolated STORAGE_PATH, then POSTs /v1/{capability_id} with a
+payload built from that capability's own FIELDS + CONSTRAINTS.
+Accept means HTTP 200, not ok:false, store.list_all(entity) holds
+the record, and GET /v1/{capability_id} returns it.
+A miss is reported as: did not remember a record they were given
+POST raising OperationalError: no such table: <entity> is that miss — the persist table was not migrated.
+
+factory-grounded persist (not an LLM stub):
 - every capability has an alembic 0001 table named spec.entity
+  (capability_id with '-' → '_' when the spec omits entity)
 - store.COLUMNS and store.save use that same entity
-- handle() persists via store.save(ENTITY, payload) after blocks succeed (ok_envelope)
+- handle() persists via store.save(ENTITY, payload) after blocks
+  succeed (GENERATE with no blocks still persists)
+- the route save(payload) writes the request, not handle()'s envelope
 - do not persist to 'records' or a capability id that is not the entity
-- PRODUCT isolates STORAGE_PATH
+- do not rely on a leftover ./data/platform.db; PRODUCT isolates
+  STORAGE_PATH the same way writer_behaviour does
 
-Keyword-fallback persistable capabilities:
+Keyword-fallback architect rosters (live Veterinary Care Platform):
   veterinary_care_core, audit, dashboard
-Each must remember one record.
+Those ids are persistable capabilities, not 'just blocks'. Each
+must remember one record. Templated execute(block_id, payload)
+or no_block_bound without store.save is not done.
 
-HotelOps A (domain kernel, not persist stub):
-- open × walk_in clinic_load_score = 0.45 (not 1.0)
-- overloaded below 0.6
-- prescription daily_dose_mg from weight × mg/kg (never silent 0)
-- invoice subtotal + tax + total from invoice_kind (consult base 85.00, tax 8%)
-- appointment cascade next_action + sla_minutes
-- claimed_actor only; Principal actor is operator/admin
+GENERATE-gap factory-LLM fallthrough (after CLI billing/auth miss):
+- write app/actions/{capability}.py through the same persist
+  envelope as REUSE keep-path (_persist_record / store.save)
+- alembic 0001 and store.COLUMNS still use spec.entity
+- bind factory-LLM keys onto inventory GENERATE ids (exact,
+  normalize, unique leftover) so vetcare_hub_veterinary_core
+  is not dropped when the LLM writes veterinary_care_core
+- empty / mismatched factory-LLM still emits the persist
+  envelope — not a deterministic contract template and not a
+  ≥2h CLI session. WRITER [check:round_trip] must not HALT
+  solely because the billing keep-path omitted the handler
 
-Launching-ready full-pilot authorship floor: emit ≥5 keepable agent-written
-app/actions/*.py handlers. This roster is 8.
+PRODUCT gate (after WRITER writer_behaviour) — accept-payload:
+The harness runs tests/test_routes.py::test_every_capability_route_accepts_payload.
+It POSTs /v1/{capability_id} with a payload built from that
+capability's own FIELDS + CONSTRAINTS (same idea as
+writer_behaviour; PRODUCT then executes the bound blocks).
+A route that returns ok:false fails with:
+  {capability} rejected a payload built from its own schema: workflow: step_N (event_bus): error
+Named class: schema sample refused (event_bus workflow step); accept-payload persisted nothing; workflow: RuntimeError: 'result'.
+
+These planned capabilities bind workflow and/or event_bus
+(appointment / scheduling / booking / reminders style) and MUST
+use the prepared step on EVERY event_bus child, including
+automated_reminders Store step_0 (first child),
+appointment_scheduling step_1 and appointment_booking step_2+:
+- booking_management
+- notification_system
+
+PRODUCT schema-sample rules (roles_handlers._sample_payload):
+- CONSTRAINTS.allowed_values[0] when declared
+- status / *_status → open
+- channel / *_channel → email (never the word sample)
+- datetime / *_at / *_datetime → 2026-09-03T10:00:00
+- date / *_date → 2026-09-03
+- time / *_time → 10:00:00
+- email-shaped names → guest@example.com
+- otherwise the word sample
+
+That schema sample is NOT an event_bus input. When a capability
+binds workflow AND event_bus — or a reminders / appointment /
+scheduling / booking-style id (appointment_scheduling /
+appointment_booking) invents a workflow — do NOT set
+ANY step input to payload. Store 0-indexes children: an
+event_bus-first child fails PRODUCT as workflow: step_0 (event_bus): error
+(automated_reminders class). An unprepared first factory
+child also fails as workflow: step_1 (event_bus): error. step_1 prepared +
+step_2 raw still fails as workflow: step_2 (event_bus): error.
+The Store workflow records a child refusal as status=error — often
+only the banner string, no inner message.
+Store kit shims also read input['result'] / out['result'] and wrap
+a missing key as workflow: RuntimeError: 'result'. The schema sample
+does not include that key — prepare_block_input / keep-path emit
+MUST attach result from the first prepared step so accept-payload
+can persist. CLONER must not rewrite assignment targets:
+name['result'] = becoming a .get() call fails as
+SyntaxError: cannot assign to function call (queue.py ~189 /
+formula_executor ~242).
+fail-closed keep original must still rewrite reads — keeping
+the whole Store workflow.py leaves envelope['result'] as
+workflow: RuntimeError: 'result' (appointment_scheduling rejected a payload built from its own schema).
+WRITER emits a factory-grounded prepared event_bus step for
+appointment / booking / reminder capabilities — do not burn
+rework on execute(block_id, payload) stubs, and do not
+execute("workflow", payload) with the raw schema sample.
+Construct each event_bus step (every child, including Store
+step_0, step_1, and step_2+) in source. The factory execute wrap is a safety
+net, not permission to keep/done an unprepared child:
+- step['block'] = 'event_bus' (workflow reads block, not block_id)
+- action=publish (BLOCK_DEFAULT_ACTIONS, keyword only)
+- input.topic = non-empty str (event / event_type / event_name / reminder_type or a record summary)
+- input.payload = dict of domain scalars (not the raw sample alone)
+- input.message = non-empty str
+- input.channel = 'mcp' (never 'sample'; 'email' without `to` is not notify-ready)
+- input.tool = 'event_bus' (MCP notify requires block/tool; the schema sample has neither)
+Exact prepared event_bus workflow step (copy this shape on
+EVERY event_bus child — step_0, step_1, step_2, and later):
+{
+  "block": "event_bus",
+  "action": "publish",
+  "input": {
+    "topic": "<non-empty str from event / reminder_type / record summary>",
+    "payload": {"reference": "<domain scalar — not the raw schema sample>"},
+    "message": "<non-empty str>",
+    "channel": "mcp",
+    "tool": "event_bus"
+  }
+}
+Do not invent a second, unprepared event_bus child after a
+prepared step. Do not invent a stricter workflow the spec
+cannot express.
+
+Launching-ready full-pilot authorship floor: emit ≥5 keepable agent-written app/actions/*.py handlers (or equivalent cli_authored_ids). Fewer than 5 is FACTORY_CODE_CLI_THIN_AUTHORSHIP — CODE_GREEN / pilot_ready=false, package 409. Do not treat the job as done below this floor.
+
+Three tests per block are already owned by the harness (TESTER is not an LLM role).
+Scope READS / WRITES / NEVER explicitly in each handler you author.
+Budget wall: 1800s (FACTORY_CODER_BUDGET_S / staged wall).
 
 # PHASE 1 of 3 — BACKEND (DO)
-Write routes, handlers, schema, domain kernel, alembic entities.
-Every required capability gets a one-record POST/GET round-trip.
-STOP / checkpoint after PHASE 1 acceptance.
+STEP 0 INVENTORY + registry REUSE (this phase): use CUT 1 verified-present ids. Bind them. Author only named GAPS. Do not invent a block id.
+One FACTORY_CODE_CLI writer. No extra coder roles.
+Write routes, handlers, and schema only.
+Every required capability gets a one-record POST/GET round-trip (POST creates, GET returns it).
+Honour reuse_accept / schema-accept / persist-accept. Do not skip BLOCK_DEFAULT_ACTIONS.
+STOP / checkpoint after PHASE 1 acceptance. Do not start PHASE 2.
 
 # PHASE 2 of 3 — FRONTEND + RAG (DO)
-UI on the working backend (frontend modules call the live POST/GET routes).
-HARD WRITE app/rag_routes.py: quoted POST /v1/rag/ingest and GET|POST /v1/rag/query
-plus /v1/steward/rag/* twins.
-STOP / checkpoint after PHASE 2 acceptance.
+STEP 0 INVENTORY + registry REUSE (this phase): use CUT 1 verified-present ids. Bind them. Author named GAPS. When inventory names rag / dual_rag, HARD WRITE app/rag_routes.py ingest/query HTTP — those routes are not named GAPS and not persist POST/GET. Do not invent a block id.
+One FACTORY_CODE_CLI writer. No extra coder roles.
+UI on the working backend (frontend modules call the live POST/GET routes). Do not invent a second API.
+RAG ingest/query where the inventory names a rag / dual_rag surface (capability id contains rag, or block id rag / dual_rag / rag_*) — otherwise do not invent a RAG surface.
+When RAG is owed, ship these HTTP routes as quoted paths in app/**/*.py (not docs/rag JSON, not phase-1 persist POST/GET): ingest POST /v1/rag/ingest or POST /v1/steward/rag/ingest; query GET or POST /v1/rag/query or GET or POST /v1/steward/rag/query.
+HARD WRITE app/rag_routes.py (Factory keep-path plants this file when the CLI miss-scopes work items to capability gaps_only): quoted POST /v1/rag/ingest and GET|POST /v1/rag/query — or the /v1/steward/rag/* twins. Acceptance cannot pass without those quoted paths in app/**/*.py.
+A vector_search bind is reuse_accept — do not invent a second vector store. It is not a substitute for those ingest/query routes. dual_rag_estate_docs / dual_rag_sop one-record POST/GET is persist, not ingest/query.
+STOP / checkpoint after PHASE 2 acceptance. Do not start PHASE 3.
 
 # PHASE 3 of 3 — INTEGRATION + RENDER-READY (DO)
-Package, boot, and integration: Dockerfile + render.yaml + app/main.py.
-Bind HTTP to 0.0.0.0:$PORT. Ephemeral filesystem — persist under STORAGE_PATH.
-render-ready is not live Render deploy and not Store Docker acceptance.
+STEP 0 INVENTORY + registry REUSE (this phase): use CUT 1 verified-present ids. Bind them. Author only named GAPS. Do not invent a block id.
+One FACTORY_CODE_CLI writer. No extra coder roles.
+Package, boot, and integration: shippable tree that *would* deploy (Dockerfile + render.yaml + app/main.py).
+render-ready is not live Render deploy and not Store Docker acceptance — those stay owner-gated.
+Then existing TESTER / STORE_MANAGER. STOP / checkpoint after PHASE 3 acceptance.
+
+Block scopes (from block.json; report-only until L2.2 flip — do not invent):
+- workflow READS=["{'kind': 'caller', 'scope': 'input'}", "{'kind': 'env', 'scope': 'process'}", "{'kind': 'config', 'scope': 'runtime'}"] WRITES=["{'kind': 'caller', 'scope': 'output'}"] NEVER=['(none)'] ACCEPTANCE=["{'id': 'unknown_action', 'check': 'errors on an unknown or missing action', 'status': 'failed'}"]
+- database READS=["{'kind': 'caller', 'scope': 'input'}", "{'kind': 'env', 'scope': 'process'}", "{'kind': 'config', 'scope': 'runtime'}", "{'kind': 'database', 'scope': 'sql'}"] WRITES=["{'kind': 'caller', 'scope': 'output'}", "{'kind': 'database', 'scope': 'sql'}"] NEVER=['(none)'] ACCEPTANCE=["{'id': 'unknown_action', 'check': 'errors on an unknown or missing action', 'status': 'failed'}"]
+- notification READS=["{'kind': 'caller', 'scope': 'input'}", "{'kind': 'env', 'scope': 'process'}", "{'kind': 'config', 'scope': 'runtime'}", "{'kind': 'network', 'scope': 'http.outbound'}", "{'kind': 'credential', 'scope': 'env'}", "{'kind': 'block', 'scope': 'peer'}"] WRITES=["{'kind': 'caller', 'scope': 'output'}", "{'kind': 'network', 'scope': 'smtp.outbound'}", "{'kind': 'email', 'scope': 'outbound'}", "{'kind': 'notification', 'scope': 'outbound'}"] NEVER=['(none)'] ACCEPTANCE=["{'id': 'unknown_action', 'check': 'errors on an unknown or missing action', 'status': 'failed'}", "{'id': 'missing_credential', 'check': 'fails loud when a required credential or key is absent', 'status': 'failed'}"]
+- queue READS=["{'kind': 'caller', 'scope': 'input'}", "{'kind': 'config', 'scope': 'runtime'}", "{'kind': 'memory', 'scope': 'cache'}", "{'kind': 'queue', 'scope': 'jobs'}"] WRITES=["{'kind': 'caller', 'scope': 'output'}", "{'kind': 'queue', 'scope': 'jobs'}"] NEVER=['(none)'] ACCEPTANCE=["{'id': 'unknown_action', 'check': 'errors on an unknown or missing action', 'status': 'failed'}"]
+- storage READS=["{'kind': 'caller', 'scope': 'input'}", "{'kind': 'file', 'scope': 'local.read'}", "{'kind': 'config', 'scope': 'runtime'}"] WRITES=["{'kind': 'caller', 'scope': 'output'}", "{'kind': 'file', 'scope': 'local.write'}"] NEVER=['(none)'] ACCEPTANCE=['(none)']
+- document_engine READS=["{'kind': 'caller', 'scope': 'input'}", "{'kind': 'file', 'scope': 'local.read'}", "{'kind': 'file', 'scope': 'input_document'}", "{'kind': 'config', 'scope': 'runtime'}"] WRITES=["{'kind': 'caller', 'scope': 'output'}", "{'kind': 'file', 'scope': 'local.write'}", "{'kind': 'file', 'scope': 'temp'}"] NEVER=['(none)'] ACCEPTANCE=["{'id': 'missing_required_input', 'check': 'refuses or errors when a required input is absent', 'status': 'refused'}"]
+- formula_executor READS=["{'kind': 'caller', 'scope': 'input'}", "{'kind': 'env', 'scope': 'process'}", "{'kind': 'config', 'scope': 'runtime'}", "{'kind': 'network', 'scope': 'http.outbound'}"] WRITES=["{'kind': 'caller', 'scope': 'output'}"] NEVER=['(none)'] ACCEPTANCE=['(none)']
+- analytics READS=["{'kind': 'caller', 'scope': 'input'}", "{'kind': 'config', 'scope': 'runtime'}", "{'kind': 'llm', 'scope': 'provider'}"] WRITES=["{'kind': 'caller', 'scope': 'output'}"] NEVER=['(none)'] ACCEPTANCE=["{'id': 'unknown_action', 'check': 'errors on an unknown or missing action', 'status': 'failed'}"]
+- dashboard READS=["{'kind': 'caller', 'scope': 'input'}", "{'kind': 'config', 'scope': 'runtime'}"] WRITES=["{'kind': 'caller', 'scope': 'output'}"] NEVER=['(none)'] ACCEPTANCE=["{'id': 'unknown_action', 'check': 'errors on an unknown or missing action', 'status': 'failed'}"]
+- vector_search READS=["{'kind': 'caller', 'scope': 'input'}", "{'kind': 'database', 'scope': 'vector'}"] WRITES=["{'kind': 'caller', 'scope': 'output'}", "{'kind': 'database', 'scope': 'vector'}"] NEVER=['(none)'] ACCEPTANCE=["{'id': 'missing_required_input', 'check': 'refuses or errors when a required input is absent', 'status': 'refused'}", "{'id': 'unknown_action', 'check': 'errors on an unknown or missing action', 'status': 'failed'}"]
+- recommendation_template READS=["{'kind': 'caller', 'scope': 'input'}", "{'kind': 'file', 'scope': 'local.read'}", "{'kind': 'env', 'scope': 'process'}", "{'kind': 'config', 'scope': 'runtime'}"] WRITES=["{'kind': 'caller', 'scope': 'output'}"] NEVER=['(none)'] ACCEPTANCE=['(none)']
+
+Kit manifests (Factory shelf + on-disk packs):
+{
+  "platform": {
+    "blocks": [
+      "analytics",
+      "dashboard",
+      "database",
+      "document_engine",
+      "formula_executor",
+      "notification",
+      "queue",
+      "recommendation_template",
+      "storage",
+      "vector_search",
+      "workflow"
+    ],
+    "id": "platform",
+    "name": "Platform",
+    "product_blocks": [
+      "analytics",
+      "dashboard",
+      "database",
+      "document_engine",
+      "formula_executor",
+      "notification",
+      "queue",
+      "recommendation_template",
+      "storage",
+      "vector_search",
+      "workflow"
+    ],
+    "source": "brief-compiler",
+    "vendored_blocks": {
+      "analytics": "vendor/blocks/analytics",
+      "dashboard": "vendor/blocks/dashboard",
+      "database": "vendor/blocks/database",
+      "document_engine": "vendor/blocks/document_engine",
+      "formula_executor": "vendor/blocks/formula_executor",
+      "notification": "vendor/blocks/notification",
+      "queue": "vendor/blocks/queue",
+      "recommendation_template": "vendor/blocks/recommendation_template",
+      "storage": "vendor/blocks/storage",
+      "vector_search": "vendor/blocks/vector_search",
+      "workflow": "vendor/blocks/workflow"
+    },
+    "version": "1.0.0"
+  }
+}
+
+REUSE records (present/reuse + reads/writes/never/acceptance):
+{
+  "analytics": {
+    "acceptance": [
+      "{'id': 'unknown_action', 'check': 'errors on an unknown or missing action', 'status': 'failed'}"
+    ],
+    "block_id": "analytics",
+    "never": [],
+    "present": true,
+    "reads": [
+      "{'kind': 'caller', 'scope': 'input'}",
+      "{'kind': 'config', 'scope': 'runtime'}",
+      "{'kind': 'llm', 'scope': 'provider'}"
+    ],
+    "scope_declared": true,
+    "source": "registry/blocks",
+    "writes": [
+      "{'kind': 'caller', 'scope': 'output'}"
+    ]
+  },
+  "dashboard": {
+    "acceptance": [
+      "{'id': 'unknown_action', 'check': 'errors on an unknown or missing action', 'status': 'failed'}"
+    ],
+    "block_id": "dashboard",
+    "never": [],
+    "present": true,
+    "reads": [
+      "{'kind': 'caller', 'scope': 'input'}",
+      "{'kind': 'config', 'scope': 'runtime'}"
+    ],
+    "scope_declared": true,
+    "source": "registry/blocks",
+    "writes": [
+      "{'kind': 'caller', 'scope': 'output'}"
+    ]
+  },
+  "database": {
+    "acceptance": [
+      "{'id': 'unknown_action', 'check': 'errors on an unknown or missing action', 'status': 'failed'}"
+    ],
+    "block_id": "database",
+    "never": [],
+    "present": true,
+    "reads": [
+      "{'kind': 'caller', 'scope': 'input'}",
+      "{'kind': 'env', 'scope': 'process'}",
+      "{'kind': 'config', 'scope': 'runtime'}",
+      "{'kind': 'database', 'scope': 'sql'}"
+    ],
+    "scope_declared": true,
+    "source": "registry/blocks",
+    "writes": [
+      "{'kind': 'caller', 'scope': 'output'}",
+      "{'kind': 'database', 'scope': 'sql'}"
+    ]
+  },
+  "document_engine": {
+    "acceptance": [
+      "{'id': 'missing_required_input', 'check': 'refuses or errors when a required input is absent', 'status': 'refused'}"
+    ],
+    "block_id": "document_engine",
+    "never": [],
+    "present": true,
+    "reads": [
+      "{'kind': 'caller', 'scope': 'input'}",
+      "{'kind': 'file', 'scope': 'local.read'}",
+      "{'kind': 'file', 'scope': 'input_document'}",
+      "{'kind': 'config', 'scope': 'runtime'}"
+    ],
+    "scope_declared": true,
+    "source": "registry/blocks",
+    "writes": [
+      "{'kind': 'caller', 'scope': 'output'}",
+      "{'kind': 'file', 'scope': 'local.write'}",
+      "{'kind': 'file', 'scope': 'temp'}"
+    ]
+  },
+  "formula_executor": {
+    "acceptance": [],
+    "block_id": "formula_executor",
+    "never": [],
+    "present": true,
+    "reads": [
+      "{'kind': 'caller', 'scope': 'input'}",
+      "{'kind': 'env', 'scope': 'process'}",
+      "{'kind': 'config', 'scope': 'runtime'}",
+      "{'kind': 'network', 'scope': 'http.outbound'}"
+    ],
+    "scope_declared": true,
+    "source": "registry/blocks",
+    "writes": [
+      "{'kind': 'caller', 'scope': 'output'}"
+    ]
+  },
+  "notification": {
+    "acceptance": [
+      "{'id': 'unknown_action', 'check': 'errors on an unknown or missing action', 'status': 'failed'}",
+      "{'id': 'missing_credential', 'check': 'fails loud when a required credential or key is absent', 'status': 'failed'}"
+    ],
+    "block_id": "notification",
+    "never": [],
+    "present": true,
+    "reads": [
+      "{'kind': 'caller', 'scope': 'input'}",
+      "{'kind': 'env', 'scope': 'process'}",
+      "{'kind': 'config', 'scope': 'runtime'}",
+      "{'kind': 'network', 'scope': 'http.outbound'}",
+      "{'kind': 'credential', 'scope': 'env'}",
+      "{'kind': 'block', 'scope': 'peer'}"
+    ],
+    "scope_declared": true,
+    "source": "registry/blocks",
+    "writes": [
+      "{'kind': 'caller', 'scope': 'output'}",
+      "{'kind': 'network', 'scope': 'smtp.outbound'}",
+      "{'kind': 'email', 'scope': 'outbound'}",
+      "{'kind': 'notification', 'scope': 'outbound'}"
+    ]
+  },
+  "queue": {
+    "acceptance": [
+      "{'id': 'unknown_action', 'check': 'errors on an unknown or missing action', 'status': 'failed'}"
+    ],
+    "block_id": "queue",
+    "never": [],
+    "present": true,
+    "reads": [
+      "{'kind': 'caller', 'scope': 'input'}",
+      "{'kind': 'config', 'scope': 'runtime'}",
+      "{'kind': 'memory', 'scope': 'cache'}",
+      "{'kind': 'queue', 'scope': 'jobs'}"
+    ],
+    "scope_declared": true,
+    "source": "registry/blocks",
+    "writes": [
+      "{'kind': 'caller', 'scope': 'output'}",
+      "{'kind': 'queue', 'scope': 'jobs'}"
+    ]
+  },
+  "recommendation_template": {
+    "acceptance": [],
+    "block_id": "recommendation_template",
+    "never": [],
+    "present": true,
+    "reads": [
+      "{'kind': 'caller', 'scope': 'input'}",
+      "{'kind': 'file', 'scope': 'local.read'}",
+      "{'kind': 'env', 'scope': 'process'}",
+      "{'kind': 'config', 'scope': 'runtime'}"
+    ],
+    "scope_declared": true,
+    "source": "registry/blocks",
+    "writes": [
+      "{'kind': 'caller', 'scope': 'output'}"
+    ]
+  },
+  "storage": {
+    "acceptance": [],
+    "block_id": "storage",
+    "never": [],
+    "present": true,
+    "reads": [
+      "{'kind': 'caller', 'scope': 'input'}",
+      "{'kind': 'file', 'scope': 'local.read'}",
+      "{'kind': 'config', 'scope': 'runtime'}"
+    ],
+    "scope_declared": true,
+    "source": "registry/blocks",
+    "writes": [
+      "{'kind': 'caller', 'scope': 'output'}",
+      "{'kind': 'file', 'scope': 'local.write'}"
+    ]
+  },
+  "vector_search": {
+    "acceptance": [
+      "{'id': 'missing_required_input', 'check': 'refuses or errors when a required input is absent', 'status': 'refused'}",
+      "{'id': 'unknown_action', 'check': 'errors on an unknown or missing action', 'status': 'failed'}"
+    ],
+    "block_id": "vector_search",
+    "never": [],
+    "present": true,
+    "reads": [
+      "{'kind': 'caller', 'scope': 'input'}",
+      "{'kind': 'database', 'scope': 'vector'}"
+    ],
+    "scope_declared": true,
+    "source": "registry/blocks",
+    "writes": [
+      "{'kind': 'caller', 'scope': 'output'}",
+      "{'kind': 'database', 'scope': 'vector'}"
+    ]
+  },
+  "workflow": {
+    "acceptance": [
+      "{'id': 'unknown_action', 'check': 'errors on an unknown or missing action', 'status': 'failed'}"
+    ],
+    "block_id": "workflow",
+    "never": [],
+    "present": true,
+    "reads": [
+      "{'kind': 'caller', 'scope': 'input'}",
+      "{'kind': 'env', 'scope': 'process'}",
+      "{'kind': 'config', 'scope': 'runtime'}"
+    ],
+    "scope_declared": true,
+    "source": "registry/blocks",
+    "writes": [
+      "{'kind': 'caller', 'scope': 'output'}"
+    ]
+  }
+}
 
 Domain pack (binding fields):
 {
   "authoritative_calculations": [
-    "clinic_load_score = STATUS_SCORE[status] * WINDOW_WEIGHT[caseload_window]",
-    "daily_dose_mg = weight_kg * mg_per_kg (defaults 10 kg × 5 mg/kg when envelope omits numbers)",
-    "invoice_total = kind_base + round(kind_base * 0.08, 2)"
+    "none claimed beyond persisted fields"
   ],
   "core_business_workflows": [
-    "one-record round-trip for veterinary_care_core",
-    "one-record round-trip for patient_records_management",
-    "one-record round-trip for appointment_scheduling",
-    "one-record round-trip for prescription_management",
-    "one-record round-trip for billing_and_invoicing",
-    "one-record round-trip for client_communication_portal",
-    "one-record round-trip for audit",
-    "one-record round-trip for dashboard"
+    "one-record round-trip for booking_management",
+    "one-record round-trip for property_management",
+    "one-record round-trip for dynamic_pricing",
+    "one-record round-trip for review_management",
+    "one-record round-trip for analytics_dashboard",
+    "one-record round-trip for notification_system",
+    "one-record round-trip for search_recommendation"
   ],
-  "data_sources": ["vendored Store blocks", "local sqlite"],
-  "demo_data_requirements": ["one persisted record per capability"],
+  "data_sources": [
+    "vendored Store blocks",
+    "local sqlite"
+  ],
+  "demo_data_requirements": [
+    "one persisted record per capability"
+  ],
   "domain_acceptance_conditions": [
     "product boots",
     "own gates green",
     "one-record round-trip per capability",
-    "envelope vocab open|in_progress|closed enforced by schema, not prose",
-    "open×walk_in clinic_load_score is 0.45 not persist stub 1.0",
-    "HotelOps H claimed_actor only; CORS allowlist refuses *"
+    "envelope vocab open|in_progress|closed enforced by schema, not prose"
   ],
-  "domain_purpose": "A clinic-operations hub for veterinary practice operators. It centralizes patient charts, appointment slots, prescriptions, invoices, and client messages so a small clinic can run a pilot without a full PIMS.",
+  "domain_purpose": "A comprehensive platform for hotel booking that enables guests to search, compare, and reserve rooms while providing hoteliers with tools to manage inventory, pricing, and reservations. It serves travelers, hotel staff, and administrators with a seamless booking experience and efficient property management.",
   "domain_rules": [
     "status vocabulary is schema-enforced: open, in_progress, closed",
-    "reserved-keyword fields are refused",
-    "client actor/user_id is claimed_actor only"
+    "reserved-keyword fields are refused"
   ],
-  "high_impact_actions": ["create", "update", "delete"],
-  "mission": "A clinic-operations hub for veterinary practice operators.",
-  "primary_users": ["clinic operators"],
+  "high_impact_actions": [
+    "create",
+    "update",
+    "delete"
+  ],
+  "mission": "A comprehensive platform for hotel booking that enables guests to search, compare, and reserve rooms while providing hoteliers with tools to manage inventory, pricing, and reservations. It serves travelers, hotel staff, and administrators with a seamless booking experience and efficient property management.",
+  "primary_users": [
+    "hospitality operators"
+  ],
   "prohibited_autonomous_actions": [
     "deploy",
     "store publish",
-    "export when the pilot suite is red",
-    "edit vendor/** or build_ledger.jsonl"
+    "export when the pilot suite is red"
   ],
-  "required_exports": ["pilot_candidate zip after PRODUCT+STORE green"],
+  "required_exports": [
+    "pilot_candidate zip after PRODUCT+STORE green"
+  ],
   "required_product_modules": [
-    "veterinary_care_core",
-    "patient_records_management",
-    "appointment_scheduling",
-    "prescription_management",
-    "billing_and_invoicing",
-    "client_communication_portal",
-    "audit",
-    "dashboard"
+    "booking_management",
+    "property_management",
+    "dynamic_pricing",
+    "review_management",
+    "analytics_dashboard",
+    "notification_system",
+    "search_recommendation"
   ],
-  "required_roles": ["operator", "admin"],
+  "required_roles": [
+    "operator",
+    "admin"
+  ],
   "security_regulatory_rules": [
-    "offline platform — no network, no HTTP store callbacks",
-    "fail-closed mutating auth; CORS allowlist only"
+    "offline platform \u2014 no network, no HTTP store callbacks"
   ]
 }
 
@@ -261,47 +715,94 @@ Done when (from intake blueprint):
 - own gates green
 - one-record round-trip per capability
 - envelope vocab open|in_progress|closed enforced by schema, not prose
-- clinic_load_score computed (0.45 on schema sample)
-- sealed paths untouched
 
 
 ==================================================
 ACCEPTANCE (harness, not the coder)
 ==================================================
 
-Fails loud. The run is not done until ALL of these are true.
+Fails loud. The run is not done until ALL of these are true. ACCEPTANCE is run by the harness, not the coder.
 - the product boots  [check:boot]
 - own gates green  [check:gates]
 - one-record round-trip per capability (POST creates, GET returns it)  [check:round_trip]
-- every capability accepts a POST built from its own FIELDS/CONSTRAINTS  [check:writer_behaviour]
-- every REUSE keep-path handler accepts a schema-sample POST without Unknown action  [check:reuse_accept]
-- PRODUCT accept-payload: appointment_scheduling event_bus step_0, step_1, step_2+ prepared  [check:event_bus_workflow]
-- envelope vocab open, in_progress, closed enforced by schema  [check:envelope_schema]
-- PRODUCT gate: pytest -m pilot  [check:product_gate]
-- STORE gate: scripts/acceptance.py ≥12 measured checks k/k  [check:store_gate]
-- ledger records pilot_ready=true (harness-owned; WRITER must not edit build_ledger.jsonl)  [check:ledger]
-- launching-ready full-pilot authorship: ≥5 keepable agent-written handlers (this roster: 8)  [check:full_pilot_authorship]
-- PHASE 1 BACKEND accepted  [check:writer_phase_backend]
-- PHASE 2 FRONTEND + RAG accepted  [check:writer_phase_frontend_rag]
-- PHASE 3 INTEGRATION accepted  [check:writer_phase_integration]
+- every emitted capability persists one record to its alembic entity and GET returns it (post-boot: the pilot-marked tests against the booted product, and a one-record round-trip per capability (POST creates, GET returns it))  [check:round_trip]
+- every capability accepts a POST built from its own FIELDS/CONSTRAINTS (writer_behaviour baseline)  [check:writer_behaviour]
+- every REUSE keep-path handler accepts a schema-sample POST without Unknown action / Unknown action: None (post-boot: the pilot-marked tests against the booted product, and a one-record round-trip per capability (POST creates, GET returns it))  [check:reuse_accept]
+- PRODUCT accept-payload (booking_management, notification_system): every event_bus step including step_0 (automated_reminders class), step_1 (appointment_scheduling class) and step_2+ (appointment_booking class) accepts the prepared contract (topic, payload dict, message, channel=mcp, action=publish) — never the raw schema sample (test_every_capability_route_accepts_payload; workflow: step_N (event_bus): error; workflow: step_0 (event_bus): error; workflow: step_1 (event_bus): error; workflow: step_2 (event_bus): error)  [check:event_bus_workflow]
+- the domain pack's domain_acceptance_conditions hold  [check:domain_acceptance]
+- envelope vocab open, in_progress, closed enforced by schema, not prose  [check:envelope_schema]
+- PRODUCT gate: post-boot: the pilot-marked tests against the booted product, and a one-record round-trip per capability (POST creates, GET returns it)  [check:product_gate]
+- STORE gate: scripts/acceptance.py (≥12 measured checks) inside the Store-built Docker image — k/k required; restart-survival of the booted store; authorship floor is not acceptance  [check:store_gate]
+- scripts/acceptance.py ≥12 measured checks k/k inside the Store-built image  [check:store_acceptance]
+- ledger records pilot_ready=true  [check:ledger]
+- launching-ready full-pilot authorship: ≥5 keepable agent-written app/actions/*.py handlers (or equivalent cli_authored_ids)  [check:full_pilot_authorship]
+- PHASE 1 of 3 BACKEND accepted: routes/handlers/schema and one-record POST/GET per required capability  [check:writer_phase_backend]
+- PHASE 2 of 3 FRONTEND + RAG accepted: UI on working backend; RAG ingest/query where needed — POST /v1/rag/ingest or POST /v1/steward/rag/ingest plus GET|POST /v1/rag/query or GET|POST /v1/steward/rag/query in app/**/*.py  [check:writer_phase_frontend_rag]
+- PHASE 3 of 3 INTEGRATION accepted: package/boot/render-ready (not live Render; not Store Docker)  [check:writer_phase_integration]
+- fail-closed: phase N acceptance before phase N+1 dispatch  [check:writer_phase_gate]
+- resume skips landed writer phases (do not redo completed earlier phases from zero)  [check:writer_phase_resume]
+
+The harness's acceptance IS the tester. Do not write decorative tests. Do not treat thin SUCCESS / templates-only / stubbed capabilities / authorship below the launching-ready full-pilot floor as done.
+
+Block-level acceptance (from block.json, report-only until flip):
+- notification: {'id': 'unknown_action', 'check': 'errors on an unknown or missing action', 'status': 'failed'}, {'id': 'missing_credential', 'check': 'fails loud when a required credential or key is absent', 'status': 'failed'}  [check:block_acceptance]
+- workflow: {'id': 'unknown_action', 'check': 'errors on an unknown or missing action', 'status': 'failed'}  [check:block_acceptance]
+- vector_search: {'id': 'missing_required_input', 'check': 'refuses or errors when a required input is absent', 'status': 'refused'}, {'id': 'unknown_action', 'check': 'errors on an unknown or missing action', 'status': 'failed'}  [check:block_acceptance]
+- queue: {'id': 'unknown_action', 'check': 'errors on an unknown or missing action', 'status': 'failed'}  [check:block_acceptance]
+- document_engine: {'id': 'missing_required_input', 'check': 'refuses or errors when a required input is absent', 'status': 'refused'}  [check:block_acceptance]
+- formula_executor: (none declared)  [check:block_acceptance]
+- recommendation_template: (none declared)  [check:block_acceptance]
+- dashboard: {'id': 'unknown_action', 'check': 'errors on an unknown or missing action', 'status': 'failed'}  [check:block_acceptance]
+- database: {'id': 'unknown_action', 'check': 'errors on an unknown or missing action', 'status': 'failed'}  [check:block_acceptance]
+- storage: (none declared)  [check:block_acceptance]
+- analytics: {'id': 'unknown_action', 'check': 'errors on an unknown or missing action', 'status': 'failed'}  [check:block_acceptance]
 
 
 ==================================================
 FORBIDDEN
 ==================================================
 
+- HARD RULE: sealed vendor is read-only — do not write vendor/**, vendor_blocks/**, vendor_blocks_mirror/**, blocks.lock.json, build_ledger.jsonl, .git/**, or anything under SEALED_AFTER_CLONER; implement domain in app/** and tests/** only as allowed by ba_allowed_globs / Hybrid C for BA; never patch vendored blocks — call Store blocks via execute(action=)
 - thin SUCCESS (code-cycle green, pilot_ready=false)
-- authorship below the launching-ready full-pilot floor (<5 handlers)
+- authorship below the launching-ready full-pilot floor (<5 agent-written app/actions/*.py / cli_authored_ids) — FACTORY_CODE_CLI_THIN_AUTHORSHIP
 - decorative tests
 - reserved-keyword fields (action inside the payload dict, id as a domain field)
-- unlisted blocks; inventing a block id
-- editing vendor/**, vendor_blocks/**, vendor_blocks_mirror/**, blocks.lock.json, build_ledger.jsonl, .git/**
-- binding formula_executor when it is not vendored (PATHS_VIOLATED if you patch vendor to add it)
-- persist to a table alembic 0001 did not create
-- execute(block_id, payload) or action=None
+- unlisted blocks (ids not in the Store registry / inventory)
+- assuming a REUSE id is present when STEP 0 flagged it missing
+- claiming REUSE without a loadable app/actions/{capability_id}.py handler source
+- inventing READS/WRITES/NEVER/ACCEPTANCE when block.json has not declared them
+- inventing a stricter accept-contract than the spec (writer_behaviour schema-accept)
+- eager from app.actions import re-exports in app/actions/__init__.py (circular import; writer_behaviour workspace does not import)
+- importing app.actions / app.routes / app.main from a capability handler (writer_behaviour workspace does not import)
+- persist to a table alembic 0001 did not create (no such table: <entity>)
+- leaving PRODUCT on a leftover ./data/platform.db stamped at 0001_baseline after the factory rewrote 0001 (upgrade_head no-op)
+- execute(block_id, payload) or no_block_bound stubs that never store.save(ENTITY, payload) (keyword-fallback audit / dashboard / {vertical}_core class)
+- persist to table=records or to the capability id when spec.entity is a different name
+- treating WRITER writer_behaviour green on a tempfile DB as done while PRODUCT still did not remember a record they were given
+- execute(block_id, payload) or action=None (Unknown action: None)
 - empty BLOCK_DEFAULT_ACTIONS on a REUSE handler that binds Store blocks
+- burying action inside the payload dict
+- reaching TESTER PRODUCT with Unknown action or workflow: step_0 (event_bus): error after keep-path emit
+- omitting workflow input['result'] so PRODUCT fails as workflow: RuntimeError: 'result' (accept-payload persisted nothing)
+- rewriting name['result'] = into name.get(...) = so PRODUCT fails as SyntaxError: cannot assign to function call (queue / formula_executor Store shims assign that key)
+- fail-closed keeping the whole original module so PRODUCT fails as workflow: RuntimeError: 'result' (fail-closed keep original must still rewrite reads)
 - forwarding the PRODUCT schema sample as an event_bus workflow step input
-- unprepared step_0 / step_1 / step_2 on appointment_scheduling
-- omitting workflow input['result']
-- leftover airport/retail capability ids, UI titles, or acceptance CORE names
-- open CORS (`*`) or treating client actor/user_id as authenticated identity
+- setting an event_bus workflow step to 'input': payload or "input": payload (or input=dict(payload))
+- an unprepared step_0 (event_bus) — Store 0-index first child; automated_reminders class fails PRODUCT as workflow: step_0 (event_bus): error
+- an unprepared step_1 (event_bus) — appointment_scheduling class fails PRODUCT as workflow: step_1 (event_bus): error
+- a prepared step_1 plus an unprepared step_2 (event_bus) — appointment_booking class still fails PRODUCT as workflow: step_2 (event_bus): error
+- treating one prepared event_bus child, a prepare_block_input import, or the factory execute wrap as keep/done while any child (including step_1) is still raw
+- channel=sample or channel=email without `to` on an event_bus step (use channel=mcp)
+- inventing workflow: step_N (event_bus): error / workflow: step_0 (event_bus): error / workflow: step_1 (event_bus): error / workflow: step_2 (event_bus): error without the prepared contract on EVERY event_bus child (topic, payload dict, message, channel=mcp, action=publish)
+- execute(block_id, payload) stubs for appointment / booking / reminder capabilities (WRITER must emit the factory-grounded prepared event_bus step)
+- execute("workflow", payload) with the raw schema sample
+- omitting workflow input['result'] so PRODUCT fails as workflow: RuntimeError: 'result' (schema-sample POST has no result key; Store kit shim wraps KeyError as RuntimeError)
+- rewriting name['result'] = into name.get(...) = so PRODUCT fails as SyntaxError: cannot assign to function call (queue / formula_executor Store shims)
+- fail-closed keeping the whole original module so PRODUCT fails as workflow: RuntimeError: 'result' (fail-closed keep original must still rewrite reads)
+- one handle() / one spec / one route at a time — this brief is the whole job
+- starting PHASE N+1 before PHASE N acceptance [check:writer_phase_gate]
+- redoing a landed writer phase from zero [check:writer_phase_resume]
+- extra coder roles — one FACTORY_CODE_CLI writer
+- treating PHASE 3 render-ready as live Render deploy or Store Docker acceptance
+- weakening honesty or exporting when the pilot suite is red
+

@@ -14,14 +14,13 @@ branch_labels = None
 depends_on = None
 
 ENTITIES = (
-    "veterinary_care_core",
-    "patient_records_management",
-    "appointment_scheduling",
-    "prescription_management",
-    "billing_and_invoicing",
-    "client_communication_portal",
-    "audit",
-    "dashboard",
+    "booking_management",
+    "property_management",
+    "dynamic_pricing",
+    "review_management",
+    "analytics_dashboard",
+    "notification_system",
+    "search_recommendation",
 )
 
 

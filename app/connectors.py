@@ -3,9 +3,9 @@
 STATUS = "not_implemented"
 
 PLACEHOLDERS = (
-    "pims_stub",
-    "lab_results_stub",
-    "pharmacy_feed_stub",
+    "pms_stub",
+    "channel_manager_stub",
+    "payments_stub",
 )
 
 

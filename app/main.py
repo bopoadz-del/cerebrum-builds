@@ -1,4 +1,4 @@
-"""Veterinary Care Platform FastAPI entry. Bind 0.0.0.0:$PORT on Render."""
+"""Hotel Booking Platform FastAPI entry. Bind 0.0.0.0:$PORT on Render."""
 
 from __future__ import annotations
 
@@ -42,12 +42,12 @@ async def lifespan(_app: FastAPI):
 
 
 app = FastAPI(
-    title="Veterinary Care Platform",
+    title="Hotel Booking Platform",
     version="1.0.0",
     description=(
-        "Cerebrum Veterinary Care Platform (VetCare Hub) — patient charts, "
-        "appointments, prescriptions, invoices, and client messages for clinic "
-        "operators. Mutations require a bearer operator token."
+        "Cerebrum Hotel Booking Platform — guests search, compare, and reserve rooms; "
+        "operators manage inventory, pricing, reviews, and notifications. "
+        "Mutations require a bearer operator token."
     ),
     lifespan=lifespan,
 )
@@ -86,9 +86,7 @@ def ui_alias() -> HTMLResponse:
 
 @app.get("/openapi.json", include_in_schema=False)
 def committed_openapi_fallback():
-    committed = Path(__file__).resolve().parents[1] / "openapi.json"
-    if committed.is_file():
-        return FileResponse(committed)
+    # BA jail: committed spec lives only at docs/openapi.json.
     docs_copy = Path(__file__).resolve().parents[1] / "docs" / "openapi.json"
     if docs_copy.is_file():
         return FileResponse(docs_copy)

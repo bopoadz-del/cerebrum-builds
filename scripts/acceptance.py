@@ -35,12 +35,12 @@ FLOOR = (
     "authorship==receipt",
 )
 
-CORE = "veterinary_care_core"
+CORE = "booking_management"
 CORE_BODY = {
     "reference": "sample",
     "status": "open",
-    "clinic_unit": "sample",
-    "caseload_window": "walk_in",
+    "stay_kind": "night",
+    "room_label": "sample",
 }
 
 
@@ -97,7 +97,7 @@ def main() -> int:
         results.append(
             _line(
                 "PASS"
-                if ui.status_code == 200 and "Veterinary Care Platform" in ui.text
+                if ui.status_code == 200 and "Hotel Booking Platform" in ui.text
                 else "FAIL",
                 "ui_served_200",
                 f"GET / -> {ui.status_code}",
@@ -109,12 +109,12 @@ def main() -> int:
             json={
                 "layer": 1,
                 "doc_id": "acc-pack",
-                "title": "Clinic caseload pack",
-                "text": "Clinic caseload, walk in wellness visit, and patient chart notes for the veterinary care pilot.",
+                "title": "Hotel occupancy pack",
+                "text": "Hotel occupancy, peak season night rate, and guest booking notes for the hospitality pilot.",
             },
             headers=AUTH_HEADERS,
         )
-        query = client.get("/v1/rag/query", params={"q": "clinic caseload"})
+        query = client.get("/v1/rag/query", params={"q": "hotel occupancy"})
         hit = (
             ingest.status_code == 200
             and query.status_code == 200
@@ -149,7 +149,7 @@ def main() -> int:
 
         open_post = client.post(
             f"/v1/{CORE}",
-            json={"reference": "sample", "status": "open", "clinic_unit": "sample"},
+            json={"reference": "sample", "status": "open", "stay_kind": "night"},
         )
         results.append(
             _line(
@@ -160,7 +160,7 @@ def main() -> int:
         )
         open_ingest = client.post(
             "/v1/rag/ingest",
-            json={"layer": 1, "doc_id": "denied", "title": "x", "text": "clinic caseload"},
+            json={"layer": 1, "doc_id": "denied", "title": "x", "text": "hotel occupancy"},
         )
         results.append(
             _line(
@@ -189,18 +189,18 @@ def main() -> int:
             )
         )
         rec = (quoted.json() or {}).get("record") or {} if quoted.status_code == 200 else {}
-        score = rec.get("clinic_load_score")
+        total = rec.get("stay_total")
         computed = (
             quoted.status_code == 200
-            and score not in (None, 1, 1.0)
-            and rec.get("overloaded") is True
+            and total not in (None, 1, 1.0)
+            and rec.get("stay_nights") == 1
             and rec.get("actor") == "operator"
         )
         results.append(
             _line(
                 "PASS" if computed else "FAIL",
-                "core_clinic_load_computed",
-                f"score={score} overloaded={rec.get('overloaded')} actor={rec.get('actor')}",
+                "core_stay_total_computed",
+                f"stay_total={total} nights={rec.get('stay_nights')} actor={rec.get('actor')}",
             )
         )
 
@@ -292,7 +292,7 @@ def main() -> int:
     )
     results.append(
         _line(
-            "PASS" if len(REQUIRED_CAPABILITY_IDS) == 8 else "FAIL",
+            "PASS" if len(REQUIRED_CAPABILITY_IDS) == 7 else "FAIL",
             "capability_roster",
             f"{len(REQUIRED_CAPABILITY_IDS)} capabilities",
         )

@@ -36,106 +36,81 @@ def _spec(
 
 
 SPECS: Dict[str, Dict[str, Any]] = {
-    "veterinary_care_core": _spec(
-        "veterinary_care_core",
-        ["analytics"],
+    "booking_management": _spec(
+        "booking_management",
+        ["workflow", "database", "notification", "queue"],
         extra_fields={
-            "clinic_unit": {"type": "string"},
-            "caseload_window": {"type": "string"},
+            "stay_kind": {"type": "string"},
+            "room_label": {"type": "string"},
         },
         extra_constraints={
-            "caseload_window": {
-                "allowed_values": ["walk_in", "shift", "day"],
-            },
+            "stay_kind": {"allowed_values": ["night", "week", "group"]},
         },
     ),
-    "patient_records_management": _spec(
-        "patient_records_management",
-        ["knowledge", "vector_search", "memory"],
+    "property_management": _spec(
+        "property_management",
+        ["database", "storage", "document_engine"],
         extra_fields={
-            "patient_name": {"type": "string"},
-            "species": {"type": "string"},
+            "property_kind": {"type": "string"},
+            "property_name": {"type": "string"},
         },
         extra_constraints={
-            "species": {
-                "allowed_values": ["canine", "feline", "exotic", "equine"],
-            },
+            "property_kind": {"allowed_values": ["hotel", "resort", "boutique"]},
         },
     ),
-    "appointment_scheduling": _spec(
-        "appointment_scheduling",
-        ["workflow", "event_bus", "notification", "queue"],
+    "dynamic_pricing": _spec(
+        "dynamic_pricing",
+        ["formula_executor", "analytics"],
         extra_fields={
-            "visit_type": {"type": "string"},
-            "slot_label": {"type": "string"},
+            "season": {"type": "string"},
+            "rate_plan": {"type": "string"},
         },
         extra_constraints={
-            "visit_type": {
-                "allowed_values": ["wellness", "surgery", "emergency", "follow_up"],
-            },
+            "season": {"allowed_values": ["peak", "shoulder", "off"]},
         },
     ),
-    "prescription_management": _spec(
-        "prescription_management",
-        ["validation", "analytics"],
+    "review_management": _spec(
+        "review_management",
+        ["database", "analytics", "notification"],
         extra_fields={
-            "medication_name": {"type": "string"},
-            "dose_form": {"type": "string"},
+            "rating_band": {"type": "string"},
+            "guest_name": {"type": "string"},
         },
         extra_constraints={
-            "dose_form": {
-                "allowed_values": ["tablet", "liquid", "injectable"],
-            },
+            "rating_band": {"allowed_values": ["excellent", "good", "poor"]},
         },
     ),
-    "billing_and_invoicing": _spec(
-        "billing_and_invoicing",
-        ["validation", "notification", "queue"],
-        extra_fields={
-            "invoice_kind": {"type": "string"},
-            "line_label": {"type": "string"},
-        },
-        extra_constraints={
-            "invoice_kind": {
-                "allowed_values": ["consult", "procedure", "pharmacy"],
-            },
-        },
-    ),
-    "client_communication_portal": _spec(
-        "client_communication_portal",
-        ["notification", "event_bus", "knowledge"],
-        extra_fields={
-            "message_kind": {"type": "string"},
-            "client_name": {"type": "string"},
-        },
-        extra_constraints={
-            "message_kind": {
-                "allowed_values": ["reminder", "result", "billing"],
-            },
-        },
-    ),
-    "audit": _spec(
-        "audit",
-        ["audit"],
-        extra_fields={
-            "event_category": {"type": "string"},
-            "resource_label": {"type": "string"},
-        },
-        extra_constraints={
-            "event_category": {
-                "allowed_values": ["clinical", "billing", "access"],
-            },
-        },
-    ),
-    "dashboard": _spec(
-        "dashboard",
-        ["dashboard", "analytics"],
+    "analytics_dashboard": _spec(
+        "analytics_dashboard",
+        ["dashboard", "analytics", "database"],
         extra_fields={
             "view_name": {"type": "string"},
             "horizon": {"type": "string"},
         },
         extra_constraints={
             "horizon": {"allowed_values": ["today", "week", "month"]},
+        },
+    ),
+    "notification_system": _spec(
+        "notification_system",
+        ["notification", "queue", "workflow"],
+        extra_fields={
+            "notice_kind": {"type": "string"},
+            "guest_name": {"type": "string"},
+        },
+        extra_constraints={
+            "notice_kind": {"allowed_values": ["confirmation", "reminder", "update"]},
+        },
+    ),
+    "search_recommendation": _spec(
+        "search_recommendation",
+        ["vector_search", "recommendation_template", "analytics"],
+        extra_fields={
+            "stay_intent": {"type": "string"},
+            "destination": {"type": "string"},
+        },
+        extra_constraints={
+            "stay_intent": {"allowed_values": ["leisure", "business", "family"]},
         },
     ),
 }

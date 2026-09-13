@@ -1,4 +1,4 @@
-"""Veterinary clinic kernel. Envelope-driven; no invented caller contracts."""
+"""Hotel booking kernel. Envelope-driven; no invented caller contracts."""
 
 from __future__ import annotations
 
@@ -11,35 +11,30 @@ STATUS_NEXT: Dict[str, Tuple[str, ...]] = {
     "closed": (),
 }
 
-WINDOW_WEIGHT = {"walk_in": 1.0, "shift": 0.85, "day": 0.7}
-STATUS_SCORE = {"open": 0.45, "in_progress": 0.72, "closed": 1.0}
-OVERLOADED_BELOW = 0.6
+STAY_NIGHTS = {"night": 1, "week": 7, "group": 3}
+NIGHTLY_RATE = {"open": 189.0, "in_progress": 165.0, "closed": 149.0}
+BOOKING_QUEUE = {
+    "night": {"next_action": "confirm_room", "hold_minutes": 30, "queue": "front_desk"},
+    "week": {"next_action": "extend_hold", "hold_minutes": 90, "queue": "reservations"},
+    "group": {"next_action": "assign_block", "hold_minutes": 120, "queue": "groups"},
+}
 
-SPECIES_RISK = {
-    "canine": "routine",
-    "feline": "routine",
-    "exotic": "elevated",
-    "equine": "elevated",
-}
-VISIT_CASCADE = {
-    "wellness": {"next_action": "confirm_slot", "sla_minutes": 30, "queue": "front_desk"},
-    "surgery": {"next_action": "pre_op", "sla_minutes": 90, "queue": "surgery"},
-    "emergency": {"next_action": "triage", "sla_minutes": 10, "queue": "triage"},
-    "follow_up": {"next_action": "chart_review", "sla_minutes": 45, "queue": "exam"},
-}
-DOSE_FORM_MG_PER_KG = {"tablet": 5.0, "liquid": 4.0, "injectable": 2.5}
-DEFAULT_WEIGHT_KG = 10.0
-INVOICE_BASE = {"consult": 85.0, "procedure": 240.0, "pharmacy": 42.0}
-TAX_RATE = 0.08
-COMMS_PRIORITY = {"reminder": "normal", "result": "high", "billing": "normal"}
-AUDIT_RETENTION_DAYS = {"clinical": 2555, "billing": 2555, "access": 365}
+PROPERTY_ROOMS = {"hotel": 48, "resort": 120, "boutique": 18}
+PROPERTY_BAND = {"hotel": "urban", "resort": "destination", "boutique": "lifestyle"}
+
+SEASON_FACTOR = {"peak": 1.45, "shoulder": 1.10, "off": 0.80}
+STATUS_RATE_ADJ = {"open": 1.0, "in_progress": 0.95, "closed": 0.90}
+BASE_RATE = 200.0
+
+RATING_SCORE = {"excellent": 4.8, "good": 3.6, "poor": 1.9}
+REVIEW_PUBLISH = {"open": "pending_moderation", "in_progress": "published", "closed": "archived"}
+
+OCCUPANCY = {"open": 0.42, "in_progress": 0.71, "closed": 0.88}
+ADR = {"today": 189.0, "week": 205.0, "month": 176.0}
 HORIZON_BAND = {"today": "tactical", "week": "planning", "month": "strategic"}
-CHART_CLASS = {
-    "canine": "companion",
-    "feline": "companion",
-    "exotic": "specialty",
-    "equine": "large_animal",
-}
+
+NOTICE_PRIORITY = {"confirmation": "high", "reminder": "normal", "update": "normal"}
+INTENT_MATCH = {"leisure": 0.82, "business": 0.74, "family": 0.88}
 
 
 def envelope_status(payload: Dict[str, Any]) -> str:
@@ -51,71 +46,63 @@ def allowed_next_status(status: str) -> Tuple[str, ...]:
     return STATUS_NEXT.get(status, ())
 
 
-def clinic_load_score(status: str, window: str) -> float:
-    base = STATUS_SCORE.get(status, STATUS_SCORE["open"])
-    weight = WINDOW_WEIGHT.get(window, WINDOW_WEIGHT["walk_in"])
-    return round(base * weight, 4)
+def stay_nights(stay_kind: str) -> int:
+    return STAY_NIGHTS.get(stay_kind, STAY_NIGHTS["night"])
 
 
-def clinic_is_overloaded(score: float) -> bool:
-    return score < OVERLOADED_BELOW
+def nightly_rate(status: str) -> float:
+    return NIGHTLY_RATE.get(status, NIGHTLY_RATE["open"])
 
 
-def patient_risk_band(species: str) -> str:
-    return SPECIES_RISK.get(species, "routine")
+def stay_total(status: str, stay_kind: str) -> float:
+    return round(nightly_rate(status) * stay_nights(stay_kind), 2)
 
 
-def chart_class(species: str) -> str:
-    return CHART_CLASS.get(species, "companion")
+def booking_cascade(stay_kind: str) -> Dict[str, Any]:
+    return dict(BOOKING_QUEUE.get(stay_kind, BOOKING_QUEUE["night"]))
 
 
-def appointment_cascade(visit_type: str) -> Dict[str, Any]:
-    return dict(VISIT_CASCADE.get(visit_type, VISIT_CASCADE["wellness"]))
+def property_room_count(property_kind: str) -> int:
+    return PROPERTY_ROOMS.get(property_kind, PROPERTY_ROOMS["hotel"])
 
 
-def _numeric(raw: Any, default: float) -> float:
-    if raw in (None, "", "sample"):
-        return default
-    try:
-        return float(raw)
-    except (TypeError, ValueError):
-        return default
+def property_band(property_kind: str) -> str:
+    return PROPERTY_BAND.get(property_kind, PROPERTY_BAND["hotel"])
 
 
-def daily_dose_mg(payload: Dict[str, Any], dose_form: str) -> float:
-    """Weight × mg/kg. Schema sample omits numbers — use clinic defaults, never 0."""
-    weight = _numeric(payload.get("weight_kg"), DEFAULT_WEIGHT_KG)
-    mg_per_kg = _numeric(payload.get("mg_per_kg"), DOSE_FORM_MG_PER_KG.get(dose_form, 5.0))
-    if weight <= 0:
-        weight = DEFAULT_WEIGHT_KG
-    if mg_per_kg <= 0:
-        mg_per_kg = DOSE_FORM_MG_PER_KG.get(dose_form, 5.0)
-    return round(weight * mg_per_kg, 2)
+def night_rate(season: str, status: str) -> float:
+    factor = SEASON_FACTOR.get(season, SEASON_FACTOR["peak"])
+    adj = STATUS_RATE_ADJ.get(status, STATUS_RATE_ADJ["open"])
+    return round(BASE_RATE * factor * adj, 2)
 
 
-def invoice_totals(invoice_kind: str) -> Dict[str, float]:
-    subtotal = INVOICE_BASE.get(invoice_kind, INVOICE_BASE["consult"])
-    tax = round(subtotal * TAX_RATE, 2)
-    total = round(subtotal + tax, 2)
-    return {"subtotal": subtotal, "tax": tax, "total": total, "tax_rate": TAX_RATE}
+def review_score(rating_band: str) -> float:
+    return RATING_SCORE.get(rating_band, RATING_SCORE["excellent"])
 
 
-def comms_priority(message_kind: str) -> str:
-    return COMMS_PRIORITY.get(message_kind, "normal")
+def review_publish_state(status: str) -> str:
+    return REVIEW_PUBLISH.get(status, REVIEW_PUBLISH["open"])
 
 
-def audit_retention_days(event_category: str) -> int:
-    return AUDIT_RETENTION_DAYS.get(event_category, AUDIT_RETENTION_DAYS["clinical"])
+def occupancy_pct(status: str) -> float:
+    return OCCUPANCY.get(status, OCCUPANCY["open"])
+
+
+def adr_for(horizon: str) -> float:
+    return ADR.get(horizon, ADR["today"])
+
+
+def revpar(status: str, horizon: str) -> float:
+    return round(occupancy_pct(status) * adr_for(horizon), 2)
 
 
 def dashboard_band(horizon: str) -> str:
-    return HORIZON_BAND.get(horizon, "tactical")
+    return HORIZON_BAND.get(horizon, HORIZON_BAND["today"])
 
 
-def knowledge_source_class(patient_name: str, species: str) -> str:
-    text = f"{patient_name} {species}".lower()
-    if "exotic" in text or species == "exotic":
-        return "specialty_chart"
-    if "equine" in text or species == "equine":
-        return "large_animal_chart"
-    return "companion_chart"
+def notice_priority(notice_kind: str) -> str:
+    return NOTICE_PRIORITY.get(notice_kind, "normal")
+
+
+def match_score(stay_intent: str) -> float:
+    return INTENT_MATCH.get(stay_intent, INTENT_MATCH["leisure"])

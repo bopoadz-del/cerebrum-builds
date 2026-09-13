@@ -12,45 +12,40 @@ from app.schema import REQUIRED_CAPABILITY_IDS, SPECS
 pytestmark = pytest.mark.not_pilot
 
 EXPECTED = {
-    "veterinary_care_core",
-    "patient_records_management",
-    "appointment_scheduling",
-    "prescription_management",
-    "billing_and_invoicing",
-    "client_communication_portal",
-    "audit",
-    "dashboard",
+    "booking_management",
+    "property_management",
+    "dynamic_pricing",
+    "review_management",
+    "analytics_dashboard",
+    "notification_system",
+    "search_recommendation",
 }
 
 
 def test_domain_kernel_is_not_a_stub() -> None:
     from app.domain import (
-        appointment_cascade,
-        audit_retention_days,
-        chart_class,
-        clinic_is_overloaded,
-        clinic_load_score,
-        comms_priority,
-        daily_dose_mg,
-        invoice_totals,
-        knowledge_source_class,
-        patient_risk_band,
+        booking_cascade,
+        match_score,
+        night_rate,
+        notice_priority,
+        occupancy_pct,
+        property_room_count,
+        revpar,
+        review_score,
+        stay_total,
     )
 
-    assert clinic_load_score("open", "walk_in") == 0.45
-    assert clinic_is_overloaded(0.45) is True
-    assert clinic_load_score("closed", "day") == 0.7
-    assert patient_risk_band("exotic") == "elevated"
-    assert chart_class("equine") == "large_animal"
-    assert appointment_cascade("emergency")["sla_minutes"] == 10
-    assert daily_dose_mg({"status": "open"}, "tablet") == 50.0
-    totals = invoice_totals("consult")
-    assert totals["subtotal"] == 85.0
-    assert totals["tax"] == 6.8
-    assert totals["total"] == 91.8
-    assert comms_priority("result") == "high"
-    assert audit_retention_days("clinical") == 2555
-    assert knowledge_source_class("kiwi", "exotic") == "specialty_chart"
+    assert stay_total("open", "night") == 189.0
+    assert stay_total("closed", "week") == 1043.0
+    assert booking_cascade("group")["hold_minutes"] == 120
+    assert property_room_count("boutique") == 18
+    assert night_rate("peak", "open") == 290.0
+    assert night_rate("off", "open") == 160.0
+    assert review_score("excellent") == 4.8
+    assert occupancy_pct("open") == 0.42
+    assert revpar("open", "today") == 79.38
+    assert notice_priority("confirmation") == "high"
+    assert match_score("family") == 0.88
 
 
 def test_workspace_imports() -> None:
@@ -58,15 +53,15 @@ def test_workspace_imports() -> None:
     from app.dispatch import BLOCK_DEFAULT_ACTIONS, execute
     from app.store import COLUMNS, list_all, save
 
-    assert app.title == "Veterinary Care Platform"
-    assert BLOCK_DEFAULT_ACTIONS["audit"] == "log"
+    assert app.title == "Hotel Booking Platform"
     assert BLOCK_DEFAULT_ACTIONS["dashboard"] == "render"
     assert BLOCK_DEFAULT_ACTIONS["vector_search"] == "search"
     assert BLOCK_DEFAULT_ACTIONS["formula_executor"] == "execute"
     assert BLOCK_DEFAULT_ACTIONS["capture"] == "extract"
-    assert BLOCK_DEFAULT_ACTIONS["file_hasher"] == "hash"
-    assert BLOCK_DEFAULT_ACTIONS["memory"] == "get"
     assert BLOCK_DEFAULT_ACTIONS["storage"] == "store"
+    assert BLOCK_DEFAULT_ACTIONS["workflow"] == "run"
+    assert BLOCK_DEFAULT_ACTIONS["notification"] == "send"
+    assert BLOCK_DEFAULT_ACTIONS["recommendation_template"] == "recommend"
     for capability_id in REQUIRED_CAPABILITY_IDS:
         assert capability_id in COLUMNS
     assert callable(execute)

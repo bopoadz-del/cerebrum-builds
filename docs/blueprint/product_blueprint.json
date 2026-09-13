@@ -1,118 +1,130 @@
 {
   "capabilities": [
     {
-      "block_ids": [],
-      "description": "Core aviation workflows and data model",
-      "id": "aviation_core",
-      "required": true,
-      "strategy_hint": "GENERATE"
-    },
-    {
       "block_ids": [
-        "audit"
+        "portfolio_rollup",
+        "estate_registry",
+        "workflow",
+        "dashboard",
+        "team"
       ],
-      "description": "Audit capability (reused from the block store)",
-      "id": "audit",
+      "description": "Unified portfolio and program management across enterprise and corporate technology initiatives, with rollup views, initiative registry, shared ownership of goals, and governance workflows for stage gates, approvals, and decision logging.",
+      "id": "portfolio_program_governance",
       "required": true,
       "strategy_hint": "REUSE"
     },
     {
       "block_ids": [
-        "dashboard"
+        "workflow",
+        "team",
+        "queue",
+        "dashboard",
+        "validation"
       ],
-      "description": "Dashboard capability (reused from the block store)",
-      "id": "dashboard",
+      "description": "Supports both agile and waterfall delivery models in one workspace: agile team cadences, release train and scrum ceremonies, sprints, backlogs, and dependencies alongside waterfall phases, project managers, business analysts, work breakdown structures, and gate-based milestones.",
+      "id": "hybrid_delivery_management",
       "required": true,
       "strategy_hint": "REUSE"
-    },
-    {
-      "block_ids": [],
-      "description": "Enterprise & corporate technology portfolio dashboard for strategic initiatives",
-      "id": "enterprise_portfolio_dashboard",
-      "required": true,
-      "strategy_hint": "GENERATE"
-    },
-    {
-      "block_ids": [],
-      "description": "Hybrid agile + waterfall program delivery with RTEs, Scrum Masters, PMs, BAs ownership",
-      "id": "hybrid_program_delivery",
-      "required": true,
-      "strategy_hint": "GENERATE"
-    },
-    {
-      "block_ids": [],
-      "description": "Integrated planning, scheduling, and milestone management",
-      "id": "integrated_planning_milestones",
-      "required": true,
-      "strategy_hint": "GENERATE"
-    },
-    {
-      "block_ids": [],
-      "description": "Reporting with KPI and value-realization tracking",
-      "id": "kpi_value_realization",
-      "required": true,
-      "strategy_hint": "GENERATE"
-    },
-    {
-      "block_ids": [],
-      "description": "Budget and capacity oversight within approved financial parameters",
-      "id": "budget_capacity_oversight",
-      "required": true,
-      "strategy_hint": "GENERATE"
-    },
-    {
-      "block_ids": [],
-      "description": "Demand prioritization and resource alignment across business/tech stakeholders",
-      "id": "demand_prioritization_resources",
-      "required": true,
-      "strategy_hint": "GENERATE"
-    },
-    {
-      "block_ids": [],
-      "description": "Oracle ERP suite program oversight as ERP delivery workstream (not full Oracle clone)",
-      "id": "oracle_erp_program_oversight",
-      "required": true,
-      "strategy_hint": "GENERATE"
     },
     {
       "block_ids": [
-        "audit"
+        "workflow",
+        "readiness_engine",
+        "dashboard",
+        "estate_maintenance",
+        "event_bus"
       ],
-      "description": "GDPR/data privacy controls with fail-closed auth, Principal audit, CORS",
-      "id": "gdpr_privacy_audit",
+      "description": "Integrated planning, scheduling, milestone management, dependency tracking, and critical path visibility across programs, with what-if scenarios and readiness checks for go-live and release milestones.",
+      "id": "integrated_planning_scheduling_milestones",
       "required": true,
       "strategy_hint": "REUSE"
     },
     {
-      "block_ids": [],
-      "description": "Governance: clear ownership, delivery disciplines, continuous improvement from stakeholder feedback",
-      "id": "governance_continuous_improvement",
+      "block_ids": [
+        "queue",
+        "team",
+        "formula_executor",
+        "analytics",
+        "recommendation_template"
+      ],
+      "description": "Demand intake, scoring, and prioritization of technology initiatives, with resource and capacity alignment across teams, roles, and vendors to match supply to prioritized demand.",
+      "id": "demand_prioritization_capacity_alignment",
       "required": true,
-      "strategy_hint": "GENERATE"
+      "strategy_hint": "REUSE"
     },
     {
-      "block_ids": [],
-      "description": "Airline ops/portfolio context for Riyadh Air RX \u2014 Riyadh HQ, 100+ destinations (not booking engine)",
-      "id": "airline_ops_portfolio_context",
+      "block_ids": [
+        "formula_executor",
+        "analytics",
+        "dashboard",
+        "audit",
+        "notification"
+      ],
+      "description": "Budget and financial guardrail tracking within approved parameters, including forecasts, actuals, variance alerts, benefits tracking, and value realization reporting tied to initiative outcomes.",
+      "id": "budget_financial_guardrails_value_realization",
       "required": true,
-      "strategy_hint": "GENERATE"
+      "strategy_hint": "REUSE"
+    },
+    {
+      "block_ids": [
+        "analytics",
+        "dashboard",
+        "knowledge",
+        "vector_search",
+        "recommendation_template",
+        "memory"
+      ],
+      "description": "KPI monitoring for team effectiveness, delivery performance, stakeholder feedback, and adoption, with continuous improvement analytics, trend detection, and recommendation templates for remediation.",
+      "id": "delivery_kpi_adoption_analytics",
+      "required": true,
+      "strategy_hint": "REUSE"
+    },
+    {
+      "block_ids": [
+        "event_bus",
+        "workflow",
+        "storage",
+        "database",
+        "audit",
+        "validation"
+      ],
+      "description": "Enterprise integration with Oracle applications and ERP platforms for finance, HR, procurement, and project accounting, including data synchronization, event-driven interfaces, and certified connectors.",
+      "id": "erp_oracle_integration",
+      "required": true,
+      "strategy_hint": "REUSE"
+    },
+    {
+      "block_ids": [
+        "audit",
+        "evidence_verifier",
+        "document_engine",
+        "file_hasher",
+        "capture",
+        "storage",
+        "validation",
+        "notification"
+      ],
+      "description": "GDPR and data privacy compliance controls, including data subject request workflows, consent and retention tracking, evidence capture, document handling, and verifiable audit trails for regulators.",
+      "id": "privacy_compliance_evidence",
+      "required": true,
+      "strategy_hint": "REUSE"
     }
   ],
   "connectors": [],
-  "drafting_mode": "keyword_fallback",
-  "drafting_note": "LLM drafting failed (HTTPStatusError); deterministic fallback used",
+  "drafting_mode": "architect_llm",
+  "drafting_note": null,
   "edge_profile": "standard",
   "factory_scenario": "CREATE_PRODUCT",
   "human_authority": true,
-  "n_required": 13,
-  "product_id": "aviation",
-  "product_name": "AirOps Portfolio",
+  "n_required": 8,
+  "product_id": "airline-delivery-management",
+  "product_name": "Riyadh Air Enterprise Delivery Platform",
   "schema_version": "product_blueprint.v1",
-  "summary": "Build AirOps Portfolio for Riyadh Air (RX): digitally native Saudi national carrier HQ Riyadh connecting the Kingdom to 100+ destinations. Enterprise & corporate technology portfolio dashboard for strategic initiatives; hybrid agile+waterfall program delivery with RTEs, Scrum Masters, PMs, BAs as owners; integrated planning/scheduling/milestone management; reporting with KPI and value-realization tracking; budget and capacity oversight within approved financial parameters; demand prioritization and resource alignment across business and tech stakeholders; Oracle ERP suite program oversight as an ERP delivery workstream (not a full Oracle clone); GDPR/data privacy controls with fail-closed auth, Principal audit, and CORS; governance with clear ownership, delivery disciplines, and continuous improvement from stakeholder feedback; airline ops/portfolio framing (not a booking engine). Kit-backed aviation. HotelOps-grade + Store 12/12. Manufacture from Cerebrum-Blocks Store blocks only \u2014 never clone an external product repo. Pilot-ready with tests. Coder: Cursor BA only \u2014 no Kimi/DeepSeek.",
+  "summary": "A unified enterprise delivery and portfolio management platform purpose-built for a digitally native airline, inspired by the Riyadh Air enterprise technology portfolio mandate. It serves PMO leaders, Release Train Engineers, Scrum Masters, Project Managers, Business Analysts, finance controllers, and cross-functional stakeholders by consolidating portfolio and program governance, hybrid agile-waterfall delivery, integrated planning and milestones, demand and capacity alignment, budget and finan",
   "ui_modules": [
     "command_center",
     "operational_chat",
     "resident_engineer"
   ],
-  "vertical": "aviation"
+  "vertical": "airline_delivery_management"
 }

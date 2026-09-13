@@ -55,3 +55,8 @@
 {"detail": "PRODUCT gate: schema-sample accept + one-record round-trip","kind": "GATE_PASSED","payload": {"gate": "product","passed": 3,"pytest": "pilot"},"role": "TESTER","seq": 55,"ts": "2026-09-13T07:20:40+00:00"}
 {"detail": "STORE gate: scripts/acceptance.py 12/12","kind": "GATE_PASSED","payload": {"gate": "store","ok": true,"score": "12/12"},"role": "STORE_MANAGER","seq": 56,"ts": "2026-09-13T07:20:40+00:00"}
 {"detail": "pilot_ready","kind": "RUN_FINISHED","payload": {"level": "STORE_GREEN","pilot_ready": true,"product_id": "airport-operations","session_id": "sess_1d94d0a373ce45fa"},"role": null,"seq": 57,"ts": "2026-09-13T07:20:40+00:00"}
+{"detail":"HotelOps A/H deepen: domain kernel + claimed_actor","kind":"NOTE","payload":{"phase":"hotelops"},"role":"WRITER","seq":58,"ts":"2026-09-13T07:26:24+00:00"}
+{"detail":"CODE gate: pytest -m not pilot","kind":"GATE_PASSED","payload":{"gate":"code","passed":16,"pytest":"not pilot"},"role":"WRITER","seq":59,"ts":"2026-09-13T07:26:24+00:00"}
+{"detail":"PRODUCT gate: schema-sample accept + one-record round-trip","kind":"GATE_PASSED","payload":{"gate":"product","passed":3,"pytest":"pilot"},"role":"TESTER","seq":60,"ts":"2026-09-13T07:26:24+00:00"}
+{"detail":"STORE gate: scripts/acceptance.py 12/12 host (NO_DOCKER; GHA store-gate.yml is SoT)","kind":"GATE_PASSED","payload":{"gate":"store","ok":true,"score":"12/12","via":"host","docker":false},"role":"STORE_MANAGER","seq":61,"ts":"2026-09-13T07:26:24+00:00"}
+{"detail":"pilot_ready","kind":"RUN_FINISHED","payload":{"level":"STORE_GREEN","pilot_ready":true,"product_id":"airport-operations","session_id":"sess_1d94d0a373ce45fa"},"role":null,"seq":62,"ts":"2026-09-13T07:26:24+00:00"}

@@ -54,6 +54,11 @@ _BLOCK_MODULE_NAME = "vendor.cerebrum.blocks.document_engine_block"
 _BLOCK_FILE_PATH = os.path.abspath(
     os.path.join(os.path.dirname(__file__), "..", "document_engine_block.py")
 )
+_BLOCK_PKG_INIT = os.path.abspath(
+    os.path.join(os.path.dirname(__file__), "..", "document_engine_block", "__init__.py")
+)
+if not os.path.isfile(_BLOCK_FILE_PATH) and os.path.isfile(_BLOCK_PKG_INIT):
+    _BLOCK_FILE_PATH = _BLOCK_PKG_INIT
 if _BLOCK_MODULE_NAME in sys.modules:
     _block_module = sys.modules[_BLOCK_MODULE_NAME]
 else:

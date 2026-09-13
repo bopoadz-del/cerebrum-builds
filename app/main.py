@@ -86,9 +86,7 @@ def ui_alias() -> HTMLResponse:
 
 @app.get("/openapi.json", include_in_schema=False)
 def committed_openapi_fallback():
-    committed = Path(__file__).resolve().parents[1] / "openapi.json"
-    if committed.is_file():
-        return FileResponse(committed)
+    # BA jail: committed spec lives only at docs/openapi.json.
     docs_copy = Path(__file__).resolve().parents[1] / "docs" / "openapi.json"
     if docs_copy.is_file():
         return FileResponse(docs_copy)

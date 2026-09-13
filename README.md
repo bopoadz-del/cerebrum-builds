@@ -1,6 +1,6 @@
-# AirOps Portfolio
+# Tiny Smoke Retail Inventory Tracker
 
-Cerebrum-builds session for **AirOps Portfolio** — Riyadh Air (RX) enterprise technology portfolio. Manufactured from vendored Store blocks (`audit`, `dashboard`) plus GENERATE handlers for aviation kernel, portfolio, hybrid delivery, milestones, KPI, budget, demand, ERP workstream, GDPR, governance, and ops context.
+Cerebrum-builds session for **Tiny Smoke Retail Inventory Tracker** — a lightweight inventory tracking application for tiny smoke retail shops. Owners manage products, monitor stock levels, and receive low-stock alerts. Manufactured from vendored Store blocks (`database`, `storage`, `validation`, `audit`, `notification`, `event_bus`, `queue`, `team`, `dashboard`, `analytics`, `workflow`).
 
 Private Factory CLI-pivot scratch store. One branch per session. Store gate = GHA docker + `scripts/acceptance.py` (not Render).
 

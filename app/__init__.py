@@ -1,3 +1,3 @@
-"""AirOps Portfolio — kit-backed aviation operations for Riyadh Air (RX)."""
+"""Tiny Smoke Retail Inventory Tracker — kit-backed stock tracking for small shops."""
 
 __version__ = "1.0.0"

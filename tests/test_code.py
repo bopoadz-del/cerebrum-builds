@@ -17,7 +17,7 @@ def test_workspace_imports() -> None:
     from app.dispatch import BLOCK_DEFAULT_ACTIONS, execute
     from app.store import COLUMNS, list_all, save
 
-    assert app.title == "AirOps Portfolio"
+    assert app.title == "Tiny Smoke Retail Inventory Tracker"
     assert BLOCK_DEFAULT_ACTIONS["audit"] == "log"
     assert BLOCK_DEFAULT_ACTIONS["dashboard"] == "render"
     assert BLOCK_DEFAULT_ACTIONS["vector_search"] == "search"

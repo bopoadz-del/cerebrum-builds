@@ -3,9 +3,8 @@
 STATUS = "not_implemented"
 
 PLACEHOLDERS = (
-    "oracle_erp_workstream_stub",
-    "airline_ops_feed_stub",
-    "portfolio_finance_stub",
+    "pos_feed_stub",
+    "supplier_catalog_stub",
 )
 
 

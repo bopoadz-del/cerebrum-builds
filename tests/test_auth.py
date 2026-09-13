@@ -10,19 +10,21 @@ pytestmark = pytest.mark.not_pilot
 SCHEMA_SAMPLE = {
     "reference": "sample",
     "status": "open",
-    "carrier_code": "RX",
-    "hub_city": "Riyadh",
+    "sku": "sample",
+    "product_name": "sample",
+    "quantity": 0,
+    "location": "sample",
 }
 
 
 def test_mutating_route_without_token_is_401(anon_client: TestClient) -> None:
-    response = anon_client.post("/v1/aviation_core", json=SCHEMA_SAMPLE)
+    response = anon_client.post("/v1/inventory_stock_tracking", json=SCHEMA_SAMPLE)
     assert response.status_code == 401
 
 
 def test_mutating_route_with_invalid_token_is_401(anon_client: TestClient) -> None:
     response = anon_client.post(
-        "/v1/aviation_core",
+        "/v1/inventory_stock_tracking",
         json=SCHEMA_SAMPLE,
         headers={"Authorization": "Bearer not-the-operator-secret"},
     )
@@ -38,7 +40,7 @@ def test_placeholder_secret_is_not_accepted(
 
     with TestClient(app) as client:
         denied = client.post(
-            "/v1/aviation_core",
+            "/v1/inventory_stock_tracking",
             json=SCHEMA_SAMPLE,
             headers={"Authorization": "Bearer changeme"},
         )
@@ -53,7 +55,7 @@ def test_unconfigured_secret_fail_closed(
     from app.main import app
 
     with TestClient(app) as client:
-        denied = client.post("/v1/aviation_core", json=SCHEMA_SAMPLE)
+        denied = client.post("/v1/inventory_stock_tracking", json=SCHEMA_SAMPLE)
         assert denied.status_code == 401
         assert "not configured" in denied.json().get("detail", "")
 
@@ -61,7 +63,7 @@ def test_unconfigured_secret_fail_closed(
 def test_rag_ingest_without_token_is_401(anon_client: TestClient) -> None:
     response = anon_client.post(
         "/v1/rag/ingest",
-        json={"layer": 1, "doc_id": "x", "title": "t", "text": "portfolio milestone"},
+        json={"layer": 1, "doc_id": "x", "title": "t", "text": "low stock threshold"},
     )
     assert response.status_code == 401
 
@@ -76,14 +78,14 @@ def test_admin_export_requires_matching_secret(anon_client: TestClient) -> None:
 
 
 def test_operator_token_attributes_audit(client: TestClient) -> None:
-    response = client.post("/v1/aviation_core", json=SCHEMA_SAMPLE)
+    response = client.post("/v1/inventory_stock_tracking", json=SCHEMA_SAMPLE)
     assert response.status_code == 200
     body = response.json()
     assert body.get("ok") is not False
     assert body.get("actor") == "operator"
     assert body.get("actor_role") == "operator"
-    audit_rows = client.get("/v1/audit").json().get("records") or []
-    assert any(row.get("actor") == "operator" for row in audit_rows)
+    stored = client.get("/v1/inventory_stock_tracking").json().get("records") or []
+    assert any(row.get("actor") == "operator" for row in stored)
 
 
 def test_cors_allowlist_refuses_wildcard(monkeypatch: pytest.MonkeyPatch) -> None:

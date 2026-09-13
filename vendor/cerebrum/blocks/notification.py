@@ -226,8 +226,8 @@ class NotificationBlock(TypedBlock):
 
         try:
             from vendor.cerebrum.blocks import BLOCK_REGISTRY
-
             try:
+                from vendor.blocks.audit.block import _instantiate_store_block as _create_block_instance
             except ImportError:
                 # Standalone/vendored runtime (a factory-built platform):
                 # there is no platform wiring, tier gate or memory cache to
@@ -235,7 +235,10 @@ class NotificationBlock(TypedBlock):
                 # block adapters themselves do. Inside the Blocks platform
                 # the import succeeds and nothing changes.
                 def _create_block_instance(block_class, config=None, allow_platform=True):
-                    return block_class()
+                    try:
+                        return block_class()
+                    except TypeError:
+                        return block_class(None, {})
 
             if block_name not in BLOCK_REGISTRY:
                 return {"status": "error", "error": f"Block '{block_name}' not found"}

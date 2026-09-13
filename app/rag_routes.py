@@ -1,4 +1,4 @@
-"""Portfolio document pack ingest/query HTTP. Quoted paths required by PHASE 2."""
+"""Shop inventory document pack ingest/query HTTP. Quoted paths required by PHASE 2."""
 
 from __future__ import annotations
 
@@ -17,7 +17,7 @@ from app.store import storage_root
 
 router = APIRouter()
 
-PORTFOLIO_INDEX = "airops_portfolio_packs_v1"
+PORTFOLIO_INDEX = "tiny_smoke_inventory_packs_v1"
 
 
 class RagIngestBody(BaseModel):

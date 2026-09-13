@@ -1,4 +1,4 @@
-"""Airport Operations Platform FastAPI entry. Bind 0.0.0.0:$PORT on Render."""
+"""Veterinary Care Platform FastAPI entry. Bind 0.0.0.0:$PORT on Render."""
 
 from __future__ import annotations
 
@@ -42,11 +42,12 @@ async def lifespan(_app: FastAPI):
 
 
 app = FastAPI(
-    title="Airport Operations Platform",
+    title="Veterinary Care Platform",
     version="1.0.0",
     description=(
-        "Cerebrum Airport Operations Platform — flight, resource, and readiness "
-        "data for airside teams. Mutations require a bearer operator token."
+        "Cerebrum Veterinary Care Platform (VetCare Hub) — patient charts, "
+        "appointments, prescriptions, invoices, and client messages for clinic "
+        "operators. Mutations require a bearer operator token."
     ),
     lifespan=lifespan,
 )

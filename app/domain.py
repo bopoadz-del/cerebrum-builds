@@ -1,4 +1,4 @@
-"""Airport operations kernel. Envelope-driven; no invented caller contracts."""
+"""Veterinary clinic kernel. Envelope-driven; no invented caller contracts."""
 
 from __future__ import annotations
 
@@ -11,25 +11,35 @@ STATUS_NEXT: Dict[str, Tuple[str, ...]] = {
     "closed": (),
 }
 
-WINDOW_WEIGHT = {"turnaround": 1.0, "shift": 0.85, "day": 0.7}
+WINDOW_WEIGHT = {"walk_in": 1.0, "shift": 0.85, "day": 0.7}
 STATUS_SCORE = {"open": 0.45, "in_progress": 0.72, "closed": 1.0}
-DEGRADED_BELOW = 0.6
+OVERLOADED_BELOW = 0.6
 
-WORK_ORDER_STAGE = {
-    "open": "assigned",
-    "in_progress": "on_stand",
-    "closed": "released",
+SPECIES_RISK = {
+    "canine": "routine",
+    "feline": "routine",
+    "exotic": "elevated",
+    "equine": "elevated",
 }
-CREW_FUNCTIONS = ("turnaround", "baggage", "fueling", "maintenance")
-RETENTION_DAYS = {"manual": 365, "certificate": 1095, "directive": 180}
-EVIDENCE_SEVERITY = {"sensor": "high", "photo": "medium", "report": "low"}
-FLIGHT_CASCADE = {
-    "arrival": {"next_action": "stand_ready", "sla_minutes": 25, "queue": "turnaround"},
-    "departure": {"next_action": "pushback", "sla_minutes": 15, "queue": "departure"},
-    "weather": {"next_action": "hold", "sla_minutes": 60, "queue": "ops"},
-    "hold": {"next_action": "release", "sla_minutes": 45, "queue": "ops"},
+VISIT_CASCADE = {
+    "wellness": {"next_action": "confirm_slot", "sla_minutes": 30, "queue": "front_desk"},
+    "surgery": {"next_action": "pre_op", "sla_minutes": 90, "queue": "surgery"},
+    "emergency": {"next_action": "triage", "sla_minutes": 10, "queue": "triage"},
+    "follow_up": {"next_action": "chart_review", "sla_minutes": 45, "queue": "exam"},
 }
+DOSE_FORM_MG_PER_KG = {"tablet": 5.0, "liquid": 4.0, "injectable": 2.5}
+DEFAULT_WEIGHT_KG = 10.0
+INVOICE_BASE = {"consult": 85.0, "procedure": 240.0, "pharmacy": 42.0}
+TAX_RATE = 0.08
+COMMS_PRIORITY = {"reminder": "normal", "result": "high", "billing": "normal"}
+AUDIT_RETENTION_DAYS = {"clinical": 2555, "billing": 2555, "access": 365}
 HORIZON_BAND = {"today": "tactical", "week": "planning", "month": "strategic"}
+CHART_CLASS = {
+    "canine": "companion",
+    "feline": "companion",
+    "exotic": "specialty",
+    "equine": "large_animal",
+}
 
 
 def envelope_status(payload: Dict[str, Any]) -> str:
@@ -41,51 +51,71 @@ def allowed_next_status(status: str) -> Tuple[str, ...]:
     return STATUS_NEXT.get(status, ())
 
 
-def readiness_score(status: str, window: str) -> float:
+def clinic_load_score(status: str, window: str) -> float:
     base = STATUS_SCORE.get(status, STATUS_SCORE["open"])
-    weight = WINDOW_WEIGHT.get(window, WINDOW_WEIGHT["turnaround"])
+    weight = WINDOW_WEIGHT.get(window, WINDOW_WEIGHT["walk_in"])
     return round(base * weight, 4)
 
 
-def stand_is_degraded(score: float) -> bool:
-    return score < DEGRADED_BELOW
+def clinic_is_overloaded(score: float) -> bool:
+    return score < OVERLOADED_BELOW
 
 
-def work_order_stage(status: str) -> str:
-    return WORK_ORDER_STAGE.get(status, "assigned")
+def patient_risk_band(species: str) -> str:
+    return SPECIES_RISK.get(species, "routine")
 
 
-def crew_function(work_order: str, crew_name: str) -> str:
-    text = f"{work_order} {crew_name}".lower()
-    if "fuel" in text:
-        return "fueling"
-    if "bag" in text:
-        return "baggage"
-    if "maint" in text:
-        return "maintenance"
-    return "turnaround"
+def chart_class(species: str) -> str:
+    return CHART_CLASS.get(species, "companion")
 
 
-def document_retention_days(control_class: str) -> int:
-    return RETENTION_DAYS.get(control_class, RETENTION_DAYS["manual"])
+def appointment_cascade(visit_type: str) -> Dict[str, Any]:
+    return dict(VISIT_CASCADE.get(visit_type, VISIT_CASCADE["wellness"]))
 
 
-def evidence_severity(kind: str) -> str:
-    return EVIDENCE_SEVERITY.get(kind, "medium")
+def _numeric(raw: Any, default: float) -> float:
+    if raw in (None, "", "sample"):
+        return default
+    try:
+        return float(raw)
+    except (TypeError, ValueError):
+        return default
 
 
-def flight_cascade(event_type: str) -> Dict[str, Any]:
-    return dict(FLIGHT_CASCADE.get(event_type, FLIGHT_CASCADE["arrival"]))
+def daily_dose_mg(payload: Dict[str, Any], dose_form: str) -> float:
+    """Weight × mg/kg. Schema sample omits numbers — use clinic defaults, never 0."""
+    weight = _numeric(payload.get("weight_kg"), DEFAULT_WEIGHT_KG)
+    mg_per_kg = _numeric(payload.get("mg_per_kg"), DOSE_FORM_MG_PER_KG.get(dose_form, 5.0))
+    if weight <= 0:
+        weight = DEFAULT_WEIGHT_KG
+    if mg_per_kg <= 0:
+        mg_per_kg = DOSE_FORM_MG_PER_KG.get(dose_form, 5.0)
+    return round(weight * mg_per_kg, 2)
 
 
-def knowledge_source_class(question: str, note_body: str) -> str:
-    text = f"{question} {note_body}".lower()
-    if "incident" in text or "evidence" in text:
-        return "incident_record"
-    if "flight" in text or "arrival" in text or "departure" in text:
-        return "flight_event"
-    return "airside_sop"
+def invoice_totals(invoice_kind: str) -> Dict[str, float]:
+    subtotal = INVOICE_BASE.get(invoice_kind, INVOICE_BASE["consult"])
+    tax = round(subtotal * TAX_RATE, 2)
+    total = round(subtotal + tax, 2)
+    return {"subtotal": subtotal, "tax": tax, "total": total, "tax_rate": TAX_RATE}
+
+
+def comms_priority(message_kind: str) -> str:
+    return COMMS_PRIORITY.get(message_kind, "normal")
+
+
+def audit_retention_days(event_category: str) -> int:
+    return AUDIT_RETENTION_DAYS.get(event_category, AUDIT_RETENTION_DAYS["clinical"])
 
 
 def dashboard_band(horizon: str) -> str:
     return HORIZON_BAND.get(horizon, "tactical")
+
+
+def knowledge_source_class(patient_name: str, species: str) -> str:
+    text = f"{patient_name} {species}".lower()
+    if "exotic" in text or species == "exotic":
+        return "specialty_chart"
+    if "equine" in text or species == "equine":
+        return "large_animal_chart"
+    return "companion_chart"

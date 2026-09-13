@@ -67,16 +67,16 @@ def test_one_record_round_trip_per_capability(client: TestClient) -> None:
         records = got.json().get("records") or []
         assert records, f"{capability_id} GET did not return the persisted record"
         assert any(row.get("reference") == payload["reference"] for row in records)
-        if capability_id == "airport_readiness":
+        if capability_id == "veterinary_care_core":
             rec = body.get("record") or {}
-            assert rec.get("readiness_score") == 0.45
-            assert rec.get("degraded") is True
+            assert rec.get("clinic_load_score") == 0.45
+            assert rec.get("overloaded") is True
             assert rec.get("actor") == "operator"
             remembered = next(
                 row for row in records if row.get("reference") == payload["reference"]
             )
-            assert remembered.get("readiness_score") == 0.45
-            assert remembered.get("degraded") is True
+            assert remembered.get("clinic_load_score") == 0.45
+            assert remembered.get("overloaded") is True
 
 
 def test_health_and_ui(client: TestClient) -> None:
@@ -84,5 +84,7 @@ def test_health_and_ui(client: TestClient) -> None:
     assert health.status_code == 200
     ui = client.get("/")
     assert ui.status_code == 200
-    assert "Airport Operations Platform" in ui.text
+    assert "Veterinary Care Platform" in ui.text
     assert "OPERATOR_TOKEN" in ui.text
+    assert "Airport Operations Platform" not in ui.text
+    assert "Retail Ops Tracker" not in ui.text

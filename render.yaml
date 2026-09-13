@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: cerebrum-airport-operations
+    name: cerebrum-veterinary-care
     runtime: python
     plan: starter
     buildCommand: pip install -r requirements.txt

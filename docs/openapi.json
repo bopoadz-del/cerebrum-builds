@@ -1,8 +1,8 @@
 {
   "openapi": "3.1.0",
   "info": {
-    "title": "Airport Operations Platform",
-    "description": "Cerebrum Airport Operations Platform \u2014 flight, resource, and readiness data for airside teams. Mutations require a bearer operator token.",
+    "title": "Veterinary Care Platform",
+    "description": "Cerebrum Veterinary Care Platform (VetCare Hub) \u2014 patient charts, appointments, prescriptions, invoices, and client messages for clinic operators. Mutations require a bearer operator token.",
     "version": "1.0.0"
   },
   "paths": {

@@ -1,24 +1,26 @@
 {
   "schema": "cli_receipt.v1",
-  "product": "Airport Operations Platform",
-  "product_id": "airport-operations",
-  "session_id": "sess_1d94d0a373ce45fa",
+  "product": "Veterinary Care Platform",
+  "product_id": "veterinary-care",
+  "session_id": "sess_69f28c0d8bc540e9",
   "cli_authored_ids": [
-    "airport_knowledge_assistant",
-    "airport_readiness",
-    "flight_event_orchestration",
-    "ground_workflow_coordination",
-    "incident_evidence_tracking",
-    "operational_dashboard",
-    "regulatory_document_control"
+    "appointment_scheduling",
+    "audit",
+    "billing_and_invoicing",
+    "client_communication_portal",
+    "dashboard",
+    "patient_records_management",
+    "prescription_management",
+    "veterinary_care_core"
   ],
   "authored_handlers": [
-    "airport_knowledge_assistant",
-    "airport_readiness",
-    "flight_event_orchestration",
-    "ground_workflow_coordination",
-    "incident_evidence_tracking",
-    "operational_dashboard",
-    "regulatory_document_control"
+    "appointment_scheduling",
+    "audit",
+    "billing_and_invoicing",
+    "client_communication_portal",
+    "dashboard",
+    "patient_records_management",
+    "prescription_management",
+    "veterinary_care_core"
   ]
 }

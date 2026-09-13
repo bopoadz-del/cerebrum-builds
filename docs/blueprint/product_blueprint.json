@@ -1,84 +1,58 @@
 {
   "capabilities": [
     {
-      "block_ids": [
-        "readiness_engine",
-        "estate_maintenance",
-        "analytics"
-      ],
-      "description": "Compute and monitor real-time operational readiness across runways, gates, stands, terminals, and ground service equipment, flagging degraded assets and scheduling issues.",
-      "id": "airport_readiness",
+      "block_ids": ["analytics"],
+      "description": "Persist clinic caseload and walk-in / shift / day load scoring for the operator desk.",
+      "id": "veterinary_care_core",
       "required": true,
       "strategy_hint": "REUSE"
     },
     {
-      "block_ids": [
-        "dashboard",
-        "analytics",
-        "notification"
-      ],
-      "description": "Provide a live operational dashboard of flight activity, resource status, and alerts for airside controllers and duty managers.",
-      "id": "operational_dashboard",
+      "block_ids": ["knowledge", "vector_search", "memory"],
+      "description": "Maintain patient charts by species with search and cached notes.",
+      "id": "patient_records_management",
       "required": true,
       "strategy_hint": "REUSE"
     },
     {
-      "block_ids": [
-        "workflow",
-        "estate_maintenance",
-        "team",
-        "queue"
-      ],
-      "description": "Coordinate ground handling tasks, work orders, and team assignments across turnaround, baggage, fueling, and maintenance workflows.",
-      "id": "ground_workflow_coordination",
+      "block_ids": ["workflow", "event_bus", "notification", "queue"],
+      "description": "Schedule wellness, surgery, emergency, and follow-up visits with prepared event_bus steps.",
+      "id": "appointment_scheduling",
       "required": true,
       "strategy_hint": "REUSE"
     },
     {
-      "block_ids": [
-        "document_engine",
-        "validation",
-        "audit",
-        "storage"
-      ],
-      "description": "Manage airport manuals, operating certificates, safety directives, and controlled documents with versioning, validation, and audit trails.",
-      "id": "regulatory_document_control",
+      "block_ids": ["validation", "analytics"],
+      "description": "Record prescriptions with domain dose math (weight × mg/kg).",
+      "id": "prescription_management",
       "required": true,
       "strategy_hint": "REUSE"
     },
     {
-      "block_ids": [
-        "capture",
-        "evidence_verifier",
-        "file_hasher",
-        "storage"
-      ],
-      "description": "Capture, hash, and verify incident reports, photos, and sensor logs for safety investigations and regulatory reporting.",
-      "id": "incident_evidence_tracking",
+      "block_ids": ["validation", "notification", "queue"],
+      "description": "Issue consult, procedure, and pharmacy invoices with tax totals.",
+      "id": "billing_and_invoicing",
       "required": true,
       "strategy_hint": "REUSE"
     },
     {
-      "block_ids": [
-        "event_bus",
-        "workflow",
-        "notification",
-        "queue"
-      ],
-      "description": "Process flight, weather, and operational events to trigger notifications, updates, and downstream workflows across the platform.",
-      "id": "flight_event_orchestration",
+      "block_ids": ["notification", "event_bus", "knowledge"],
+      "description": "Send reminder, result, and billing notices to clients on MCP.",
+      "id": "client_communication_portal",
       "required": true,
       "strategy_hint": "REUSE"
     },
     {
-      "block_ids": [
-        "knowledge",
-        "vector_search",
-        "recommendation_template",
-        "memory"
-      ],
-      "description": "Answer ops and compliance questions from airport documentation, procedures, and historical records using search and AI-assisted recommendations.",
-      "id": "airport_knowledge_assistant",
+      "block_ids": ["audit"],
+      "description": "Persistable clinic audit events with category retention.",
+      "id": "audit",
+      "required": true,
+      "strategy_hint": "REUSE"
+    },
+    {
+      "block_ids": ["dashboard", "analytics"],
+      "description": "Persistable clinic dashboard views for today / week / month.",
+      "id": "dashboard",
       "required": true,
       "strategy_hint": "REUSE"
     }
@@ -89,15 +63,15 @@
   "edge_profile": "standard",
   "factory_scenario": "CREATE_PRODUCT",
   "human_authority": true,
-  "n_required": 7,
-  "product_id": "airport-operations",
-  "product_name": "Airport Operations Platform",
+  "n_required": 8,
+  "product_id": "veterinary-care",
+  "product_name": "Veterinary Care Platform",
   "schema_version": "product_blueprint.v1",
-  "summary": "An integrated operations platform for airport authorities and airside teams that unifies flight, resource, and readiness data into a single command view. It tracks aircraft turnarounds, gate and stand allocation, ground crew dispatch, work orders, regulatory documents, and incident evidence to keep daily airport operations safe, compliant, and on schedule.",
+  "summary": "A clinic-operations hub for veterinary practice operators. It centralizes patient charts, appointment slots, prescriptions, invoices, and client messages so a small clinic can run a pilot without a full PIMS.",
   "ui_modules": [
     "command_center",
     "operational_chat",
     "resident_engineer"
   ],
-  "vertical": "airport_operations"
+  "vertical": "veterinary_care"
 }

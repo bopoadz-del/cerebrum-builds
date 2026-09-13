@@ -1,4 +1,4 @@
-"""operational_dashboard — REUSE dashboard + analytics + notification."""
+"""dashboard — persistable keyword-fallback capability. REUSE dashboard + analytics."""
 
 from __future__ import annotations
 
@@ -9,17 +9,17 @@ from app.dispatch import BLOCK_DEFAULT_ACTIONS, execute
 from app.domain import allowed_next_status, dashboard_band, envelope_status
 from app.persist import ok_envelope
 
-# READS: caller.input, config.runtime, env.process, network.http.outbound
-# WRITES: caller.output, notification.outbound
+# READS: caller.input, config.runtime
+# WRITES: caller.output
 # NEVER: (none)
 
-BLOCK_IDS = ["dashboard", "analytics", "notification"]
-CAPABILITY_ID = "operational_dashboard"
+BLOCK_IDS = ["dashboard", "analytics"]
+CAPABILITY_ID = "dashboard"
 HORIZONS = ("today", "week", "month")
 
 
 def handle(payload: Dict[str, Any]) -> Dict[str, Any]:
-    """Render the airside board with a horizon band and open-item count."""
+    """Render the clinic board and persist the view — not a stub dashboard block."""
     status = envelope_status(payload)
     horizon = str(payload.get("horizon") or "today")
     if horizon not in HORIZONS:
@@ -47,11 +47,10 @@ def handle(payload: Dict[str, Any]) -> Dict[str, Any]:
         "view_name": view_name,
         "horizon": horizon,
         "band": dashboard_band(horizon),
-        "widgets": ["stands", "flights", "incidents"],
+        "widgets": ["patients", "appointments", "invoices"],
         "open_items": open_items,
         "in_motion": in_motion,
         "allowed_next_status": list(allowed_next_status(status)),
         "theme": "light",
-        "notified": True,
     }
     return ok_envelope(CAPABILITY_ID, record, blocks)

@@ -36,83 +36,106 @@ def _spec(
 
 
 SPECS: Dict[str, Dict[str, Any]] = {
-    "airport_readiness": _spec(
-        "airport_readiness",
+    "veterinary_care_core": _spec(
+        "veterinary_care_core",
         ["analytics"],
         extra_fields={
-            "stand_id": {"type": "string"},
-            "readiness_window": {"type": "string"},
+            "clinic_unit": {"type": "string"},
+            "caseload_window": {"type": "string"},
         },
         extra_constraints={
-            "readiness_window": {
-                "allowed_values": ["turnaround", "shift", "day"],
+            "caseload_window": {
+                "allowed_values": ["walk_in", "shift", "day"],
             },
         },
     ),
-    "operational_dashboard": _spec(
-        "operational_dashboard",
-        ["dashboard", "analytics", "notification"],
+    "patient_records_management": _spec(
+        "patient_records_management",
+        ["knowledge", "vector_search", "memory"],
+        extra_fields={
+            "patient_name": {"type": "string"},
+            "species": {"type": "string"},
+        },
+        extra_constraints={
+            "species": {
+                "allowed_values": ["canine", "feline", "exotic", "equine"],
+            },
+        },
+    ),
+    "appointment_scheduling": _spec(
+        "appointment_scheduling",
+        ["workflow", "event_bus", "notification", "queue"],
+        extra_fields={
+            "visit_type": {"type": "string"},
+            "slot_label": {"type": "string"},
+        },
+        extra_constraints={
+            "visit_type": {
+                "allowed_values": ["wellness", "surgery", "emergency", "follow_up"],
+            },
+        },
+    ),
+    "prescription_management": _spec(
+        "prescription_management",
+        ["validation", "analytics"],
+        extra_fields={
+            "medication_name": {"type": "string"},
+            "dose_form": {"type": "string"},
+        },
+        extra_constraints={
+            "dose_form": {
+                "allowed_values": ["tablet", "liquid", "injectable"],
+            },
+        },
+    ),
+    "billing_and_invoicing": _spec(
+        "billing_and_invoicing",
+        ["validation", "notification", "queue"],
+        extra_fields={
+            "invoice_kind": {"type": "string"},
+            "line_label": {"type": "string"},
+        },
+        extra_constraints={
+            "invoice_kind": {
+                "allowed_values": ["consult", "procedure", "pharmacy"],
+            },
+        },
+    ),
+    "client_communication_portal": _spec(
+        "client_communication_portal",
+        ["notification", "event_bus", "knowledge"],
+        extra_fields={
+            "message_kind": {"type": "string"},
+            "client_name": {"type": "string"},
+        },
+        extra_constraints={
+            "message_kind": {
+                "allowed_values": ["reminder", "result", "billing"],
+            },
+        },
+    ),
+    "audit": _spec(
+        "audit",
+        ["audit"],
+        extra_fields={
+            "event_category": {"type": "string"},
+            "resource_label": {"type": "string"},
+        },
+        extra_constraints={
+            "event_category": {
+                "allowed_values": ["clinical", "billing", "access"],
+            },
+        },
+    ),
+    "dashboard": _spec(
+        "dashboard",
+        ["dashboard", "analytics"],
         extra_fields={
             "view_name": {"type": "string"},
             "horizon": {"type": "string"},
         },
         extra_constraints={
             "horizon": {"allowed_values": ["today", "week", "month"]},
-        },
-    ),
-    "ground_workflow_coordination": _spec(
-        "ground_workflow_coordination",
-        ["workflow", "team", "queue"],
-        extra_fields={
-            "crew_name": {"type": "string"},
-            "work_order": {"type": "string"},
-        },
-    ),
-    "regulatory_document_control": _spec(
-        "regulatory_document_control",
-        ["document_engine", "validation", "audit", "storage"],
-        extra_fields={
-            "document_title": {"type": "string"},
-            "control_class": {"type": "string"},
-        },
-        extra_constraints={
-            "control_class": {
-                "allowed_values": ["manual", "certificate", "directive"],
-            },
-        },
-    ),
-    "incident_evidence_tracking": _spec(
-        "incident_evidence_tracking",
-        ["capture", "file_hasher", "storage"],
-        extra_fields={
-            "incident_note": {"type": "string"},
-            "evidence_kind": {"type": "string"},
-        },
-        extra_constraints={
-            "evidence_kind": {
-                "allowed_values": ["photo", "report", "sensor"],
-            },
-        },
-    ),
-    "flight_event_orchestration": _spec(
-        "flight_event_orchestration",
-        ["event_bus", "workflow", "notification", "queue"],
-        extra_fields={
-            "event_type": {"type": "string"},
-            "flight_reference": {"type": "string"},
-        },
-        extra_constraints={
-            "event_type": {
-                "allowed_values": ["arrival", "departure", "weather", "hold"],
-            },
-        },
-    ),
-    "airport_knowledge_assistant": _spec(
-        "airport_knowledge_assistant",
-        ["knowledge", "vector_search", "recommendation_template", "memory"],
-        extra_fields={
-            "question": {"type": "string"},
-            "note_body": {"type": "string"},
         },
     ),
 }

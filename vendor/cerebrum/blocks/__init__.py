@@ -8,8 +8,20 @@ latent ModuleNotFoundError in the customer's environment.
 import importlib
 
 _BLOCK_DEFS = {
+    "analytics": ("vendor.cerebrum.blocks.analytics", "AnalyticsBlock"),
     "audit": ("vendor.cerebrum.blocks.audit", "AuditBlock"),
     "dashboard": ("vendor.cerebrum.blocks.dashboard", "DashboardBlock"),
+    "database": ("vendor.cerebrum.blocks.database", "DatabaseBlock"),
+    "document_engine": ("vendor.cerebrum.blocks.document_engine", "DocumentEngineBlock"),
+    "file_hasher": ("vendor.cerebrum.blocks.file_hasher", "FileHasherBlock"),
+    "knowledge": ("vendor.cerebrum.blocks.knowledge", "KnowledgeBlock"),
+    "memory": ("vendor.cerebrum.blocks.memory", "MemoryBlock"),
+    "notification": ("vendor.cerebrum.blocks.notification", "NotificationBlock"),
+    "storage": ("vendor.cerebrum.blocks.storage", "StorageBlock"),
+    "team": ("vendor.cerebrum.blocks.team", "TeamBlock"),
+    "validation": ("vendor.cerebrum.blocks.validation", "ValidationBlock"),
+    "vector_search": ("vendor.cerebrum.blocks.vector_search", "VectorSearchBlock"),
+    "workflow": ("vendor.cerebrum.blocks.workflow", "WorkflowBlock"),
 }
 
 

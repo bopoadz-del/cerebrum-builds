@@ -1,18 +1,22 @@
 {
   "schema": "cli_receipt.v1",
+  "product": "LedgerFlow",
+  "pilot_ready": true,
+  "level": "FOUNDING_CUSTOMER_READY",
   "cli_authored_ids": [
-    "airline_ops_portfolio_context",
-    "audit",
-    "aviation_core",
-    "budget_capacity_oversight",
-    "dashboard",
-    "demand_prioritization_resources",
-    "enterprise_portfolio_dashboard",
-    "gdpr_privacy_audit",
-    "governance_continuous_improvement",
-    "hybrid_program_delivery",
-    "integrated_planning_milestones",
-    "kpi_value_realization",
-    "oracle_erp_program_oversight"
+    "audit_and_compliance",
+    "budgeting_and_alerts",
+    "data_synchronization",
+    "financial_dashboard",
+    "report_generation",
+    "transaction_capture"
+  ],
+  "authored_handlers": [
+    "audit_and_compliance",
+    "budgeting_and_alerts",
+    "data_synchronization",
+    "financial_dashboard",
+    "report_generation",
+    "transaction_capture"
   ]
 }

@@ -6,6 +6,12 @@ from typing import Any, Dict
 
 from app.block_inputs import prepare_block_input
 from app.dispatch import BLOCK_DEFAULT_ACTIONS, execute
+from app.domain import (
+    allowed_next_status,
+    envelope_status,
+    readiness_score,
+    stand_is_degraded,
+)
 from app.persist import ok_envelope
 
 # READS: caller.input, config.runtime, llm.provider
@@ -18,16 +24,21 @@ WINDOWS = ("turnaround", "shift", "day")
 
 
 def handle(payload: Dict[str, Any]) -> Dict[str, Any]:
-    """Track a readiness metric for a stand and persist the snapshot."""
+    """Score a stand from envelope status × window weight; persist the snapshot."""
+    status = envelope_status(payload)
     window = str(payload.get("readiness_window") or "turnaround")
     if window not in WINDOWS:
         window = "turnaround"
     stand_id = str(payload.get("stand_id") or payload.get("reference") or "sample")
+    score = readiness_score(status, window)
+    degraded = stand_is_degraded(score)
     record = {
         **payload,
+        "status": status,
         "stand_id": stand_id,
         "readiness_window": window,
-        "readiness_score": 1.0,
+        "readiness_score": score,
+        "degraded": degraded,
         "capability": CAPABILITY_ID,
         "channel": "mcp",
     }
@@ -41,7 +52,10 @@ def handle(payload: Dict[str, Any]) -> Dict[str, Any]:
     record["readiness"] = {
         "stand_id": stand_id,
         "window": window,
-        "tracked": True,
+        "score": score,
+        "degraded": degraded,
+        "allowed_next_status": list(allowed_next_status(status)),
         "metric": "airport_ops_events",
+        "tracked": True,
     }
     return ok_envelope(CAPABILITY_ID, record, blocks)

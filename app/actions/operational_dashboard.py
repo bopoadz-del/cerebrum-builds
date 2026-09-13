@@ -6,6 +6,7 @@ from typing import Any, Dict
 
 from app.block_inputs import prepare_block_input
 from app.dispatch import BLOCK_DEFAULT_ACTIONS, execute
+from app.domain import allowed_next_status, dashboard_band, envelope_status
 from app.persist import ok_envelope
 
 # READS: caller.input, config.runtime, env.process, network.http.outbound
@@ -18,15 +19,20 @@ HORIZONS = ("today", "week", "month")
 
 
 def handle(payload: Dict[str, Any]) -> Dict[str, Any]:
-    """Render the airside board, track a metric, and notify over MCP."""
+    """Render the airside board with a horizon band and open-item count."""
+    status = envelope_status(payload)
     horizon = str(payload.get("horizon") or "today")
     if horizon not in HORIZONS:
         horizon = "today"
     view_name = str(payload.get("view_name") or payload.get("reference") or "sample")
+    open_items = 1 if status == "open" else 0
+    in_motion = 1 if status == "in_progress" else 0
     record = {
         **payload,
+        "status": status,
         "view_name": view_name,
         "horizon": horizon,
+        "open_items": open_items,
         "capability": CAPABILITY_ID,
         "channel": "mcp",
     }
@@ -40,7 +46,11 @@ def handle(payload: Dict[str, Any]) -> Dict[str, Any]:
     record["board"] = {
         "view_name": view_name,
         "horizon": horizon,
+        "band": dashboard_band(horizon),
         "widgets": ["stands", "flights", "incidents"],
+        "open_items": open_items,
+        "in_motion": in_motion,
+        "allowed_next_status": list(allowed_next_status(status)),
         "theme": "light",
         "notified": True,
     }

@@ -11,6 +11,7 @@ from app.block_inputs import (
     vector_search_input,
 )
 from app.dispatch import BLOCK_DEFAULT_ACTIONS, execute
+from app.domain import allowed_next_status, envelope_status, knowledge_source_class
 from app.persist import ok_envelope
 
 # READS: caller.input, env.process, config.runtime, database.vector, memory.cache
@@ -22,13 +23,17 @@ CAPABILITY_ID = "airport_knowledge_assistant"
 
 
 def handle(payload: Dict[str, Any]) -> Dict[str, Any]:
-    """Ask the knowledge block, search the corpus, recommend, and cache."""
+    """Ask, search, recommend, and cache with an honest source class."""
+    status = envelope_status(payload)
     question = str(payload.get("question") or payload.get("reference") or "sample")
     note_body = str(payload.get("note_body") or question)
+    source_class = knowledge_source_class(question, note_body)
     record = {
         **payload,
+        "status": status,
         "question": question,
         "note_body": note_body,
+        "source_class": source_class,
         "capability": CAPABILITY_ID,
         "channel": "mcp",
     }
@@ -56,7 +61,10 @@ def handle(payload: Dict[str, Any]) -> Dict[str, Any]:
     }
     record["assistant"] = {
         "question": question,
+        "source_class": source_class,
+        "retrieval": "lexical_plus_vector_search",
         "cached_key": f"airport_ops:{record.get('reference') or 'sample'}",
+        "allowed_next_status": list(allowed_next_status(status)),
         "searched": True,
     }
     return ok_envelope(CAPABILITY_ID, record, blocks)

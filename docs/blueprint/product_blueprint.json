@@ -2,24 +2,12 @@
   "capabilities": [
     {
       "block_ids": [
-        "database",
-        "validation",
-        "audit"
+        "readiness_engine",
+        "estate_maintenance",
+        "analytics"
       ],
-      "description": "Track SKUs, quantities on hand, and reorder thresholds; update stock counts manually or via import.",
-      "id": "inventory_tracking",
-      "required": true,
-      "strategy_hint": "REUSE"
-    },
-    {
-      "block_ids": [
-        "workflow",
-        "queue",
-        "database",
-        "notification"
-      ],
-      "description": "Capture incoming orders, update fulfillment status through a simple workflow, and maintain order history.",
-      "id": "order_management",
+      "description": "Compute and monitor real-time operational readiness across runways, gates, stands, terminals, and ground service equipment, flagging degraded assets and scheduling issues.",
+      "id": "airport_readiness",
       "required": true,
       "strategy_hint": "REUSE"
     },
@@ -27,32 +15,70 @@
       "block_ids": [
         "dashboard",
         "analytics",
-        "database"
+        "notification"
       ],
-      "description": "A single-screen dashboard showing current inventory levels, open orders, and recent activity for day-to-day monitoring.",
-      "id": "ops_dashboard",
+      "description": "Provide a live operational dashboard of flight activity, resource status, and alerts for airside controllers and duty managers.",
+      "id": "operational_dashboard",
       "required": true,
       "strategy_hint": "REUSE"
     },
     {
       "block_ids": [
-        "notification",
-        "event_bus",
-        "readiness_engine"
+        "workflow",
+        "estate_maintenance",
+        "team",
+        "queue"
       ],
-      "description": "Notify staff when items fall below reorder thresholds or when orders are stalled.",
-      "id": "stock_alerts",
+      "description": "Coordinate ground handling tasks, work orders, and team assignments across turnaround, baggage, fueling, and maintenance workflows.",
+      "id": "ground_workflow_coordination",
+      "required": true,
+      "strategy_hint": "REUSE"
+    },
+    {
+      "block_ids": [
+        "document_engine",
+        "validation",
+        "audit",
+        "storage"
+      ],
+      "description": "Manage airport manuals, operating certificates, safety directives, and controlled documents with versioning, validation, and audit trails.",
+      "id": "regulatory_document_control",
+      "required": true,
+      "strategy_hint": "REUSE"
+    },
+    {
+      "block_ids": [
+        "capture",
+        "evidence_verifier",
+        "file_hasher",
+        "storage"
+      ],
+      "description": "Capture, hash, and verify incident reports, photos, and sensor logs for safety investigations and regulatory reporting.",
+      "id": "incident_evidence_tracking",
+      "required": true,
+      "strategy_hint": "REUSE"
+    },
+    {
+      "block_ids": [
+        "event_bus",
+        "workflow",
+        "notification",
+        "queue"
+      ],
+      "description": "Process flight, weather, and operational events to trigger notifications, updates, and downstream workflows across the platform.",
+      "id": "flight_event_orchestration",
       "required": true,
       "strategy_hint": "REUSE"
     },
     {
       "block_ids": [
         "knowledge",
-        "memory",
-        "storage"
+        "vector_search",
+        "recommendation_template",
+        "memory"
       ],
-      "description": "Maintain a simple knowledge base of pilot run notes, supplier contacts, and process quirks.",
-      "id": "pilot_ops_log",
+      "description": "Answer ops and compliance questions from airport documentation, procedures, and historical records using search and AI-assisted recommendations.",
+      "id": "airport_knowledge_assistant",
       "required": true,
       "strategy_hint": "REUSE"
     }
@@ -63,15 +89,15 @@
   "edge_profile": "standard",
   "factory_scenario": "CREATE_PRODUCT",
   "human_authority": true,
-  "n_required": 5,
-  "product_id": "retail-operations",
-  "product_name": "Retail Ops Tracker",
+  "n_required": 7,
+  "product_id": "airport-operations",
+  "product_name": "Airport Operations Platform",
   "schema_version": "product_blueprint.v1",
-  "summary": "A lightweight operations tracker for small retail teams running a pilot. It centralizes inventory counts, order status, and a simple dashboard so staff can see what's in stock, what's been ordered, and what needs attention without adopting a full ERP.",
+  "summary": "An integrated operations platform for airport authorities and airside teams that unifies flight, resource, and readiness data into a single command view. It tracks aircraft turnarounds, gate and stand allocation, ground crew dispatch, work orders, regulatory documents, and incident evidence to keep daily airport operations safe, compliant, and on schedule.",
   "ui_modules": [
     "command_center",
     "operational_chat",
     "resident_engineer"
   ],
-  "vertical": "retail_operations"
+  "vertical": "airport_operations"
 }

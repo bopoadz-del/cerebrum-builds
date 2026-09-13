@@ -1,8 +1,8 @@
 {
   "openapi": "3.1.0",
   "info": {
-    "title": "Retail Ops Tracker",
-    "description": "Cerebrum Retail Ops Tracker \u2014 inventory counts, order status, and a simple dashboard for small retail teams. Mutations require a bearer operator token.",
+    "title": "Airport Operations Platform",
+    "description": "Cerebrum Airport Operations Platform \u2014 flight, resource, and readiness data for airside teams. Mutations require a bearer operator token.",
     "version": "1.0.0"
   },
   "paths": {

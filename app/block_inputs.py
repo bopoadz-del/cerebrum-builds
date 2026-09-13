@@ -2,7 +2,19 @@
 
 from __future__ import annotations
 
+from pathlib import Path
 from typing import Any, Dict, List
+
+# Minimal PDF so document_engine parse has a real file without caller paths.
+_MINIMAL_PDF = (
+    b"%PDF-1.1\n"
+    b"1 0 obj<</Type/Catalog/Pages 2 0 R>>endobj\n"
+    b"2 0 obj<</Type/Pages/Kids[3 0 R]/Count 1>>endobj\n"
+    b"3 0 obj<</Type/Page/Parent 2 0 R/MediaBox[0 0 612 792]>>endobj\n"
+    b"xref\n0 4\n0000000000 65535 f \n0000000009 00000 n \n"
+    b"0000000058 00000 n \n0000000115 00000 n \n"
+    b"trailer<</Size 4/Root 1 0 R>>\nstartxref\n190\n%%EOF\n"
+)
 
 
 def _ref(payload: Dict[str, Any]) -> str:
@@ -13,13 +25,10 @@ def _status(payload: Dict[str, Any]) -> str:
     return str(payload.get("status") or "open")
 
 
-def _sku(payload: Dict[str, Any]) -> str:
-    return str(payload.get("sku") or _ref(payload))
-
-
 def _summary(payload: Dict[str, Any]) -> str:
+    stand = payload.get("stand_id") or payload.get("flight_reference") or _ref(payload)
     return (
-        f"retail ops {_ref(payload)} sku={_sku(payload)} "
+        f"airport ops {_ref(payload)} stand={stand} "
         f"status={_status(payload)}"
     )
 
@@ -33,21 +42,43 @@ def _result_seed(payload: Dict[str, Any]) -> Dict[str, Any]:
     }
 
 
+def _scratch_dir() -> Path:
+    from app.store import storage_root
+
+    path = storage_root() / "scratch"
+    path.mkdir(parents=True, exist_ok=True)
+    return path
+
+
+def _write_scratch(name: str, content: bytes | str) -> str:
+    path = _scratch_dir() / name
+    if isinstance(content, str):
+        path.write_text(content, encoding="utf-8")
+    else:
+        path.write_bytes(content)
+    return str(path)
+
+
 def prepare_block_input(block_id: str, payload: Dict[str, Any]) -> Dict[str, Any]:
     """Factory-grounded constructed input for a declared Store block."""
     builders = {
-        "database": database_input,
-        "validation": validation_input,
-        "audit": audit_input,
-        "workflow": workflow_input,
-        "queue": queue_input,
-        "notification": notification_input,
-        "dashboard": dashboard_input,
         "analytics": analytics_input,
+        "audit": audit_input,
+        "capture": capture_input,
+        "dashboard": dashboard_input,
+        "document_engine": document_engine_input,
         "event_bus": event_bus_input,
+        "file_hasher": file_hasher_input,
         "knowledge": knowledge_input,
         "memory": memory_input,
+        "notification": notification_input,
+        "queue": queue_input,
+        "recommendation_template": recommendation_template_input,
         "storage": storage_input,
+        "team": team_input,
+        "validation": validation_input,
+        "vector_search": vector_search_input,
+        "workflow": workflow_input,
     }
     builder = builders.get(block_id)
     if builder is None:
@@ -55,26 +86,16 @@ def prepare_block_input(block_id: str, payload: Dict[str, Any]) -> Dict[str, Any
     return builder(payload)
 
 
-def database_input(payload: Dict[str, Any]) -> Dict[str, Any]:
-    table = str(payload.get("capability") or "inventory_tracking")
+def analytics_input(payload: Dict[str, Any]) -> Dict[str, Any]:
     return {
-        "table": table,
-        "filters": {"reference": _ref(payload)},
-        "result": _result_seed(payload),
-    }
-
-
-def validation_input(payload: Dict[str, Any]) -> Dict[str, Any]:
-    item = {
-        "id": _ref(payload),
-        "type": "retail_sku",
-        "quantity": int(payload.get("quantity_on_hand") or 0),
-        "sku": _sku(payload),
-        "status": _status(payload),
-    }
-    return {
-        "item": item,
-        "context": {"channel": "mcp", "summary": _summary(payload)},
+        "metric": "airport_ops_events",
+        "value": 1.0,
+        "tags": {
+            "reference": _ref(payload),
+            "stand_id": str(payload.get("stand_id") or _ref(payload)),
+            "horizon": str(payload.get("horizon") or payload.get("readiness_window") or "today"),
+            "status": _status(payload),
+        },
         "result": _result_seed(payload),
     }
 
@@ -82,14 +103,13 @@ def validation_input(payload: Dict[str, Any]) -> Dict[str, Any]:
 def audit_input(payload: Dict[str, Any]) -> Dict[str, Any]:
     actor = str(payload.get("actor") or payload.get("user_id") or "unattributed")
     return {
-        "category": payload.get("category") or "ops",
+        "category": payload.get("category") or "airside",
         "user_id": actor,
         "event_action": payload.get("event_action") or "persist",
         "resource": _ref(payload),
         "details": {
             "status": _status(payload),
             "summary": _summary(payload),
-            "sku": _sku(payload),
             "actor": actor,
             "actor_role": payload.get("actor_role"),
             "capability": payload.get("capability"),
@@ -98,35 +118,36 @@ def audit_input(payload: Dict[str, Any]) -> Dict[str, Any]:
     }
 
 
-def queue_input(payload: Dict[str, Any]) -> Dict[str, Any]:
+def capture_input(payload: Dict[str, Any]) -> Dict[str, Any]:
+    note = str(payload.get("incident_note") or _summary(payload))
     return {
-        "job_type": "fulfill_order",
-        "queue": "orders",
-        "payload": {
-            "reference": _ref(payload),
-            "order_number": payload.get("order_number") or _ref(payload),
-            "status": _status(payload),
-        },
+        "raw_text": note,
+        "text": note,
+        "content": note,
+        "result": _result_seed(payload),
+        "reference": _ref(payload),
+    }
+
+
+def dashboard_input(payload: Dict[str, Any]) -> Dict[str, Any]:
+    return {
+        "user_id": str(payload.get("actor") or payload.get("user_id") or "operator"),
+        "title": f"Airport ops {_ref(payload)}",
+        "theme": "light",
+        "layout": "grid",
+        "summary": _summary(payload),
         "result": _result_seed(payload),
     }
 
 
-def notification_input(payload: Dict[str, Any]) -> Dict[str, Any]:
-    message = (
-        payload.get("message")
-        or f"Retail ops notice for {_ref(payload)} ({_sku(payload)})"
-    )
+def document_engine_input(payload: Dict[str, Any]) -> Dict[str, Any]:
+    title = str(payload.get("document_title") or _ref(payload))
+    path = _write_scratch(f"{_ref(payload)}.pdf", _MINIMAL_PDF)
     return {
-        "channel": "mcp",
-        "message": str(message),
-        "tool": "event_bus",
-        "block": "event_bus",
-        "payload": {
-            "reference": _ref(payload),
-            "sku": _sku(payload),
-            "status": _status(payload),
-        },
-        "params": {"action": "publish", "topic": f"retail.{_ref(payload)}"},
+        "pdf": _MINIMAL_PDF,
+        "pdf_path": path,
+        "file_path": path,
+        "title": title,
         "result": _result_seed(payload),
     }
 
@@ -136,15 +157,14 @@ def event_bus_input(payload: Dict[str, Any]) -> Dict[str, Any]:
         payload.get("event")
         or payload.get("event_type")
         or payload.get("event_name")
-        or payload.get("alert_kind")
         or payload.get("reminder_type")
-        or f"retail.{_ref(payload)}"
+        or f"airport.{_ref(payload)}"
     )
     return {
         "topic": topic,
         "payload": {
             "reference": _ref(payload),
-            "sku": _sku(payload),
+            "flight_reference": payload.get("flight_reference") or _ref(payload),
             "status": _status(payload),
         },
         "message": _summary(payload),
@@ -166,62 +186,20 @@ def prepared_event_bus_step(payload: Dict[str, Any], *, step_id: str = "step_0")
     }
 
 
-def workflow_input(payload: Dict[str, Any]) -> Dict[str, Any]:
-    seed = _result_seed(payload)
-    queue_step = {
-        "id": "step_0",
-        "block": "queue",
-        "action": "enqueue",
-        "params": {"action": "enqueue"},
-        "input": queue_input(payload),
-    }
-    notify_step = {
-        "id": "step_1",
-        "block": "notification",
-        "action": "send",
-        "params": {"action": "send"},
-        "input": notification_input(payload),
-    }
+def file_hasher_input(payload: Dict[str, Any]) -> Dict[str, Any]:
+    body = str(payload.get("incident_note") or _summary(payload))
+    path = _write_scratch(f"{_ref(payload)}.evidence.txt", body)
     return {
-        "pipeline_id": f"order-{_ref(payload)}",
-        "result": seed,
-        "steps": [queue_step, notify_step],
-    }
-
-
-def dashboard_input(payload: Dict[str, Any]) -> Dict[str, Any]:
-    return {
-        "user_id": str(payload.get("actor") or payload.get("user_id") or "operator"),
-        "title": f"Retail ops {_ref(payload)}",
-        "theme": "light",
-        "layout": "grid",
-        "summary": _summary(payload),
+        "file_path": path,
         "result": _result_seed(payload),
-    }
-
-
-def analytics_input(payload: Dict[str, Any]) -> Dict[str, Any]:
-    qty = payload.get("quantity_on_hand")
-    try:
-        value = float(qty)
-    except (TypeError, ValueError):
-        value = 1.0
-    return {
-        "metric": "retail_ops_events",
-        "value": value,
-        "tags": {
-            "reference": _ref(payload),
-            "horizon": str(payload.get("horizon") or "today"),
-            "status": _status(payload),
-        },
-        "result": _result_seed(payload),
+        "reference": _ref(payload),
     }
 
 
 def knowledge_input(payload: Dict[str, Any]) -> Dict[str, Any]:
     question = (
-        payload.get("note_body")
-        or payload.get("note_title")
+        payload.get("question")
+        or payload.get("note_body")
         or _summary(payload)
     )
     return {
@@ -233,27 +211,154 @@ def knowledge_input(payload: Dict[str, Any]) -> Dict[str, Any]:
 
 def memory_input(payload: Dict[str, Any]) -> Dict[str, Any]:
     return {
-        "key": f"pilot_ops:{_ref(payload)}",
+        "key": f"airport_ops:{_ref(payload)}",
         "value": {
             "reference": _ref(payload),
-            "note_title": payload.get("note_title") or "sample",
+            "question": payload.get("question") or "sample",
             "status": _status(payload),
         },
         "result": _result_seed(payload),
     }
 
 
+def notification_input(payload: Dict[str, Any]) -> Dict[str, Any]:
+    message = payload.get("message") or f"Airport ops notice for {_ref(payload)}"
+    topic = str(
+        payload.get("event_type")
+        or payload.get("event")
+        or f"airport.{_ref(payload)}"
+    )
+    return {
+        "channel": "mcp",
+        "message": str(message),
+        "tool": "event_bus",
+        "block": "event_bus",
+        "payload": {
+            "reference": _ref(payload),
+            "status": _status(payload),
+        },
+        "params": {"action": "publish", "topic": topic},
+        "result": _result_seed(payload),
+    }
+
+
+def queue_input(payload: Dict[str, Any]) -> Dict[str, Any]:
+    return {
+        "job_type": "ground_task",
+        "queue": "airside",
+        "payload": {
+            "reference": _ref(payload),
+            "work_order": payload.get("work_order") or _ref(payload),
+            "crew_name": payload.get("crew_name") or "sample",
+            "status": _status(payload),
+        },
+        "result": _result_seed(payload),
+    }
+
+
+def recommendation_template_input(payload: Dict[str, Any]) -> Dict[str, Any]:
+    return {
+        "operation": "recommend",
+        "variance_data": [
+            {
+                "name": _ref(payload),
+                "variance_pct": 0,
+                "risk_level": "info",
+                "delay_days": 0,
+            }
+        ],
+        "result": _result_seed(payload),
+    }
+
+
 def storage_input(payload: Dict[str, Any]) -> Dict[str, Any]:
-    body = payload.get("note_body") or _summary(payload)
+    body = (
+        payload.get("note_body")
+        or payload.get("incident_note")
+        or payload.get("document_title")
+        or _summary(payload)
+    )
     return {
         "filename": f"{_ref(payload)}.md",
         "content": str(body),
         "metadata": {
             "reference": _ref(payload),
-            "note_title": payload.get("note_title") or "sample",
             "status": _status(payload),
         },
         "result": _result_seed(payload),
+    }
+
+
+def team_input(payload: Dict[str, Any]) -> Dict[str, Any]:
+    actor = str(payload.get("actor") or payload.get("user_id") or "operator")
+    name = str(payload.get("crew_name") or f"airside-{_ref(payload)}")
+    return {
+        "user_id": actor,
+        "name": name,
+        "slug": f"airside-{_ref(payload)}".replace(" ", "-").lower(),
+        "result": _result_seed(payload),
+    }
+
+
+def validation_input(payload: Dict[str, Any]) -> Dict[str, Any]:
+    item = {
+        "id": _ref(payload),
+        "type": "airport_document",
+        "status": _status(payload),
+        "document_title": payload.get("document_title") or _ref(payload),
+    }
+    return {
+        "item": item,
+        "context": {"channel": "mcp", "summary": _summary(payload)},
+        "result": _result_seed(payload),
+    }
+
+
+def vector_search_input(payload: Dict[str, Any]) -> Dict[str, Any]:
+    query = str(payload.get("question") or payload.get("note_body") or _summary(payload))
+    return {
+        "query": query,
+        "text": query,
+        "result": _result_seed(payload),
+    }
+
+
+def workflow_input(payload: Dict[str, Any]) -> Dict[str, Any]:
+    """Default ground-workflow pipeline. Flight orchestration overrides in-handler."""
+    seed = _result_seed(payload)
+    queue_step = {
+        "id": "step_0",
+        "block": "queue",
+        "action": "enqueue",
+        "params": {"action": "enqueue"},
+        "input": queue_input(payload),
+    }
+    team_step = {
+        "id": "step_1",
+        "block": "team",
+        "action": "create_team",
+        "params": {"action": "create_team"},
+        "input": team_input(payload),
+    }
+    return {
+        "pipeline_id": f"ground-{_ref(payload)}",
+        "result": seed,
+        "steps": [queue_step, team_step],
+    }
+
+
+def flight_workflow_input(payload: Dict[str, Any]) -> Dict[str, Any]:
+    """Prepared event_bus children for step_0, step_1, and step_2+."""
+    seed = _result_seed(payload)
+    steps = [
+        prepared_event_bus_step(payload, step_id="step_0"),
+        prepared_event_bus_step(payload, step_id="step_1"),
+        prepared_event_bus_step(payload, step_id="step_2"),
+    ]
+    return {
+        "pipeline_id": f"flight-{_ref(payload)}",
+        "result": seed,
+        "steps": steps,
     }
 
 
@@ -274,7 +379,7 @@ def record_mutation_audit(
         "actor": principal.subject,
         "actor_role": principal.role,
         "event_action": action,
-        "category": extra.pop("category", "ops"),
+        "category": extra.pop("category", "airside"),
         **extra,
     }
     execute("audit", audit_input(payload), action=BLOCK_DEFAULT_ACTIONS.get("audit"))

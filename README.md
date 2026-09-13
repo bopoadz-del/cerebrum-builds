@@ -1,14 +1,16 @@
-# Retail Ops Tracker
+# Airport Operations Platform
 
-Cerebrum-builds session for **Retail Ops Tracker** — a lightweight operations tracker for small retail teams. It centralizes inventory counts, order status, and a simple dashboard so staff can see what's in stock, what's been ordered, and what needs attention without adopting a full ERP.
+Cerebrum-builds session for **Airport Operations Platform** — an integrated operations platform for airport authorities and airside teams. It unifies flight, resource, and readiness data into a single command view: aircraft turnarounds, gate and stand allocation, ground crew dispatch, work orders, regulatory documents, and incident evidence.
 
 Manufactured from vendored Store blocks:
 
-- `inventory_tracking` — database, validation, audit
-- `order_management` — workflow, queue, database, notification
-- `ops_dashboard` — dashboard, analytics, database
-- `stock_alerts` — notification, event_bus
-- `pilot_ops_log` — knowledge, memory, storage
+- `airport_readiness` — analytics
+- `operational_dashboard` — dashboard, analytics, notification
+- `ground_workflow_coordination` — workflow, team, queue
+- `regulatory_document_control` — document_engine, validation, audit, storage
+- `incident_evidence_tracking` — capture, file_hasher, storage
+- `flight_event_orchestration` — event_bus, workflow, notification, queue
+- `airport_knowledge_assistant` — knowledge, vector_search, recommendation_template, memory
 
 Offline platform. Channel `mcp` only. No HTTP store callbacks.
 

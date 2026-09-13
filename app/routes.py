@@ -11,7 +11,7 @@ from app.auth import require_operator
 from app.block_inputs import record_mutation_audit
 from app.dispatch import load_handler
 from app.schema import RESERVED_FIELDS, REQUIRED_CAPABILITY_IDS, SPECS, STATUS_VALUES, get_spec
-from app.store import list_all, save as store_save
+from app.store import list_all
 
 router = APIRouter()
 
@@ -64,13 +64,15 @@ def post_capability(
     if capability_id not in SPECS:
         raise HTTPException(status_code=404, detail="unknown capability")
     payload = _validate_payload(capability_id, request_payload)
+    claimed = request_payload.get("actor") or request_payload.get("user_id")
     payload = {
         **payload,
+        "claimed_actor": claimed,
         "actor": principal.subject,
         "actor_role": principal.role,
+        "user_id": principal.subject,
         "capability": capability_id,
     }
-    spec = get_spec(capability_id)
     handle = load_handler(capability_id)
     try:
         result = handle(payload)
@@ -83,7 +85,8 @@ def post_capability(
         return {"ok": False, "error": "handler returned a non-object", "capability": capability_id}
     if result.get("ok") is False:
         return result
-    store_save(spec["entity"], payload)
+    # Handlers persist the computed domain record via ok_envelope. Do not
+    # overwrite that row with the thinner request payload.
     record_mutation_audit(
         principal,
         action=f"mutate:{capability_id}",
@@ -91,8 +94,8 @@ def post_capability(
         details={
             "status": payload.get("status", "open"),
             "capability": capability_id,
-            "sku": payload.get("sku") or payload.get("reference") or "sample",
-            "category": "ops",
+            "stand_id": payload.get("stand_id") or payload.get("reference") or "sample",
+            "category": "airside",
         },
     )
     result.setdefault("ok", True)
@@ -121,6 +124,6 @@ def get_capability(capability_id: str) -> Dict[str, Any]:
 def list_capabilities() -> Dict[str, Any]:
     return {
         "ok": True,
-        "product": "Retail Ops Tracker",
+        "product": "Airport Operations Platform",
         "capabilities": list(REQUIRED_CAPABILITY_IDS),
     }

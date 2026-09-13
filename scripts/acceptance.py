@@ -35,6 +35,14 @@ FLOOR = (
     "authorship==receipt",
 )
 
+CORE = "airport_readiness"
+CORE_BODY = {
+    "reference": "sample",
+    "status": "open",
+    "stand_id": "sample",
+    "readiness_window": "turnaround",
+}
+
 
 def _line(status: str, name: str, detail: str) -> dict:
     print(f"{status} {name} — {detail}")
@@ -60,7 +68,7 @@ def main() -> int:
         )
 
         missing = client.post(
-            "/v1/inventory_tracking",
+            f"/v1/{CORE}",
             json={"status": "open"},
             headers=AUTH_HEADERS,
         )
@@ -73,7 +81,7 @@ def main() -> int:
         )
 
         bad_enum = client.post(
-            "/v1/inventory_tracking",
+            f"/v1/{CORE}",
             json={"reference": "sample", "status": "bogus"},
             headers=AUTH_HEADERS,
         )
@@ -88,7 +96,7 @@ def main() -> int:
         ui = client.get("/")
         results.append(
             _line(
-                "PASS" if ui.status_code == 200 and "Retail Ops Tracker" in ui.text else "FAIL",
+                "PASS" if ui.status_code == 200 and "Airport Operations Platform" in ui.text else "FAIL",
                 "ui_served_200",
                 f"GET / -> {ui.status_code}",
             )
@@ -99,12 +107,12 @@ def main() -> int:
             json={
                 "layer": 1,
                 "doc_id": "acc-pack",
-                "title": "Inventory count pack",
-                "text": "Inventory count, reorder threshold, and order status for the retail ops pilot.",
+                "title": "Stand turnaround pack",
+                "text": "Stand turnaround, gate allocation, and flight event notes for the airport operations pilot.",
             },
             headers=AUTH_HEADERS,
         )
-        query = client.get("/v1/rag/query", params={"q": "inventory count"})
+        query = client.get("/v1/rag/query", params={"q": "stand turnaround"})
         hit = (
             ingest.status_code == 200
             and query.status_code == 200
@@ -138,8 +146,8 @@ def main() -> int:
         )
 
         open_post = client.post(
-            "/v1/inventory_tracking",
-            json={"reference": "sample", "status": "open", "sku": "sample"},
+            f"/v1/{CORE}",
+            json={"reference": "sample", "status": "open", "stand_id": "sample"},
         )
         results.append(
             _line(
@@ -150,7 +158,7 @@ def main() -> int:
         )
         open_ingest = client.post(
             "/v1/rag/ingest",
-            json={"layer": 1, "doc_id": "denied", "title": "x", "text": "inventory count"},
+            json={"layer": 1, "doc_id": "denied", "title": "x", "text": "stand turnaround"},
         )
         results.append(
             _line(
@@ -160,19 +168,13 @@ def main() -> int:
             )
         )
         quoted = client.post(
-            "/v1/inventory_tracking",
-            json={
-                "reference": "sample",
-                "status": "open",
-                "sku": "sample",
-                "quantity_on_hand": 0,
-                "reorder_threshold": 0,
-            },
+            f"/v1/{CORE}",
+            json=CORE_BODY,
             headers=AUTH_HEADERS,
         )
         remembered = False
         if quoted.status_code == 200:
-            listed = client.get("/v1/inventory_tracking")
+            listed = client.get(f"/v1/{CORE}")
             records = (listed.json() or {}).get("records") or []
             remembered = listed.status_code == 200 and any(
                 row.get("reference") == "sample" for row in records
@@ -182,6 +184,21 @@ def main() -> int:
                 "PASS" if quoted.status_code == 200 and remembered else "FAIL",
                 "core_round_trip",
                 f"status={quoted.status_code} remembered={remembered}",
+            )
+        )
+        rec = (quoted.json() or {}).get("record") or {} if quoted.status_code == 200 else {}
+        score = rec.get("readiness_score")
+        computed = (
+            quoted.status_code == 200
+            and score not in (None, 1, 1.0)
+            and rec.get("degraded") is True
+            and rec.get("actor") == "operator"
+        )
+        results.append(
+            _line(
+                "PASS" if computed else "FAIL",
+                "core_readiness_computed",
+                f"score={score} degraded={rec.get('degraded')} actor={rec.get('actor')}",
             )
         )
 
@@ -273,7 +290,7 @@ def main() -> int:
     )
     results.append(
         _line(
-            "PASS" if len(REQUIRED_CAPABILITY_IDS) == 5 else "FAIL",
+            "PASS" if len(REQUIRED_CAPABILITY_IDS) == 7 else "FAIL",
             "capability_roster",
             f"{len(REQUIRED_CAPABILITY_IDS)} capabilities",
         )

@@ -226,11 +226,7 @@ class NotificationBlock(TypedBlock):
 
         try:
             from vendor.cerebrum.blocks import BLOCK_REGISTRY
-            try:
-                from vendor.blocks.notification.block import _instantiate_store_block
-            except ImportError:
-                def _instantiate_store_block(block_class, config=None, allow_platform=True):
-                    return block_class()
+            from vendor.blocks.audit.block import _instantiate_store_block
 
             if block_name not in BLOCK_REGISTRY:
                 return {"status": "error", "error": f"Block '{block_name}' not found"}

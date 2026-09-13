@@ -36,135 +36,62 @@ def _spec(
 
 
 SPECS: Dict[str, Dict[str, Any]] = {
-    "aviation_core": _spec(
-        "aviation_core",
-        [],
+    "inventory_tracking": _spec(
+        "inventory_tracking",
+        ["database", "validation", "audit"],
         extra_fields={
-            "carrier_code": {"type": "string"},
-            "hub_city": {"type": "string"},
+            "sku": {"type": "string"},
+            "quantity_on_hand": {"type": "int"},
+            "reorder_threshold": {"type": "int"},
         },
         extra_constraints={
-            "carrier_code": {"allowed_values": ["RX"]},
-            "hub_city": {"allowed_values": ["Riyadh"]},
+            "quantity_on_hand": {"min": 0},
+            "reorder_threshold": {"min": 0},
         },
     ),
-    "audit": _spec("audit", ["audit"]),
-    "dashboard": _spec("dashboard", ["dashboard"]),
-    "enterprise_portfolio_dashboard": _spec(
-        "enterprise_portfolio_dashboard",
-        [],
+    "order_management": _spec(
+        "order_management",
+        ["workflow", "queue", "database", "notification"],
         extra_fields={
-            "initiative_name": {"type": "string"},
-            "horizon": {"type": "string"},
+            "order_number": {"type": "string"},
+            "fulfillment_stage": {"type": "string"},
         },
         extra_constraints={
-            "horizon": {"allowed_values": ["strategic", "tactical", "runway"]},
-        },
-    ),
-    "hybrid_program_delivery": _spec(
-        "hybrid_program_delivery",
-        [],
-        extra_fields={
-            "owner_role": {"type": "string"},
-            "delivery_mode": {"type": "string"},
-        },
-        extra_constraints={
-            "owner_role": {"allowed_values": ["rte", "scrum_master", "pm", "ba"]},
-            "delivery_mode": {"allowed_values": ["hybrid", "agile", "waterfall"]},
-        },
-    ),
-    "integrated_planning_milestones": _spec(
-        "integrated_planning_milestones",
-        [],
-        extra_fields={
-            "milestone_name": {"type": "string"},
-            "planned_date": {"type": "date"},
-        },
-    ),
-    "kpi_value_realization": _spec(
-        "kpi_value_realization",
-        [],
-        extra_fields={
-            "kpi_name": {"type": "string"},
-            "value_stream": {"type": "string"},
-        },
-        extra_constraints={
-            "value_stream": {"allowed_values": ["network", "digital", "erp", "ops"]},
-        },
-    ),
-    "budget_capacity_oversight": _spec(
-        "budget_capacity_oversight",
-        [],
-        extra_fields={
-            "budget_code": {"type": "string"},
-            "currency": {"type": "string"},
-        },
-        extra_constraints={
-            "currency": {"allowed_values": ["SAR", "USD"]},
-        },
-    ),
-    "demand_prioritization_resources": _spec(
-        "demand_prioritization_resources",
-        [],
-        extra_fields={
-            "demand_item": {"type": "string"},
-            "priority_band": {"type": "string"},
-        },
-        extra_constraints={
-            "priority_band": {"allowed_values": ["now", "next", "later"]},
-        },
-    ),
-    "oracle_erp_program_oversight": _spec(
-        "oracle_erp_program_oversight",
-        [],
-        extra_fields={
-            "workstream": {"type": "string"},
-            "suite_module": {"type": "string"},
-        },
-        extra_constraints={
-            "workstream": {"allowed_values": ["erp_delivery", "integration", "cutover"]},
-            "suite_module": {"allowed_values": ["finance", "procurement", "hcm"]},
-        },
-    ),
-    "gdpr_privacy_audit": _spec(
-        "gdpr_privacy_audit",
-        ["audit"],
-        extra_fields={
-            "lawful_basis": {"type": "string"},
-            "data_subject": {"type": "string"},
-        },
-        extra_constraints={
-            "lawful_basis": {
-                "allowed_values": [
-                    "legitimate_interest",
-                    "consent",
-                    "contract",
-                    "legal_obligation",
-                ]
+            "fulfillment_stage": {
+                "allowed_values": ["received", "picking", "packed", "shipped"],
             },
         },
     ),
-    "governance_continuous_improvement": _spec(
-        "governance_continuous_improvement",
-        [],
+    "ops_dashboard": _spec(
+        "ops_dashboard",
+        ["dashboard", "analytics", "database"],
         extra_fields={
-            "owner_name": {"type": "string"},
-            "feedback_source": {"type": "string"},
+            "view_name": {"type": "string"},
+            "horizon": {"type": "string"},
         },
         extra_constraints={
-            "feedback_source": {"allowed_values": ["stakeholder", "rte", "operator"]},
+            "horizon": {"allowed_values": ["today", "week", "month"]},
         },
     ),
-    "airline_ops_portfolio_context": _spec(
-        "airline_ops_portfolio_context",
-        [],
+    "stock_alerts": _spec(
+        "stock_alerts",
+        ["notification", "event_bus"],
         extra_fields={
-            "station": {"type": "string"},
-            "framing": {"type": "string"},
+            "sku": {"type": "string"},
+            "alert_kind": {"type": "string"},
         },
         extra_constraints={
-            "station": {"allowed_values": ["RUH", "JED", "DMM"]},
-            "framing": {"allowed_values": ["portfolio", "ops_context"]},
+            "alert_kind": {
+                "allowed_values": ["below_reorder", "stalled_order"],
+            },
+        },
+    ),
+    "pilot_ops_log": _spec(
+        "pilot_ops_log",
+        ["knowledge", "memory", "storage"],
+        extra_fields={
+            "note_title": {"type": "string"},
+            "note_body": {"type": "string"},
         },
     ),
 }

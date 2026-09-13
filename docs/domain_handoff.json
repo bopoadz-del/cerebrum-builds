@@ -1,0 +1,19 @@
+{
+  "coder_brief_path": "docs/coder_brief.md",
+  "domain": "retail",
+  "floor_url": "https://cerebrumdev-backend-goia.onrender.com/floor?session=sess_d00261c31ff7451f",
+  "instruction": "MR.FINANCE: COLLECTOR+CLONER are done for retail. The frozen command is `docs/coder_brief.md` for session `sess_d00261c31ff7451f`. Take over: produce, check, post, and deploy (GitHub or as the user directs). Do not wait for Grok Bot SendToAgent.",
+  "issue_number": 6,
+  "issue_url": "https://github.com/bopoadz-del/cerebrum-builds/issues/6",
+  "notified_via": [
+    "github_issue",
+    "domain_handoff.json"
+  ],
+  "product_id": "retail-operations",
+  "schema_version": "domain_handoff.v1",
+  "session_id": "sess_d00261c31ff7451f",
+  "stage": "post_cloner",
+  "ts": "2026-09-13T06:12:41Z",
+  "vertical": "retail-operations",
+  "workspace": "/app/storage/factory_outputs/sessions/sess_d00261c31ff7451f/retail-operations"
+}

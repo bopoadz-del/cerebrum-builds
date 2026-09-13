@@ -17,12 +17,14 @@ def test_workspace_imports() -> None:
     from app.dispatch import BLOCK_DEFAULT_ACTIONS, execute
     from app.store import COLUMNS, list_all, save
 
-    assert app.title == "AirOps Portfolio"
+    assert app.title == "Retail Ops Tracker"
     assert BLOCK_DEFAULT_ACTIONS["audit"] == "log"
     assert BLOCK_DEFAULT_ACTIONS["dashboard"] == "render"
     assert BLOCK_DEFAULT_ACTIONS["vector_search"] == "search"
     assert BLOCK_DEFAULT_ACTIONS["formula_executor"] == "execute"
     assert BLOCK_DEFAULT_ACTIONS["capture"] == "extract"
+    assert BLOCK_DEFAULT_ACTIONS["memory"] == "get"
+    assert BLOCK_DEFAULT_ACTIONS["storage"] == "store"
     for capability_id in REQUIRED_CAPABILITY_IDS:
         assert capability_id in COLUMNS
     assert callable(execute)
@@ -70,3 +72,11 @@ def test_full_pilot_authorship_floor() -> None:
     authored = [p for p in root.glob("*.py") if p.name != "__init__.py"]
     assert len(authored) >= 5
     assert len(authored) == len(REQUIRED_CAPABILITY_IDS)
+    expected = {
+        "inventory_tracking",
+        "order_management",
+        "ops_dashboard",
+        "stock_alerts",
+        "pilot_ops_log",
+    }
+    assert {p.stem for p in authored} == expected

@@ -73,18 +73,18 @@ def test_health_and_ui(client: TestClient) -> None:
     assert health.status_code == 200
     ui = client.get("/")
     assert ui.status_code == 200
-    assert "AirOps Portfolio" in ui.text
+    assert "Retail Ops Tracker" in ui.text
     assert "OPERATOR_TOKEN" in ui.text
 
 
-def test_core_kernel_and_actor_on_schema_sample(client: TestClient) -> None:
-    payload = _sample_payload("aviation_core")
-    response = client.post("/v1/aviation_core", json=payload)
+def test_inventory_count_and_actor_on_schema_sample(client: TestClient) -> None:
+    payload = _sample_payload("inventory_tracking")
+    response = client.post("/v1/inventory_tracking", json=payload)
     assert response.status_code == 200
     body = response.json()
     assert body.get("ok") is not False
     assert body.get("actor") == "operator"
-    kernel = (body.get("record") or {}).get("aviation_kernel") or {}
-    assert kernel.get("carrier_code") == "RX"
-    assert kernel.get("not_a_booking_engine") is True
-    assert (kernel.get("network") or {}).get("meets_hundred_plus") is True
+    record = body.get("record") or {}
+    assert record.get("sku") == payload.get("sku") or "sample"
+    assert record.get("below_reorder") is True
+    assert record.get("quantity_on_hand") == 0

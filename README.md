@@ -1,6 +1,6 @@
-# AirOps Portfolio
+# Aviation Operations Hub
 
-Cerebrum-builds session for **AirOps Portfolio** — Riyadh Air (RX) enterprise technology portfolio. Manufactured from vendored Store blocks (`audit`, `dashboard`) plus GENERATE handlers for aviation kernel, portfolio, hybrid delivery, milestones, KPI, budget, demand, ERP workstream, GDPR, governance, and ops context.
+Cerebrum-builds session `sess_0caf3859ba9f44b6` for **Aviation Operations Hub** — fleet compliance, maintenance tracking, crew readiness, document control, and operational analytics. Manufactured from vendored Store blocks (`workflow`, `audit`, `file_hasher`, `database`, `validation`, `team`, `notification`, `document_engine`, `storage`, `dashboard`, `analytics`, `knowledge`, `vector_search`, `memory`).
 
 Private Factory CLI-pivot scratch store. One branch per session. Store gate = GHA docker + `scripts/acceptance.py` (not Render).
 

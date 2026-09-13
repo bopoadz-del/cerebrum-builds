@@ -36,135 +36,97 @@ def _spec(
 
 
 SPECS: Dict[str, Dict[str, Any]] = {
-    "aviation_core": _spec(
-        "aviation_core",
-        [],
+    "aircraft_maintenance_tracking": _spec(
+        "aircraft_maintenance_tracking",
+        ["workflow", "audit"],
         extra_fields={
-            "carrier_code": {"type": "string"},
-            "hub_city": {"type": "string"},
+            "tail_number": {"type": "string"},
+            "work_order_kind": {"type": "string"},
         },
         extra_constraints={
-            "carrier_code": {"allowed_values": ["RX"]},
-            "hub_city": {"allowed_values": ["Riyadh"]},
-        },
-    ),
-    "audit": _spec("audit", ["audit"]),
-    "dashboard": _spec("dashboard", ["dashboard"]),
-    "enterprise_portfolio_dashboard": _spec(
-        "enterprise_portfolio_dashboard",
-        [],
-        extra_fields={
-            "initiative_name": {"type": "string"},
-            "horizon": {"type": "string"},
-        },
-        extra_constraints={
-            "horizon": {"allowed_values": ["strategic", "tactical", "runway"]},
-        },
-    ),
-    "hybrid_program_delivery": _spec(
-        "hybrid_program_delivery",
-        [],
-        extra_fields={
-            "owner_role": {"type": "string"},
-            "delivery_mode": {"type": "string"},
-        },
-        extra_constraints={
-            "owner_role": {"allowed_values": ["rte", "scrum_master", "pm", "ba"]},
-            "delivery_mode": {"allowed_values": ["hybrid", "agile", "waterfall"]},
-        },
-    ),
-    "integrated_planning_milestones": _spec(
-        "integrated_planning_milestones",
-        [],
-        extra_fields={
-            "milestone_name": {"type": "string"},
-            "planned_date": {"type": "date"},
-        },
-    ),
-    "kpi_value_realization": _spec(
-        "kpi_value_realization",
-        [],
-        extra_fields={
-            "kpi_name": {"type": "string"},
-            "value_stream": {"type": "string"},
-        },
-        extra_constraints={
-            "value_stream": {"allowed_values": ["network", "digital", "erp", "ops"]},
-        },
-    ),
-    "budget_capacity_oversight": _spec(
-        "budget_capacity_oversight",
-        [],
-        extra_fields={
-            "budget_code": {"type": "string"},
-            "currency": {"type": "string"},
-        },
-        extra_constraints={
-            "currency": {"allowed_values": ["SAR", "USD"]},
-        },
-    ),
-    "demand_prioritization_resources": _spec(
-        "demand_prioritization_resources",
-        [],
-        extra_fields={
-            "demand_item": {"type": "string"},
-            "priority_band": {"type": "string"},
-        },
-        extra_constraints={
-            "priority_band": {"allowed_values": ["now", "next", "later"]},
-        },
-    ),
-    "oracle_erp_program_oversight": _spec(
-        "oracle_erp_program_oversight",
-        [],
-        extra_fields={
-            "workstream": {"type": "string"},
-            "suite_module": {"type": "string"},
-        },
-        extra_constraints={
-            "workstream": {"allowed_values": ["erp_delivery", "integration", "cutover"]},
-            "suite_module": {"allowed_values": ["finance", "procurement", "hcm"]},
-        },
-    ),
-    "gdpr_privacy_audit": _spec(
-        "gdpr_privacy_audit",
-        ["audit"],
-        extra_fields={
-            "lawful_basis": {"type": "string"},
-            "data_subject": {"type": "string"},
-        },
-        extra_constraints={
-            "lawful_basis": {
-                "allowed_values": [
-                    "legitimate_interest",
-                    "consent",
-                    "contract",
-                    "legal_obligation",
-                ]
+            "work_order_kind": {
+                "allowed_values": ["scheduled", "unscheduled", "ad_directive"],
             },
         },
     ),
-    "governance_continuous_improvement": _spec(
-        "governance_continuous_improvement",
-        [],
+    "regulatory_compliance_audit": _spec(
+        "regulatory_compliance_audit",
+        ["audit", "file_hasher"],
         extra_fields={
-            "owner_name": {"type": "string"},
-            "feedback_source": {"type": "string"},
+            "regulation": {"type": "string"},
+            "finding_severity": {"type": "string"},
         },
         extra_constraints={
-            "feedback_source": {"allowed_values": ["stakeholder", "rte", "operator"]},
+            "regulation": {
+                "allowed_values": ["part_121", "part_135", "easa_ops"],
+            },
+            "finding_severity": {
+                "allowed_values": ["observation", "minor", "major"],
+            },
         },
     ),
-    "airline_ops_portfolio_context": _spec(
-        "airline_ops_portfolio_context",
-        [],
+    "fleet_registry_management": _spec(
+        "fleet_registry_management",
+        ["database", "validation"],
         extra_fields={
-            "station": {"type": "string"},
-            "framing": {"type": "string"},
+            "registration": {"type": "string"},
+            "aircraft_type": {"type": "string"},
         },
         extra_constraints={
-            "station": {"allowed_values": ["RUH", "JED", "DMM"]},
-            "framing": {"allowed_values": ["portfolio", "ops_context"]},
+            "aircraft_type": {
+                "allowed_values": ["narrowbody", "widebody", "bizjet"],
+            },
+        },
+    ),
+    "crew_training_readiness": _spec(
+        "crew_training_readiness",
+        ["team", "notification", "workflow"],
+        extra_fields={
+            "crew_role": {"type": "string"},
+            "currency_item": {"type": "string"},
+        },
+        extra_constraints={
+            "crew_role": {
+                "allowed_values": ["captain", "first_officer", "cabin"],
+            },
+            "currency_item": {
+                "allowed_values": ["line_check", "sim", "crm"],
+            },
+        },
+    ),
+    "flight_document_control": _spec(
+        "flight_document_control",
+        ["document_engine", "storage", "file_hasher", "notification"],
+        extra_fields={
+            "document_kind": {"type": "string"},
+            "revision": {"type": "string"},
+        },
+        extra_constraints={
+            "document_kind": {
+                "allowed_values": ["mel", "qrh", "weight_balance", "release"],
+            },
+        },
+    ),
+    "operational_analytics_dashboard": _spec(
+        "operational_analytics_dashboard",
+        ["dashboard", "analytics"],
+        extra_fields={
+            "view_name": {"type": "string"},
+            "horizon": {"type": "string"},
+        },
+        extra_constraints={
+            "horizon": {"allowed_values": ["today", "week", "month"]},
+        },
+    ),
+    "safety_knowledge_assistant": _spec(
+        "safety_knowledge_assistant",
+        ["knowledge", "vector_search", "memory"],
+        extra_fields={
+            "question": {"type": "string"},
+            "corpus_layer": {"type": "string"},
+        },
+        extra_constraints={
+            "corpus_layer": {"allowed_values": ["sms", "asrs", "fom"]},
         },
     ),
 }

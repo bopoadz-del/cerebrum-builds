@@ -60,7 +60,7 @@ def main() -> int:
         )
 
         missing = client.post(
-            "/v1/aviation_core",
+            "/v1/aircraft_maintenance_tracking",
             json={"status": "open"},
             headers=AUTH_HEADERS,
         )
@@ -73,7 +73,7 @@ def main() -> int:
         )
 
         bad_enum = client.post(
-            "/v1/aviation_core",
+            "/v1/aircraft_maintenance_tracking",
             json={"reference": "sample", "status": "bogus"},
             headers=AUTH_HEADERS,
         )
@@ -88,7 +88,7 @@ def main() -> int:
         ui = client.get("/")
         results.append(
             _line(
-                "PASS" if ui.status_code == 200 and "AirOps Portfolio" in ui.text else "FAIL",
+                "PASS" if ui.status_code == 200 and "Aviation Operations Hub" in ui.text else "FAIL",
                 "ui_served_200",
                 f"GET / -> {ui.status_code}",
             )
@@ -99,12 +99,12 @@ def main() -> int:
             json={
                 "layer": 1,
                 "doc_id": "acc-pack",
-                "title": "Portfolio milestone pack",
-                "text": "Integrated planning milestone and KPI value realization for the RX portfolio.",
+                "title": "Maintenance airworthiness pack",
+                "text": "Scheduled maintenance, airworthiness tracking, and crew currency for the aviation operations hub.",
             },
             headers=AUTH_HEADERS,
         )
-        query = client.get("/v1/rag/query", params={"q": "portfolio milestone"})
+        query = client.get("/v1/rag/query", params={"q": "maintenance airworthiness"})
         hit = (
             ingest.status_code == 200
             and query.status_code == 200
@@ -138,8 +138,8 @@ def main() -> int:
         )
 
         open_post = client.post(
-            "/v1/aviation_core",
-            json={"reference": "sample", "status": "open", "carrier_code": "RX"},
+            "/v1/aircraft_maintenance_tracking",
+            json={"reference": "sample", "status": "open", "tail_number": "sample"},
         )
         results.append(
             _line(
@@ -150,7 +150,7 @@ def main() -> int:
         )
         open_ingest = client.post(
             "/v1/rag/ingest",
-            json={"layer": 1, "doc_id": "denied", "title": "x", "text": "portfolio milestone"},
+            json={"layer": 1, "doc_id": "denied", "title": "x", "text": "maintenance airworthiness"},
         )
         results.append(
             _line(
@@ -160,26 +160,27 @@ def main() -> int:
             )
         )
         quoted = client.post(
-            "/v1/aviation_core",
+            "/v1/aircraft_maintenance_tracking",
             json={
                 "reference": "sample",
                 "status": "open",
-                "carrier_code": "RX",
-                "hub_city": "Riyadh",
+                "tail_number": "sample",
+                "work_order_kind": "scheduled",
             },
             headers=AUTH_HEADERS,
         )
-        destinations = 0
+        remembered = False
         if quoted.status_code == 200:
-            record = (quoted.json() or {}).get("record") or {}
-            destinations = ((record.get("aviation_kernel") or {}).get("network") or {}).get(
-                "destinations"
-            ) or 0
+            listed = client.get("/v1/aircraft_maintenance_tracking")
+            records = (listed.json() or {}).get("records") or []
+            remembered = listed.status_code == 200 and any(
+                row.get("reference") == "sample" for row in records
+            )
         results.append(
             _line(
-                "PASS" if quoted.status_code == 200 and destinations >= 100 else "FAIL",
-                "core_network_floor",
-                f"status={quoted.status_code} destinations={destinations}",
+                "PASS" if quoted.status_code == 200 and remembered else "FAIL",
+                "core_round_trip",
+                f"status={quoted.status_code} remembered={remembered}",
             )
         )
 
@@ -271,7 +272,7 @@ def main() -> int:
     )
     results.append(
         _line(
-            "PASS" if len(REQUIRED_CAPABILITY_IDS) == 13 else "FAIL",
+            "PASS" if len(REQUIRED_CAPABILITY_IDS) == 7 else "FAIL",
             "capability_roster",
             f"{len(REQUIRED_CAPABILITY_IDS)} capabilities",
         )

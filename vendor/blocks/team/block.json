@@ -1,0 +1,22 @@
+{
+  "acceptance": [{"check": "errors on an unknown or missing action", "id": "unknown_action", "status": "failed"}],
+  "author": "Cerebrum Team",
+  "description": "team kit shim",
+  "id": "team",
+  "inputs": [
+    {"description": "JSON payload", "name": "input", "required": false, "type": "json"},
+    {"default": "create_team", "description": "Action", "name": "action", "required": false, "type": "string"}
+  ],
+  "layer": 2,
+  "name": "Team",
+  "never": [],
+  "outputs": [{"description": "Result", "name": "result", "type": "json"}],
+  "permissions": {"blocks": [], "filesystem": false, "imports": [], "network": false},
+  "publisher_id": "cerebrum_platform",
+  "reads": [{"kind": "caller", "scope": "input"}],
+  "requires": [],
+  "tags": ["team"],
+  "trust_tier": "platform",
+  "version": "1.0.0",
+  "writes": [{"kind": "caller", "scope": "output"}]
+}

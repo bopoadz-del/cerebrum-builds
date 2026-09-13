@@ -1,114 +1,65 @@
 {
   "capabilities": [
     {
-      "block_ids": [],
-      "description": "Core aviation workflows and data model",
-      "id": "aviation_core",
-      "required": true,
-      "strategy_hint": "GENERATE"
-    },
-    {
-      "block_ids": [
-        "audit"
-      ],
-      "description": "Audit capability (reused from the block store)",
-      "id": "audit",
+      "block_ids": ["workflow", "audit"],
+      "description": "Aircraft maintenance and airworthiness work orders",
+      "id": "aircraft_maintenance_tracking",
       "required": true,
       "strategy_hint": "REUSE"
     },
     {
-      "block_ids": [
-        "dashboard"
-      ],
-      "description": "Dashboard capability (reused from the block store)",
-      "id": "dashboard",
+      "block_ids": ["audit", "file_hasher"],
+      "description": "Regulatory compliance findings with hashed evidence",
+      "id": "regulatory_compliance_audit",
       "required": true,
       "strategy_hint": "REUSE"
     },
     {
-      "block_ids": [],
-      "description": "Enterprise & corporate technology portfolio dashboard for strategic initiatives",
-      "id": "enterprise_portfolio_dashboard",
-      "required": true,
-      "strategy_hint": "GENERATE"
-    },
-    {
-      "block_ids": [],
-      "description": "Hybrid agile + waterfall program delivery with RTEs, Scrum Masters, PMs, BAs ownership",
-      "id": "hybrid_program_delivery",
-      "required": true,
-      "strategy_hint": "GENERATE"
-    },
-    {
-      "block_ids": [],
-      "description": "Integrated planning, scheduling, and milestone management",
-      "id": "integrated_planning_milestones",
-      "required": true,
-      "strategy_hint": "GENERATE"
-    },
-    {
-      "block_ids": [],
-      "description": "Reporting with KPI and value-realization tracking",
-      "id": "kpi_value_realization",
-      "required": true,
-      "strategy_hint": "GENERATE"
-    },
-    {
-      "block_ids": [],
-      "description": "Budget and capacity oversight within approved financial parameters",
-      "id": "budget_capacity_oversight",
-      "required": true,
-      "strategy_hint": "GENERATE"
-    },
-    {
-      "block_ids": [],
-      "description": "Demand prioritization and resource alignment across business/tech stakeholders",
-      "id": "demand_prioritization_resources",
-      "required": true,
-      "strategy_hint": "GENERATE"
-    },
-    {
-      "block_ids": [],
-      "description": "Oracle ERP suite program oversight as ERP delivery workstream (not full Oracle clone)",
-      "id": "oracle_erp_program_oversight",
-      "required": true,
-      "strategy_hint": "GENERATE"
-    },
-    {
-      "block_ids": [
-        "audit"
-      ],
-      "description": "GDPR/data privacy controls with fail-closed auth, Principal audit, CORS",
-      "id": "gdpr_privacy_audit",
+      "block_ids": ["database", "validation"],
+      "description": "Fleet registry and type-certificate records",
+      "id": "fleet_registry_management",
       "required": true,
       "strategy_hint": "REUSE"
     },
     {
-      "block_ids": [],
-      "description": "Governance: clear ownership, delivery disciplines, continuous improvement from stakeholder feedback",
-      "id": "governance_continuous_improvement",
+      "block_ids": ["team", "notification", "workflow"],
+      "description": "Crew training currency and readiness",
+      "id": "crew_training_readiness",
       "required": true,
-      "strategy_hint": "GENERATE"
+      "strategy_hint": "REUSE"
     },
     {
-      "block_ids": [],
-      "description": "Airline ops/portfolio context for Riyadh Air RX \u2014 Riyadh HQ, 100+ destinations (not booking engine)",
-      "id": "airline_ops_portfolio_context",
+      "block_ids": ["document_engine", "storage", "file_hasher", "notification"],
+      "description": "Controlled flight document revisions",
+      "id": "flight_document_control",
       "required": true,
-      "strategy_hint": "GENERATE"
+      "strategy_hint": "REUSE"
+    },
+    {
+      "block_ids": ["dashboard", "analytics"],
+      "description": "Operational analytics dashboard",
+      "id": "operational_analytics_dashboard",
+      "required": true,
+      "strategy_hint": "REUSE"
+    },
+    {
+      "block_ids": ["knowledge", "vector_search", "memory"],
+      "description": "Safety knowledge assistant",
+      "id": "safety_knowledge_assistant",
+      "required": true,
+      "strategy_hint": "REUSE"
     }
   ],
   "connectors": [],
   "drafting_mode": "keyword_fallback",
-  "drafting_note": "LLM drafting failed (HTTPStatusError); deterministic fallback used",
   "edge_profile": "standard",
   "factory_scenario": "CREATE_PRODUCT",
   "human_authority": true,
-  "n_required": 13,
+  "n_required": 7,
   "product_id": "aviation",
-  "product_name": "AirOps Portfolio",
+  "product_name": "Aviation Operations Hub",
   "schema_version": "product_blueprint.v1",
-  "summary": "Build AirOps Portfolio for Riyadh Air (RX): digitally native Saudi national carrier HQ Riyadh connecting the Kingdom to 100+ destinations. Enterprise & corporate technology portfolio dashboard for strategic initiatives; hybrid agile+waterfall program delivery with RTEs, Scrum Masters, PMs, BAs as owners; integrated planning/scheduling/milestone management; reporting with KPI and value-realization tracking; budget and capacity oversight within approved financial parameters; demand prioritization and resource alignment across business and tech stakeholders; Oracle ERP suite program oversight as an ERP delivery workstream (not a full Oracle clone); GDPR/data privacy controls with fail-closed auth, Principal audit, and CORS; governance with clear ownership, delivery disciplines, and continuous improvement from stakeholder feedback; airline ops/portfolio framing (not a booking engine). Kit-backed aviation. HotelOps-grade + Store 12/12. Manufacture from Cerebrum-Blocks Store blocks only \u2014 never clone an external product repo. Pilot-ready with tests. Coder: Cursor BA only \u2014 no Kimi/DeepSeek.",
+  "summary": "Aviation Operations Hub is an integrated platform for airlines, charter operators, and private flight departments to manage fleet compliance, maintenance, crew readiness, and flight operations.",
   "ui_modules": [
     "command_center",
     "operational_chat",

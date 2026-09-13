@@ -1,18 +1,56 @@
 {
   "blocks": [
+    "analytics",
     "audit",
-    "dashboard"
+    "dashboard",
+    "database",
+    "document_engine",
+    "event_bus",
+    "file_hasher",
+    "knowledge",
+    "memory",
+    "notification",
+    "storage",
+    "team",
+    "validation",
+    "vector_search",
+    "workflow"
   ],
   "id": "platform",
   "name": "Platform",
   "product_blocks": [
+    "analytics",
     "audit",
-    "dashboard"
+    "dashboard",
+    "database",
+    "document_engine",
+    "file_hasher",
+    "knowledge",
+    "memory",
+    "notification",
+    "storage",
+    "team",
+    "validation",
+    "vector_search",
+    "workflow"
   ],
-  "source": "synthesized-from-factory-shelf",
+  "source": "brief-compiler",
   "vendored_blocks": {
+    "analytics": "vendor/blocks/analytics",
     "audit": "vendor/blocks/audit",
-    "dashboard": "vendor/blocks/dashboard"
+    "dashboard": "vendor/blocks/dashboard",
+    "database": "vendor/blocks/database",
+    "document_engine": "vendor/blocks/document_engine",
+    "event_bus": "vendor/blocks/event_bus",
+    "file_hasher": "vendor/blocks/file_hasher",
+    "knowledge": "vendor/blocks/knowledge",
+    "memory": "vendor/blocks/memory",
+    "notification": "vendor/blocks/notification",
+    "storage": "vendor/blocks/storage",
+    "team": "vendor/blocks/team",
+    "validation": "vendor/blocks/validation",
+    "vector_search": "vendor/blocks/vector_search",
+    "workflow": "vendor/blocks/workflow"
   },
   "version": "1.0.0"
 }

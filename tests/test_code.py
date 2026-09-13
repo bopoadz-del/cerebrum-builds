@@ -17,12 +17,12 @@ def test_workspace_imports() -> None:
     from app.dispatch import BLOCK_DEFAULT_ACTIONS, execute
     from app.store import COLUMNS, list_all, save
 
-    assert app.title == "AirOps Portfolio"
+    assert app.title == "Aviation Operations Hub"
     assert BLOCK_DEFAULT_ACTIONS["audit"] == "log"
     assert BLOCK_DEFAULT_ACTIONS["dashboard"] == "render"
     assert BLOCK_DEFAULT_ACTIONS["vector_search"] == "search"
-    assert BLOCK_DEFAULT_ACTIONS["formula_executor"] == "execute"
-    assert BLOCK_DEFAULT_ACTIONS["capture"] == "extract"
+    assert BLOCK_DEFAULT_ACTIONS["file_hasher"] == "hash"
+    assert BLOCK_DEFAULT_ACTIONS["workflow"] == "run"
     for capability_id in REQUIRED_CAPABILITY_IDS:
         assert capability_id in COLUMNS
     assert callable(execute)
@@ -46,6 +46,15 @@ def test_specs_envelope_vocabulary() -> None:
         assert allowed == ["open", "in_progress", "closed"]
         assert "reference" in spec["FIELDS"]
         assert spec["entity"] == spec["id"]
+    assert set(REQUIRED_CAPABILITY_IDS) == {
+        "aircraft_maintenance_tracking",
+        "regulatory_compliance_audit",
+        "fleet_registry_management",
+        "crew_training_readiness",
+        "flight_document_control",
+        "operational_analytics_dashboard",
+        "safety_knowledge_assistant",
+    }
 
 
 def test_rag_paths_quoted_in_source() -> None:

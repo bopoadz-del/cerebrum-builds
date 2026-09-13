@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: cerebrum-airops-portfolio
+    name: cerebrum-aviation-ops-hub
     runtime: python
     plan: starter
     buildCommand: pip install -r requirements.txt

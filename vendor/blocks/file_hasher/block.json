@@ -1,0 +1,22 @@
+{
+  "acceptance": [{"check": "errors on an unknown or missing action", "id": "unknown_action", "status": "failed"}],
+  "author": "Cerebrum Team",
+  "description": "file_hasher kit shim",
+  "id": "file_hasher",
+  "inputs": [
+    {"description": "JSON payload", "name": "input", "required": false, "type": "json"},
+    {"default": "hash", "description": "Action", "name": "action", "required": false, "type": "string"}
+  ],
+  "layer": 2,
+  "name": "File Hasher",
+  "never": [],
+  "outputs": [{"description": "Result", "name": "result", "type": "json"}],
+  "permissions": {"blocks": [], "filesystem": false, "imports": [], "network": false},
+  "publisher_id": "cerebrum_platform",
+  "reads": [{"kind": "caller", "scope": "input"}],
+  "requires": [],
+  "tags": ["file_hasher"],
+  "trust_tier": "platform",
+  "version": "1.0.0",
+  "writes": [{"kind": "caller", "scope": "output"}]
+}

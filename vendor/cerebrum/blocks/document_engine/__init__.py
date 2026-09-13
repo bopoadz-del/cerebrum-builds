@@ -52,7 +52,7 @@ from .mapper import DocumentMapper, StructuredDocument
 
 _BLOCK_MODULE_NAME = "vendor.cerebrum.blocks.document_engine_block"
 _BLOCK_FILE_PATH = os.path.abspath(
-    os.path.join(os.path.dirname(__file__), "..", "document_engine_block.py")
+    os.path.join(os.path.dirname(__file__), "..", "document_engine_block", "__init__.py")
 )
 if _BLOCK_MODULE_NAME in sys.modules:
     _block_module = sys.modules[_BLOCK_MODULE_NAME]

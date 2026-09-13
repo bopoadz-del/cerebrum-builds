@@ -137,7 +137,14 @@ def notification_input(payload: Dict[str, Any]) -> Dict[str, Any]:
         "tool": "event_bus",
         "block": "event_bus",
         "message": f"budget alert for {_ref(payload)}",
-        "payload": {"reference": _ref(payload), "status": _status(payload)},
+        "payload": {
+            "topic": "budget.alert",
+            "payload": {"reference": _ref(payload)},
+            "message": f"budget alert for {_ref(payload)}",
+            "channel": "mcp",
+            "tool": "event_bus",
+        },
+        "params": {"action": "publish"},
         "to": "ops@example.com",
         "subject": f"LedgerFlow {_ref(payload)}",
     }

@@ -4,15 +4,37 @@
     "airline_ops_portfolio_context",
     "audit",
     "aviation_core",
-    "budget_capacity_oversight",
+    "budget_financial_guardrails_value_realization",
     "dashboard",
-    "demand_prioritization_resources",
-    "enterprise_portfolio_dashboard",
-    "gdpr_privacy_audit",
+    "delivery_kpi_adoption_analytics",
+    "demand_prioritization_capacity_alignment",
+    "erp_oracle_integration",
     "governance_continuous_improvement",
-    "hybrid_program_delivery",
-    "integrated_planning_milestones",
-    "kpi_value_realization",
-    "oracle_erp_program_oversight"
-  ]
+    "hybrid_delivery_management",
+    "integrated_planning_scheduling_milestones",
+    "portfolio_program_governance",
+    "privacy_compliance_evidence"
+  ],
+  "authored_handlers": [
+    "airline_ops_portfolio_context",
+    "audit",
+    "aviation_core",
+    "budget_financial_guardrails_value_realization",
+    "dashboard",
+    "delivery_kpi_adoption_analytics",
+    "demand_prioritization_capacity_alignment",
+    "erp_oracle_integration",
+    "governance_continuous_improvement",
+    "hybrid_delivery_management",
+    "integrated_planning_scheduling_milestones",
+    "portfolio_program_governance",
+    "privacy_compliance_evidence"
+  ],
+  "product_id": "airline-delivery-management",
+  "product_name": "Riyadh Air Enterprise Delivery Platform",
+  "gates": {
+    "code": "CODE_GREEN",
+    "product": "STORE_GREEN",
+    "store": "STORE_GREEN"
+  }
 }

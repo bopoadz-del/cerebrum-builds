@@ -36,135 +36,74 @@ def _spec(
 
 
 SPECS: Dict[str, Dict[str, Any]] = {
-    "aviation_core": _spec(
-        "aviation_core",
-        [],
+    "transaction_capture": _spec(
+        "transaction_capture",
+        ["capture", "storage", "validation"],
         extra_fields={
-            "carrier_code": {"type": "string"},
-            "hub_city": {"type": "string"},
+            "account_name": {"type": "string"},
+            "category": {"type": "string"},
+            "amount": {"type": "number"},
         },
         extra_constraints={
-            "carrier_code": {"allowed_values": ["RX"]},
-            "hub_city": {"allowed_values": ["Riyadh"]},
+            "category": {"allowed_values": ["income", "expense", "transfer"]},
+            "amount": {"min": 1},
         },
     ),
-    "audit": _spec("audit", ["audit"]),
-    "dashboard": _spec("dashboard", ["dashboard"]),
-    "enterprise_portfolio_dashboard": _spec(
-        "enterprise_portfolio_dashboard",
-        [],
+    "financial_dashboard": _spec(
+        "financial_dashboard",
+        ["dashboard", "analytics"],
         extra_fields={
-            "initiative_name": {"type": "string"},
-            "horizon": {"type": "string"},
-        },
-        extra_constraints={
-            "horizon": {"allowed_values": ["strategic", "tactical", "runway"]},
-        },
-    ),
-    "hybrid_program_delivery": _spec(
-        "hybrid_program_delivery",
-        [],
-        extra_fields={
-            "owner_role": {"type": "string"},
-            "delivery_mode": {"type": "string"},
-        },
-        extra_constraints={
-            "owner_role": {"allowed_values": ["rte", "scrum_master", "pm", "ba"]},
-            "delivery_mode": {"allowed_values": ["hybrid", "agile", "waterfall"]},
-        },
-    ),
-    "integrated_planning_milestones": _spec(
-        "integrated_planning_milestones",
-        [],
-        extra_fields={
-            "milestone_name": {"type": "string"},
-            "planned_date": {"type": "date"},
-        },
-    ),
-    "kpi_value_realization": _spec(
-        "kpi_value_realization",
-        [],
-        extra_fields={
-            "kpi_name": {"type": "string"},
-            "value_stream": {"type": "string"},
-        },
-        extra_constraints={
-            "value_stream": {"allowed_values": ["network", "digital", "erp", "ops"]},
-        },
-    ),
-    "budget_capacity_oversight": _spec(
-        "budget_capacity_oversight",
-        [],
-        extra_fields={
-            "budget_code": {"type": "string"},
+            "period": {"type": "string"},
             "currency": {"type": "string"},
         },
         extra_constraints={
-            "currency": {"allowed_values": ["SAR", "USD"]},
+            "period": {"allowed_values": ["month", "quarter", "year"]},
+            "currency": {"allowed_values": ["USD", "EUR", "GBP"]},
         },
     ),
-    "demand_prioritization_resources": _spec(
-        "demand_prioritization_resources",
-        [],
+    "budgeting_and_alerts": _spec(
+        "budgeting_and_alerts",
+        ["formula_executor", "notification", "workflow"],
         extra_fields={
-            "demand_item": {"type": "string"},
-            "priority_band": {"type": "string"},
+            "budget_name": {"type": "string"},
+            "threshold_pct": {"type": "number"},
         },
         extra_constraints={
-            "priority_band": {"allowed_values": ["now", "next", "later"]},
+            "threshold_pct": {"min": 1},
         },
     ),
-    "oracle_erp_program_oversight": _spec(
-        "oracle_erp_program_oversight",
-        [],
+    "report_generation": _spec(
+        "report_generation",
+        ["document_engine", "recommendation_template"],
         extra_fields={
-            "workstream": {"type": "string"},
-            "suite_module": {"type": "string"},
+            "report_type": {"type": "string"},
+            "period": {"type": "string"},
         },
         extra_constraints={
-            "workstream": {"allowed_values": ["erp_delivery", "integration", "cutover"]},
-            "suite_module": {"allowed_values": ["finance", "procurement", "hcm"]},
+            "report_type": {"allowed_values": ["pnl", "expense_breakdown", "tax_summary"]},
+            "period": {"allowed_values": ["month", "quarter", "year"]},
         },
     ),
-    "gdpr_privacy_audit": _spec(
-        "gdpr_privacy_audit",
-        ["audit"],
+    "audit_and_compliance": _spec(
+        "audit_and_compliance",
+        ["audit", "file_hasher"],
         extra_fields={
-            "lawful_basis": {"type": "string"},
-            "data_subject": {"type": "string"},
+            "event_action": {"type": "string"},
+            "evidence_label": {"type": "string"},
         },
         extra_constraints={
-            "lawful_basis": {
-                "allowed_values": [
-                    "legitimate_interest",
-                    "consent",
-                    "contract",
-                    "legal_obligation",
-                ]
-            },
+            "event_action": {"allowed_values": ["persist", "review", "export"]},
         },
     ),
-    "governance_continuous_improvement": _spec(
-        "governance_continuous_improvement",
-        [],
+    "data_synchronization": _spec(
+        "data_synchronization",
+        ["event_bus", "queue", "database"],
         extra_fields={
-            "owner_name": {"type": "string"},
-            "feedback_source": {"type": "string"},
+            "source_name": {"type": "string"},
+            "sync_mode": {"type": "string"},
         },
         extra_constraints={
-            "feedback_source": {"allowed_values": ["stakeholder", "rte", "operator"]},
-        },
-    ),
-    "airline_ops_portfolio_context": _spec(
-        "airline_ops_portfolio_context",
-        [],
-        extra_fields={
-            "station": {"type": "string"},
-            "framing": {"type": "string"},
-        },
-        extra_constraints={
-            "station": {"allowed_values": ["RUH", "JED", "DMM"]},
-            "framing": {"allowed_values": ["portfolio", "ops_context"]},
+            "sync_mode": {"allowed_values": ["push", "pull", "bidirectional"]},
         },
     ),
 }

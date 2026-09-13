@@ -90,7 +90,6 @@ def post_capability(
         details={
             "status": payload.get("status", "open"),
             "capability": capability_id,
-            "carrier_code": payload.get("carrier_code") or "RX",
             "category": "admin",
         },
     )
@@ -120,6 +119,6 @@ def get_capability(capability_id: str) -> Dict[str, Any]:
 def list_capabilities() -> Dict[str, Any]:
     return {
         "ok": True,
-        "product": "AirOps Portfolio",
+        "product": "LedgerFlow",
         "capabilities": list(REQUIRED_CAPABILITY_IDS),
     }

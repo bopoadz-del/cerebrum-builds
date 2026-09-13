@@ -10,6 +10,7 @@ import importlib
 _BLOCK_DEFS = {
     "analytics": ("vendor.cerebrum.blocks.analytics", "AnalyticsBlock"),
     "audit": ("vendor.cerebrum.blocks.audit", "AuditBlock"),
+    "capture": ("vendor.cerebrum.blocks.capture", "CaptureBlock"),
     "dashboard": ("vendor.cerebrum.blocks.dashboard", "DashboardBlock"),
     "database": ("vendor.cerebrum.blocks.database", "DatabaseBlock"),
     "document_engine": ("vendor.cerebrum.blocks.document_engine", "DocumentEngineBlock"),

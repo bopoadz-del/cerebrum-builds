@@ -1,4 +1,4 @@
-"""AirOps Portfolio FastAPI entry. Bind 0.0.0.0:$PORT on Render."""
+"""LedgerFlow FastAPI entry. Bind 0.0.0.0:$PORT on Render."""
 
 from __future__ import annotations
 
@@ -42,12 +42,12 @@ async def lifespan(_app: FastAPI):
 
 
 app = FastAPI(
-    title="AirOps Portfolio",
+    title="LedgerFlow",
     version="1.0.0",
     description=(
-        "Cerebrum AirOps Portfolio for Riyadh Air (RX) — enterprise technology "
-        "portfolio, hybrid delivery, milestones, KPI, budget, demand, ERP workstream, "
-        "GDPR, governance. Mutations require a bearer operator token."
+        "LedgerFlow personal finance platform — track income and expenses, "
+        "automate budgeting, and surface savings insights. Mutations require "
+        "a bearer operator token."
     ),
     lifespan=lifespan,
 )

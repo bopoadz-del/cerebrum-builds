@@ -1,3 +1,3 @@
-"""AirOps Portfolio — kit-backed aviation operations for Riyadh Air (RX)."""
+"""LedgerFlow — personal finance for operators and admins."""
 
 __version__ = "1.0.0"

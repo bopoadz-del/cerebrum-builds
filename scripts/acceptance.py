@@ -271,7 +271,7 @@ def main() -> int:
     )
     results.append(
         _line(
-            "PASS" if len(REQUIRED_CAPABILITY_IDS) == 13 else "FAIL",
+            "PASS" if len(REQUIRED_CAPABILITY_IDS) == 20 else "FAIL",
             "capability_roster",
             f"{len(REQUIRED_CAPABILITY_IDS)} capabilities",
         )

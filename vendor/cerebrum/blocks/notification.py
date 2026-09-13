@@ -228,6 +228,9 @@ class NotificationBlock(TypedBlock):
             from vendor.cerebrum.blocks import BLOCK_REGISTRY
 
             try:
+                from vendor.blocks.audit.block import (
+                    _instantiate_store_block as _create_block_instance,
+                )
             except ImportError:
                 # Standalone/vendored runtime (a factory-built platform):
                 # there is no platform wiring, tier gate or memory cache to

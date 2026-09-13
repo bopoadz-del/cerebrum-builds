@@ -167,6 +167,93 @@ SPECS: Dict[str, Dict[str, Any]] = {
             "framing": {"allowed_values": ["portfolio", "ops_context"]},
         },
     ),
+    "aircraft_maintenance_tracking": _spec(
+        "aircraft_maintenance_tracking",
+        ["workflow", "audit"],
+        extra_fields={
+            "tail_number": {"type": "string"},
+            "maintenance_kind": {"type": "string"},
+        },
+        extra_constraints={
+            "maintenance_kind": {
+                "allowed_values": ["scheduled", "unscheduled", "ad_compliance"]
+            },
+        },
+    ),
+    "regulatory_compliance_audit": _spec(
+        "regulatory_compliance_audit",
+        ["audit", "file_hasher"],
+        extra_fields={
+            "regulation": {"type": "string"},
+            "audit_scope": {"type": "string"},
+        },
+        extra_constraints={
+            "regulation": {"allowed_values": ["far_121", "easa_part_ops", "gaca"]},
+            "audit_scope": {"allowed_values": ["airworthiness", "ops", "training"]},
+        },
+    ),
+    "fleet_registry_management": _spec(
+        "fleet_registry_management",
+        ["database", "validation"],
+        extra_fields={
+            "aircraft_type": {"type": "string"},
+            "registry_mark": {"type": "string"},
+        },
+        extra_constraints={
+            "aircraft_type": {
+                "allowed_values": ["narrow_body", "wide_body", "regional", "rotorcraft"]
+            },
+        },
+    ),
+    "crew_training_readiness": _spec(
+        "crew_training_readiness",
+        ["team", "notification", "workflow"],
+        extra_fields={
+            "crew_role": {"type": "string"},
+            "readiness": {"type": "string"},
+        },
+        extra_constraints={
+            "crew_role": {
+                "allowed_values": ["captain", "first_officer", "cabin", "dispatcher"]
+            },
+            "readiness": {"allowed_values": ["current", "due", "expired"]},
+        },
+    ),
+    "flight_document_control": _spec(
+        "flight_document_control",
+        ["document_engine", "storage", "file_hasher", "notification"],
+        extra_fields={
+            "document_class": {"type": "string"},
+            "control_state": {"type": "string"},
+        },
+        extra_constraints={
+            "document_class": {"allowed_values": ["amm", "mel", "qrh", "ops_manual"]},
+            "control_state": {"allowed_values": ["controlled", "draft", "superseded"]},
+        },
+    ),
+    "operational_analytics_dashboard": _spec(
+        "operational_analytics_dashboard",
+        ["dashboard", "analytics"],
+        extra_fields={
+            "horizon": {"type": "string"},
+            "metric_family": {"type": "string"},
+        },
+        extra_constraints={
+            "horizon": {"allowed_values": ["daily", "weekly", "monthly"]},
+            "metric_family": {"allowed_values": ["dispatch", "delay", "mx_backlog"]},
+        },
+    ),
+    "safety_knowledge_assistant": _spec(
+        "safety_knowledge_assistant",
+        ["knowledge", "vector_search", "memory"],
+        extra_fields={
+            "corpus": {"type": "string"},
+            "question": {"type": "string"},
+        },
+        extra_constraints={
+            "corpus": {"allowed_values": ["asrs", "sms", "sop"]},
+        },
+    ),
 }
 
 CAPABILITIES = SPECS

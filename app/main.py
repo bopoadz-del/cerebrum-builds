@@ -45,9 +45,9 @@ app = FastAPI(
     title="AirOps Portfolio",
     version="1.0.0",
     description=(
-        "Cerebrum AirOps Portfolio for Riyadh Air (RX) — enterprise technology "
-        "portfolio, hybrid delivery, milestones, KPI, budget, demand, ERP workstream, "
-        "GDPR, governance. Mutations require a bearer operator token."
+        "Cerebrum Aviation Operations Hub on AirOps Portfolio for Riyadh Air (RX) — "
+        "fleet compliance, maintenance, crew readiness, flight documents, operational "
+        "analytics, plus enterprise portfolio delivery. Mutations require a bearer operator token."
     ),
     lifespan=lifespan,
 )

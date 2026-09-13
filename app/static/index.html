@@ -25,7 +25,7 @@
 <body>
   <header>
     <h1>AirOps Portfolio</h1>
-    <p class="sub">Riyadh Air (RX) — operator / admin. Mutations require a bearer operator token. OPERATOR_TOKEN is not stored in git.</p>
+    <p class="sub">Aviation Operations Hub on AirOps Portfolio — Riyadh Air (RX). Operator / admin. Mutations require a bearer operator token. OPERATOR_TOKEN is not stored in git.</p>
   </header>
   <nav id="nav"></nav>
   <main>
@@ -72,7 +72,14 @@
       "oracle_erp_program_oversight",
       "gdpr_privacy_audit",
       "governance_continuous_improvement",
-      "airline_ops_portfolio_context"
+      "airline_ops_portfolio_context",
+      "aircraft_maintenance_tracking",
+      "regulatory_compliance_audit",
+      "fleet_registry_management",
+      "crew_training_readiness",
+      "flight_document_control",
+      "operational_analytics_dashboard",
+      "safety_knowledge_assistant"
     ];
     const UI = ["command_center", "operational_chat", "resident_engineer"];
     const MAP = {
@@ -130,7 +137,14 @@
         oracle_erp_program_oversight: {workstream: "erp_delivery", suite_module: "finance"},
         gdpr_privacy_audit: {lawful_basis: "legitimate_interest", data_subject: "sample"},
         governance_continuous_improvement: {owner_name: "sample", feedback_source: "stakeholder"},
-        airline_ops_portfolio_context: {station: "RUH", framing: "portfolio"}
+        airline_ops_portfolio_context: {station: "RUH", framing: "portfolio"},
+        aircraft_maintenance_tracking: {tail_number: "sample", maintenance_kind: "scheduled"},
+        regulatory_compliance_audit: {regulation: "far_121", audit_scope: "airworthiness"},
+        fleet_registry_management: {aircraft_type: "narrow_body", registry_mark: "sample"},
+        crew_training_readiness: {crew_role: "captain", readiness: "current"},
+        flight_document_control: {document_class: "amm", control_state: "controlled"},
+        operational_analytics_dashboard: {horizon: "daily", metric_family: "dispatch"},
+        safety_knowledge_assistant: {corpus: "asrs", question: "sample"}
       };
       return extras[id] || {};
     }

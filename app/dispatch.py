@@ -31,6 +31,8 @@ BLOCK_DEFAULT_ACTIONS: Dict[str, str] = {
     "capture": "extract",
     "estate_registry": "register",
     "readiness_engine": "assess",
+    "file_hasher": "hash",
+    "memory": "set",
 }
 
 

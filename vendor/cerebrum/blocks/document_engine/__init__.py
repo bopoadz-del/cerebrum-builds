@@ -54,9 +54,12 @@ _BLOCK_MODULE_NAME = "vendor.cerebrum.blocks.document_engine_block"
 _BLOCK_FILE_PATH = os.path.abspath(
     os.path.join(os.path.dirname(__file__), "..", "document_engine_block.py")
 )
+_BLOCK_PACKAGE_INIT = os.path.abspath(
+    os.path.join(os.path.dirname(__file__), "..", "document_engine_block", "__init__.py")
+)
 if _BLOCK_MODULE_NAME in sys.modules:
     _block_module = sys.modules[_BLOCK_MODULE_NAME]
-else:
+elif os.path.isfile(_BLOCK_FILE_PATH):
     _spec = importlib.util.spec_from_file_location(_BLOCK_MODULE_NAME, _BLOCK_FILE_PATH)
     if _spec is None or _spec.loader is None:
         raise ImportError(
@@ -65,6 +68,17 @@ else:
     _block_module = importlib.util.module_from_spec(_spec)
     sys.modules[_BLOCK_MODULE_NAME] = _block_module
     _spec.loader.exec_module(_block_module)
+elif os.path.isfile(_BLOCK_PACKAGE_INIT):
+    from vendor.cerebrum.blocks.document_engine_block import DocumentEngineBlock as _DEB
+
+    class _Loaded:
+        DocumentEngineBlock = _DEB
+
+    _block_module = _Loaded()
+else:
+    raise ImportError(
+        f"document_engine wrapper missing at {_BLOCK_FILE_PATH} or {_BLOCK_PACKAGE_INIT}"
+    )
 DocumentEngineBlock = _block_module.DocumentEngineBlock
 
 __all__ = [

@@ -3,29 +3,29 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>AirOps Portfolio</title>
+  <title>Retail Ops Tracker</title>
   <style>
-    :root { font-family: "IBM Plex Sans", "Segoe UI", sans-serif; background: #10161c; color: #eef4f2; }
+    :root { font-family: "IBM Plex Sans", "Segoe UI", sans-serif; background: #14181c; color: #eef2f6; }
     body { margin: 0; }
-    header { padding: 1.2rem 1.5rem; border-bottom: 1px solid #2a3b36; }
+    header { padding: 1.2rem 1.5rem; border-bottom: 1px solid #2b3640; }
     h1 { margin: 0; font-size: 1.4rem; }
-    p.sub { margin: 0.35rem 0 0; color: #93a8a0; }
+    p.sub { margin: 0.35rem 0 0; color: #93a0ad; }
     nav { display: flex; flex-wrap: wrap; gap: 0.4rem; padding: 0.8rem 1.5rem; }
-    nav button { background: #18221f; color: #eef4f2; border: 1px solid #355249; padding: 0.35rem 0.7rem; cursor: pointer; }
-    nav button.active { background: #0f7a5a; }
+    nav button { background: #1c242c; color: #eef2f6; border: 1px solid #3a4a58; padding: 0.35rem 0.7rem; cursor: pointer; }
+    nav button.active { background: #0f6e8a; }
     main { padding: 1rem 1.5rem 3rem; }
     label { display: block; margin: 0.6rem 0 0.2rem; }
-    input, textarea, select { width: 100%; max-width: 36rem; background: #0b100e; color: #eef4f2; border: 1px solid #355249; padding: 0.4rem; }
-    button.act { margin-top: 0.8rem; background: #0f7a5a; color: #fff; border: 0; padding: 0.5rem 1rem; cursor: pointer; }
-    pre { background: #0b100e; padding: 0.8rem; overflow: auto; }
+    input, textarea, select { width: 100%; max-width: 36rem; background: #0d1116; color: #eef2f6; border: 1px solid #3a4a58; padding: 0.4rem; }
+    button.act { margin-top: 0.8rem; background: #0f6e8a; color: #fff; border: 0; padding: 0.5rem 1rem; cursor: pointer; }
+    pre { background: #0d1116; padding: 0.8rem; overflow: auto; }
     .mods { display: grid; gap: 0.6rem; grid-template-columns: repeat(auto-fill, minmax(14rem, 1fr)); }
-    .card { border: 1px solid #2a3b36; padding: 0.7rem; }
+    .card { border: 1px solid #2b3640; padding: 0.7rem; }
   </style>
 </head>
 <body>
   <header>
-    <h1>AirOps Portfolio</h1>
-    <p class="sub">Riyadh Air (RX) — operator / admin. Mutations require a bearer operator token. OPERATOR_TOKEN is not stored in git.</p>
+    <h1>Retail Ops Tracker</h1>
+    <p class="sub">Small-team inventory, orders, and alerts. Operator / admin. Mutations require a bearer operator token. OPERATOR_TOKEN is not stored in git.</p>
   </header>
   <nav id="nav"></nav>
   <main>
@@ -34,7 +34,7 @@
       <div class="mods" id="modules"></div>
     </section>
     <section id="live" class="panel">
-      <h2 id="cap-title">aviation_core</h2>
+      <h2 id="cap-title">inventory_tracking</h2>
       <label>Operator token <input id="operator-token" type="password" autocomplete="off" placeholder="OPERATOR_TOKEN" /></label>
       <label>Capability
         <select id="capability"></select>
@@ -46,12 +46,12 @@
       <pre id="out">Ready.</pre>
     </section>
     <section id="operational_chat" class="panel">
-      <h2>Operational chat — portfolio packs</h2>
-      <label>Title <input id="rag-title" value="Portfolio milestone pack" /></label>
-      <label>Text <textarea id="rag-text" rows="3">Integrated planning milestone and KPI value realization notes for the RX technology portfolio.</textarea></label>
+      <h2>Operational chat — retail notes</h2>
+      <label>Title <input id="rag-title" value="Inventory count pack" /></label>
+      <label>Text <textarea id="rag-text" rows="3">Inventory count, reorder threshold, and order status notes for the retail ops pilot.</textarea></label>
       <button class="act" id="ingest-btn" type="button">Ingest pack</button>
-      <label>Query <input id="rag-q" value="portfolio milestone" /></label>
-      <button class="act" id="query-btn" type="button">Query packs</button>
+      <label>Query <input id="rag-q" value="inventory count" /></label>
+      <button class="act" id="query-btn" type="button">Query notes</button>
     </section>
     <section id="resident_engineer" class="panel">
       <h2>Resident engineer</h2>
@@ -60,34 +60,26 @@
   </main>
   <script>
     const CAPS = [
-      "aviation_core",
-      "audit",
-      "dashboard",
-      "enterprise_portfolio_dashboard",
-      "hybrid_program_delivery",
-      "integrated_planning_milestones",
-      "kpi_value_realization",
-      "budget_capacity_oversight",
-      "demand_prioritization_resources",
-      "oracle_erp_program_oversight",
-      "gdpr_privacy_audit",
-      "governance_continuous_improvement",
-      "airline_ops_portfolio_context"
+      "inventory_tracking",
+      "order_management",
+      "ops_dashboard",
+      "stock_alerts",
+      "pilot_ops_log"
     ];
     const UI = ["command_center", "operational_chat", "resident_engineer"];
     const MAP = {
-      command_center: "aviation_core",
-      operational_chat: "integrated_planning_milestones",
-      resident_engineer: "audit"
+      command_center: "inventory_tracking",
+      operational_chat: "order_management",
+      resident_engineer: "ops_dashboard"
     };
-    let current = "aviation_core";
+    let current = "inventory_tracking";
     const nav = document.getElementById("nav");
     const modules = document.getElementById("modules");
     const capSelect = document.getElementById("capability");
     UI.forEach((name) => {
       const b = document.createElement("button");
       b.textContent = name;
-      b.onclick = () => select(MAP[name] || "aviation_core", b);
+      b.onclick = () => select(MAP[name] || "inventory_tracking", b);
       nav.appendChild(b);
       const card = document.createElement("div");
       card.className = "card";
@@ -120,17 +112,11 @@
     }
     function extraFields(id) {
       const extras = {
-        aviation_core: {carrier_code: "RX", hub_city: "Riyadh"},
-        enterprise_portfolio_dashboard: {initiative_name: "sample", horizon: "strategic"},
-        hybrid_program_delivery: {owner_role: "rte", delivery_mode: "hybrid"},
-        integrated_planning_milestones: {milestone_name: "sample", planned_date: "2026-09-03"},
-        kpi_value_realization: {kpi_name: "sample", value_stream: "network"},
-        budget_capacity_oversight: {budget_code: "sample", currency: "SAR"},
-        demand_prioritization_resources: {demand_item: "sample", priority_band: "now"},
-        oracle_erp_program_oversight: {workstream: "erp_delivery", suite_module: "finance"},
-        gdpr_privacy_audit: {lawful_basis: "legitimate_interest", data_subject: "sample"},
-        governance_continuous_improvement: {owner_name: "sample", feedback_source: "stakeholder"},
-        airline_ops_portfolio_context: {station: "RUH", framing: "portfolio"}
+        inventory_tracking: {sku: "sample", quantity_on_hand: 0, reorder_threshold: 0},
+        order_management: {order_number: "sample", fulfillment_stage: "received"},
+        ops_dashboard: {view_name: "sample", horizon: "today"},
+        stock_alerts: {sku: "sample", alert_kind: "below_reorder"},
+        pilot_ops_log: {note_title: "sample", note_body: "sample"}
       };
       return extras[id] || {};
     }
@@ -165,7 +151,7 @@
       document.getElementById("out").textContent = JSON.stringify(await res.json(), null, 2);
     };
     document.getElementById("query-btn").onclick = async () => {
-      const q = encodeURIComponent(document.getElementById("rag-q").value || "portfolio");
+      const q = encodeURIComponent(document.getElementById("rag-q").value || "inventory");
       const res = await fetch("/v1/rag/query?q=" + q);
       document.getElementById("out").textContent = JSON.stringify(await res.json(), null, 2);
     };

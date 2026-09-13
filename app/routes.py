@@ -68,6 +68,7 @@ def post_capability(
         **payload,
         "actor": principal.subject,
         "actor_role": principal.role,
+        "capability": capability_id,
     }
     spec = get_spec(capability_id)
     handle = load_handler(capability_id)
@@ -90,8 +91,8 @@ def post_capability(
         details={
             "status": payload.get("status", "open"),
             "capability": capability_id,
-            "carrier_code": payload.get("carrier_code") or "RX",
-            "category": "admin",
+            "sku": payload.get("sku") or payload.get("reference") or "sample",
+            "category": "ops",
         },
     )
     result.setdefault("ok", True)
@@ -120,6 +121,6 @@ def get_capability(capability_id: str) -> Dict[str, Any]:
 def list_capabilities() -> Dict[str, Any]:
     return {
         "ok": True,
-        "product": "AirOps Portfolio",
+        "product": "Retail Ops Tracker",
         "capabilities": list(REQUIRED_CAPABILITY_IDS),
     }

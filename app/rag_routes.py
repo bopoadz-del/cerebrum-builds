@@ -1,4 +1,4 @@
-"""Portfolio document pack ingest/query HTTP. Quoted paths required by PHASE 2."""
+"""Retail ops notes ingest/query HTTP. Quoted paths required by PHASE 2."""
 
 from __future__ import annotations
 
@@ -17,7 +17,7 @@ from app.store import storage_root
 
 router = APIRouter()
 
-PORTFOLIO_INDEX = "airops_portfolio_packs_v1"
+RETAIL_INDEX = "retail_ops_notes_v1"
 
 
 class RagIngestBody(BaseModel):
@@ -35,7 +35,7 @@ def _rag_dir() -> Path:
 
 
 def _index_path() -> Path:
-    return _rag_dir() / f"{PORTFOLIO_INDEX}.jsonl"
+    return _rag_dir() / f"{RETAIL_INDEX}.jsonl"
 
 
 def _tokens(text: str) -> List[str]:
@@ -75,7 +75,7 @@ def rag_ingest(body: RagIngestBody, request: Request) -> Dict[str, Any]:
         "text": body.text,
         "layer": body.layer,
         "property_id": body.property_id,
-        "index": PORTFOLIO_INDEX,
+        "index": RETAIL_INDEX,
         "retrieval": "lexical_jsonl",
         "actor": principal.subject,
         "actor_role": principal.role,
@@ -90,7 +90,7 @@ def rag_ingest(body: RagIngestBody, request: Request) -> Dict[str, Any]:
         details={
             "status": "open",
             "capability": "rag_ingest",
-            "category": "data_access",
+            "category": "ops",
             "layer": body.layer,
             "retrieval": "lexical_jsonl",
         },

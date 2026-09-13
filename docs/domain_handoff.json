@@ -1,13 +1,19 @@
 {
   "coder_brief_path": "docs/coder_brief.md",
-  "domain": "veterinary",
-  "floor_url": "https://cerebrumdev-backend-goia.onrender.com/floor?session=sess_69f28c0d8bc540e9",
-  "instruction": "Factory WRITER recovery for Veterinary Care Platform. Frozen command is docs/coder_brief.md for session sess_69f28c0d8bc540e9. PATHS_VIOLATED fix: never edit vendor/** or build_ledger.jsonl. Replace airport/retail product code.",
-  "product_id": "veterinary-care",
+  "domain": "hospitality",
+  "floor_url": "https://cerebrumdev-backend-goia.onrender.com/floor?session=sess_548ff6a3ec9d4bd2",
+  "instruction": "MR.FINANCE: COLLECTOR+CLONER are done for hospitality. The frozen command is `docs/coder_brief.md` for session `sess_548ff6a3ec9d4bd2`. Take over: produce, check, post, and deploy (GitHub or as the user directs). Do not wait for Grok Bot SendToAgent.",
+  "issue_number": 13,
+  "issue_url": "https://github.com/bopoadz-del/cerebrum-builds/issues/13",
+  "notified_via": [
+    "github_issue",
+    "domain_handoff.json"
+  ],
+  "product_id": "hospitality",
   "schema_version": "domain_handoff.v1",
-  "session_id": "sess_69f28c0d8bc540e9",
-  "stage": "writer_recovery",
-  "ts": "2026-09-13T07:53:00Z",
-  "vertical": "veterinary-care",
-  "workspace": "/workspace"
+  "session_id": "sess_548ff6a3ec9d4bd2",
+  "stage": "post_cloner",
+  "ts": "2026-09-13T08:08:43Z",
+  "vertical": "hospitality",
+  "workspace": "/app/storage/factory_outputs/sessions/sess_548ff6a3ec9d4bd2/hospitality"
 }

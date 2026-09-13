@@ -1,58 +1,79 @@
 {
   "capabilities": [
     {
-      "block_ids": ["analytics"],
-      "description": "Persist clinic caseload and walk-in / shift / day load scoring for the operator desk.",
-      "id": "veterinary_care_core",
+      "block_ids": [
+        "workflow",
+        "database",
+        "notification",
+        "queue"
+      ],
+      "description": "Enable guests to search, select, and reserve hotel rooms, and hoteliers to manage reservations, including modifications and cancellations.",
+      "id": "booking_management",
       "required": true,
       "strategy_hint": "REUSE"
     },
     {
-      "block_ids": ["knowledge", "vector_search", "memory"],
-      "description": "Maintain patient charts by species with search and cached notes.",
-      "id": "patient_records_management",
+      "block_ids": [
+        "database",
+        "storage",
+        "document_engine"
+      ],
+      "description": "Allow hoteliers to list and manage properties, room types, amenities, and availability calendars.",
+      "id": "property_management",
       "required": true,
       "strategy_hint": "REUSE"
     },
     {
-      "block_ids": ["workflow", "event_bus", "notification", "queue"],
-      "description": "Schedule wellness, surgery, emergency, and follow-up visits with prepared event_bus steps.",
-      "id": "appointment_scheduling",
+      "block_ids": [
+        "formula_executor",
+        "analytics"
+      ],
+      "description": "Implement pricing rules based on demand, seasonality, and occupancy to optimize revenue and offer competitive rates.",
+      "id": "dynamic_pricing",
       "required": true,
       "strategy_hint": "REUSE"
     },
     {
-      "block_ids": ["validation", "analytics"],
-      "description": "Record prescriptions with domain dose math (weight × mg/kg).",
-      "id": "prescription_management",
+      "block_ids": [
+        "database",
+        "analytics",
+        "notification"
+      ],
+      "description": "Collect and display guest reviews and ratings to build trust and provide feedback to hoteliers.",
+      "id": "review_management",
       "required": true,
       "strategy_hint": "REUSE"
     },
     {
-      "block_ids": ["validation", "notification", "queue"],
-      "description": "Issue consult, procedure, and pharmacy invoices with tax totals.",
-      "id": "billing_and_invoicing",
+      "block_ids": [
+        "dashboard",
+        "analytics",
+        "database"
+      ],
+      "description": "Provide dashboards for hoteliers to monitor bookings, revenue, and occupancy trends, and for administrators to oversee platform performance.",
+      "id": "analytics_dashboard",
       "required": true,
       "strategy_hint": "REUSE"
     },
     {
-      "block_ids": ["notification", "event_bus", "knowledge"],
-      "description": "Send reminder, result, and billing notices to clients on MCP.",
-      "id": "client_communication_portal",
+      "block_ids": [
+        "notification",
+        "queue",
+        "workflow"
+      ],
+      "description": "Send automated notifications for booking confirmations, reminders, and updates to guests and hoteliers.",
+      "id": "notification_system",
       "required": true,
       "strategy_hint": "REUSE"
     },
     {
-      "block_ids": ["audit"],
-      "description": "Persistable clinic audit events with category retention.",
-      "id": "audit",
-      "required": true,
-      "strategy_hint": "REUSE"
-    },
-    {
-      "block_ids": ["dashboard", "analytics"],
-      "description": "Persistable clinic dashboard views for today / week / month.",
-      "id": "dashboard",
+      "block_ids": [
+        "vector_search",
+        "recommendation_template",
+        "analytics"
+      ],
+      "description": "Provide personalized hotel recommendations and search results based on user preferences and behavior.",
+      "id": "search_recommendation",
       "required": true,
       "strategy_hint": "REUSE"
     }
@@ -63,15 +84,15 @@
   "edge_profile": "standard",
   "factory_scenario": "CREATE_PRODUCT",
   "human_authority": true,
-  "n_required": 8,
-  "product_id": "veterinary-care",
-  "product_name": "Veterinary Care Platform",
+  "n_required": 7,
+  "product_id": "hospitality",
+  "product_name": "Hotel Booking Platform",
   "schema_version": "product_blueprint.v1",
-  "summary": "A clinic-operations hub for veterinary practice operators. It centralizes patient charts, appointment slots, prescriptions, invoices, and client messages so a small clinic can run a pilot without a full PIMS.",
+  "summary": "A comprehensive platform for hotel booking that enables guests to search, compare, and reserve rooms while providing hoteliers with tools to manage inventory, pricing, and reservations. It serves travelers, hotel staff, and administrators with a seamless booking experience and efficient property management.",
   "ui_modules": [
     "command_center",
     "operational_chat",
     "resident_engineer"
   ],
-  "vertical": "veterinary_care"
+  "vertical": "hospitality"
 }

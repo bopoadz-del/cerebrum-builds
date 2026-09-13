@@ -63,21 +63,21 @@
       "aviation_core",
       "audit",
       "dashboard",
-      "enterprise_portfolio_dashboard",
-      "hybrid_program_delivery",
-      "integrated_planning_milestones",
-      "kpi_value_realization",
-      "budget_capacity_oversight",
-      "demand_prioritization_resources",
-      "oracle_erp_program_oversight",
-      "gdpr_privacy_audit",
+      "portfolio_program_governance",
+      "hybrid_delivery_management",
+      "integrated_planning_scheduling_milestones",
+      "demand_prioritization_capacity_alignment",
+      "budget_financial_guardrails_value_realization",
+      "delivery_kpi_adoption_analytics",
+      "erp_oracle_integration",
+      "privacy_compliance_evidence",
       "governance_continuous_improvement",
       "airline_ops_portfolio_context"
     ];
     const UI = ["command_center", "operational_chat", "resident_engineer"];
     const MAP = {
       command_center: "aviation_core",
-      operational_chat: "integrated_planning_milestones",
+      operational_chat: "integrated_planning_scheduling_milestones",
       resident_engineer: "audit"
     };
     let current = "aviation_core";
@@ -121,14 +121,14 @@
     function extraFields(id) {
       const extras = {
         aviation_core: {carrier_code: "RX", hub_city: "Riyadh"},
-        enterprise_portfolio_dashboard: {initiative_name: "sample", horizon: "strategic"},
-        hybrid_program_delivery: {owner_role: "rte", delivery_mode: "hybrid"},
-        integrated_planning_milestones: {milestone_name: "sample", planned_date: "2026-09-03"},
-        kpi_value_realization: {kpi_name: "sample", value_stream: "network"},
-        budget_capacity_oversight: {budget_code: "sample", currency: "SAR"},
-        demand_prioritization_resources: {demand_item: "sample", priority_band: "now"},
-        oracle_erp_program_oversight: {workstream: "erp_delivery", suite_module: "finance"},
-        gdpr_privacy_audit: {lawful_basis: "legitimate_interest", data_subject: "sample"},
+        portfolio_program_governance: {initiative_name: "sample", horizon: "strategic"},
+        hybrid_delivery_management: {owner_role: "rte", delivery_mode: "hybrid"},
+        integrated_planning_scheduling_milestones: {milestone_name: "sample", planned_date: "2026-09-03"},
+        delivery_kpi_adoption_analytics: {kpi_name: "sample", value_stream: "network"},
+        budget_financial_guardrails_value_realization: {budget_code: "sample", currency: "SAR"},
+        demand_prioritization_capacity_alignment: {demand_item: "sample", priority_band: "now"},
+        erp_oracle_integration: {workstream: "erp_delivery", suite_module: "finance"},
+        privacy_compliance_evidence: {lawful_basis: "legitimate_interest", data_subject: "sample"},
         governance_continuous_improvement: {owner_name: "sample", feedback_source: "stakeholder"},
         airline_ops_portfolio_context: {station: "RUH", framing: "portfolio"}
       };

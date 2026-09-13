@@ -1,16 +1,18 @@
-"""hybrid_program_delivery — GENERATE. Agile+waterfall with RTE / SM / PM / BA owners."""
+"""hybrid_delivery_management — REUSE workflow, team, queue, dashboard, validation."""
 
 from __future__ import annotations
 
 from typing import Any, Dict
 
+from app.block_inputs import prepare_block_input
+from app.dispatch import BLOCK_DEFAULT_ACTIONS, execute
 from app.persist import ok_envelope
 
-# READS: caller.input
-# WRITES: caller.output
+# READS: caller.input, team.state, queue.jobs, config.runtime
+# WRITES: caller.output, queue.jobs, file.local.write
 # NEVER: inventing unverified Store block ids
 
-BLOCK_IDS: list[str] = []
+BLOCK_IDS = ["workflow", "team", "queue", "dashboard", "validation"]
 
 STATUS_VALUES = ("open", "in_progress", "closed")
 ROLE_LANE = {
@@ -26,27 +28,25 @@ MODE_BLEND = {
 }
 
 
-def _status(payload: Dict[str, Any]) -> str:
-    status = str(payload.get("status") or "open")
-    return status if status in STATUS_VALUES else "open"
-
-
-def _role(payload: Dict[str, Any]) -> str:
-    role = str(payload.get("owner_role") or "rte")
-    return role if role in ROLE_LANE else "rte"
-
-
-def _mode(payload: Dict[str, Any]) -> str:
-    mode = str(payload.get("delivery_mode") or "hybrid")
-    return mode if mode in MODE_BLEND else "hybrid"
-
-
 def handle(payload: Dict[str, Any]) -> Dict[str, Any]:
     """Assign a hybrid delivery lane and owner discipline from the envelope."""
-    status = _status(payload)
-    role = _role(payload)
-    mode = _mode(payload)
+    status = str(payload.get("status") or "open")
+    if status not in STATUS_VALUES:
+        status = "open"
+    role = str(payload.get("owner_role") or "rte")
+    if role not in ROLE_LANE:
+        role = "rte"
+    mode = str(payload.get("delivery_mode") or "hybrid")
+    if mode not in MODE_BLEND:
+        mode = "hybrid"
     ceremonies = MODE_BLEND[mode]
+    blocks: Dict[str, Any] = {}
+    for block_id in BLOCK_IDS:
+        blocks[block_id] = execute(
+            block_id,
+            prepare_block_input(block_id, payload),
+            action=BLOCK_DEFAULT_ACTIONS.get(block_id),
+        )
     record = {
         **payload,
         "status": status,
@@ -61,4 +61,4 @@ def handle(payload: Dict[str, Any]) -> Dict[str, Any]:
             "is_terminal": status == "closed",
         },
     }
-    return ok_envelope("hybrid_program_delivery", record)
+    return ok_envelope("hybrid_delivery_management", record, blocks)

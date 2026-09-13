@@ -50,9 +50,9 @@ SPECS: Dict[str, Dict[str, Any]] = {
     ),
     "audit": _spec("audit", ["audit"]),
     "dashboard": _spec("dashboard", ["dashboard"]),
-    "enterprise_portfolio_dashboard": _spec(
-        "enterprise_portfolio_dashboard",
-        [],
+    "portfolio_program_governance": _spec(
+        "portfolio_program_governance",
+        ["workflow", "dashboard", "team"],
         extra_fields={
             "initiative_name": {"type": "string"},
             "horizon": {"type": "string"},
@@ -61,9 +61,9 @@ SPECS: Dict[str, Dict[str, Any]] = {
             "horizon": {"allowed_values": ["strategic", "tactical", "runway"]},
         },
     ),
-    "hybrid_program_delivery": _spec(
-        "hybrid_program_delivery",
-        [],
+    "hybrid_delivery_management": _spec(
+        "hybrid_delivery_management",
+        ["workflow", "team", "queue", "dashboard", "validation"],
         extra_fields={
             "owner_role": {"type": "string"},
             "delivery_mode": {"type": "string"},
@@ -73,39 +73,17 @@ SPECS: Dict[str, Dict[str, Any]] = {
             "delivery_mode": {"allowed_values": ["hybrid", "agile", "waterfall"]},
         },
     ),
-    "integrated_planning_milestones": _spec(
-        "integrated_planning_milestones",
-        [],
+    "integrated_planning_scheduling_milestones": _spec(
+        "integrated_planning_scheduling_milestones",
+        ["workflow", "dashboard", "event_bus"],
         extra_fields={
             "milestone_name": {"type": "string"},
             "planned_date": {"type": "date"},
         },
     ),
-    "kpi_value_realization": _spec(
-        "kpi_value_realization",
-        [],
-        extra_fields={
-            "kpi_name": {"type": "string"},
-            "value_stream": {"type": "string"},
-        },
-        extra_constraints={
-            "value_stream": {"allowed_values": ["network", "digital", "erp", "ops"]},
-        },
-    ),
-    "budget_capacity_oversight": _spec(
-        "budget_capacity_oversight",
-        [],
-        extra_fields={
-            "budget_code": {"type": "string"},
-            "currency": {"type": "string"},
-        },
-        extra_constraints={
-            "currency": {"allowed_values": ["SAR", "USD"]},
-        },
-    ),
-    "demand_prioritization_resources": _spec(
-        "demand_prioritization_resources",
-        [],
+    "demand_prioritization_capacity_alignment": _spec(
+        "demand_prioritization_capacity_alignment",
+        ["queue", "team", "formula_executor", "analytics", "recommendation_template"],
         extra_fields={
             "demand_item": {"type": "string"},
             "priority_band": {"type": "string"},
@@ -114,9 +92,38 @@ SPECS: Dict[str, Dict[str, Any]] = {
             "priority_band": {"allowed_values": ["now", "next", "later"]},
         },
     ),
-    "oracle_erp_program_oversight": _spec(
-        "oracle_erp_program_oversight",
-        [],
+    "budget_financial_guardrails_value_realization": _spec(
+        "budget_financial_guardrails_value_realization",
+        ["formula_executor", "analytics", "dashboard", "audit", "notification"],
+        extra_fields={
+            "budget_code": {"type": "string"},
+            "currency": {"type": "string"},
+        },
+        extra_constraints={
+            "currency": {"allowed_values": ["SAR", "USD"]},
+        },
+    ),
+    "delivery_kpi_adoption_analytics": _spec(
+        "delivery_kpi_adoption_analytics",
+        [
+            "analytics",
+            "dashboard",
+            "knowledge",
+            "vector_search",
+            "recommendation_template",
+            "memory",
+        ],
+        extra_fields={
+            "kpi_name": {"type": "string"},
+            "value_stream": {"type": "string"},
+        },
+        extra_constraints={
+            "value_stream": {"allowed_values": ["network", "digital", "erp", "ops"]},
+        },
+    ),
+    "erp_oracle_integration": _spec(
+        "erp_oracle_integration",
+        ["event_bus", "workflow", "storage", "database", "audit", "validation"],
         extra_fields={
             "workstream": {"type": "string"},
             "suite_module": {"type": "string"},
@@ -126,9 +133,17 @@ SPECS: Dict[str, Dict[str, Any]] = {
             "suite_module": {"allowed_values": ["finance", "procurement", "hcm"]},
         },
     ),
-    "gdpr_privacy_audit": _spec(
-        "gdpr_privacy_audit",
-        ["audit"],
+    "privacy_compliance_evidence": _spec(
+        "privacy_compliance_evidence",
+        [
+            "audit",
+            "document_engine",
+            "file_hasher",
+            "capture",
+            "storage",
+            "validation",
+            "notification",
+        ],
         extra_fields={
             "lawful_basis": {"type": "string"},
             "data_subject": {"type": "string"},

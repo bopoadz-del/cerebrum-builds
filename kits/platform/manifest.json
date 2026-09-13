@@ -1,18 +1,45 @@
 {
   "blocks": [
+    "analytics",
     "audit",
-    "dashboard"
+    "dashboard",
+    "database",
+    "event_bus",
+    "notification",
+    "queue",
+    "storage",
+    "team",
+    "validation",
+    "workflow"
   ],
   "id": "platform",
   "name": "Platform",
   "product_blocks": [
+    "analytics",
     "audit",
-    "dashboard"
+    "dashboard",
+    "database",
+    "event_bus",
+    "notification",
+    "queue",
+    "storage",
+    "team",
+    "validation",
+    "workflow"
   ],
   "source": "synthesized-from-factory-shelf",
   "vendored_blocks": {
+    "analytics": "vendor/blocks/analytics",
     "audit": "vendor/blocks/audit",
-    "dashboard": "vendor/blocks/dashboard"
+    "dashboard": "vendor/blocks/dashboard",
+    "database": "vendor/blocks/database",
+    "event_bus": "vendor/blocks/event_bus",
+    "notification": "vendor/blocks/notification",
+    "queue": "vendor/blocks/queue",
+    "storage": "vendor/blocks/storage",
+    "team": "vendor/blocks/team",
+    "validation": "vendor/blocks/validation",
+    "workflow": "vendor/blocks/workflow"
   },
   "version": "1.0.0"
 }

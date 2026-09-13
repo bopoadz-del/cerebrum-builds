@@ -56,26 +56,18 @@ reproduced (same capability roster, same compiled-brief fingerprint).
 TARGET
 ==================================================
 
-Booted aviation platform: AirOps Portfolio.
-Build AirOps Portfolio for Riyadh Air (RX): digitally native Saudi national carrier HQ Riyadh connecting the Kingdom to 100+ destinations. Enterprise & corporate technology portfolio dashboard for strategic initiatives; hybrid agile+waterfall program delivery with RTEs, Scrum Masters, PMs, BAs as owners; integrated planning/scheduling/milestone management; reporting with KPI and value-realization tracking; budget and capacity oversight within approved financial parameters; demand prioritization and resource alignment across business and tech stakeholders; Oracle ERP suite program oversight as an ERP delivery workstream (not a full Oracle clone); GDPR/data privacy controls with fail-closed auth, Principal audit, and CORS; governance with clear ownership, delivery disciplines, and continuous improvement from stakeholder feedback; airline ops/portfolio framing (not a booking engine). Kit-backed aviation. HotelOps-grade + Store 12/12. Manufacture from Cerebrum-Blocks Store blocks only — never clone an external product repo. Pilot-ready with tests. Coder: Cursor BA only — no Kimi/DeepSeek.
+Booted retail_inventory platform: Tiny Smoke Retail Inventory Tracker.
+A lightweight inventory tracking application for tiny smoke retail shops, enabling owners to manage products, monitor stock levels, and receive low-stock alerts. Designed for small teams and single-location retailers who need a simple, reliable tool without enterprise complexity.
 
-Who it is for: aviation operators
+Who it is for: retail inventory operators
 Roles: operator, admin
 
 Capabilities:
-- aviation_core [GENERATE]: kernel/template generation (no block ids)  (no block ids — genuine gap)
-- audit [REUSE]: dual-registered  blocks=['audit']
-- dashboard [REUSE]: dual-registered  blocks=['dashboard']
-- enterprise_portfolio_dashboard [GENERATE]: kernel/template generation (no block ids)  (no block ids — genuine gap)
-- hybrid_program_delivery [GENERATE]: kernel/template generation (no block ids)  (no block ids — genuine gap)
-- integrated_planning_milestones [GENERATE]: kernel/template generation (no block ids)  (no block ids — genuine gap)
-- kpi_value_realization [GENERATE]: kernel/template generation (no block ids)  (no block ids — genuine gap)
-- budget_capacity_oversight [GENERATE]: kernel/template generation (no block ids)  (no block ids — genuine gap)
-- demand_prioritization_resources [GENERATE]: kernel/template generation (no block ids)  (no block ids — genuine gap)
-- oracle_erp_program_oversight [GENERATE]: kernel/template generation (no block ids)  (no block ids — genuine gap)
-- gdpr_privacy_audit [REUSE]: dual-registered  blocks=['audit']
-- governance_continuous_improvement [GENERATE]: kernel/template generation (no block ids)  (no block ids — genuine gap)
-- airline_ops_portfolio_context [GENERATE]: kernel/template generation (no block ids)  (no block ids — genuine gap)
+- inventory_stock_tracking [REUSE]: dual-registered  blocks=['database', 'storage', 'validation', 'audit']
+- low_stock_alerts [REUSE]: dual-registered  blocks=['notification', 'event_bus', 'queue']
+- team_management [REUSE]: dual-registered  blocks=['team', 'audit']
+- inventory_dashboard [REUSE]: dual-registered  blocks=['dashboard', 'analytics']
+- stock_adjustment_workflow [REUSE]: dual-registered  blocks=['workflow', 'audit', 'validation']
 
 
 ==================================================
@@ -87,36 +79,21 @@ Coder: list what the Store already provides. REUSE by exact block id, verified p
 Store registry (exact ids, verified): analytics, audit, capture, dashboard, database, document_engine, estate_maintenance, estate_registry, event_bus, evidence_verifier, file_hasher, formula_executor, knowledge, memory, notification, portfolio_rollup, queue, readiness_engine, recommendation_template, spec_analyzer, storage, team, validation, vector_search, workflow
 
 REUSE (verified present):
-- audit: REUSE ['audit'] (verified present in Store registry; handler source factory-grounded persist; emit app/actions/audit.py)
-- dashboard: REUSE ['dashboard'] (verified present in Store registry; handler source factory-grounded persist; emit app/actions/dashboard.py)
-- gdpr_privacy_audit: REUSE ['audit'] (verified present in Store registry; handler source factory-grounded persist; emit app/actions/gdpr_privacy_audit.py)
+- inventory_stock_tracking: REUSE ['database', 'storage', 'validation', 'audit'] (verified present in Store registry; handler source factory-grounded persist; emit app/actions/inventory_stock_tracking.py)
+- low_stock_alerts: REUSE ['notification', 'event_bus', 'queue'] (verified present in Store registry; handler source factory-grounded persist; emit app/actions/low_stock_alerts.py)
+- team_management: REUSE ['team', 'audit'] (verified present in Store registry; handler source factory-grounded persist; emit app/actions/team_management.py)
+- inventory_dashboard: REUSE ['dashboard', 'analytics'] (verified present in Store registry; handler source factory-grounded persist; emit app/actions/inventory_dashboard.py)
+- stock_adjustment_workflow: REUSE ['workflow', 'audit', 'validation'] (verified present in Store registry; handler source factory-grounded persist; emit app/actions/stock_adjustment_workflow.py)
 
 GAPS (you author; do not invent a block id):
-- aviation_core: GAP — author this logic (kernel/template generation (no block ids))
-- enterprise_portfolio_dashboard: GAP — author this logic (kernel/template generation (no block ids))
-- hybrid_program_delivery: GAP — author this logic (kernel/template generation (no block ids))
-- integrated_planning_milestones: GAP — author this logic (kernel/template generation (no block ids))
-- kpi_value_realization: GAP — author this logic (kernel/template generation (no block ids))
-- budget_capacity_oversight: GAP — author this logic (kernel/template generation (no block ids))
-- demand_prioritization_resources: GAP — author this logic (kernel/template generation (no block ids))
-- oracle_erp_program_oversight: GAP — author this logic (kernel/template generation (no block ids))
-- governance_continuous_improvement: GAP — author this logic (kernel/template generation (no block ids))
-- airline_ops_portfolio_context: GAP — author this logic (kernel/template generation (no block ids))
+- (none)
 
 WORK ITEMS (C-BRIEF hole-fill; GENERATE gaps plus REUSE that still need handlers):
-- aviation_core: GENERATE/GAP — author this logic
-- audit: REUSE hole-fill — bind persist / event_bus / BLOCK_DEFAULT_ACTIONS; do not skip because inventory_gaps is empty
-- dashboard: REUSE hole-fill — bind persist / event_bus / BLOCK_DEFAULT_ACTIONS; do not skip because inventory_gaps is empty
-- enterprise_portfolio_dashboard: GENERATE/GAP — author this logic
-- hybrid_program_delivery: GENERATE/GAP — author this logic
-- integrated_planning_milestones: GENERATE/GAP — author this logic
-- kpi_value_realization: GENERATE/GAP — author this logic
-- budget_capacity_oversight: GENERATE/GAP — author this logic
-- demand_prioritization_resources: GENERATE/GAP — author this logic
-- oracle_erp_program_oversight: GENERATE/GAP — author this logic
-- gdpr_privacy_audit: REUSE hole-fill — bind persist / event_bus / BLOCK_DEFAULT_ACTIONS; do not skip because inventory_gaps is empty
-- governance_continuous_improvement: GENERATE/GAP — author this logic
-- airline_ops_portfolio_context: GENERATE/GAP — author this logic
+- inventory_stock_tracking: REUSE hole-fill — bind persist / event_bus / BLOCK_DEFAULT_ACTIONS; do not skip because inventory_gaps is empty
+- low_stock_alerts: REUSE hole-fill — bind persist / event_bus / BLOCK_DEFAULT_ACTIONS; do not skip because inventory_gaps is empty
+- team_management: REUSE hole-fill — bind persist / event_bus / BLOCK_DEFAULT_ACTIONS; do not skip because inventory_gaps is empty
+- inventory_dashboard: REUSE hole-fill — bind persist / event_bus / BLOCK_DEFAULT_ACTIONS; do not skip because inventory_gaps is empty
+- stock_adjustment_workflow: REUSE hole-fill — bind persist / event_bus / BLOCK_DEFAULT_ACTIONS; do not skip because inventory_gaps is empty
 
 MISSING claimed REUSE (runner HALTS here if any):
 - (none)
@@ -130,7 +107,7 @@ CUT 2 — RUNNER VALIDATE
 
 CUT 2 — runner validates ids against the registry (not the coder).
 Claimed REUSE that is not present HALTS before WRITER build, not at CLONER.
-Verified present: audit, dashboard, audit
+Verified present: database, storage, validation, audit, notification, event_bus, queue, team, audit, dashboard, analytics, workflow, audit, validation
 Missing:
 
 
@@ -378,26 +355,62 @@ render-ready is not live Render deploy and not Store Docker acceptance — those
 Then existing TESTER / STORE_MANAGER. STOP / checkpoint after PHASE 3 acceptance.
 
 Block scopes (from block.json; report-only until L2.2 flip — do not invent):
+- database READS=["{'kind': 'caller', 'scope': 'input'}", "{'kind': 'env', 'scope': 'process'}", "{'kind': 'config', 'scope': 'runtime'}", "{'kind': 'database', 'scope': 'sql'}"] WRITES=["{'kind': 'caller', 'scope': 'output'}", "{'kind': 'database', 'scope': 'sql'}"] NEVER=['(none)'] ACCEPTANCE=["{'id': 'unknown_action', 'check': 'errors on an unknown or missing action', 'status': 'failed'}"]
+- storage READS=["{'kind': 'caller', 'scope': 'input'}", "{'kind': 'file', 'scope': 'local.read'}", "{'kind': 'config', 'scope': 'runtime'}"] WRITES=["{'kind': 'caller', 'scope': 'output'}", "{'kind': 'file', 'scope': 'local.write'}"] NEVER=['(none)'] ACCEPTANCE=['(none)']
+- validation READS=["{'kind': 'caller', 'scope': 'input'}", "{'kind': 'config', 'scope': 'runtime'}"] WRITES=["{'kind': 'caller', 'scope': 'output'}"] NEVER=['(none)'] ACCEPTANCE=["{'id': 'missing_required_input', 'check': 'refuses or errors when a required input is absent', 'status': 'refused'}", "{'id': 'unknown_action', 'check': 'errors on an unknown or missing action', 'status': 'failed'}"]
 - audit READS=["{'kind': 'caller', 'scope': 'input'}", "{'kind': 'config', 'scope': 'runtime'}", "{'kind': 'database', 'scope': 'sql'}"] WRITES=["{'kind': 'caller', 'scope': 'output'}", "{'kind': 'database', 'scope': 'sql'}"] NEVER=['(none)'] ACCEPTANCE=["{'id': 'unknown_action', 'check': 'errors on an unknown or missing action', 'status': 'failed'}"]
+- notification READS=["{'kind': 'caller', 'scope': 'input'}", "{'kind': 'env', 'scope': 'process'}", "{'kind': 'config', 'scope': 'runtime'}", "{'kind': 'network', 'scope': 'http.outbound'}", "{'kind': 'credential', 'scope': 'env'}", "{'kind': 'block', 'scope': 'peer'}"] WRITES=["{'kind': 'caller', 'scope': 'output'}", "{'kind': 'network', 'scope': 'smtp.outbound'}", "{'kind': 'email', 'scope': 'outbound'}", "{'kind': 'notification', 'scope': 'outbound'}"] NEVER=['(none)'] ACCEPTANCE=["{'id': 'unknown_action', 'check': 'errors on an unknown or missing action', 'status': 'failed'}", "{'id': 'missing_credential', 'check': 'fails loud when a required credential or key is absent', 'status': 'failed'}"]
+- event_bus READS=["{'kind': 'caller', 'scope': 'input'}", "{'kind': 'config', 'scope': 'runtime'}"] WRITES=["{'kind': 'caller', 'scope': 'output'}"] NEVER=['(none)'] ACCEPTANCE=["{'id': 'unknown_action', 'check': 'errors on an unknown or missing action', 'status': 'failed'}"]
+- queue READS=["{'kind': 'caller', 'scope': 'input'}", "{'kind': 'config', 'scope': 'runtime'}", "{'kind': 'memory', 'scope': 'cache'}", "{'kind': 'queue', 'scope': 'jobs'}"] WRITES=["{'kind': 'caller', 'scope': 'output'}", "{'kind': 'queue', 'scope': 'jobs'}"] NEVER=['(none)'] ACCEPTANCE=["{'id': 'unknown_action', 'check': 'errors on an unknown or missing action', 'status': 'failed'}"]
+- team READS=["{'kind': 'caller', 'scope': 'input'}", "{'kind': 'file', 'scope': 'local.read'}", "{'kind': 'env', 'scope': 'process'}", "{'kind': 'config', 'scope': 'runtime'}", "{'kind': 'team', 'scope': 'state'}"] WRITES=["{'kind': 'caller', 'scope': 'output'}", "{'kind': 'file', 'scope': 'local.write'}"] NEVER=['(none)'] ACCEPTANCE=["{'id': 'unknown_action', 'check': 'errors on an unknown or missing action', 'status': 'failed'}"]
 - dashboard READS=["{'kind': 'caller', 'scope': 'input'}", "{'kind': 'config', 'scope': 'runtime'}"] WRITES=["{'kind': 'caller', 'scope': 'output'}"] NEVER=['(none)'] ACCEPTANCE=["{'id': 'unknown_action', 'check': 'errors on an unknown or missing action', 'status': 'failed'}"]
+- analytics READS=["{'kind': 'caller', 'scope': 'input'}", "{'kind': 'config', 'scope': 'runtime'}", "{'kind': 'llm', 'scope': 'provider'}"] WRITES=["{'kind': 'caller', 'scope': 'output'}"] NEVER=['(none)'] ACCEPTANCE=["{'id': 'unknown_action', 'check': 'errors on an unknown or missing action', 'status': 'failed'}"]
+- workflow READS=["{'kind': 'caller', 'scope': 'input'}", "{'kind': 'env', 'scope': 'process'}", "{'kind': 'config', 'scope': 'runtime'}"] WRITES=["{'kind': 'caller', 'scope': 'output'}"] NEVER=['(none)'] ACCEPTANCE=["{'id': 'unknown_action', 'check': 'errors on an unknown or missing action', 'status': 'failed'}"]
 
 Kit manifests (Factory shelf + on-disk packs):
 {
   "platform": {
     "blocks": [
+      "analytics",
       "audit",
-      "dashboard"
+      "dashboard",
+      "database",
+      "event_bus",
+      "notification",
+      "queue",
+      "storage",
+      "team",
+      "validation",
+      "workflow"
     ],
     "id": "platform",
     "name": "Platform",
     "product_blocks": [
+      "analytics",
       "audit",
-      "dashboard"
+      "dashboard",
+      "database",
+      "event_bus",
+      "notification",
+      "queue",
+      "storage",
+      "team",
+      "validation",
+      "workflow"
     ],
     "source": "brief-compiler",
     "vendored_blocks": {
+      "analytics": "vendor/blocks/analytics",
       "audit": "vendor/blocks/audit",
-      "dashboard": "vendor/blocks/dashboard"
+      "dashboard": "vendor/blocks/dashboard",
+      "database": "vendor/blocks/database",
+      "event_bus": "vendor/blocks/event_bus",
+      "notification": "vendor/blocks/notification",
+      "queue": "vendor/blocks/queue",
+      "storage": "vendor/blocks/storage",
+      "team": "vendor/blocks/team",
+      "validation": "vendor/blocks/validation",
+      "workflow": "vendor/blocks/workflow"
     },
     "version": "1.0.0"
   }
@@ -405,6 +418,24 @@ Kit manifests (Factory shelf + on-disk packs):
 
 REUSE records (present/reuse + reads/writes/never/acceptance):
 {
+  "analytics": {
+    "acceptance": [
+      "{'id': 'unknown_action', 'check': 'errors on an unknown or missing action', 'status': 'failed'}"
+    ],
+    "block_id": "analytics",
+    "never": [],
+    "present": true,
+    "reads": [
+      "{'kind': 'caller', 'scope': 'input'}",
+      "{'kind': 'config', 'scope': 'runtime'}",
+      "{'kind': 'llm', 'scope': 'provider'}"
+    ],
+    "scope_declared": true,
+    "source": "registry/blocks",
+    "writes": [
+      "{'kind': 'caller', 'scope': 'output'}"
+    ]
+  },
   "audit": {
     "acceptance": [
       "{'id': 'unknown_action', 'check': 'errors on an unknown or missing action', 'status': 'failed'}"
@@ -440,6 +471,162 @@ REUSE records (present/reuse + reads/writes/never/acceptance):
     "writes": [
       "{'kind': 'caller', 'scope': 'output'}"
     ]
+  },
+  "database": {
+    "acceptance": [
+      "{'id': 'unknown_action', 'check': 'errors on an unknown or missing action', 'status': 'failed'}"
+    ],
+    "block_id": "database",
+    "never": [],
+    "present": true,
+    "reads": [
+      "{'kind': 'caller', 'scope': 'input'}",
+      "{'kind': 'env', 'scope': 'process'}",
+      "{'kind': 'config', 'scope': 'runtime'}",
+      "{'kind': 'database', 'scope': 'sql'}"
+    ],
+    "scope_declared": true,
+    "source": "registry/blocks",
+    "writes": [
+      "{'kind': 'caller', 'scope': 'output'}",
+      "{'kind': 'database', 'scope': 'sql'}"
+    ]
+  },
+  "event_bus": {
+    "acceptance": [
+      "{'id': 'unknown_action', 'check': 'errors on an unknown or missing action', 'status': 'failed'}"
+    ],
+    "block_id": "event_bus",
+    "never": [],
+    "present": true,
+    "reads": [
+      "{'kind': 'caller', 'scope': 'input'}",
+      "{'kind': 'config', 'scope': 'runtime'}"
+    ],
+    "scope_declared": true,
+    "source": "registry/blocks",
+    "writes": [
+      "{'kind': 'caller', 'scope': 'output'}"
+    ]
+  },
+  "notification": {
+    "acceptance": [
+      "{'id': 'unknown_action', 'check': 'errors on an unknown or missing action', 'status': 'failed'}",
+      "{'id': 'missing_credential', 'check': 'fails loud when a required credential or key is absent', 'status': 'failed'}"
+    ],
+    "block_id": "notification",
+    "never": [],
+    "present": true,
+    "reads": [
+      "{'kind': 'caller', 'scope': 'input'}",
+      "{'kind': 'env', 'scope': 'process'}",
+      "{'kind': 'config', 'scope': 'runtime'}",
+      "{'kind': 'network', 'scope': 'http.outbound'}",
+      "{'kind': 'credential', 'scope': 'env'}",
+      "{'kind': 'block', 'scope': 'peer'}"
+    ],
+    "scope_declared": true,
+    "source": "registry/blocks",
+    "writes": [
+      "{'kind': 'caller', 'scope': 'output'}",
+      "{'kind': 'network', 'scope': 'smtp.outbound'}",
+      "{'kind': 'email', 'scope': 'outbound'}",
+      "{'kind': 'notification', 'scope': 'outbound'}"
+    ]
+  },
+  "queue": {
+    "acceptance": [
+      "{'id': 'unknown_action', 'check': 'errors on an unknown or missing action', 'status': 'failed'}"
+    ],
+    "block_id": "queue",
+    "never": [],
+    "present": true,
+    "reads": [
+      "{'kind': 'caller', 'scope': 'input'}",
+      "{'kind': 'config', 'scope': 'runtime'}",
+      "{'kind': 'memory', 'scope': 'cache'}",
+      "{'kind': 'queue', 'scope': 'jobs'}"
+    ],
+    "scope_declared": true,
+    "source": "registry/blocks",
+    "writes": [
+      "{'kind': 'caller', 'scope': 'output'}",
+      "{'kind': 'queue', 'scope': 'jobs'}"
+    ]
+  },
+  "storage": {
+    "acceptance": [],
+    "block_id": "storage",
+    "never": [],
+    "present": true,
+    "reads": [
+      "{'kind': 'caller', 'scope': 'input'}",
+      "{'kind': 'file', 'scope': 'local.read'}",
+      "{'kind': 'config', 'scope': 'runtime'}"
+    ],
+    "scope_declared": true,
+    "source": "registry/blocks",
+    "writes": [
+      "{'kind': 'caller', 'scope': 'output'}",
+      "{'kind': 'file', 'scope': 'local.write'}"
+    ]
+  },
+  "team": {
+    "acceptance": [
+      "{'id': 'unknown_action', 'check': 'errors on an unknown or missing action', 'status': 'failed'}"
+    ],
+    "block_id": "team",
+    "never": [],
+    "present": true,
+    "reads": [
+      "{'kind': 'caller', 'scope': 'input'}",
+      "{'kind': 'file', 'scope': 'local.read'}",
+      "{'kind': 'env', 'scope': 'process'}",
+      "{'kind': 'config', 'scope': 'runtime'}",
+      "{'kind': 'team', 'scope': 'state'}"
+    ],
+    "scope_declared": true,
+    "source": "registry/blocks",
+    "writes": [
+      "{'kind': 'caller', 'scope': 'output'}",
+      "{'kind': 'file', 'scope': 'local.write'}"
+    ]
+  },
+  "validation": {
+    "acceptance": [
+      "{'id': 'missing_required_input', 'check': 'refuses or errors when a required input is absent', 'status': 'refused'}",
+      "{'id': 'unknown_action', 'check': 'errors on an unknown or missing action', 'status': 'failed'}"
+    ],
+    "block_id": "validation",
+    "never": [],
+    "present": true,
+    "reads": [
+      "{'kind': 'caller', 'scope': 'input'}",
+      "{'kind': 'config', 'scope': 'runtime'}"
+    ],
+    "scope_declared": true,
+    "source": "registry/blocks",
+    "writes": [
+      "{'kind': 'caller', 'scope': 'output'}"
+    ]
+  },
+  "workflow": {
+    "acceptance": [
+      "{'id': 'unknown_action', 'check': 'errors on an unknown or missing action', 'status': 'failed'}"
+    ],
+    "block_id": "workflow",
+    "never": [],
+    "present": true,
+    "reads": [
+      "{'kind': 'caller', 'scope': 'input'}",
+      "{'kind': 'env', 'scope': 'process'}",
+      "{'kind': 'config', 'scope': 'runtime'}"
+    ],
+    "scope_declared": true,
+    "source": "registry/blocks",
+    "writes": [
+      "{'kind': 'caller', 'scope': 'output'}"
+    ]
   }
 }
 
@@ -449,19 +636,11 @@ Domain pack (binding fields):
     "none claimed beyond persisted fields"
   ],
   "core_business_workflows": [
-    "one-record round-trip for aviation_core",
-    "one-record round-trip for audit",
-    "one-record round-trip for dashboard",
-    "one-record round-trip for enterprise_portfolio_dashboard",
-    "one-record round-trip for hybrid_program_delivery",
-    "one-record round-trip for integrated_planning_milestones",
-    "one-record round-trip for kpi_value_realization",
-    "one-record round-trip for budget_capacity_oversight",
-    "one-record round-trip for demand_prioritization_resources",
-    "one-record round-trip for oracle_erp_program_oversight",
-    "one-record round-trip for gdpr_privacy_audit",
-    "one-record round-trip for governance_continuous_improvement",
-    "one-record round-trip for airline_ops_portfolio_context"
+    "one-record round-trip for inventory_stock_tracking",
+    "one-record round-trip for low_stock_alerts",
+    "one-record round-trip for team_management",
+    "one-record round-trip for inventory_dashboard",
+    "one-record round-trip for stock_adjustment_workflow"
   ],
   "data_sources": [
     "vendored Store blocks",
@@ -476,7 +655,7 @@ Domain pack (binding fields):
     "one-record round-trip per capability",
     "envelope vocab open|in_progress|closed enforced by schema, not prose"
   ],
-  "domain_purpose": "Build AirOps Portfolio for Riyadh Air (RX): digitally native Saudi national carrier HQ Riyadh connecting the Kingdom to 100+ destinations. Enterprise & corporate technology portfolio dashboard for strategic initiatives; hybrid agile+waterfall program delivery with RTEs, Scrum Masters, PMs, BAs as owners; integrated planning/scheduling/milestone management; reporting with KPI and value-realization tracking; budget and capacity oversight within approved financial parameters; demand prioritization and resource alignment across business and tech stakeholders; Oracle ERP suite program oversight as an ERP delivery workstream (not a full Oracle clone); GDPR/data privacy controls with fail-closed auth, Principal audit, and CORS; governance with clear ownership, delivery disciplines, and continuous improvement from stakeholder feedback; airline ops/portfolio framing (not a booking engine). Kit-backed aviation. HotelOps-grade + Store 12/12. Manufacture from Cerebrum-Blocks Store blocks only \u2014 never clone an external product repo. Pilot-ready with tests. Coder: Cursor BA only \u2014 no Kimi/DeepSeek.",
+  "domain_purpose": "A lightweight inventory tracking application for tiny smoke retail shops, enabling owners to manage products, monitor stock levels, and receive low-stock alerts. Designed for small teams and single-location retailers who need a simple, reliable tool without enterprise complexity.",
   "domain_rules": [
     "status vocabulary is schema-enforced: open, in_progress, closed",
     "reserved-keyword fields are refused"
@@ -486,9 +665,9 @@ Domain pack (binding fields):
     "update",
     "delete"
   ],
-  "mission": "Build AirOps Portfolio for Riyadh Air (RX): digitally native Saudi national carrier HQ Riyadh connecting the Kingdom to 100+ destinations. Enterprise & corporate technology portfolio dashboard for strategic initiatives; hybrid agile+waterfall program delivery with RTEs, Scrum Masters, PMs, BAs as owners; integrated planning/scheduling/milestone management; reporting with KPI and value-realization tracking; budget and capacity oversight within approved financial parameters; demand prioritization and resource alignment across business and tech stakeholders; Oracle ERP suite program oversight as an ERP delivery workstream (not a full Oracle clone); GDPR/data privacy controls with fail-closed auth, Principal audit, and CORS; governance with clear ownership, delivery disciplines, and continuous improvement from stakeholder feedback; airline ops/portfolio framing (not a booking engine). Kit-backed aviation. HotelOps-grade + Store 12/12. Manufacture from Cerebrum-Blocks Store blocks only \u2014 never clone an external product repo. Pilot-ready with tests. Coder: Cursor BA only \u2014 no Kimi/DeepSeek.",
+  "mission": "A lightweight inventory tracking application for tiny smoke retail shops, enabling owners to manage products, monitor stock levels, and receive low-stock alerts. Designed for small teams and single-location retailers who need a simple, reliable tool without enterprise complexity.",
   "primary_users": [
-    "aviation operators"
+    "retail inventory operators"
   ],
   "prohibited_autonomous_actions": [
     "deploy",
@@ -499,19 +678,11 @@ Domain pack (binding fields):
     "pilot_candidate zip after PRODUCT+STORE green"
   ],
   "required_product_modules": [
-    "aviation_core",
-    "audit",
-    "dashboard",
-    "enterprise_portfolio_dashboard",
-    "hybrid_program_delivery",
-    "integrated_planning_milestones",
-    "kpi_value_realization",
-    "budget_capacity_oversight",
-    "demand_prioritization_resources",
-    "oracle_erp_program_oversight",
-    "gdpr_privacy_audit",
-    "governance_continuous_improvement",
-    "airline_ops_portfolio_context"
+    "inventory_stock_tracking",
+    "low_stock_alerts",
+    "team_management",
+    "inventory_dashboard",
+    "stock_adjustment_workflow"
   ],
   "required_roles": [
     "operator",
@@ -558,7 +729,16 @@ The harness's acceptance IS the tester. Do not write decorative tests. Do not tr
 
 Block-level acceptance (from block.json, report-only until flip):
 - audit: {'id': 'unknown_action', 'check': 'errors on an unknown or missing action', 'status': 'failed'}  [check:block_acceptance]
+- notification: {'id': 'unknown_action', 'check': 'errors on an unknown or missing action', 'status': 'failed'}, {'id': 'missing_credential', 'check': 'fails loud when a required credential or key is absent', 'status': 'failed'}  [check:block_acceptance]
+- event_bus: {'id': 'unknown_action', 'check': 'errors on an unknown or missing action', 'status': 'failed'}  [check:block_acceptance]
+- database: {'id': 'unknown_action', 'check': 'errors on an unknown or missing action', 'status': 'failed'}  [check:block_acceptance]
+- team: {'id': 'unknown_action', 'check': 'errors on an unknown or missing action', 'status': 'failed'}  [check:block_acceptance]
 - dashboard: {'id': 'unknown_action', 'check': 'errors on an unknown or missing action', 'status': 'failed'}  [check:block_acceptance]
+- analytics: {'id': 'unknown_action', 'check': 'errors on an unknown or missing action', 'status': 'failed'}  [check:block_acceptance]
+- storage: (none declared)  [check:block_acceptance]
+- queue: {'id': 'unknown_action', 'check': 'errors on an unknown or missing action', 'status': 'failed'}  [check:block_acceptance]
+- validation: {'id': 'missing_required_input', 'check': 'refuses or errors when a required input is absent', 'status': 'refused'}, {'id': 'unknown_action', 'check': 'errors on an unknown or missing action', 'status': 'failed'}  [check:block_acceptance]
+- workflow: {'id': 'unknown_action', 'check': 'errors on an unknown or missing action', 'status': 'failed'}  [check:block_acceptance]
 
 
 ==================================================

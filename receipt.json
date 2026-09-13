@@ -1,26 +1,24 @@
 {
   "schema": "cli_receipt.v1",
-  "product": "Veterinary Care Platform",
-  "product_id": "veterinary-care",
-  "session_id": "sess_69f28c0d8bc540e9",
+  "product": "Hotel Booking Platform",
+  "product_id": "hospitality",
+  "session_id": "sess_548ff6a3ec9d4bd2",
   "cli_authored_ids": [
-    "appointment_scheduling",
-    "audit",
-    "billing_and_invoicing",
-    "client_communication_portal",
-    "dashboard",
-    "patient_records_management",
-    "prescription_management",
-    "veterinary_care_core"
+    "analytics_dashboard",
+    "booking_management",
+    "dynamic_pricing",
+    "notification_system",
+    "property_management",
+    "review_management",
+    "search_recommendation"
   ],
   "authored_handlers": [
-    "appointment_scheduling",
-    "audit",
-    "billing_and_invoicing",
-    "client_communication_portal",
-    "dashboard",
-    "patient_records_management",
-    "prescription_management",
-    "veterinary_care_core"
+    "analytics_dashboard",
+    "booking_management",
+    "dynamic_pricing",
+    "notification_system",
+    "property_management",
+    "review_management",
+    "search_recommendation"
   ]
 }

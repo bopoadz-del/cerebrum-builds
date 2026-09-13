@@ -85,8 +85,6 @@ def post_capability(
         return {"ok": False, "error": "handler returned a non-object", "capability": capability_id}
     if result.get("ok") is False:
         return result
-    # Handlers persist the computed domain record via ok_envelope. Do not
-    # overwrite that row with the thinner request payload.
     record_mutation_audit(
         principal,
         action=f"mutate:{capability_id}",
@@ -94,8 +92,8 @@ def post_capability(
         details={
             "status": payload.get("status", "open"),
             "capability": capability_id,
-            "clinic_unit": payload.get("clinic_unit") or payload.get("reference") or "sample",
-            "category": "clinical",
+            "property_name": payload.get("property_name") or payload.get("reference") or "sample",
+            "category": "hospitality",
         },
     )
     result.setdefault("ok", True)
@@ -124,6 +122,6 @@ def get_capability(capability_id: str) -> Dict[str, Any]:
 def list_capabilities() -> Dict[str, Any]:
     return {
         "ok": True,
-        "product": "Veterinary Care Platform",
+        "product": "Hotel Booking Platform",
         "capabilities": list(REQUIRED_CAPABILITY_IDS),
     }

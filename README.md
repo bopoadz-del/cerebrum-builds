@@ -1,17 +1,16 @@
-# Veterinary Care Platform
+# Hotel Booking Platform
 
-Cerebrum-builds session for **Veterinary Care Platform** (VetCare Hub) — a clinic-operations hub for veterinary practice operators. It centralizes patient charts, appointment slots, prescriptions, invoices, and client messages so a small clinic can run a pilot without a full PIMS.
+Cerebrum-builds session for **Hotel Booking Platform** — guests search, compare, and reserve rooms while hospitality operators manage inventory, pricing, reviews, and notifications.
 
-Manufactured from vendored Store blocks (session `sess_69f28c0d8bc540e9`):
+Manufactured from vendored Store blocks (session `sess_548ff6a3ec9d4bd2`):
 
-- `veterinary_care_core` — analytics
-- `patient_records_management` — knowledge, vector_search, memory
-- `appointment_scheduling` — workflow, event_bus, notification, queue
-- `prescription_management` — validation, analytics
-- `billing_and_invoicing` — validation, notification, queue
-- `client_communication_portal` — notification, event_bus, knowledge
-- `audit` — audit (persistable capability)
-- `dashboard` — dashboard, analytics (persistable capability)
+- `booking_management` — workflow, database, notification, queue
+- `property_management` — database, storage, document_engine
+- `dynamic_pricing` — formula_executor, analytics
+- `review_management` — database, analytics, notification
+- `analytics_dashboard` — dashboard, analytics, database
+- `notification_system` — notification, queue, workflow
+- `search_recommendation` — vector_search, recommendation_template, analytics
 
 Offline platform. Channel `mcp` only. No HTTP store callbacks.
 

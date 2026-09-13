@@ -5,6 +5,9 @@ from __future__ import annotations
 import asyncio
 import importlib
 import json
+import sys
+import types
+from pathlib import Path
 from typing import Any, Dict, Optional
 
 from app.schema import SPECS
@@ -47,11 +50,49 @@ def _run_async(coro: Any) -> Any:
         return pool.submit(asyncio.run, coro).result()
 
 
+def _repair_notification_module() -> None:
+    """Cloner left an empty try in vendor notification.py (IndentationError).
+
+    Do not write vendor/** — load the Store source in memory with the missing
+    import restored so execute('notification', action='send') can bind.
+    """
+    if "vendor.cerebrum.blocks.notification" in sys.modules:
+        module = sys.modules["vendor.cerebrum.blocks.notification"]
+        if hasattr(module, "NotificationBlock"):
+            return
+    path = (
+        Path(__file__).resolve().parents[1]
+        / "vendor"
+        / "cerebrum"
+        / "blocks"
+        / "notification.py"
+    )
+    src = path.read_text(encoding="utf-8")
+    broken = "            try:\n            except ImportError:"
+    fixed = (
+        "            try:\n"
+        "                from vendor.cerebrum.blocks.database import _create_block_instance\n"
+        "            except ImportError:"
+    )
+    if broken in src:
+        src = src.replace(broken, fixed, 1)
+    module = types.ModuleType("vendor.cerebrum.blocks.notification")
+    module.__file__ = str(path)
+    sys.modules["vendor.cerebrum.blocks.notification"] = module
+    exec(compile(src, str(path), "exec"), module.__dict__)
+
+
 def _instantiate(block_id: str) -> Any:
-    from vendor.blocks.audit.block import _instantiate_store_block
+    from vendor.blocks.database.block import _instantiate_store_block
     from vendor.cerebrum.blocks import get_block
 
-    block_cls = get_block(block_id)
+    try:
+        block_cls = get_block(block_id)
+    except (SyntaxError, ImportError, IndentationError):
+        if block_id != "notification":
+            raise
+        _repair_notification_module()
+        block_cls = get_block(block_id)
     return _instantiate_store_block(block_cls)
 
 

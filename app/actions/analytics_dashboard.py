@@ -1,4 +1,4 @@
-"""dashboard — persistable keyword-fallback capability. REUSE dashboard + analytics."""
+"""analytics_dashboard — REUSE dashboard + analytics + database."""
 
 from __future__ import annotations
 
@@ -6,33 +6,43 @@ from typing import Any, Dict
 
 from app.block_inputs import prepare_block_input
 from app.dispatch import BLOCK_DEFAULT_ACTIONS, execute
-from app.domain import allowed_next_status, dashboard_band, envelope_status
+from app.domain import (
+    adr_for,
+    allowed_next_status,
+    dashboard_band,
+    envelope_status,
+    occupancy_pct,
+    revpar,
+)
 from app.persist import ok_envelope
 
-# READS: caller.input, config.runtime
-# WRITES: caller.output
+# READS: caller.input, config.runtime, database.sql
+# WRITES: caller.output, database.sql
 # NEVER: (none)
 
-BLOCK_IDS = ["dashboard", "analytics"]
-CAPABILITY_ID = "dashboard"
+BLOCK_IDS = ["dashboard", "analytics", "database"]
+CAPABILITY_ID = "analytics_dashboard"
 HORIZONS = ("today", "week", "month")
 
 
 def handle(payload: Dict[str, Any]) -> Dict[str, Any]:
-    """Render the clinic board and persist the view — not a stub dashboard block."""
+    """Render occupancy / ADR / RevPAR and persist the hotel board."""
     status = envelope_status(payload)
     horizon = str(payload.get("horizon") or "today")
     if horizon not in HORIZONS:
         horizon = "today"
     view_name = str(payload.get("view_name") or payload.get("reference") or "sample")
-    open_items = 1 if status == "open" else 0
-    in_motion = 1 if status == "in_progress" else 0
+    occupancy = occupancy_pct(status)
+    adr = adr_for(horizon)
+    revenue_per_room = revpar(status, horizon)
     record = {
         **payload,
         "status": status,
         "view_name": view_name,
         "horizon": horizon,
-        "open_items": open_items,
+        "occupancy_pct": occupancy,
+        "adr": adr,
+        "revpar": revenue_per_room,
         "capability": CAPABILITY_ID,
         "channel": "mcp",
     }
@@ -47,9 +57,10 @@ def handle(payload: Dict[str, Any]) -> Dict[str, Any]:
         "view_name": view_name,
         "horizon": horizon,
         "band": dashboard_band(horizon),
-        "widgets": ["patients", "appointments", "invoices"],
-        "open_items": open_items,
-        "in_motion": in_motion,
+        "occupancy_pct": occupancy,
+        "adr": adr,
+        "revpar": revenue_per_room,
+        "widgets": ["bookings", "occupancy", "revenue"],
         "allowed_next_status": list(allowed_next_status(status)),
         "theme": "light",
     }

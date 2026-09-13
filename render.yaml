@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: cerebrum-veterinary-care
+    name: cerebrum-hotel-booking
     runtime: python
     plan: starter
     buildCommand: pip install -r requirements.txt

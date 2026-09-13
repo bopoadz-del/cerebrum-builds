@@ -29,6 +29,7 @@ BLOCK_DEFAULT_ACTIONS: Dict[str, str] = {
     "spec_analyzer": "analyze",
     "recommendation_template": "recommend",
     "capture": "extract",
+    "file_hasher": "hash",
     "estate_registry": "register",
     "readiness_engine": "assess",
     "memory": "get",

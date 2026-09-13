@@ -14,11 +14,13 @@ branch_labels = None
 depends_on = None
 
 ENTITIES = (
-    "inventory_tracking",
-    "order_management",
-    "ops_dashboard",
-    "stock_alerts",
-    "pilot_ops_log",
+    "airport_readiness",
+    "operational_dashboard",
+    "ground_workflow_coordination",
+    "regulatory_document_control",
+    "incident_evidence_tracking",
+    "flight_event_orchestration",
+    "airport_knowledge_assistant",
 )
 
 

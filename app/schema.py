@@ -36,35 +36,22 @@ def _spec(
 
 
 SPECS: Dict[str, Dict[str, Any]] = {
-    "inventory_tracking": _spec(
-        "inventory_tracking",
-        ["database", "validation", "audit"],
+    "airport_readiness": _spec(
+        "airport_readiness",
+        ["analytics"],
         extra_fields={
-            "sku": {"type": "string"},
-            "quantity_on_hand": {"type": "int"},
-            "reorder_threshold": {"type": "int"},
+            "stand_id": {"type": "string"},
+            "readiness_window": {"type": "string"},
         },
         extra_constraints={
-            "quantity_on_hand": {"min": 0},
-            "reorder_threshold": {"min": 0},
-        },
-    ),
-    "order_management": _spec(
-        "order_management",
-        ["workflow", "queue", "database", "notification"],
-        extra_fields={
-            "order_number": {"type": "string"},
-            "fulfillment_stage": {"type": "string"},
-        },
-        extra_constraints={
-            "fulfillment_stage": {
-                "allowed_values": ["received", "picking", "packed", "shipped"],
+            "readiness_window": {
+                "allowed_values": ["turnaround", "shift", "day"],
             },
         },
     ),
-    "ops_dashboard": _spec(
-        "ops_dashboard",
-        ["dashboard", "analytics", "database"],
+    "operational_dashboard": _spec(
+        "operational_dashboard",
+        ["dashboard", "analytics", "notification"],
         extra_fields={
             "view_name": {"type": "string"},
             "horizon": {"type": "string"},
@@ -73,24 +60,58 @@ SPECS: Dict[str, Dict[str, Any]] = {
             "horizon": {"allowed_values": ["today", "week", "month"]},
         },
     ),
-    "stock_alerts": _spec(
-        "stock_alerts",
-        ["notification", "event_bus"],
+    "ground_workflow_coordination": _spec(
+        "ground_workflow_coordination",
+        ["workflow", "team", "queue"],
         extra_fields={
-            "sku": {"type": "string"},
-            "alert_kind": {"type": "string"},
+            "crew_name": {"type": "string"},
+            "work_order": {"type": "string"},
+        },
+    ),
+    "regulatory_document_control": _spec(
+        "regulatory_document_control",
+        ["document_engine", "validation", "audit", "storage"],
+        extra_fields={
+            "document_title": {"type": "string"},
+            "control_class": {"type": "string"},
         },
         extra_constraints={
-            "alert_kind": {
-                "allowed_values": ["below_reorder", "stalled_order"],
+            "control_class": {
+                "allowed_values": ["manual", "certificate", "directive"],
             },
         },
     ),
-    "pilot_ops_log": _spec(
-        "pilot_ops_log",
-        ["knowledge", "memory", "storage"],
+    "incident_evidence_tracking": _spec(
+        "incident_evidence_tracking",
+        ["capture", "file_hasher", "storage"],
         extra_fields={
-            "note_title": {"type": "string"},
+            "incident_note": {"type": "string"},
+            "evidence_kind": {"type": "string"},
+        },
+        extra_constraints={
+            "evidence_kind": {
+                "allowed_values": ["photo", "report", "sensor"],
+            },
+        },
+    ),
+    "flight_event_orchestration": _spec(
+        "flight_event_orchestration",
+        ["event_bus", "workflow", "notification", "queue"],
+        extra_fields={
+            "event_type": {"type": "string"},
+            "flight_reference": {"type": "string"},
+        },
+        extra_constraints={
+            "event_type": {
+                "allowed_values": ["arrival", "departure", "weather", "hold"],
+            },
+        },
+    ),
+    "airport_knowledge_assistant": _spec(
+        "airport_knowledge_assistant",
+        ["knowledge", "vector_search", "recommendation_template", "memory"],
+        extra_fields={
+            "question": {"type": "string"},
             "note_body": {"type": "string"},
         },
     ),

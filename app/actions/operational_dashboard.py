@@ -1,4 +1,4 @@
-"""ops_dashboard — REUSE dashboard + analytics + database. One-screen ops view."""
+"""operational_dashboard — REUSE dashboard + analytics + notification."""
 
 from __future__ import annotations
 
@@ -8,17 +8,17 @@ from app.block_inputs import prepare_block_input
 from app.dispatch import BLOCK_DEFAULT_ACTIONS, execute
 from app.persist import ok_envelope
 
-# READS: caller.input, config.runtime, llm.provider, database.sql
-# WRITES: caller.output, database.sql
+# READS: caller.input, config.runtime, env.process, network.http.outbound
+# WRITES: caller.output, notification.outbound
 # NEVER: (none)
 
-BLOCK_IDS = ["dashboard", "analytics", "database"]
-CAPABILITY_ID = "ops_dashboard"
+BLOCK_IDS = ["dashboard", "analytics", "notification"]
+CAPABILITY_ID = "operational_dashboard"
 HORIZONS = ("today", "week", "month")
 
 
 def handle(payload: Dict[str, Any]) -> Dict[str, Any]:
-    """Render the ops board, track a sample metric, and persist the view."""
+    """Render the airside board, track a metric, and notify over MCP."""
     horizon = str(payload.get("horizon") or "today")
     if horizon not in HORIZONS:
         horizon = "today"
@@ -40,7 +40,8 @@ def handle(payload: Dict[str, Any]) -> Dict[str, Any]:
     record["board"] = {
         "view_name": view_name,
         "horizon": horizon,
-        "widgets": ["stock_on_hand", "open_orders", "alerts"],
+        "widgets": ["stands", "flights", "incidents"],
         "theme": "light",
+        "notified": True,
     }
     return ok_envelope(CAPABILITY_ID, record, blocks)

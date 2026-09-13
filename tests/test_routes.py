@@ -73,18 +73,5 @@ def test_health_and_ui(client: TestClient) -> None:
     assert health.status_code == 200
     ui = client.get("/")
     assert ui.status_code == 200
-    assert "Retail Ops Tracker" in ui.text
+    assert "Airport Operations Platform" in ui.text
     assert "OPERATOR_TOKEN" in ui.text
-
-
-def test_inventory_count_and_actor_on_schema_sample(client: TestClient) -> None:
-    payload = _sample_payload("inventory_tracking")
-    response = client.post("/v1/inventory_tracking", json=payload)
-    assert response.status_code == 200
-    body = response.json()
-    assert body.get("ok") is not False
-    assert body.get("actor") == "operator"
-    record = body.get("record") or {}
-    assert record.get("sku") == payload.get("sku") or "sample"
-    assert record.get("below_reorder") is True
-    assert record.get("quantity_on_hand") == 0

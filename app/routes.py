@@ -91,8 +91,8 @@ def post_capability(
         details={
             "status": payload.get("status", "open"),
             "capability": capability_id,
-            "sku": payload.get("sku") or payload.get("reference") or "sample",
-            "category": "ops",
+            "stand_id": payload.get("stand_id") or payload.get("reference") or "sample",
+            "category": "airside",
         },
     )
     result.setdefault("ok", True)
@@ -121,6 +121,6 @@ def get_capability(capability_id: str) -> Dict[str, Any]:
 def list_capabilities() -> Dict[str, Any]:
     return {
         "ok": True,
-        "product": "Retail Ops Tracker",
+        "product": "Airport Operations Platform",
         "capabilities": list(REQUIRED_CAPABILITY_IDS),
     }

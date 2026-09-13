@@ -3,9 +3,9 @@
 STATUS = "not_implemented"
 
 PLACEHOLDERS = (
-    "pos_feed_stub",
-    "supplier_portal_stub",
-    "barcode_scanner_stub",
+    "aodb_stub",
+    "stand_allocation_stub",
+    "weather_feed_stub",
 )
 
 

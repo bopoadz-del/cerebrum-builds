@@ -12,37 +12,45 @@ from app.schema import REQUIRED_CAPABILITY_IDS, SPECS
 pytestmark = pytest.mark.not_pilot
 
 EXPECTED = {
-    "airport_readiness",
-    "operational_dashboard",
-    "ground_workflow_coordination",
-    "regulatory_document_control",
-    "incident_evidence_tracking",
-    "flight_event_orchestration",
-    "airport_knowledge_assistant",
+    "veterinary_care_core",
+    "patient_records_management",
+    "appointment_scheduling",
+    "prescription_management",
+    "billing_and_invoicing",
+    "client_communication_portal",
+    "audit",
+    "dashboard",
 }
 
 
 def test_domain_kernel_is_not_a_stub() -> None:
     from app.domain import (
-        crew_function,
-        document_retention_days,
-        evidence_severity,
-        flight_cascade,
+        appointment_cascade,
+        audit_retention_days,
+        chart_class,
+        clinic_is_overloaded,
+        clinic_load_score,
+        comms_priority,
+        daily_dose_mg,
+        invoice_totals,
         knowledge_source_class,
-        readiness_score,
-        stand_is_degraded,
-        work_order_stage,
+        patient_risk_band,
     )
 
-    assert readiness_score("open", "turnaround") == 0.45
-    assert stand_is_degraded(0.45) is True
-    assert readiness_score("closed", "day") == 0.7
-    assert work_order_stage("in_progress") == "on_stand"
-    assert crew_function("fuel bowser", "alpha") == "fueling"
-    assert document_retention_days("certificate") == 1095
-    assert evidence_severity("sensor") == "high"
-    assert flight_cascade("arrival")["sla_minutes"] == 25
-    assert knowledge_source_class("incident on stand", "") == "incident_record"
+    assert clinic_load_score("open", "walk_in") == 0.45
+    assert clinic_is_overloaded(0.45) is True
+    assert clinic_load_score("closed", "day") == 0.7
+    assert patient_risk_band("exotic") == "elevated"
+    assert chart_class("equine") == "large_animal"
+    assert appointment_cascade("emergency")["sla_minutes"] == 10
+    assert daily_dose_mg({"status": "open"}, "tablet") == 50.0
+    totals = invoice_totals("consult")
+    assert totals["subtotal"] == 85.0
+    assert totals["tax"] == 6.8
+    assert totals["total"] == 91.8
+    assert comms_priority("result") == "high"
+    assert audit_retention_days("clinical") == 2555
+    assert knowledge_source_class("kiwi", "exotic") == "specialty_chart"
 
 
 def test_workspace_imports() -> None:
@@ -50,7 +58,7 @@ def test_workspace_imports() -> None:
     from app.dispatch import BLOCK_DEFAULT_ACTIONS, execute
     from app.store import COLUMNS, list_all, save
 
-    assert app.title == "Airport Operations Platform"
+    assert app.title == "Veterinary Care Platform"
     assert BLOCK_DEFAULT_ACTIONS["audit"] == "log"
     assert BLOCK_DEFAULT_ACTIONS["dashboard"] == "render"
     assert BLOCK_DEFAULT_ACTIONS["vector_search"] == "search"
@@ -99,6 +107,25 @@ def test_actions_init_has_no_eager_reexport() -> None:
         encoding="utf-8"
     )
     assert "from app.actions import" not in text
+
+
+def test_no_airport_or_retail_product_ids() -> None:
+    root = Path(__file__).resolve().parents[1]
+    forbidden = (
+        "airport_readiness",
+        "inventory_tracking",
+        "Retail Ops Tracker",
+        "Airport Operations Platform",
+    )
+    app_text = (root / "app" / "main.py").read_text(encoding="utf-8")
+    for token in forbidden:
+        assert token not in app_text
+    leftover = [
+        p.name
+        for p in (root / "app" / "actions").glob("*.py")
+        if p.stem.startswith("airport") or p.stem in {"inventory_tracking", "order_management"}
+    ]
+    assert leftover == []
 
 
 def test_full_pilot_authorship_floor() -> None:

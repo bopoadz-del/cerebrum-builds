@@ -1,3 +1,3 @@
-"""Airport Operations Platform — airside command view for airport operators."""
+"""Veterinary Care Platform — VetCare Hub for clinic operators."""
 
 __version__ = "1.0.0"

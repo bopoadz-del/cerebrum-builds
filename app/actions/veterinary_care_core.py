@@ -1,4 +1,4 @@
-"""airport_readiness — REUSE analytics. Persist stand/turnaround readiness."""
+"""veterinary_care_core — REUSE analytics. Persist clinic caseload readiness."""
 
 from __future__ import annotations
 
@@ -8,9 +8,9 @@ from app.block_inputs import prepare_block_input
 from app.dispatch import BLOCK_DEFAULT_ACTIONS, execute
 from app.domain import (
     allowed_next_status,
+    clinic_is_overloaded,
+    clinic_load_score,
     envelope_status,
-    readiness_score,
-    stand_is_degraded,
 )
 from app.persist import ok_envelope
 
@@ -19,26 +19,26 @@ from app.persist import ok_envelope
 # NEVER: (none)
 
 BLOCK_IDS = ["analytics"]
-CAPABILITY_ID = "airport_readiness"
-WINDOWS = ("turnaround", "shift", "day")
+CAPABILITY_ID = "veterinary_care_core"
+WINDOWS = ("walk_in", "shift", "day")
 
 
 def handle(payload: Dict[str, Any]) -> Dict[str, Any]:
-    """Score a stand from envelope status × window weight; persist the snapshot."""
+    """Score clinic load from envelope status × window weight; persist the snapshot."""
     status = envelope_status(payload)
-    window = str(payload.get("readiness_window") or "turnaround")
+    window = str(payload.get("caseload_window") or "walk_in")
     if window not in WINDOWS:
-        window = "turnaround"
-    stand_id = str(payload.get("stand_id") or payload.get("reference") or "sample")
-    score = readiness_score(status, window)
-    degraded = stand_is_degraded(score)
+        window = "walk_in"
+    clinic_unit = str(payload.get("clinic_unit") or payload.get("reference") or "sample")
+    score = clinic_load_score(status, window)
+    overloaded = clinic_is_overloaded(score)
     record = {
         **payload,
         "status": status,
-        "stand_id": stand_id,
-        "readiness_window": window,
-        "readiness_score": score,
-        "degraded": degraded,
+        "clinic_unit": clinic_unit,
+        "caseload_window": window,
+        "clinic_load_score": score,
+        "overloaded": overloaded,
         "capability": CAPABILITY_ID,
         "channel": "mcp",
     }
@@ -49,13 +49,13 @@ def handle(payload: Dict[str, Any]) -> Dict[str, Any]:
             prepare_block_input(block_id, record),
             action=BLOCK_DEFAULT_ACTIONS.get(block_id),
         )
-    record["readiness"] = {
-        "stand_id": stand_id,
+    record["clinic"] = {
+        "clinic_unit": clinic_unit,
         "window": window,
         "score": score,
-        "degraded": degraded,
+        "overloaded": overloaded,
         "allowed_next_status": list(allowed_next_status(status)),
-        "metric": "airport_ops_events",
+        "metric": "vetcare_clinic_events",
         "tracked": True,
     }
     return ok_envelope(CAPABILITY_ID, record, blocks)

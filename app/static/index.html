@@ -3,29 +3,29 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Airport Operations Platform</title>
+  <title>Veterinary Care Platform</title>
   <style>
-    :root { font-family: "IBM Plex Sans", "Segoe UI", sans-serif; background: #0f1419; color: #e8eef4; }
+    :root { font-family: "IBM Plex Sans", "Segoe UI", sans-serif; background: #101612; color: #e8f0ea; }
     body { margin: 0; }
-    header { padding: 1.2rem 1.5rem; border-bottom: 1px solid #2a3642; background: #121a22; }
+    header { padding: 1.2rem 1.5rem; border-bottom: 1px solid #2a3a30; background: #141c16; }
     h1 { margin: 0; font-size: 1.4rem; }
-    p.sub { margin: 0.35rem 0 0; color: #93a0ad; }
+    p.sub { margin: 0.35rem 0 0; color: #93ad9a; }
     nav { display: flex; flex-wrap: wrap; gap: 0.4rem; padding: 0.8rem 1.5rem; }
-    nav button { background: #1c242c; color: #e8eef4; border: 1px solid #3a4a58; padding: 0.35rem 0.7rem; cursor: pointer; }
-    nav button.active { background: #0d5c73; }
+    nav button { background: #1c2420; color: #e8f0ea; border: 1px solid #3a5848; padding: 0.35rem 0.7rem; cursor: pointer; }
+    nav button.active { background: #0d7358; }
     main { padding: 1rem 1.5rem 3rem; }
     label { display: block; margin: 0.6rem 0 0.2rem; }
-    input, textarea, select { width: 100%; max-width: 36rem; background: #0d1116; color: #e8eef4; border: 1px solid #3a4a58; padding: 0.4rem; }
-    button.act { margin-top: 0.8rem; background: #0d5c73; color: #fff; border: 0; padding: 0.5rem 1rem; cursor: pointer; }
-    pre { background: #0d1116; padding: 0.8rem; overflow: auto; }
+    input, textarea, select { width: 100%; max-width: 36rem; background: #0d1110; color: #e8f0ea; border: 1px solid #3a5848; padding: 0.4rem; }
+    button.act { margin-top: 0.8rem; background: #0d7358; color: #fff; border: 0; padding: 0.5rem 1rem; cursor: pointer; }
+    pre { background: #0d1110; padding: 0.8rem; overflow: auto; }
     .mods { display: grid; gap: 0.6rem; grid-template-columns: repeat(auto-fill, minmax(14rem, 1fr)); }
-    .card { border: 1px solid #2a3642; padding: 0.7rem; }
+    .card { border: 1px solid #2a3a30; padding: 0.7rem; }
   </style>
 </head>
 <body>
   <header>
-    <h1>Airport Operations Platform</h1>
-    <p class="sub">Airside command view for stands, crews, documents, incidents, and flight events. Operator / admin. Mutations require a bearer operator token. OPERATOR_TOKEN is not stored in git.</p>
+    <h1>Veterinary Care Platform</h1>
+    <p class="sub">VetCare Hub for clinic operators — charts, appointments, prescriptions, invoices, and client messages. Operator / admin. Mutations require a bearer operator token. OPERATOR_TOKEN is not stored in git.</p>
   </header>
   <nav id="nav"></nav>
   <main>
@@ -34,7 +34,7 @@
       <div class="mods" id="modules"></div>
     </section>
     <section id="live" class="panel">
-      <h2 id="cap-title">airport_readiness</h2>
+      <h2 id="cap-title">veterinary_care_core</h2>
       <label>Operator token <input id="operator-token" type="password" autocomplete="off" placeholder="OPERATOR_TOKEN" /></label>
       <label>Capability
         <select id="capability"></select>
@@ -46,11 +46,11 @@
       <pre id="out">Ready.</pre>
     </section>
     <section id="operational_chat" class="panel">
-      <h2>Operational chat — airport notes</h2>
-      <label>Title <input id="rag-title" value="Stand turnaround pack" /></label>
-      <label>Text <textarea id="rag-text" rows="3">Stand turnaround, gate allocation, and flight event notes for the airport operations pilot.</textarea></label>
+      <h2>Operational chat — clinic notes</h2>
+      <label>Title <input id="rag-title" value="Clinic caseload pack" /></label>
+      <label>Text <textarea id="rag-text" rows="3">Clinic caseload, walk in wellness visit, and patient chart notes for the veterinary care pilot.</textarea></label>
       <button class="act" id="ingest-btn" type="button">Ingest pack</button>
-      <label>Query <input id="rag-q" value="stand turnaround" /></label>
+      <label>Query <input id="rag-q" value="clinic caseload" /></label>
       <button class="act" id="query-btn" type="button">Query notes</button>
     </section>
     <section id="resident_engineer" class="panel">
@@ -60,28 +60,29 @@
   </main>
   <script>
     const CAPS = [
-      "airport_readiness",
-      "operational_dashboard",
-      "ground_workflow_coordination",
-      "regulatory_document_control",
-      "incident_evidence_tracking",
-      "flight_event_orchestration",
-      "airport_knowledge_assistant"
+      "veterinary_care_core",
+      "patient_records_management",
+      "appointment_scheduling",
+      "prescription_management",
+      "billing_and_invoicing",
+      "client_communication_portal",
+      "audit",
+      "dashboard"
     ];
     const UI = ["command_center", "operational_chat", "resident_engineer"];
     const MAP = {
-      command_center: "airport_readiness",
-      operational_chat: "airport_knowledge_assistant",
-      resident_engineer: "operational_dashboard"
+      command_center: "veterinary_care_core",
+      operational_chat: "patient_records_management",
+      resident_engineer: "dashboard"
     };
-    let current = "airport_readiness";
+    let current = "veterinary_care_core";
     const nav = document.getElementById("nav");
     const modules = document.getElementById("modules");
     const capSelect = document.getElementById("capability");
     UI.forEach((name) => {
       const b = document.createElement("button");
       b.textContent = name;
-      b.onclick = () => select(MAP[name] || "airport_readiness", b);
+      b.onclick = () => select(MAP[name] || "veterinary_care_core", b);
       nav.appendChild(b);
       const card = document.createElement("div");
       card.className = "card";
@@ -114,13 +115,14 @@
     }
     function extraFields(id) {
       const extras = {
-        airport_readiness: {stand_id: "sample", readiness_window: "turnaround"},
-        operational_dashboard: {view_name: "sample", horizon: "today"},
-        ground_workflow_coordination: {crew_name: "sample", work_order: "sample"},
-        regulatory_document_control: {document_title: "sample", control_class: "manual"},
-        incident_evidence_tracking: {incident_note: "sample", evidence_kind: "photo"},
-        flight_event_orchestration: {event_type: "arrival", flight_reference: "sample"},
-        airport_knowledge_assistant: {question: "sample", note_body: "sample"}
+        veterinary_care_core: {clinic_unit: "sample", caseload_window: "walk_in"},
+        patient_records_management: {patient_name: "sample", species: "canine"},
+        appointment_scheduling: {visit_type: "wellness", slot_label: "sample"},
+        prescription_management: {medication_name: "sample", dose_form: "tablet"},
+        billing_and_invoicing: {invoice_kind: "consult", line_label: "sample"},
+        client_communication_portal: {message_kind: "reminder", client_name: "sample"},
+        audit: {event_category: "clinical", resource_label: "sample"},
+        dashboard: {view_name: "sample", horizon: "today"}
       };
       return extras[id] || {};
     }
@@ -155,7 +157,7 @@
       document.getElementById("out").textContent = JSON.stringify(await res.json(), null, 2);
     };
     document.getElementById("query-btn").onclick = async () => {
-      const q = encodeURIComponent(document.getElementById("rag-q").value || "turnaround");
+      const q = encodeURIComponent(document.getElementById("rag-q").value || "caseload");
       const res = await fetch("/v1/rag/query?q=" + q);
       document.getElementById("out").textContent = JSON.stringify(await res.json(), null, 2);
     };

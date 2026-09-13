@@ -35,12 +35,12 @@ FLOOR = (
     "authorship==receipt",
 )
 
-CORE = "airport_readiness"
+CORE = "veterinary_care_core"
 CORE_BODY = {
     "reference": "sample",
     "status": "open",
-    "stand_id": "sample",
-    "readiness_window": "turnaround",
+    "clinic_unit": "sample",
+    "caseload_window": "walk_in",
 }
 
 
@@ -96,7 +96,9 @@ def main() -> int:
         ui = client.get("/")
         results.append(
             _line(
-                "PASS" if ui.status_code == 200 and "Airport Operations Platform" in ui.text else "FAIL",
+                "PASS"
+                if ui.status_code == 200 and "Veterinary Care Platform" in ui.text
+                else "FAIL",
                 "ui_served_200",
                 f"GET / -> {ui.status_code}",
             )
@@ -107,12 +109,12 @@ def main() -> int:
             json={
                 "layer": 1,
                 "doc_id": "acc-pack",
-                "title": "Stand turnaround pack",
-                "text": "Stand turnaround, gate allocation, and flight event notes for the airport operations pilot.",
+                "title": "Clinic caseload pack",
+                "text": "Clinic caseload, walk in wellness visit, and patient chart notes for the veterinary care pilot.",
             },
             headers=AUTH_HEADERS,
         )
-        query = client.get("/v1/rag/query", params={"q": "stand turnaround"})
+        query = client.get("/v1/rag/query", params={"q": "clinic caseload"})
         hit = (
             ingest.status_code == 200
             and query.status_code == 200
@@ -147,7 +149,7 @@ def main() -> int:
 
         open_post = client.post(
             f"/v1/{CORE}",
-            json={"reference": "sample", "status": "open", "stand_id": "sample"},
+            json={"reference": "sample", "status": "open", "clinic_unit": "sample"},
         )
         results.append(
             _line(
@@ -158,7 +160,7 @@ def main() -> int:
         )
         open_ingest = client.post(
             "/v1/rag/ingest",
-            json={"layer": 1, "doc_id": "denied", "title": "x", "text": "stand turnaround"},
+            json={"layer": 1, "doc_id": "denied", "title": "x", "text": "clinic caseload"},
         )
         results.append(
             _line(
@@ -187,18 +189,18 @@ def main() -> int:
             )
         )
         rec = (quoted.json() or {}).get("record") or {} if quoted.status_code == 200 else {}
-        score = rec.get("readiness_score")
+        score = rec.get("clinic_load_score")
         computed = (
             quoted.status_code == 200
             and score not in (None, 1, 1.0)
-            and rec.get("degraded") is True
+            and rec.get("overloaded") is True
             and rec.get("actor") == "operator"
         )
         results.append(
             _line(
                 "PASS" if computed else "FAIL",
-                "core_readiness_computed",
-                f"score={score} degraded={rec.get('degraded')} actor={rec.get('actor')}",
+                "core_clinic_load_computed",
+                f"score={score} overloaded={rec.get('overloaded')} actor={rec.get('actor')}",
             )
         )
 
@@ -290,7 +292,7 @@ def main() -> int:
     )
     results.append(
         _line(
-            "PASS" if len(REQUIRED_CAPABILITY_IDS) == 7 else "FAIL",
+            "PASS" if len(REQUIRED_CAPABILITY_IDS) == 8 else "FAIL",
             "capability_roster",
             f"{len(REQUIRED_CAPABILITY_IDS)} capabilities",
         )

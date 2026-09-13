@@ -1,4 +1,4 @@
-"""Retail ops notes ingest/query HTTP. Quoted paths required by PHASE 2."""
+"""Airport ops notes ingest/query HTTP. Quoted paths required by PHASE 2."""
 
 from __future__ import annotations
 
@@ -17,7 +17,7 @@ from app.store import storage_root
 
 router = APIRouter()
 
-RETAIL_INDEX = "retail_ops_notes_v1"
+AIRPORT_INDEX = "airport_ops_notes_v1"
 
 
 class RagIngestBody(BaseModel):
@@ -35,7 +35,7 @@ def _rag_dir() -> Path:
 
 
 def _index_path() -> Path:
-    return _rag_dir() / f"{RETAIL_INDEX}.jsonl"
+    return _rag_dir() / f"{AIRPORT_INDEX}.jsonl"
 
 
 def _tokens(text: str) -> List[str]:
@@ -75,7 +75,7 @@ def rag_ingest(body: RagIngestBody, request: Request) -> Dict[str, Any]:
         "text": body.text,
         "layer": body.layer,
         "property_id": body.property_id,
-        "index": RETAIL_INDEX,
+        "index": AIRPORT_INDEX,
         "retrieval": "lexical_jsonl",
         "actor": principal.subject,
         "actor_role": principal.role,

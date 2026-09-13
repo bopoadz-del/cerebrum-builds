@@ -3,29 +3,29 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Retail Ops Tracker</title>
+  <title>Airport Operations Platform</title>
   <style>
-    :root { font-family: "IBM Plex Sans", "Segoe UI", sans-serif; background: #14181c; color: #eef2f6; }
+    :root { font-family: "IBM Plex Sans", "Segoe UI", sans-serif; background: #0f1419; color: #e8eef4; }
     body { margin: 0; }
-    header { padding: 1.2rem 1.5rem; border-bottom: 1px solid #2b3640; }
+    header { padding: 1.2rem 1.5rem; border-bottom: 1px solid #2a3642; background: #121a22; }
     h1 { margin: 0; font-size: 1.4rem; }
     p.sub { margin: 0.35rem 0 0; color: #93a0ad; }
     nav { display: flex; flex-wrap: wrap; gap: 0.4rem; padding: 0.8rem 1.5rem; }
-    nav button { background: #1c242c; color: #eef2f6; border: 1px solid #3a4a58; padding: 0.35rem 0.7rem; cursor: pointer; }
-    nav button.active { background: #0f6e8a; }
+    nav button { background: #1c242c; color: #e8eef4; border: 1px solid #3a4a58; padding: 0.35rem 0.7rem; cursor: pointer; }
+    nav button.active { background: #0d5c73; }
     main { padding: 1rem 1.5rem 3rem; }
     label { display: block; margin: 0.6rem 0 0.2rem; }
-    input, textarea, select { width: 100%; max-width: 36rem; background: #0d1116; color: #eef2f6; border: 1px solid #3a4a58; padding: 0.4rem; }
-    button.act { margin-top: 0.8rem; background: #0f6e8a; color: #fff; border: 0; padding: 0.5rem 1rem; cursor: pointer; }
+    input, textarea, select { width: 100%; max-width: 36rem; background: #0d1116; color: #e8eef4; border: 1px solid #3a4a58; padding: 0.4rem; }
+    button.act { margin-top: 0.8rem; background: #0d5c73; color: #fff; border: 0; padding: 0.5rem 1rem; cursor: pointer; }
     pre { background: #0d1116; padding: 0.8rem; overflow: auto; }
     .mods { display: grid; gap: 0.6rem; grid-template-columns: repeat(auto-fill, minmax(14rem, 1fr)); }
-    .card { border: 1px solid #2b3640; padding: 0.7rem; }
+    .card { border: 1px solid #2a3642; padding: 0.7rem; }
   </style>
 </head>
 <body>
   <header>
-    <h1>Retail Ops Tracker</h1>
-    <p class="sub">Small-team inventory, orders, and alerts. Operator / admin. Mutations require a bearer operator token. OPERATOR_TOKEN is not stored in git.</p>
+    <h1>Airport Operations Platform</h1>
+    <p class="sub">Airside command view for stands, crews, documents, incidents, and flight events. Operator / admin. Mutations require a bearer operator token. OPERATOR_TOKEN is not stored in git.</p>
   </header>
   <nav id="nav"></nav>
   <main>
@@ -34,7 +34,7 @@
       <div class="mods" id="modules"></div>
     </section>
     <section id="live" class="panel">
-      <h2 id="cap-title">inventory_tracking</h2>
+      <h2 id="cap-title">airport_readiness</h2>
       <label>Operator token <input id="operator-token" type="password" autocomplete="off" placeholder="OPERATOR_TOKEN" /></label>
       <label>Capability
         <select id="capability"></select>
@@ -46,11 +46,11 @@
       <pre id="out">Ready.</pre>
     </section>
     <section id="operational_chat" class="panel">
-      <h2>Operational chat — retail notes</h2>
-      <label>Title <input id="rag-title" value="Inventory count pack" /></label>
-      <label>Text <textarea id="rag-text" rows="3">Inventory count, reorder threshold, and order status notes for the retail ops pilot.</textarea></label>
+      <h2>Operational chat — airport notes</h2>
+      <label>Title <input id="rag-title" value="Stand turnaround pack" /></label>
+      <label>Text <textarea id="rag-text" rows="3">Stand turnaround, gate allocation, and flight event notes for the airport operations pilot.</textarea></label>
       <button class="act" id="ingest-btn" type="button">Ingest pack</button>
-      <label>Query <input id="rag-q" value="inventory count" /></label>
+      <label>Query <input id="rag-q" value="stand turnaround" /></label>
       <button class="act" id="query-btn" type="button">Query notes</button>
     </section>
     <section id="resident_engineer" class="panel">
@@ -60,26 +60,28 @@
   </main>
   <script>
     const CAPS = [
-      "inventory_tracking",
-      "order_management",
-      "ops_dashboard",
-      "stock_alerts",
-      "pilot_ops_log"
+      "airport_readiness",
+      "operational_dashboard",
+      "ground_workflow_coordination",
+      "regulatory_document_control",
+      "incident_evidence_tracking",
+      "flight_event_orchestration",
+      "airport_knowledge_assistant"
     ];
     const UI = ["command_center", "operational_chat", "resident_engineer"];
     const MAP = {
-      command_center: "inventory_tracking",
-      operational_chat: "order_management",
-      resident_engineer: "ops_dashboard"
+      command_center: "airport_readiness",
+      operational_chat: "airport_knowledge_assistant",
+      resident_engineer: "operational_dashboard"
     };
-    let current = "inventory_tracking";
+    let current = "airport_readiness";
     const nav = document.getElementById("nav");
     const modules = document.getElementById("modules");
     const capSelect = document.getElementById("capability");
     UI.forEach((name) => {
       const b = document.createElement("button");
       b.textContent = name;
-      b.onclick = () => select(MAP[name] || "inventory_tracking", b);
+      b.onclick = () => select(MAP[name] || "airport_readiness", b);
       nav.appendChild(b);
       const card = document.createElement("div");
       card.className = "card";
@@ -112,11 +114,13 @@
     }
     function extraFields(id) {
       const extras = {
-        inventory_tracking: {sku: "sample", quantity_on_hand: 0, reorder_threshold: 0},
-        order_management: {order_number: "sample", fulfillment_stage: "received"},
-        ops_dashboard: {view_name: "sample", horizon: "today"},
-        stock_alerts: {sku: "sample", alert_kind: "below_reorder"},
-        pilot_ops_log: {note_title: "sample", note_body: "sample"}
+        airport_readiness: {stand_id: "sample", readiness_window: "turnaround"},
+        operational_dashboard: {view_name: "sample", horizon: "today"},
+        ground_workflow_coordination: {crew_name: "sample", work_order: "sample"},
+        regulatory_document_control: {document_title: "sample", control_class: "manual"},
+        incident_evidence_tracking: {incident_note: "sample", evidence_kind: "photo"},
+        flight_event_orchestration: {event_type: "arrival", flight_reference: "sample"},
+        airport_knowledge_assistant: {question: "sample", note_body: "sample"}
       };
       return extras[id] || {};
     }
@@ -151,7 +155,7 @@
       document.getElementById("out").textContent = JSON.stringify(await res.json(), null, 2);
     };
     document.getElementById("query-btn").onclick = async () => {
-      const q = encodeURIComponent(document.getElementById("rag-q").value || "inventory");
+      const q = encodeURIComponent(document.getElementById("rag-q").value || "turnaround");
       const res = await fetch("/v1/rag/query?q=" + q);
       document.getElementById("out").textContent = JSON.stringify(await res.json(), null, 2);
     };

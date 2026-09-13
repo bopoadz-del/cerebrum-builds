@@ -114,8 +114,8 @@ def _create_block_instance(block_or_name, *args, **kwargs):
 
 #!/usr/bin/env python3
 """
-Auto-generated adapter for Cerebrum block: database
-Wraps vendor.cerebrum.blocks.database into a synchronous run() function.
+Auto-generated adapter for Cerebrum block: recommendation_template
+Wraps vendor.cerebrum.blocks.recommendation_template into a synchronous run() function.
 """
 
 import asyncio
@@ -135,11 +135,11 @@ def _run_async(coro):
 
 def run(**kwargs):
     """
-    Execute the database block.
+    Execute the recommendation_template block.
     Accepts keyword args matching the block's inputs/params.
     Returns the standardized block result payload.
     """
-    block_cls = get_block("database")
+    block_cls = get_block("recommendation_template")
     instance = _instantiate_store_block(block_cls)
 
     input_data = kwargs.get("input", kwargs)
@@ -149,6 +149,6 @@ def run(**kwargs):
     if envelope.get("status") == "error":
         inner = envelope.get("result", {})
         message = inner.get("error") if isinstance(inner, dict) else str(inner)
-        raise RuntimeError(message or "database block failed")
+        raise RuntimeError(message or "recommendation_template block failed")
 
     return envelope.get("result", envelope)

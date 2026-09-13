@@ -1,20 +1,24 @@
 {
   "schema": "cli_receipt.v1",
-  "product": "Retail Ops Tracker",
-  "product_id": "retail-operations",
-  "session_id": "sess_d00261c31ff7451f",
+  "product": "Airport Operations Platform",
+  "product_id": "airport-operations",
+  "session_id": "sess_1d94d0a373ce45fa",
   "cli_authored_ids": [
-    "inventory_tracking",
-    "ops_dashboard",
-    "order_management",
-    "pilot_ops_log",
-    "stock_alerts"
+    "airport_knowledge_assistant",
+    "airport_readiness",
+    "flight_event_orchestration",
+    "ground_workflow_coordination",
+    "incident_evidence_tracking",
+    "operational_dashboard",
+    "regulatory_document_control"
   ],
   "authored_handlers": [
-    "inventory_tracking",
-    "ops_dashboard",
-    "order_management",
-    "pilot_ops_log",
-    "stock_alerts"
+    "airport_knowledge_assistant",
+    "airport_readiness",
+    "flight_event_orchestration",
+    "ground_workflow_coordination",
+    "incident_evidence_tracking",
+    "operational_dashboard",
+    "regulatory_document_control"
   ]
 }

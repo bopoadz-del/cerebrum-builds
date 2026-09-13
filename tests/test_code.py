@@ -22,6 +22,29 @@ EXPECTED = {
 }
 
 
+def test_domain_kernel_is_not_a_stub() -> None:
+    from app.domain import (
+        crew_function,
+        document_retention_days,
+        evidence_severity,
+        flight_cascade,
+        knowledge_source_class,
+        readiness_score,
+        stand_is_degraded,
+        work_order_stage,
+    )
+
+    assert readiness_score("open", "turnaround") == 0.45
+    assert stand_is_degraded(0.45) is True
+    assert readiness_score("closed", "day") == 0.7
+    assert work_order_stage("in_progress") == "on_stand"
+    assert crew_function("fuel bowser", "alpha") == "fueling"
+    assert document_retention_days("certificate") == 1095
+    assert evidence_severity("sensor") == "high"
+    assert flight_cascade("arrival")["sla_minutes"] == 25
+    assert knowledge_source_class("incident on stand", "") == "incident_record"
+
+
 def test_workspace_imports() -> None:
     from app.main import app
     from app.dispatch import BLOCK_DEFAULT_ACTIONS, execute

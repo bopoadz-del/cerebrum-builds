@@ -82,6 +82,24 @@ def test_operator_token_attributes_actor(client: TestClient) -> None:
     assert body.get("ok") is not False
     assert body.get("actor") == "operator"
     assert body.get("actor_role") == "operator"
+    rec = body.get("record") or {}
+    assert rec.get("actor") == "operator"
+    assert rec.get("actor_role") == "operator"
+    assert rec.get("readiness_score") == 0.45
+    assert rec.get("degraded") is True
+    assert rec.get("claimed_actor") is None
+
+
+def test_forged_actor_is_claimed_only(client: TestClient) -> None:
+    forged = {**SCHEMA_SAMPLE, "actor": "forged-tower-chief", "user_id": "spoof"}
+    response = client.post("/v1/airport_readiness", json=forged)
+    assert response.status_code == 200
+    rec = response.json().get("record") or {}
+    assert rec.get("actor") == "operator"
+    assert rec.get("actor_role") == "operator"
+    assert rec.get("claimed_actor") == "forged-tower-chief"
+    assert rec.get("user_id") != "spoof"
+    assert rec.get("user_id") == "operator"
 
 
 def test_cors_allowlist_refuses_wildcard(monkeypatch: pytest.MonkeyPatch) -> None:

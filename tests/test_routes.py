@@ -57,7 +57,8 @@ def test_one_record_round_trip_per_capability(client: TestClient) -> None:
         payload = _sample_payload(capability_id)
         post = client.post(f"/v1/{capability_id}", json=payload)
         assert post.status_code == 200, capability_id
-        assert post.json().get("ok") is not False, capability_id
+        body = post.json()
+        assert body.get("ok") is not False, capability_id
         entity = SPECS[capability_id]["entity"]
         stored = list_all(entity)
         assert stored, f"{capability_id} did not remember a record they were given"
@@ -66,6 +67,16 @@ def test_one_record_round_trip_per_capability(client: TestClient) -> None:
         records = got.json().get("records") or []
         assert records, f"{capability_id} GET did not return the persisted record"
         assert any(row.get("reference") == payload["reference"] for row in records)
+        if capability_id == "airport_readiness":
+            rec = body.get("record") or {}
+            assert rec.get("readiness_score") == 0.45
+            assert rec.get("degraded") is True
+            assert rec.get("actor") == "operator"
+            remembered = next(
+                row for row in records if row.get("reference") == payload["reference"]
+            )
+            assert remembered.get("readiness_score") == 0.45
+            assert remembered.get("degraded") is True
 
 
 def test_health_and_ui(client: TestClient) -> None:

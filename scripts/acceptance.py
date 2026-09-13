@@ -186,6 +186,21 @@ def main() -> int:
                 f"status={quoted.status_code} remembered={remembered}",
             )
         )
+        rec = (quoted.json() or {}).get("record") or {} if quoted.status_code == 200 else {}
+        score = rec.get("readiness_score")
+        computed = (
+            quoted.status_code == 200
+            and score not in (None, 1, 1.0)
+            and rec.get("degraded") is True
+            and rec.get("actor") == "operator"
+        )
+        results.append(
+            _line(
+                "PASS" if computed else "FAIL",
+                "core_readiness_computed",
+                f"score={score} degraded={rec.get('degraded')} actor={rec.get('actor')}",
+            )
+        )
 
     ci = ROOT / ".github" / "workflows" / "store-gate.yml"
     results.append(

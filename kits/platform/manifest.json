@@ -1,18 +1,57 @@
 {
   "blocks": [
+    "analytics",
     "audit",
-    "dashboard"
+    "capture",
+    "dashboard",
+    "database",
+    "document_engine",
+    "event_bus",
+    "file_hasher",
+    "formula_executor",
+    "notification",
+    "queue",
+    "recommendation_template",
+    "storage",
+    "validation",
+    "workflow"
   ],
   "id": "platform",
   "name": "Platform",
   "product_blocks": [
+    "analytics",
     "audit",
-    "dashboard"
+    "capture",
+    "dashboard",
+    "database",
+    "document_engine",
+    "event_bus",
+    "file_hasher",
+    "formula_executor",
+    "notification",
+    "queue",
+    "recommendation_template",
+    "storage",
+    "validation",
+    "workflow"
   ],
   "source": "synthesized-from-factory-shelf",
   "vendored_blocks": {
+    "analytics": "vendor/blocks/analytics",
     "audit": "vendor/blocks/audit",
-    "dashboard": "vendor/blocks/dashboard"
+    "capture": "vendor/blocks/capture",
+    "dashboard": "vendor/blocks/dashboard",
+    "database": "vendor/blocks/database",
+    "document_engine": "vendor/blocks/document_engine",
+    "event_bus": "vendor/blocks/event_bus",
+    "file_hasher": "vendor/blocks/file_hasher",
+    "formula_executor": "vendor/blocks/formula_executor",
+    "notification": "vendor/blocks/notification",
+    "queue": "vendor/blocks/queue",
+    "recommendation_template": "vendor/blocks/recommendation_template",
+    "storage": "vendor/blocks/storage",
+    "validation": "vendor/blocks/validation",
+    "workflow": "vendor/blocks/workflow"
   },
   "version": "1.0.0"
 }

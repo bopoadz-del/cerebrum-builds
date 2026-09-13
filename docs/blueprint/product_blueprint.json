@@ -1,118 +1,86 @@
 {
   "capabilities": [
     {
-      "block_ids": [],
-      "description": "Core aviation workflows and data model",
-      "id": "aviation_core",
-      "required": true,
-      "strategy_hint": "GENERATE"
-    },
-    {
       "block_ids": [
-        "audit"
+        "capture",
+        "storage",
+        "validation"
       ],
-      "description": "Audit capability (reused from the block store)",
-      "id": "audit",
+      "description": "Import and categorize financial transactions from multiple sources, including manual entry and bank feeds.",
+      "id": "transaction_capture",
       "required": true,
       "strategy_hint": "REUSE"
     },
     {
       "block_ids": [
-        "dashboard"
+        "dashboard",
+        "analytics",
+        "portfolio_rollup"
       ],
-      "description": "Dashboard capability (reused from the block store)",
-      "id": "dashboard",
+      "description": "Visualize income, expenses, cash flow, and net worth through interactive dashboards with charts and summaries.",
+      "id": "financial_dashboard",
       "required": true,
       "strategy_hint": "REUSE"
-    },
-    {
-      "block_ids": [],
-      "description": "Enterprise & corporate technology portfolio dashboard for strategic initiatives",
-      "id": "enterprise_portfolio_dashboard",
-      "required": true,
-      "strategy_hint": "GENERATE"
-    },
-    {
-      "block_ids": [],
-      "description": "Hybrid agile + waterfall program delivery with RTEs, Scrum Masters, PMs, BAs ownership",
-      "id": "hybrid_program_delivery",
-      "required": true,
-      "strategy_hint": "GENERATE"
-    },
-    {
-      "block_ids": [],
-      "description": "Integrated planning, scheduling, and milestone management",
-      "id": "integrated_planning_milestones",
-      "required": true,
-      "strategy_hint": "GENERATE"
-    },
-    {
-      "block_ids": [],
-      "description": "Reporting with KPI and value-realization tracking",
-      "id": "kpi_value_realization",
-      "required": true,
-      "strategy_hint": "GENERATE"
-    },
-    {
-      "block_ids": [],
-      "description": "Budget and capacity oversight within approved financial parameters",
-      "id": "budget_capacity_oversight",
-      "required": true,
-      "strategy_hint": "GENERATE"
-    },
-    {
-      "block_ids": [],
-      "description": "Demand prioritization and resource alignment across business/tech stakeholders",
-      "id": "demand_prioritization_resources",
-      "required": true,
-      "strategy_hint": "GENERATE"
-    },
-    {
-      "block_ids": [],
-      "description": "Oracle ERP suite program oversight as ERP delivery workstream (not full Oracle clone)",
-      "id": "oracle_erp_program_oversight",
-      "required": true,
-      "strategy_hint": "GENERATE"
     },
     {
       "block_ids": [
-        "audit"
+        "formula_executor",
+        "notification",
+        "workflow"
       ],
-      "description": "GDPR/data privacy controls with fail-closed auth, Principal audit, CORS",
-      "id": "gdpr_privacy_audit",
+      "description": "Set budgets for categories, monitor spending against limits, and receive notifications when thresholds are approached or exceeded.",
+      "id": "budgeting_and_alerts",
       "required": true,
       "strategy_hint": "REUSE"
     },
     {
-      "block_ids": [],
-      "description": "Governance: clear ownership, delivery disciplines, continuous improvement from stakeholder feedback",
-      "id": "governance_continuous_improvement",
+      "block_ids": [
+        "document_engine",
+        "recommendation_template"
+      ],
+      "description": "Generate detailed financial reports such as profit and loss, expense breakdowns, and tax summaries in various formats.",
+      "id": "report_generation",
       "required": true,
-      "strategy_hint": "GENERATE"
+      "strategy_hint": "REUSE"
     },
     {
-      "block_ids": [],
-      "description": "Airline ops/portfolio context for Riyadh Air RX \u2014 Riyadh HQ, 100+ destinations (not booking engine)",
-      "id": "airline_ops_portfolio_context",
+      "block_ids": [
+        "audit",
+        "file_hasher",
+        "evidence_verifier"
+      ],
+      "description": "Maintain an immutable audit trail of all financial transactions and changes for compliance and dispute resolution.",
+      "id": "audit_and_compliance",
       "required": true,
-      "strategy_hint": "GENERATE"
+      "strategy_hint": "REUSE"
+    },
+    {
+      "block_ids": [
+        "event_bus",
+        "queue",
+        "database"
+      ],
+      "description": "Securely synchronize financial data across devices and external institutions using event-driven architecture.",
+      "id": "data_synchronization",
+      "required": true,
+      "strategy_hint": "REUSE"
     }
   ],
   "connectors": [],
-  "drafting_mode": "keyword_fallback",
-  "drafting_note": "LLM drafting failed (HTTPStatusError); deterministic fallback used",
+  "drafting_mode": "architect_llm",
+  "drafting_note": null,
   "edge_profile": "standard",
   "factory_scenario": "CREATE_PRODUCT",
   "human_authority": true,
-  "n_required": 13,
-  "product_id": "aviation",
-  "product_name": "AirOps Portfolio",
+  "n_required": 6,
+  "product_id": "personal-finance",
+  "product_name": "LedgerFlow",
   "schema_version": "product_blueprint.v1",
-  "summary": "Build AirOps Portfolio for Riyadh Air (RX): digitally native Saudi national carrier HQ Riyadh connecting the Kingdom to 100+ destinations. Enterprise & corporate technology portfolio dashboard for strategic initiatives; hybrid agile+waterfall program delivery with RTEs, Scrum Masters, PMs, BAs as owners; integrated planning/scheduling/milestone management; reporting with KPI and value-realization tracking; budget and capacity oversight within approved financial parameters; demand prioritization and resource alignment across business and tech stakeholders; Oracle ERP suite program oversight as an ERP delivery workstream (not a full Oracle clone); GDPR/data privacy controls with fail-closed auth, Principal audit, and CORS; governance with clear ownership, delivery disciplines, and continuous improvement from stakeholder feedback; airline ops/portfolio framing (not a booking engine). Kit-backed aviation. HotelOps-grade + Store 12/12. Manufacture from Cerebrum-Blocks Store blocks only \u2014 never clone an external product repo. Pilot-ready with tests. Coder: Cursor BA only \u2014 no Kimi/DeepSeek.",
+  "summary": "LedgerFlow is a personal finance management platform that helps individuals and small teams track income and expenses, automate budgeting, and gain actionable insights into their financial health. It connects to bank accounts, categorizes transactions, and provides dashboards, alerts, and recommendations to improve savings and spending habits.",
   "ui_modules": [
     "command_center",
     "operational_chat",
     "resident_engineer"
   ],
-  "vertical": "aviation"
+  "vertical": "personal_finance"
 }

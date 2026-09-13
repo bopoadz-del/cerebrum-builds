@@ -302,12 +302,29 @@ def workflow_input(payload: Dict[str, Any]) -> Dict[str, Any]:
 
 
 def booking_workflow_input(payload: Dict[str, Any]) -> Dict[str, Any]:
-    """Prepared step_0 / step_1 / step_2+ for booking-style workflow."""
+    """Prepared step_0 / step_1 / step_2+ for booking-style workflow.
+
+    step_0 is the notify/event contract (topic, payload dict, message, channel=mcp).
+    Adjacent children are untyped Store blocks so chain validation does not
+    demand notification.output.message on the next step.
+    """
     seed = _result_seed(payload)
     steps = [
         prepared_event_bus_step(payload, step_id="step_0"),
-        prepared_event_bus_step(payload, step_id="step_1"),
-        prepared_event_bus_step(payload, step_id="step_2"),
+        {
+            "id": "step_1",
+            "block": "queue",
+            "action": "enqueue",
+            "params": {"action": "enqueue"},
+            "input": queue_input(payload),
+        },
+        {
+            "id": "step_2",
+            "block": "database",
+            "action": "query",
+            "params": {"action": "query"},
+            "input": database_input(payload),
+        },
     ]
     return {
         "pipeline_id": f"booking-{_ref(payload)}",
@@ -321,8 +338,20 @@ def notice_workflow_input(payload: Dict[str, Any]) -> Dict[str, Any]:
     seed = _result_seed(payload)
     steps = [
         prepared_event_bus_step(payload, step_id="step_0"),
-        prepared_event_bus_step(payload, step_id="step_1"),
-        prepared_event_bus_step(payload, step_id="step_2"),
+        {
+            "id": "step_1",
+            "block": "queue",
+            "action": "enqueue",
+            "params": {"action": "enqueue"},
+            "input": queue_input(payload),
+        },
+        {
+            "id": "step_2",
+            "block": "database",
+            "action": "query",
+            "params": {"action": "query"},
+            "input": database_input(payload),
+        },
     ]
     return {
         "pipeline_id": f"notice-{_ref(payload)}",

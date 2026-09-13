@@ -82,13 +82,28 @@ def _repair_notification_module() -> None:
     exec(compile(src, str(path), "exec"), module.__dict__)
 
 
+def _document_engine_class() -> Any:
+    """Package path is document_engine_block/; cloner still looks for a .py file."""
+    name = "vendor.cerebrum.blocks.document_engine_block"
+    existing = sys.modules.get(name)
+    if existing is not None and not hasattr(existing, "DocumentEngineBlock"):
+        del sys.modules[name]
+    from vendor.cerebrum.blocks.document_engine_block import DocumentEngineBlock
+
+    return DocumentEngineBlock
+
+
 def _instantiate(block_id: str) -> Any:
     from vendor.blocks.database.block import _instantiate_store_block
     from vendor.cerebrum.blocks import get_block
 
+    if block_id in {"notification", "workflow"}:
+        _repair_notification_module()
+    if block_id == "document_engine":
+        return _instantiate_store_block(_document_engine_class())
     try:
         block_cls = get_block(block_id)
-    except (SyntaxError, ImportError, IndentationError):
+    except (SyntaxError, ImportError, IndentationError, OSError):
         if block_id != "notification":
             raise
         _repair_notification_module()
@@ -98,6 +113,7 @@ def _instantiate(block_id: str) -> Any:
 
 def execute(block_id: str, payload: Any = None, *, action: Optional[str] = None) -> Dict[str, Any]:
     """Run a vendored Store block. Pass action= as a keyword, never in payload."""
+    _repair_notification_module()
     if action is None:
         action = BLOCK_DEFAULT_ACTIONS.get(block_id)
     if action is None:

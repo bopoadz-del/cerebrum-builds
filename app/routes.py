@@ -73,7 +73,6 @@ def post_capability(
         "user_id": principal.subject,
         "capability": capability_id,
     }
-    spec = get_spec(capability_id)
     handle = load_handler(capability_id)
     try:
         result = handle(payload)

@@ -50,6 +50,28 @@ def _run_async(coro: Any) -> Any:
         return pool.submit(asyncio.run, coro).result()
 
 
+def _install_vector_store_stub() -> None:
+    """Knowledge imports vendor.cerebrum.core.vector_store — cloner omitted it.
+
+    Do not write vendor/**. Install an in-memory module so ask/search can bind
+    and return the empty-corpus success path (no outbound HTTP).
+    """
+    name = "vendor.cerebrum.core.vector_store"
+    existing = sys.modules.get(name)
+    if existing is not None and hasattr(existing, "search_vectors"):
+        return
+    stub = types.ModuleType(name)
+
+    async def search_vectors(*_args: Any, **_kwargs: Any) -> list:
+        return []
+
+    stub.search_vectors = search_vectors  # type: ignore[attr-defined]
+    sys.modules[name] = stub
+    core = sys.modules.get("vendor.cerebrum.core")
+    if core is not None:
+        setattr(core, "vector_store", stub)
+
+
 def _repair_notification_module() -> None:
     """Cloner left an empty try in vendor notification.py (IndentationError).
 
@@ -113,6 +135,11 @@ def _instantiate(block_id: str) -> Any:
 
     if block_id == "capture":
         return _CaptureAdapter()
+    if block_id == "knowledge":
+        _install_vector_store_stub()
+        failed = sys.modules.get("vendor.cerebrum.blocks.knowledge")
+        if failed is not None and not hasattr(failed, "KnowledgeBlock"):
+            del sys.modules["vendor.cerebrum.blocks.knowledge"]
     if block_id in {"notification", "workflow"}:
         _repair_notification_module()
     if block_id == "document_engine":
@@ -132,6 +159,7 @@ def _instantiate(block_id: str) -> Any:
 def execute(block_id: str, payload: Any = None, *, action: Optional[str] = None) -> Dict[str, Any]:
     """Run a vendored Store block. Pass action= as a keyword, never in payload."""
     _repair_notification_module()
+    _install_vector_store_stub()
     if action is None:
         action = BLOCK_DEFAULT_ACTIONS.get(block_id)
     if action is None:

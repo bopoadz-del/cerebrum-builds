@@ -93,17 +93,35 @@ def _document_engine_class() -> Any:
     return DocumentEngineBlock
 
 
+class _CaptureAdapter:
+    """In-process capture extract. Capture is not in vendor.cerebrum.blocks."""
+
+    name = "capture"
+    version = "1.0.0"
+
+    async def execute(self, input_data: Any, params: Any = None) -> Dict[str, Any]:
+        from vendor.blocks.capture.block import run
+
+        data = input_data if isinstance(input_data, dict) else {"text": str(input_data or "")}
+        result = run(input=data)
+        return {"block": "capture", "status": "success", "result": result}
+
+
 def _instantiate(block_id: str) -> Any:
     from vendor.blocks.database.block import _instantiate_store_block
     from vendor.cerebrum.blocks import get_block
 
+    if block_id == "capture":
+        return _CaptureAdapter()
     if block_id in {"notification", "workflow"}:
         _repair_notification_module()
     if block_id == "document_engine":
         return _instantiate_store_block(_document_engine_class())
     try:
         block_cls = get_block(block_id)
-    except (SyntaxError, ImportError, IndentationError, OSError):
+    except (SyntaxError, ImportError, IndentationError, OSError, KeyError):
+        if block_id == "capture":
+            return _CaptureAdapter()
         if block_id != "notification":
             raise
         _repair_notification_module()

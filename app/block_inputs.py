@@ -5,16 +5,6 @@ from __future__ import annotations
 from typing import Any, Dict, List
 
 
-_MINIMAL_PDF = (
-    b"%PDF-1.1\n"
-    b"1 0 obj<</Type/Catalog/Pages 2 0 R>>endobj\n"
-    b"2 0 obj<</Type/Pages/Kids[3 0 R]/Count 1>>endobj\n"
-    b"3 0 obj<</Type/Page/MediaBox[0 0 612 792]/Parent 2 0 R>>endobj\n"
-    b"trailer<</Size 4/Root 1 0 R>>\n"
-    b"%%EOF\n"
-)
-
-
 def _ref(payload: Dict[str, Any]) -> str:
     return str(payload.get("reference") or "sample")
 
@@ -30,6 +20,7 @@ def _summary(payload: Dict[str, Any]) -> str:
         or payload.get("destination")
         or payload.get("guest_name")
         or payload.get("view_name")
+        or payload.get("rate_plan")
         or _ref(payload)
     )
     return f"hotel {_ref(payload)} unit={unit} status={_status(payload)}"
@@ -48,15 +39,19 @@ def prepare_block_input(block_id: str, payload: Dict[str, Any]) -> Dict[str, Any
     """Factory-grounded constructed input for a declared Store block."""
     builders = {
         "analytics": analytics_input,
+        "audit": audit_input,
+        "capture": capture_input,
         "dashboard": dashboard_input,
         "database": database_input,
-        "document_engine": document_engine_input,
         "event_bus": event_bus_input,
         "formula_executor": formula_executor_input,
+        "knowledge": knowledge_input,
+        "memory": memory_input,
         "notification": notification_input,
         "queue": queue_input,
         "recommendation_template": recommendation_template_input,
-        "storage": storage_input,
+        "team": team_input,
+        "validation": validation_input,
         "vector_search": vector_search_input,
         "workflow": workflow_input,
     }
@@ -93,6 +88,32 @@ def analytics_input(payload: Dict[str, Any]) -> Dict[str, Any]:
     }
 
 
+def audit_input(payload: Dict[str, Any]) -> Dict[str, Any]:
+    return {
+        "category": "data_access",
+        "user_id": str(payload.get("actor") or payload.get("user_id") or "operator"),
+        "event_action": str(payload.get("capability") or "hotel_mutate"),
+        "resource": _ref(payload),
+        "details": {
+            "status": _status(payload),
+            "summary": _summary(payload),
+        },
+        "result": _result_seed(payload),
+    }
+
+
+def capture_input(payload: Dict[str, Any]) -> Dict[str, Any]:
+    guest = str(payload.get("guest_name") or payload.get("reference") or "sample")
+    band = str(payload.get("rating_band") or "excellent")
+    text = f"Guest {guest} left a {band} review for hotel {_ref(payload)}."
+    return {
+        "text": text,
+        "raw_text": text,
+        "content": text,
+        "result": _result_seed(payload),
+    }
+
+
 def dashboard_input(payload: Dict[str, Any]) -> Dict[str, Any]:
     return {
         "user_id": str(payload.get("actor") or payload.get("user_id") or "operator"),
@@ -110,23 +131,6 @@ def database_input(payload: Dict[str, Any]) -> Dict[str, Any]:
         "sql": "SELECT 1 AS ok",
         "table": table,
         "params": (),
-        "result": _result_seed(payload),
-    }
-
-
-def document_engine_input(payload: Dict[str, Any]) -> Dict[str, Any]:
-    """Synthesize a property factsheet. Do not demand file paths from the caller."""
-    from app.store import storage_root
-
-    folder = storage_root() / "docs"
-    folder.mkdir(parents=True, exist_ok=True)
-    path = folder / f"{_ref(payload)}.pdf"
-    if not path.is_file():
-        path.write_bytes(_MINIMAL_PDF)
-    return {
-        "pdf_path": str(path),
-        "file_path": str(path),
-        "text": _summary(payload),
         "result": _result_seed(payload),
     }
 
@@ -150,7 +154,7 @@ def event_bus_input(payload: Dict[str, Any]) -> Dict[str, Any]:
         },
         "message": _summary(payload),
         "channel": "mcp",
-        "tool": "analytics",
+        "tool": "event_bus",
         "result": _result_seed(payload),
     }
 
@@ -160,16 +164,16 @@ def prepared_event_bus_step(payload: Dict[str, Any], *, step_id: str = "step_0")
     prepared = event_bus_input(payload)
     return {
         "id": step_id,
-        "block": "notification",
-        "action": "send",
-        "params": {"action": "send"},
+        "block": "event_bus",
+        "action": "publish",
+        "params": {"action": "publish"},
         "input": {
-            **prepared,
-            "channel": "mcp",
-            "tool": "analytics",
-            "block": "analytics",
+            "topic": prepared["topic"],
+            "payload": {"reference": _ref(payload)},
             "message": prepared["message"],
-            "params": {"action": "track_event"},
+            "channel": "mcp",
+            "tool": "event_bus",
+            "result": _result_seed(payload),
         },
     }
 
@@ -191,6 +195,32 @@ def formula_executor_input(payload: Dict[str, Any]) -> Dict[str, Any]:
             "volume_m3": nights_value,
             "rate_per_m3": rate_value,
             "waste_factor": 1.0,
+        },
+        "result": _result_seed(payload),
+    }
+
+
+def knowledge_input(payload: Dict[str, Any]) -> Dict[str, Any]:
+    question = (
+        payload.get("destination")
+        or payload.get("guest_name")
+        or payload.get("property_name")
+        or _summary(payload)
+    )
+    return {
+        "question": f"What stay notes exist for {question}?",
+        "query": str(question),
+        "result": _result_seed(payload),
+    }
+
+
+def memory_input(payload: Dict[str, Any]) -> Dict[str, Any]:
+    return {
+        "key": f"hotel.{_ref(payload)}",
+        "value": {
+            "reference": _ref(payload),
+            "status": _status(payload),
+            "destination": payload.get("destination") or _ref(payload),
         },
         "result": _result_seed(payload),
     }
@@ -237,15 +267,21 @@ def queue_input(payload: Dict[str, Any]) -> Dict[str, Any]:
 
 def recommendation_template_input(payload: Dict[str, Any]) -> Dict[str, Any]:
     score = payload.get("match_score")
+    if score is None:
+        score = payload.get("night_rate")
     try:
-        variance = round((1.0 - float(score)) * 100.0, 2)
+        variance = round((1.0 - min(float(score), 1.0)) * 100.0, 2) if float(score) <= 1 else 18.0
     except (TypeError, ValueError):
         variance = 18.0
     return {
         "operation": "recommend",
         "variance_data": [
             {
-                "item": str(payload.get("destination") or _ref(payload)),
+                "item": str(
+                    payload.get("destination")
+                    or payload.get("rate_plan")
+                    or _ref(payload)
+                ),
                 "variance_pct": variance,
                 "cost_impact_usd": 80.0,
             }
@@ -254,11 +290,26 @@ def recommendation_template_input(payload: Dict[str, Any]) -> Dict[str, Any]:
     }
 
 
-def storage_input(payload: Dict[str, Any]) -> Dict[str, Any]:
+def team_input(payload: Dict[str, Any]) -> Dict[str, Any]:
+    name = str(payload.get("property_name") or payload.get("reference") or "sample")
     return {
-        "content": _summary(payload),
-        "filename": f"{_ref(payload)}.txt",
-        "metadata": {"reference": _ref(payload), "status": _status(payload)},
+        "user_id": str(payload.get("actor") or payload.get("user_id") or "operator"),
+        "name": f"Hotel {name}",
+        "plan": "free",
+        "result": _result_seed(payload),
+    }
+
+
+def validation_input(payload: Dict[str, Any]) -> Dict[str, Any]:
+    item_key = f"hotel-{_ref(payload)}"
+    return {
+        "item": {
+            "id": item_key,
+            "type": str(payload.get("capability") or "booking_management"),
+            "quantity": 1,
+            "value": float(payload.get("stay_total") or payload.get("night_rate") or 1),
+        },
+        "context": {"channel": "mcp", "status": _status(payload)},
         "result": _result_seed(payload),
     }
 
@@ -268,6 +319,7 @@ def vector_search_input(payload: Dict[str, Any]) -> Dict[str, Any]:
         payload.get("destination")
         or payload.get("stay_intent")
         or payload.get("property_name")
+        or payload.get("guest_name")
         or _summary(payload)
     )
     return {
@@ -280,83 +332,86 @@ def vector_search_input(payload: Dict[str, Any]) -> Dict[str, Any]:
 def workflow_input(payload: Dict[str, Any]) -> Dict[str, Any]:
     """Default hospitality pipeline with prepared children + result seed."""
     seed = _result_seed(payload)
-    queue_step = {
-        "id": "step_0",
-        "block": "queue",
-        "action": "enqueue",
-        "params": {"action": "enqueue"},
-        "input": queue_input(payload),
-    }
-    notify_step = {
-        "id": "step_1",
-        "block": "notification",
-        "action": "send",
-        "params": {"action": "send"},
-        "input": notification_input(payload),
-    }
     return {
         "pipeline_id": f"hotel-{_ref(payload)}",
         "result": seed,
-        "steps": [queue_step, notify_step],
+        "steps": [
+            prepared_event_bus_step(payload, step_id="step_0"),
+            {
+                "id": "step_1",
+                "block": "database",
+                "action": "query",
+                "params": {"action": "query"},
+                "input": database_input(payload),
+            },
+            {
+                "id": "step_2",
+                "block": "queue",
+                "action": "enqueue",
+                "params": {"action": "enqueue"},
+                "input": queue_input(payload),
+            },
+        ],
     }
 
 
 def booking_workflow_input(payload: Dict[str, Any]) -> Dict[str, Any]:
-    """Prepared step_0 / step_1 / step_2+ for booking-style workflow.
-
-    step_0 is the notify/event contract (topic, payload dict, message, channel=mcp).
-    Adjacent children are untyped Store blocks so chain validation does not
-    demand notification.output.message on the next step.
-    """
+    """Prepared step_0 / step_1 / step_2+ event_bus children for booking-style workflow."""
     seed = _result_seed(payload)
-    steps = [
-        prepared_event_bus_step(payload, step_id="step_0"),
-        {
-            "id": "step_1",
-            "block": "queue",
-            "action": "enqueue",
-            "params": {"action": "enqueue"},
-            "input": queue_input(payload),
-        },
-        {
-            "id": "step_2",
-            "block": "database",
-            "action": "query",
-            "params": {"action": "query"},
-            "input": database_input(payload),
-        },
-    ]
     return {
         "pipeline_id": f"booking-{_ref(payload)}",
         "result": seed,
-        "steps": steps,
+        "steps": [
+            prepared_event_bus_step(payload, step_id="step_0"),
+            prepared_event_bus_step(payload, step_id="step_1"),
+            prepared_event_bus_step(payload, step_id="step_2"),
+        ],
     }
 
 
 def notice_workflow_input(payload: Dict[str, Any]) -> Dict[str, Any]:
-    """Prepared step_0 / step_1 / step_2+ for reminder-style workflow."""
+    """Prepared step_0 / step_1 / step_2+ event_bus children for reminder-style workflow."""
     seed = _result_seed(payload)
-    steps = [
-        prepared_event_bus_step(payload, step_id="step_0"),
-        {
-            "id": "step_1",
-            "block": "queue",
-            "action": "enqueue",
-            "params": {"action": "enqueue"},
-            "input": queue_input(payload),
-        },
-        {
-            "id": "step_2",
-            "block": "database",
-            "action": "query",
-            "params": {"action": "query"},
-            "input": database_input(payload),
-        },
-    ]
     return {
         "pipeline_id": f"notice-{_ref(payload)}",
         "result": seed,
-        "steps": steps,
+        "steps": [
+            prepared_event_bus_step(payload, step_id="step_0"),
+            prepared_event_bus_step(payload, step_id="step_1"),
+            prepared_event_bus_step(payload, step_id="step_2"),
+        ],
+    }
+
+
+def property_workflow_input(payload: Dict[str, Any]) -> Dict[str, Any]:
+    """Property listing pipeline — no event_bus child; still seeds result."""
+    seed = _result_seed(payload)
+    return {
+        "pipeline_id": f"property-{_ref(payload)}",
+        "result": seed,
+        "steps": [
+            {
+                "id": "step_0",
+                "block": "database",
+                "action": "query",
+                "params": {"action": "query"},
+                "input": database_input(payload),
+            },
+            {
+                "id": "step_1",
+                "block": "team",
+                "action": "create_team",
+                "params": {"action": "create_team"},
+                "input": team_input(payload),
+            },
+            {
+                "id": "step_2",
+                "block": "audit",
+                "action": "log",
+                "params": {"action": "log"},
+                "input": audit_input(payload),
+            },
+        ],
     }
 
 
@@ -367,7 +422,7 @@ def record_mutation_audit(
     resource: str,
     details: Dict[str, Any] | None = None,
 ) -> Dict[str, Any]:
-    """Attribute a mutation. Audit is not vendored in this kit — do not execute it."""
+    """Attribute a mutation. Persistable audit fields — do not invent caller keys."""
     extra = dict(details or {})
     return {
         "reference": resource,

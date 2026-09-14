@@ -1,14 +1,16 @@
-"""booking_management — REUSE workflow + database + notification + queue."""
+"""booking_management — REUSE workflow + database + validation + event_bus + queue + audit."""
 
 from __future__ import annotations
 
 from typing import Any, Dict
 
 from app.block_inputs import (
+    audit_input,
     booking_workflow_input,
     database_input,
-    notification_input,
+    event_bus_input,
     queue_input,
+    validation_input,
 )
 from app.dispatch import BLOCK_DEFAULT_ACTIONS, execute
 from app.domain import (
@@ -22,16 +24,16 @@ from app.domain import (
 from app.persist import ok_envelope
 
 # READS: caller.input, env.process, config.runtime, database.sql, queue.jobs
-# WRITES: caller.output, database.sql, notification.outbound, queue.jobs
+# WRITES: caller.output, database.sql, queue.jobs
 # NEVER: (none)
 
-BLOCK_IDS = ["workflow", "database", "notification", "queue"]
+BLOCK_IDS = ["workflow", "database", "validation", "event_bus", "queue", "audit"]
 CAPABILITY_ID = "booking_management"
 STAY_KINDS = ("night", "week", "group")
 
 
 def handle(payload: Dict[str, Any]) -> Dict[str, Any]:
-    """Reserve a stay with prepared workflow steps and persist the booking."""
+    """Reserve a stay with prepared event_bus workflow steps and persist the booking."""
     status = envelope_status(payload)
     stay_kind = str(payload.get("stay_kind") or "night")
     if stay_kind not in STAY_KINDS:
@@ -55,28 +57,21 @@ def handle(payload: Dict[str, Any]) -> Dict[str, Any]:
         "capability": CAPABILITY_ID,
         "channel": "mcp",
     }
-    blocks = {
-        "workflow": execute(
-            "workflow",
-            booking_workflow_input(record),
-            action=BLOCK_DEFAULT_ACTIONS.get("workflow"),
-        ),
-        "database": execute(
-            "database",
-            database_input(record),
-            action=BLOCK_DEFAULT_ACTIONS.get("database"),
-        ),
-        "notification": execute(
-            "notification",
-            notification_input(record),
-            action=BLOCK_DEFAULT_ACTIONS.get("notification"),
-        ),
-        "queue": execute(
-            "queue",
-            queue_input(record),
-            action=BLOCK_DEFAULT_ACTIONS.get("queue"),
-        ),
+    prepared = {
+        "workflow": booking_workflow_input(record),
+        "database": database_input(record),
+        "validation": validation_input(record),
+        "event_bus": event_bus_input(record),
+        "queue": queue_input(record),
+        "audit": audit_input(record),
     }
+    blocks: Dict[str, Any] = {}
+    for block_id in BLOCK_IDS:
+        blocks[block_id] = execute(
+            block_id,
+            prepared[block_id],
+            action=BLOCK_DEFAULT_ACTIONS.get(block_id),
+        )
     record["booking"] = {
         "stay_kind": stay_kind,
         "room_label": room_label,

@@ -1,19 +1,25 @@
-"""search_recommendation — REUSE vector_search + recommendation_template + analytics."""
+"""search_recommendation — REUSE vector_search + knowledge + recommendation_template + memory + analytics."""
 
 from __future__ import annotations
 
 from typing import Any, Dict
 
-from app.block_inputs import prepare_block_input
+from app.block_inputs import (
+    analytics_input,
+    knowledge_input,
+    memory_input,
+    recommendation_template_input,
+    vector_search_input,
+)
 from app.dispatch import BLOCK_DEFAULT_ACTIONS, execute
 from app.domain import allowed_next_status, envelope_status, match_score
 from app.persist import ok_envelope
 
-# READS: caller.input, config.runtime, database.vector, file.local.read
-# WRITES: caller.output, database.vector
+# READS: caller.input, config.runtime, database.vector, memory.cache
+# WRITES: caller.output, database.vector, memory.cache
 # NEVER: (none)
 
-BLOCK_IDS = ["vector_search", "recommendation_template", "analytics"]
+BLOCK_IDS = ["vector_search", "knowledge", "recommendation_template", "memory", "analytics"]
 CAPABILITY_ID = "search_recommendation"
 INTENTS = ("leisure", "business", "family")
 
@@ -37,11 +43,18 @@ def handle(payload: Dict[str, Any]) -> Dict[str, Any]:
         "capability": CAPABILITY_ID,
         "channel": "mcp",
     }
+    prepared = {
+        "vector_search": vector_search_input(record),
+        "knowledge": knowledge_input(record),
+        "recommendation_template": recommendation_template_input(record),
+        "memory": memory_input(record),
+        "analytics": analytics_input(record),
+    }
     blocks: Dict[str, Any] = {}
     for block_id in BLOCK_IDS:
         blocks[block_id] = execute(
             block_id,
-            prepare_block_input(block_id, record),
+            prepared[block_id],
             action=BLOCK_DEFAULT_ACTIONS.get(block_id),
         )
     record["recommendation"] = {

@@ -1,25 +1,31 @@
-"""review_management — REUSE database + analytics + notification."""
+"""review_management — REUSE capture + knowledge + vector_search + analytics + notification."""
 
 from __future__ import annotations
 
 from typing import Any, Dict
 
-from app.block_inputs import prepare_block_input
+from app.block_inputs import (
+    analytics_input,
+    capture_input,
+    knowledge_input,
+    notification_input,
+    vector_search_input,
+)
 from app.dispatch import BLOCK_DEFAULT_ACTIONS, execute
 from app.domain import allowed_next_status, envelope_status, review_publish_state, review_score
 from app.persist import ok_envelope
 
-# READS: caller.input, config.runtime, database.sql
-# WRITES: caller.output, database.sql, notification.outbound
+# READS: caller.input, config.runtime, database.vector, file.local.read
+# WRITES: caller.output, database.vector, notification.outbound
 # NEVER: (none)
 
-BLOCK_IDS = ["database", "analytics", "notification"]
+BLOCK_IDS = ["capture", "knowledge", "vector_search", "analytics", "notification"]
 CAPABILITY_ID = "review_management"
 BANDS = ("excellent", "good", "poor")
 
 
 def handle(payload: Dict[str, Any]) -> Dict[str, Any]:
-    """Score a guest review and persist the publish state."""
+    """Score a guest review, extract its text, and persist the publish state."""
     status = envelope_status(payload)
     rating_band = str(payload.get("rating_band") or "excellent")
     if rating_band not in BANDS:
@@ -37,11 +43,18 @@ def handle(payload: Dict[str, Any]) -> Dict[str, Any]:
         "capability": CAPABILITY_ID,
         "channel": "mcp",
     }
+    prepared = {
+        "capture": capture_input(record),
+        "knowledge": knowledge_input(record),
+        "vector_search": vector_search_input(record),
+        "analytics": analytics_input(record),
+        "notification": notification_input(record),
+    }
     blocks: Dict[str, Any] = {}
     for block_id in BLOCK_IDS:
         blocks[block_id] = execute(
             block_id,
-            prepare_block_input(block_id, record),
+            prepared[block_id],
             action=BLOCK_DEFAULT_ACTIONS.get(block_id),
         )
     record["review"] = {

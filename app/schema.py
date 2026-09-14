@@ -38,7 +38,7 @@ def _spec(
 SPECS: Dict[str, Dict[str, Any]] = {
     "booking_management": _spec(
         "booking_management",
-        ["workflow", "database", "notification", "queue"],
+        ["workflow", "database", "validation", "event_bus", "queue", "audit"],
         extra_fields={
             "stay_kind": {"type": "string"},
             "room_label": {"type": "string"},
@@ -49,7 +49,7 @@ SPECS: Dict[str, Dict[str, Any]] = {
     ),
     "property_management": _spec(
         "property_management",
-        ["database", "storage", "document_engine"],
+        ["database", "team", "workflow", "audit"],
         extra_fields={
             "property_kind": {"type": "string"},
             "property_name": {"type": "string"},
@@ -60,7 +60,7 @@ SPECS: Dict[str, Dict[str, Any]] = {
     ),
     "dynamic_pricing": _spec(
         "dynamic_pricing",
-        ["formula_executor", "analytics"],
+        ["formula_executor", "recommendation_template", "analytics", "database"],
         extra_fields={
             "season": {"type": "string"},
             "rate_plan": {"type": "string"},
@@ -71,7 +71,7 @@ SPECS: Dict[str, Dict[str, Any]] = {
     ),
     "review_management": _spec(
         "review_management",
-        ["database", "analytics", "notification"],
+        ["capture", "knowledge", "vector_search", "analytics", "notification"],
         extra_fields={
             "rating_band": {"type": "string"},
             "guest_name": {"type": "string"},
@@ -93,7 +93,7 @@ SPECS: Dict[str, Dict[str, Any]] = {
     ),
     "notification_system": _spec(
         "notification_system",
-        ["notification", "queue", "workflow"],
+        ["notification", "event_bus", "queue", "workflow"],
         extra_fields={
             "notice_kind": {"type": "string"},
             "guest_name": {"type": "string"},
@@ -104,7 +104,7 @@ SPECS: Dict[str, Dict[str, Any]] = {
     ),
     "search_recommendation": _spec(
         "search_recommendation",
-        ["vector_search", "recommendation_template", "analytics"],
+        ["vector_search", "knowledge", "recommendation_template", "memory", "analytics"],
         extra_fields={
             "stay_intent": {"type": "string"},
             "destination": {"type": "string"},

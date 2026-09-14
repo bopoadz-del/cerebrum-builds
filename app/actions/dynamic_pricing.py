@@ -1,19 +1,24 @@
-"""dynamic_pricing — REUSE formula_executor + analytics. Domain night rate."""
+"""dynamic_pricing — REUSE formula_executor + recommendation_template + analytics + database."""
 
 from __future__ import annotations
 
 from typing import Any, Dict
 
-from app.block_inputs import prepare_block_input
+from app.block_inputs import (
+    analytics_input,
+    database_input,
+    formula_executor_input,
+    recommendation_template_input,
+)
 from app.dispatch import BLOCK_DEFAULT_ACTIONS, execute
 from app.domain import allowed_next_status, envelope_status, night_rate
 from app.persist import ok_envelope
 
-# READS: caller.input, env.process, config.runtime
-# WRITES: caller.output
+# READS: caller.input, env.process, config.runtime, database.sql
+# WRITES: caller.output, database.sql
 # NEVER: (none)
 
-BLOCK_IDS = ["formula_executor", "analytics"]
+BLOCK_IDS = ["formula_executor", "recommendation_template", "analytics", "database"]
 CAPABILITY_ID = "dynamic_pricing"
 SEASONS = ("peak", "shoulder", "off")
 
@@ -36,11 +41,17 @@ def handle(payload: Dict[str, Any]) -> Dict[str, Any]:
         "capability": CAPABILITY_ID,
         "channel": "mcp",
     }
+    prepared = {
+        "formula_executor": formula_executor_input(record),
+        "recommendation_template": recommendation_template_input(record),
+        "analytics": analytics_input(record),
+        "database": database_input(record),
+    }
     blocks: Dict[str, Any] = {}
     for block_id in BLOCK_IDS:
         blocks[block_id] = execute(
             block_id,
-            prepare_block_input(block_id, record),
+            prepared[block_id],
             action=BLOCK_DEFAULT_ACTIONS.get(block_id),
         )
     record["pricing"] = {

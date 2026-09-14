@@ -1,10 +1,10 @@
-"""notification_system — REUSE notification + queue + workflow."""
+"""notification_system — REUSE notification + event_bus + queue + workflow."""
 
 from __future__ import annotations
 
 from typing import Any, Dict
 
-from app.block_inputs import notice_workflow_input, notification_input, queue_input
+from app.block_inputs import event_bus_input, notice_workflow_input, notification_input, queue_input
 from app.dispatch import BLOCK_DEFAULT_ACTIONS, execute
 from app.domain import allowed_next_status, envelope_status, notice_priority
 from app.persist import ok_envelope
@@ -13,13 +13,13 @@ from app.persist import ok_envelope
 # WRITES: caller.output, notification.outbound, queue.jobs
 # NEVER: (none)
 
-BLOCK_IDS = ["notification", "queue", "workflow"]
+BLOCK_IDS = ["notification", "event_bus", "queue", "workflow"]
 CAPABILITY_ID = "notification_system"
 KINDS = ("confirmation", "reminder", "update")
 
 
 def handle(payload: Dict[str, Any]) -> Dict[str, Any]:
-    """Send a guest notice on MCP with prepared workflow steps and persist it."""
+    """Send a guest notice on MCP with prepared event_bus workflow steps and persist it."""
     status = envelope_status(payload)
     notice_kind = str(payload.get("notice_kind") or "confirmation")
     if notice_kind not in KINDS:
@@ -36,23 +36,19 @@ def handle(payload: Dict[str, Any]) -> Dict[str, Any]:
         "capability": CAPABILITY_ID,
         "channel": "mcp",
     }
-    blocks = {
-        "notification": execute(
-            "notification",
-            notification_input(record),
-            action=BLOCK_DEFAULT_ACTIONS.get("notification"),
-        ),
-        "queue": execute(
-            "queue",
-            queue_input(record),
-            action=BLOCK_DEFAULT_ACTIONS.get("queue"),
-        ),
-        "workflow": execute(
-            "workflow",
-            notice_workflow_input(record),
-            action=BLOCK_DEFAULT_ACTIONS.get("workflow"),
-        ),
+    prepared = {
+        "notification": notification_input(record),
+        "event_bus": event_bus_input(record),
+        "queue": queue_input(record),
+        "workflow": notice_workflow_input(record),
     }
+    blocks: Dict[str, Any] = {}
+    for block_id in BLOCK_IDS:
+        blocks[block_id] = execute(
+            block_id,
+            prepared[block_id],
+            action=BLOCK_DEFAULT_ACTIONS.get(block_id),
+        )
     record["notice"] = {
         "guest_name": guest_name,
         "notice_kind": notice_kind,

@@ -4,21 +4,26 @@
       "block_ids": [
         "workflow",
         "database",
-        "notification",
-        "queue"
+        "validation",
+        "event_bus",
+        "queue",
+        "audit"
       ],
-      "description": "Enable guests to search, select, and reserve hotel rooms, and hoteliers to manage reservations, including modifications and cancellations.",
+      "description": "Handles the full reservation lifecycle including availability checks, real-time booking, modifications, cancellations, and stay records across all channels.",
       "id": "booking_management",
       "required": true,
       "strategy_hint": "REUSE"
     },
     {
       "block_ids": [
+        "estate_registry",
+        "estate_maintenance",
         "database",
-        "storage",
-        "document_engine"
+        "team",
+        "workflow",
+        "audit"
       ],
-      "description": "Allow hoteliers to list and manage properties, room types, amenities, and availability calendars.",
+      "description": "Manages rooms, rate plans, seasonal inventory, and property configuration for one or many hotel properties.",
       "id": "property_management",
       "required": true,
       "strategy_hint": "REUSE"
@@ -26,20 +31,25 @@
     {
       "block_ids": [
         "formula_executor",
-        "analytics"
+        "readiness_engine",
+        "recommendation_template",
+        "analytics",
+        "database"
       ],
-      "description": "Implement pricing rules based on demand, seasonality, and occupancy to optimize revenue and offer competitive rates.",
+      "description": "Calculates and adjusts room rates in real time based on demand, occupancy, seasonality, competitor signals, and configurable pricing rules.",
       "id": "dynamic_pricing",
       "required": true,
       "strategy_hint": "REUSE"
     },
     {
       "block_ids": [
-        "database",
+        "capture",
+        "knowledge",
+        "vector_search",
         "analytics",
         "notification"
       ],
-      "description": "Collect and display guest reviews and ratings to build trust and provide feedback to hoteliers.",
+      "description": "Collects, moderates, and responds to guest reviews; analyzes sentiment and surfaces reputation trends for each property.",
       "id": "review_management",
       "required": true,
       "strategy_hint": "REUSE"
@@ -48,9 +58,10 @@
       "block_ids": [
         "dashboard",
         "analytics",
+        "portfolio_rollup",
         "database"
       ],
-      "description": "Provide dashboards for hoteliers to monitor bookings, revenue, and occupancy trends, and for administrators to oversee platform performance.",
+      "description": "Provides operational dashboards and reports covering occupancy, revenue, booking pace, channel performance, and guest satisfaction.",
       "id": "analytics_dashboard",
       "required": true,
       "strategy_hint": "REUSE"
@@ -58,10 +69,11 @@
     {
       "block_ids": [
         "notification",
+        "event_bus",
         "queue",
         "workflow"
       ],
-      "description": "Send automated notifications for booking confirmations, reminders, and updates to guests and hoteliers.",
+      "description": "Sends timely booking confirmations, reminders, pricing alerts, and internal staff notifications via email, SMS, and in-app channels.",
       "id": "notification_system",
       "required": true,
       "strategy_hint": "REUSE"
@@ -69,10 +81,12 @@
     {
       "block_ids": [
         "vector_search",
+        "knowledge",
         "recommendation_template",
+        "memory",
         "analytics"
       ],
-      "description": "Provide personalized hotel recommendations and search results based on user preferences and behavior.",
+      "description": "Enables guests to search properties and rooms with filters, and recommends personalized stays, packages, and upsells based on preferences and history.",
       "id": "search_recommendation",
       "required": true,
       "strategy_hint": "REUSE"
@@ -86,9 +100,9 @@
   "human_authority": true,
   "n_required": 7,
   "product_id": "hospitality",
-  "product_name": "Hotel Booking Platform",
+  "product_name": "StayFlow Hospitality Platform",
   "schema_version": "product_blueprint.v1",
-  "summary": "A comprehensive platform for hotel booking that enables guests to search, compare, and reserve rooms while providing hoteliers with tools to manage inventory, pricing, and reservations. It serves travelers, hotel staff, and administrators with a seamless booking experience and efficient property management.",
+  "summary": "StayFlow is an all-in-one hotel booking and property management platform for independent hotels, boutique inns, and small hotel groups. It unifies real-time reservation management, room inventory and rate control, dynamic pricing, guest reviews, and operational analytics, while keeping staff and guests informed with automated notifications and AI-assisted search and recommendations.",
   "ui_modules": [
     "command_center",
     "operational_chat",

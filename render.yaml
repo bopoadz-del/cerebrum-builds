@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: cerebrum-hotel-booking
+    name: cerebrum-automotive-platform
     runtime: python
     plan: starter
     buildCommand: pip install -r requirements.txt
@@ -14,6 +14,8 @@ services:
       - key: OPERATOR_TOKEN
         sync: false
       - key: ADMIN_TOKEN
+        sync: false
+      - key: PLATFORM_TOKEN
         sync: false
       - key: CORS_ALLOWLIST
         sync: false

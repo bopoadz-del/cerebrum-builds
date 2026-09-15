@@ -2,7 +2,7 @@
 
 Revision ID: 0001_baseline
 Revises:
-Create Date: 2026-09-13
+Create Date: 2026-09-15
 """
 
 from alembic import op
@@ -14,13 +14,10 @@ branch_labels = None
 depends_on = None
 
 ENTITIES = (
-    "booking_management",
-    "property_management",
-    "dynamic_pricing",
-    "review_management",
-    "analytics_dashboard",
-    "notification_system",
-    "search_recommendation",
+    "automotive_core",
+    "dashboard",
+    "team",
+    "audit",
 )
 
 
@@ -28,7 +25,7 @@ def upgrade() -> None:
     for entity in ENTITIES:
         op.create_table(
             entity,
-            sa.Column("pk", sa.Integer(), primary_key=True, autoincrement=True),
+            sa.Column("id", sa.Integer(), primary_key=True, autoincrement=True),
             sa.Column("reference", sa.Text(), nullable=True),
             sa.Column("status", sa.Text(), nullable=True),
             sa.Column("payload_json", sa.Text(), nullable=True),

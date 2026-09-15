@@ -1,16 +1,13 @@
-# Hotel Booking Platform
+# Automotive Platform
 
-Cerebrum-builds session for **Hotel Booking Platform** — guests search, compare, and reserve rooms while hospitality operators manage inventory, pricing, reviews, and notifications.
+Cerebrum-builds session for **Automotive Platform** — a car dealership workspace for vehicle inventory (make, model, year, price, mileage, VIN, new/used), leads, test-drive booking, financing interest, and a sales-team dashboard. Multi-branch inventory.
 
-Manufactured from vendored Store blocks (session `sess_548ff6a3ec9d4bd2`):
+Manufactured from vendored Store blocks:
 
-- `booking_management` — workflow, database, notification, queue
-- `property_management` — database, storage, document_engine
-- `dynamic_pricing` — formula_executor, analytics
-- `review_management` — database, analytics, notification
-- `analytics_dashboard` — dashboard, analytics, database
-- `notification_system` — notification, queue, workflow
-- `search_recommendation` — vector_search, recommendation_template, analytics
+- `automotive_core` — GENERATE vehicle inventory kernel (no block ids)
+- `dashboard` — REUSE `dashboard`
+- `team` — REUSE `team`
+- `audit` — REUSE `audit`
 
 Offline platform. Channel `mcp` only. No HTTP store callbacks.
 

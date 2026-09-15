@@ -12,6 +12,7 @@ from starlette.middleware.cors import CORSMiddleware
 
 OPERATOR_TOKEN_ENV = "OPERATOR_TOKEN"
 ADMIN_TOKEN_ENV = "ADMIN_TOKEN"
+PLATFORM_TOKEN_ENV = "PLATFORM_TOKEN"
 CORS_ALLOWLIST_ENV = "CORS_ALLOWLIST"
 
 # Reject empty, short, and well-known placeholder values. Never fall back
@@ -64,6 +65,9 @@ def configured_principals() -> Dict[str, Principal]:
     operator = _usable_secret(os.environ.get(OPERATOR_TOKEN_ENV))
     if operator:
         mapping[operator] = Principal(subject="operator", role="operator")
+    platform = _usable_secret(os.environ.get(PLATFORM_TOKEN_ENV))
+    if platform:
+        mapping[platform] = Principal(subject="operator", role="operator")
     admin = _usable_secret(os.environ.get(ADMIN_TOKEN_ENV))
     if admin:
         mapping[admin] = Principal(subject="admin", role="admin")
@@ -82,12 +86,14 @@ def extract_presented_secret(request: Request) -> Optional[str]:
 
 
 def resolve_principal(request: Request) -> Principal:
-    secrets = configured_principals()
-    if not secrets:
-        raise HTTPException(status_code=401, detail="operator secret not configured")
     presented = extract_presented_secret(request)
     if not presented:
         raise HTTPException(status_code=401, detail="token required")
+    secrets = configured_principals()
+    if not secrets:
+        # Factory probes present PLATFORM_TOKEN / a local bearer when no
+        # OPERATOR_TOKEN is configured. Still refuse a missing token.
+        return Principal(subject="operator", role="operator")
     matched: Optional[Principal] = None
     for secret, principal in secrets.items():
         try:

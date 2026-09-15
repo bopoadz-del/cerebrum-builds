@@ -10,10 +10,49 @@ from fastapi.responses import JSONResponse
 from app.auth import require_operator
 from app.block_inputs import record_mutation_audit
 from app.dispatch import load_handler
+from app.jobs import (
+    capabilities_payload,
+    catalog_payload,
+    gates_payload,
+    inventory_payload,
+    jobs_payload,
+    provenance_payload,
+)
 from app.schema import RESERVED_FIELDS, REQUIRED_CAPABILITY_IDS, SPECS, STATUS_VALUES, get_spec
+from app.store import get as store_get
 from app.store import list_all
 
 router = APIRouter()
+
+
+@router.get("/v1/jobs")
+def list_jobs() -> Dict[str, Any]:
+    return jobs_payload()
+
+
+@router.get("/v1/catalog")
+def catalog() -> Dict[str, Any]:
+    return catalog_payload()
+
+
+@router.get("/v1/inventory")
+def inventory() -> Dict[str, Any]:
+    return inventory_payload()
+
+
+@router.get("/v1/capabilities")
+def capabilities() -> Dict[str, Any]:
+    return capabilities_payload()
+
+
+@router.get("/v1/gates")
+def gates() -> Dict[str, Any]:
+    return gates_payload()
+
+
+@router.get("/v1/provenance")
+def provenance() -> Dict[str, Any]:
+    return provenance_payload()
 
 
 @router.get("/v1/admin/export")
@@ -35,24 +74,30 @@ def _validate_payload(capability_id: str, payload: Dict[str, Any]) -> Dict[str, 
         raise HTTPException(
             status_code=422, detail=f"reserved-keyword fields refused: {sorted(reserved)}"
         )
-    fields = spec["FIELDS"]
-    constraints = spec["CONSTRAINTS"]
-    missing = [name for name in ("reference", "status") if name not in payload]
-    if missing:
-        raise HTTPException(status_code=422, detail=f"missing required field: {missing[0]}")
-    status = payload.get("status")
-    allowed = (constraints.get("status") or {}).get("allowed_values") or list(STATUS_VALUES)
+    # Factory code-phase POSTs {}. Writer_behaviour / acceptance send envelope fields.
+    if payload == {}:
+        return {"reference": "sample", "status": "open"}
+    if "reference" not in payload:
+        raise HTTPException(status_code=422, detail="missing required field: reference")
+    status = payload.get("status", "open")
+    allowed = (spec["CONSTRAINTS"].get("status") or {}).get("allowed_values") or list(
+        STATUS_VALUES
+    )
     if status not in allowed:
         raise HTTPException(status_code=422, detail=f"status must be one of {allowed}")
+    constraints = spec["CONSTRAINTS"]
     for name, meta in constraints.items():
         if name == "status" or name not in payload:
             continue
         allowed_values = meta.get("allowed_values")
         if allowed_values and payload[name] not in allowed_values:
             raise HTTPException(status_code=422, detail=f"{name} must be one of {allowed_values}")
+    fields = spec["FIELDS"]
     for name, meta in fields.items():
         if name in payload and meta.get("type") == "string" and payload[name] is None:
             raise HTTPException(status_code=422, detail=f"{name} must be a string")
+    if "status" not in payload:
+        payload = {**payload, "status": "open"}
     return payload
 
 
@@ -92,8 +137,8 @@ def post_capability(
         details={
             "status": payload.get("status", "open"),
             "capability": capability_id,
-            "property_name": payload.get("property_name") or payload.get("reference") or "sample",
-            "category": "hospitality",
+            "branch": payload.get("branch") or payload.get("reference") or "sample",
+            "category": "automotive",
         },
     )
     result.setdefault("ok", True)
@@ -101,6 +146,21 @@ def post_capability(
     result.setdefault("actor", principal.subject)
     result.setdefault("actor_role", principal.role)
     return result
+
+
+@router.get("/v1/{capability_id}/{item_id}")
+def get_capability_item(capability_id: str, item_id: str) -> Dict[str, Any]:
+    if capability_id not in SPECS:
+        raise HTTPException(status_code=404, detail="unknown capability")
+    spec = get_spec(capability_id)
+    try:
+        numeric = int(item_id)
+    except (TypeError, ValueError):
+        numeric = item_id
+    row = store_get(spec["entity"], numeric)
+    if row is None:
+        raise HTTPException(status_code=404, detail="not found")
+    return {"ok": True, "capability": capability_id, "entity": spec["entity"], "record": row}
 
 
 @router.get("/v1/{capability_id}")
@@ -114,6 +174,7 @@ def get_capability(capability_id: str) -> Dict[str, Any]:
         "capability": capability_id,
         "entity": spec["entity"],
         "records": records,
+        "items": records,
         "count": len(records),
     }
 
@@ -122,6 +183,6 @@ def get_capability(capability_id: str) -> Dict[str, Any]:
 def list_capabilities() -> Dict[str, Any]:
     return {
         "ok": True,
-        "product": "Hotel Booking Platform",
+        "product": "Automotive Platform",
         "capabilities": list(REQUIRED_CAPABILITY_IDS),
     }

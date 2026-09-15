@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Hotel Booking Platform</title>
+  <title>Automotive Platform</title>
   <style>
     :root { font-family: "IBM Plex Sans", "Segoe UI", sans-serif; background: #10141c; color: #e8eef6; }
     body { margin: 0; }
@@ -24,8 +24,8 @@
 </head>
 <body>
   <header>
-    <h1>Hotel Booking Platform</h1>
-    <p class="sub">Hospitality operators — bookings, properties, pricing, reviews, and guest notices. Operator / admin. Mutations require a bearer operator token. OPERATOR_TOKEN is not stored in git.</p>
+    <h1>Automotive Platform</h1>
+    <p class="sub">Automotive operators — vehicle inventory, leads, test-drives, financing, and a sales dashboard. Operator / admin. Mutations require a bearer operator token. OPERATOR_TOKEN is not stored in git.</p>
   </header>
   <nav id="nav"></nav>
   <main>
@@ -34,7 +34,7 @@
       <div class="mods" id="modules"></div>
     </section>
     <section id="live" class="panel">
-      <h2 id="cap-title">booking_management</h2>
+      <h2 id="cap-title">automotive_core</h2>
       <label>Operator token <input id="operator-token" type="password" autocomplete="off" placeholder="OPERATOR_TOKEN" /></label>
       <label>Capability
         <select id="capability"></select>
@@ -46,11 +46,11 @@
       <pre id="out">Ready.</pre>
     </section>
     <section id="operational_chat" class="panel">
-      <h2>Operational chat — property notes</h2>
-      <label>Title <input id="rag-title" value="Hotel occupancy pack" /></label>
-      <label>Text <textarea id="rag-text" rows="3">Hotel occupancy, peak season night rate, and guest booking notes for the hospitality pilot.</textarea></label>
+      <h2>Operational chat — vehicle notes</h2>
+      <label>Title <input id="rag-title" value="Vehicle inventory pack" /></label>
+      <label>Text <textarea id="rag-text" rows="3">Vehicle inventory, new and used listings, VIN, mileage, and sales-lead notes for the automotive pilot.</textarea></label>
       <button class="act" id="ingest-btn" type="button">Ingest pack</button>
-      <label>Query <input id="rag-q" value="hotel occupancy" /></label>
+      <label>Query <input id="rag-q" value="vehicle inventory" /></label>
       <button class="act" id="query-btn" type="button">Query notes</button>
     </section>
     <section id="resident_engineer" class="panel">
@@ -59,29 +59,21 @@
     </section>
   </main>
   <script>
-    const CAPS = [
-      "booking_management",
-      "property_management",
-      "dynamic_pricing",
-      "review_management",
-      "analytics_dashboard",
-      "notification_system",
-      "search_recommendation"
-    ];
+    const CAPS = ["automotive_core", "dashboard", "team", "audit"];
     const UI = ["command_center", "operational_chat", "resident_engineer"];
     const MAP = {
-      command_center: "booking_management",
-      operational_chat: "property_management",
-      resident_engineer: "analytics_dashboard"
+      command_center: "automotive_core",
+      operational_chat: "dashboard",
+      resident_engineer: "team"
     };
-    let current = "booking_management";
+    let current = "automotive_core";
     const nav = document.getElementById("nav");
     const modules = document.getElementById("modules");
     const capSelect = document.getElementById("capability");
     UI.forEach((name) => {
       const b = document.createElement("button");
       b.textContent = name;
-      b.onclick = () => select(MAP[name] || "booking_management", b);
+      b.onclick = () => select(MAP[name] || "automotive_core", b);
       nav.appendChild(b);
       const card = document.createElement("div");
       card.className = "card";
@@ -114,13 +106,10 @@
     }
     function extraFields(id) {
       const extras = {
-        booking_management: {stay_kind: "night", room_label: "sample"},
-        property_management: {property_kind: "hotel", property_name: "sample"},
-        dynamic_pricing: {season: "peak", rate_plan: "sample"},
-        review_management: {rating_band: "excellent", guest_name: "sample"},
-        analytics_dashboard: {view_name: "sample", horizon: "today"},
-        notification_system: {notice_kind: "confirmation", guest_name: "sample"},
-        search_recommendation: {stay_intent: "leisure", destination: "sample"}
+        automotive_core: {condition: "new", branch: "sample"},
+        dashboard: {view_name: "sample", horizon: "today"},
+        team: {desk: "sales", branch: "sample"},
+        audit: {category: "data_access", note: "sample"}
       };
       return extras[id] || {};
     }
@@ -155,7 +144,7 @@
       document.getElementById("out").textContent = JSON.stringify(await res.json(), null, 2);
     };
     document.getElementById("query-btn").onclick = async () => {
-      const q = encodeURIComponent(document.getElementById("rag-q").value || "occupancy");
+      const q = encodeURIComponent(document.getElementById("rag-q").value || "inventory");
       const res = await fetch("/v1/rag/query?q=" + q);
       document.getElementById("out").textContent = JSON.stringify(await res.json(), null, 2);
     };

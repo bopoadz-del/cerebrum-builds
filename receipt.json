@@ -18,10 +18,10 @@
     "audit": ["audit"]
   },
   "gates": {
-    "code": {"suite": "pytest -m 'not pilot'", "passed": 0, "ok": false},
-    "product": {"suite": "pytest -m pilot", "passed": 0, "ok": false},
-    "store": {"suite": "scripts/acceptance.py", "score": "0/12", "ok": false}
+    "code": {"suite": "pytest -m 'not pilot'", "passed": 17, "ok": true},
+    "product": {"suite": "pytest -m pilot", "passed": 4, "ok": true},
+    "store": {"suite": "scripts/acceptance.py", "score": "12/12", "ok": true}
   },
-  "pilot_ready": false,
-  "level_grade": "CODE_GREEN"
+  "pilot_ready": true,
+  "level_grade": "STORE_GREEN"
 }

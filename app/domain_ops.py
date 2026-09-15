@@ -73,10 +73,13 @@ async def perform_all(capability: Optional[str] = None) -> Dict[str, Any]:
 
     keep = save(entity, {"reference": "s12-keep", "status": "open"})
     listed = list_all(entity)
+    listed_refs = {row.get("reference") for row in listed}
     listed_ids = {row.get("id") for row in listed}
     outcomes["list_only_persisted"] = (
         _performed("list is persist-backed")
-        if keep["id"] in listed_ids and created["id"] not in listed_ids
+        if keep["id"] in listed_ids
+        and "s12-keep" in listed_refs
+        and "s12-create" not in listed_refs
         else _failed("list invented or dropped rows")
     )
 

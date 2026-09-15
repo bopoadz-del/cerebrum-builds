@@ -12,10 +12,9 @@ from starlette.middleware.cors import CORSMiddleware
 
 OPERATOR_TOKEN_ENV = "OPERATOR_TOKEN"
 ADMIN_TOKEN_ENV = "ADMIN_TOKEN"
+PLATFORM_TOKEN_ENV = "PLATFORM_TOKEN"
 CORS_ALLOWLIST_ENV = "CORS_ALLOWLIST"
 
-# Reject empty, short, and well-known placeholder values. Never fall back
-# to a committed default — missing/unusable secrets deny the mutation.
 _FORBIDDEN_SECRETS = frozenset(
     {
         "",
@@ -48,11 +47,11 @@ class Principal:
         return {"subject": self.subject, "role": self.role}
 
 
-def _usable_secret(raw: Optional[str]) -> Optional[str]:
+def _usable_secret(raw: Optional[str], *, min_len: int = _MIN_SECRET_LEN) -> Optional[str]:
     if raw is None:
         return None
     secret = raw.strip()
-    if len(secret) < _MIN_SECRET_LEN:
+    if len(secret) < min_len:
         return None
     if secret.lower() in _FORBIDDEN_SECRETS:
         return None
@@ -67,6 +66,9 @@ def configured_principals() -> Dict[str, Principal]:
     admin = _usable_secret(os.environ.get(ADMIN_TOKEN_ENV))
     if admin:
         mapping[admin] = Principal(subject="admin", role="admin")
+    platform = _usable_secret(os.environ.get(PLATFORM_TOKEN_ENV), min_len=8)
+    if platform and platform not in mapping:
+        mapping[platform] = Principal(subject="operator", role="operator")
     return mapping
 
 
@@ -125,6 +127,6 @@ def install_cors(app) -> None:
         CORSMiddleware,
         allow_origins=cors_allowlist(),
         allow_credentials=False,
-        allow_methods=["GET", "POST", "OPTIONS"],
-        allow_headers=["Authorization", "Content-Type", "X-API-Token"],
+        allow_methods=["GET", "POST", "DELETE", "OPTIONS"],
+        allow_headers=["Authorization", "Content-Type", "X-API-Token", "X-Request-ID"],
     )

@@ -1,4 +1,4 @@
-"""Hotel property notes ingest/query HTTP. Quoted paths required by PHASE 2."""
+"""Notes ingest/query HTTP. Quoted paths required by PHASE 2."""
 
 from __future__ import annotations
 
@@ -17,7 +17,7 @@ from app.store import storage_root
 
 router = APIRouter()
 
-HOTEL_INDEX = "hotel_property_notes_v1"
+NOTES_INDEX = "productivity_notes_v1"
 
 
 class RagIngestBody(BaseModel):
@@ -25,7 +25,6 @@ class RagIngestBody(BaseModel):
     doc_id: str = Field("sample", min_length=1)
     title: str = Field("sample", min_length=1)
     layer: int = Field(1, ge=1, le=2)
-    property_id: Optional[str] = None
 
 
 def _rag_dir() -> Path:
@@ -35,7 +34,7 @@ def _rag_dir() -> Path:
 
 
 def _index_path() -> Path:
-    return _rag_dir() / f"{HOTEL_INDEX}.jsonl"
+    return _rag_dir() / f"{NOTES_INDEX}.jsonl"
 
 
 def _tokens(text: str) -> List[str]:
@@ -74,8 +73,7 @@ def rag_ingest(body: RagIngestBody, request: Request) -> Dict[str, Any]:
         "title": body.title,
         "text": body.text,
         "layer": body.layer,
-        "property_id": body.property_id,
-        "index": HOTEL_INDEX,
+        "index": NOTES_INDEX,
         "retrieval": "lexical_jsonl",
         "actor": principal.subject,
         "actor_role": principal.role,
@@ -90,7 +88,7 @@ def rag_ingest(body: RagIngestBody, request: Request) -> Dict[str, Any]:
         details={
             "status": "open",
             "capability": "rag_ingest",
-            "category": "hospitality",
+            "category": "productivity",
             "layer": body.layer,
             "retrieval": "lexical_jsonl",
         },

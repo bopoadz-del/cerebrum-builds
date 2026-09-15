@@ -1,16 +1,11 @@
-# Hotel Booking Platform
+# Productivity Platform
 
-Cerebrum-builds session for **Hotel Booking Platform** — guests search, compare, and reserve rooms while hospitality operators manage inventory, pricing, reviews, and notifications.
+Cerebrum-builds session for **Productivity Platform** — a tiny single-page notes app for productivity operators. Save a note with a title and body, list notes, search notes by keyword, delete a note. Nothing else.
 
-Manufactured from vendored Store blocks (session `sess_548ff6a3ec9d4bd2`):
+Manufactured from vendored Store blocks:
 
-- `booking_management` — workflow, database, notification, queue
-- `property_management` — database, storage, document_engine
-- `dynamic_pricing` — formula_executor, analytics
-- `review_management` — database, analytics, notification
-- `analytics_dashboard` — dashboard, analytics, database
-- `notification_system` — notification, queue, workflow
-- `search_recommendation` — vector_search, recommendation_template, analytics
+- `productivity_core` — GENERATE notes kernel (no block ids)
+- `audit` — REUSE `audit` (verified present)
 
 Offline platform. Channel `mcp` only. No HTTP store callbacks.
 

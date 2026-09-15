@@ -6,6 +6,7 @@ from typing import Any, Dict, List, Mapping
 
 STATUS_VALUES = ("open", "in_progress", "closed")
 RESERVED_FIELDS = frozenset({"action", "id"})
+NOTE_OPS = ("create", "update", "delete", "search")
 
 ENVELOPE_FIELDS: Dict[str, Dict[str, Any]] = {
     "reference": {"type": "string"},
@@ -36,81 +37,25 @@ def _spec(
 
 
 SPECS: Dict[str, Dict[str, Any]] = {
-    "booking_management": _spec(
-        "booking_management",
-        ["workflow", "database", "validation", "event_bus", "queue", "audit"],
+    "productivity_core": _spec(
+        "productivity_core",
+        [],
         extra_fields={
-            "stay_kind": {"type": "string"},
-            "room_label": {"type": "string"},
+            "title": {"type": "string"},
+            "body": {"type": "string"},
+            "keyword": {"type": "string"},
+            "note_op": {"type": "string"},
         },
         extra_constraints={
-            "stay_kind": {"allowed_values": ["night", "week", "group"]},
+            "note_op": {"allowed_values": list(NOTE_OPS)},
         },
     ),
-    "property_management": _spec(
-        "property_management",
-        ["database", "team", "workflow", "audit"],
+    "audit": _spec(
+        "audit",
+        ["audit"],
         extra_fields={
-            "property_kind": {"type": "string"},
-            "property_name": {"type": "string"},
-        },
-        extra_constraints={
-            "property_kind": {"allowed_values": ["hotel", "resort", "boutique"]},
-        },
-    ),
-    "dynamic_pricing": _spec(
-        "dynamic_pricing",
-        ["formula_executor", "recommendation_template", "analytics", "database"],
-        extra_fields={
-            "season": {"type": "string"},
-            "rate_plan": {"type": "string"},
-        },
-        extra_constraints={
-            "season": {"allowed_values": ["peak", "shoulder", "off"]},
-        },
-    ),
-    "review_management": _spec(
-        "review_management",
-        ["capture", "knowledge", "vector_search", "analytics", "notification"],
-        extra_fields={
-            "rating_band": {"type": "string"},
-            "guest_name": {"type": "string"},
-        },
-        extra_constraints={
-            "rating_band": {"allowed_values": ["excellent", "good", "poor"]},
-        },
-    ),
-    "analytics_dashboard": _spec(
-        "analytics_dashboard",
-        ["dashboard", "analytics", "database"],
-        extra_fields={
-            "view_name": {"type": "string"},
-            "horizon": {"type": "string"},
-        },
-        extra_constraints={
-            "horizon": {"allowed_values": ["today", "week", "month"]},
-        },
-    ),
-    "notification_system": _spec(
-        "notification_system",
-        ["notification", "event_bus", "queue", "workflow"],
-        extra_fields={
-            "notice_kind": {"type": "string"},
-            "guest_name": {"type": "string"},
-        },
-        extra_constraints={
-            "notice_kind": {"allowed_values": ["confirmation", "reminder", "update"]},
-        },
-    ),
-    "search_recommendation": _spec(
-        "search_recommendation",
-        ["vector_search", "knowledge", "recommendation_template", "memory", "analytics"],
-        extra_fields={
-            "stay_intent": {"type": "string"},
-            "destination": {"type": "string"},
-        },
-        extra_constraints={
-            "stay_intent": {"allowed_values": ["leisure", "business", "family"]},
+            "event_action": {"type": "string"},
+            "resource": {"type": "string"},
         },
     ),
 }
@@ -124,3 +69,31 @@ def get_spec(capability_id: str) -> Dict[str, Any]:
         return SPECS[capability_id]
     except KeyError as exc:
         raise KeyError(f"unknown capability: {capability_id}") from exc
+
+
+def schema_sample(capability_id: str) -> Dict[str, Any]:
+    """Payload the writer_behaviour / PRODUCT probes build from FIELDS + CONSTRAINTS."""
+    spec = get_spec(capability_id)
+    payload: Dict[str, Any] = {}
+    for name, meta in spec["FIELDS"].items():
+        constraint = spec["CONSTRAINTS"].get(name) or {}
+        allowed = constraint.get("allowed_values")
+        if allowed:
+            payload[name] = allowed[0]
+        elif name == "status" or name.endswith("_status"):
+            payload[name] = "open"
+        elif name == "channel" or name.endswith("_channel"):
+            payload[name] = "email"
+        elif "email" in name:
+            payload[name] = "sample@example.com"
+        elif meta.get("type") == "int" or meta.get("type") == "integer":
+            payload[name] = constraint.get("min", 1)
+        elif meta.get("type") == "float":
+            payload[name] = constraint.get("min", 1)
+        elif meta.get("type") == "bool" or meta.get("type") == "boolean":
+            payload[name] = False
+        else:
+            payload[name] = "sample"
+    payload["reference"] = payload.get("reference") or "sample"
+    payload["status"] = payload.get("status") or "open"
+    return payload

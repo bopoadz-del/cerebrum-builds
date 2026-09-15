@@ -15,9 +15,9 @@ import pytest
 from app import backup, store
 from app.migrations import current_revision, downgrade, upgrade_head, upgrade_to
 
-ENTITY = ''
-SAMPLE = {}
-ENTITIES = []
+ENTITY = "productivity_core"
+SAMPLE = {"reference": "sample", "status": "open", "title": "sample", "body": "sample"}
+ENTITIES = ["productivity_core", "audit"]
 REV_V1 = '0001_baseline'
 REV_V2 = '0002_lifecycle_audit'
 AUDIT = 'lifecycle_audit'

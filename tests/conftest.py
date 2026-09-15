@@ -25,6 +25,8 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 os.environ["STORAGE_PATH"] = tempfile.mkdtemp(prefix="platform-test-")
+os.environ.setdefault("PLATFORM_TOKEN", "dev-local-token-ok16")
+os.environ.setdefault("OPERATOR_TOKEN", "dev-local-token-ok16")
 
 # Schema is versioned. connect() does not CREATE TABLE. Apply head so
 # model/route tests have tables; a missing revision fails the suite.

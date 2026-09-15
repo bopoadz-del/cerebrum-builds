@@ -16,7 +16,6 @@ if str(ROOT) not in sys.path:
 
 os.environ.setdefault("STORAGE_PATH", str(ROOT / "data"))
 os.environ.setdefault("VECTOR_DB_URL", "")
-# Runtime-only acceptance secret. The app has no git-default fallback.
 os.environ.setdefault("OPERATOR_TOKEN", "acceptance-operator-secret-rx01")
 AUTH_HEADERS = {"Authorization": f"Bearer {os.environ['OPERATOR_TOKEN']}"}
 
@@ -35,12 +34,13 @@ FLOOR = (
     "authorship==receipt",
 )
 
-CORE = "booking_management"
+CORE = "productivity_core"
 CORE_BODY = {
     "reference": "sample",
     "status": "open",
-    "stay_kind": "night",
-    "room_label": "sample",
+    "title": "sample",
+    "body": "sample",
+    "note_op": "create",
 }
 
 
@@ -97,7 +97,7 @@ def main() -> int:
         results.append(
             _line(
                 "PASS"
-                if ui.status_code == 200 and "Hotel Booking Platform" in ui.text
+                if ui.status_code == 200 and "Productivity Platform" in ui.text
                 else "FAIL",
                 "ui_served_200",
                 f"GET / -> {ui.status_code}",
@@ -109,12 +109,12 @@ def main() -> int:
             json={
                 "layer": 1,
                 "doc_id": "acc-pack",
-                "title": "Hotel occupancy pack",
-                "text": "Hotel occupancy, peak season night rate, and guest booking notes for the hospitality pilot.",
+                "title": "Notes pack",
+                "text": "Save a note with a title and body, list notes, search notes by keyword, delete a note.",
             },
             headers=AUTH_HEADERS,
         )
-        query = client.get("/v1/rag/query", params={"q": "hotel occupancy"})
+        query = client.get("/v1/rag/query", params={"q": "search notes"})
         hit = (
             ingest.status_code == 200
             and query.status_code == 200
@@ -149,7 +149,7 @@ def main() -> int:
 
         open_post = client.post(
             f"/v1/{CORE}",
-            json={"reference": "sample", "status": "open", "stay_kind": "night"},
+            json={"reference": "sample", "status": "open", "title": "sample"},
         )
         results.append(
             _line(
@@ -160,7 +160,7 @@ def main() -> int:
         )
         open_ingest = client.post(
             "/v1/rag/ingest",
-            json={"layer": 1, "doc_id": "denied", "title": "x", "text": "hotel occupancy"},
+            json={"layer": 1, "doc_id": "denied", "title": "x", "text": "search notes"},
         )
         results.append(
             _line(
@@ -189,18 +189,17 @@ def main() -> int:
             )
         )
         rec = (quoted.json() or {}).get("record") or {} if quoted.status_code == 200 else {}
-        total = rec.get("stay_total")
         computed = (
             quoted.status_code == 200
-            and total not in (None, 1, 1.0)
-            and rec.get("stay_nights") == 1
+            and rec.get("title") == "sample"
+            and rec.get("body") == "sample"
             and rec.get("actor") == "operator"
         )
         results.append(
             _line(
                 "PASS" if computed else "FAIL",
-                "core_stay_total_computed",
-                f"stay_total={total} nights={rec.get('stay_nights')} actor={rec.get('actor')}",
+                "core_note_persisted",
+                f"title={rec.get('title')} body={rec.get('body')} actor={rec.get('actor')}",
             )
         )
 
@@ -275,7 +274,7 @@ def main() -> int:
     if receipt_path.is_file():
         receipt = json.loads(receipt_path.read_text(encoding="utf-8"))
         listed = sorted(receipt.get("authored_handlers") or receipt.get("cli_authored_ids") or [])
-        match = listed == authored and len(authored) >= 5
+        match = listed == authored and len(authored) >= 2
         results.append(
             _line(
                 "PASS" if match else "FAIL",
@@ -292,15 +291,13 @@ def main() -> int:
     )
     results.append(
         _line(
-            "PASS" if len(REQUIRED_CAPABILITY_IDS) == 7 else "FAIL",
+            "PASS" if len(REQUIRED_CAPABILITY_IDS) == 2 else "FAIL",
             "capability_roster",
             f"{len(REQUIRED_CAPABILITY_IDS)} capabilities",
         )
     )
     render = (ROOT / "Dockerfile").is_file() and (ROOT / "render.yaml").is_file()
-    results.append(
-        _line("PASS" if render else "FAIL", "render_ready", "Dockerfile + render.yaml")
-    )
+    results.append(_line("PASS" if render else "FAIL", "render_ready", "Dockerfile + render.yaml"))
 
     floor_ok = all(
         row["status"] in {"PASS", "SKIP"}

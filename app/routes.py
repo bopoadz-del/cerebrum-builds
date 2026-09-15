@@ -136,6 +136,8 @@ def get_capability(
 
 @router.get("/v1/{capability_id}/{item_id}")
 def get_capability_item(capability_id: str, item_id: str) -> Dict[str, Any]:
+    if capability_id in {"rag", "steward", "admin", "jobs"}:
+        raise HTTPException(status_code=404, detail="unknown capability")
     if capability_id not in SPECS:
         raise HTTPException(status_code=404, detail="unknown capability")
     spec = get_spec(capability_id)

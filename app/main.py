@@ -54,8 +54,8 @@ app = FastAPI(
 )
 install_cors(app)
 app.add_middleware(RequestIdMiddleware)
-app.include_router(capability_router)
 app.include_router(rag_router)
+app.include_router(capability_router)
 
 if STATIC_DIR.is_dir():
     app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")

@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: cerebrum-hotel-booking
+    name: cerebrum-automotive
     runtime: python
     plan: starter
     buildCommand: pip install -r requirements.txt

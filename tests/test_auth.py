@@ -10,19 +10,21 @@ pytestmark = pytest.mark.not_pilot
 SCHEMA_SAMPLE = {
     "reference": "sample",
     "status": "open",
-    "stay_kind": "night",
-    "room_label": "sample",
+    "listing_kind": "new",
+    "branch_code": "sample",
+    "make": "sample",
+    "model": "sample",
 }
 
 
 def test_mutating_route_without_token_is_401(anon_client: TestClient) -> None:
-    response = anon_client.post("/v1/booking_management", json=SCHEMA_SAMPLE)
+    response = anon_client.post("/v1/automotive_core", json=SCHEMA_SAMPLE)
     assert response.status_code == 401
 
 
 def test_mutating_route_with_invalid_token_is_401(anon_client: TestClient) -> None:
     response = anon_client.post(
-        "/v1/booking_management",
+        "/v1/automotive_core",
         json=SCHEMA_SAMPLE,
         headers={"Authorization": "Bearer not-the-operator-secret"},
     )
@@ -38,7 +40,7 @@ def test_placeholder_secret_is_not_accepted(
 
     with TestClient(app) as client:
         denied = client.post(
-            "/v1/booking_management",
+            "/v1/automotive_core",
             json=SCHEMA_SAMPLE,
             headers={"Authorization": "Bearer changeme"},
         )
@@ -53,7 +55,7 @@ def test_unconfigured_secret_fail_closed(
     from app.main import app
 
     with TestClient(app) as client:
-        denied = client.post("/v1/booking_management", json=SCHEMA_SAMPLE)
+        denied = client.post("/v1/automotive_core", json=SCHEMA_SAMPLE)
         assert denied.status_code == 401
         assert "not configured" in denied.json().get("detail", "")
 
@@ -61,7 +63,7 @@ def test_unconfigured_secret_fail_closed(
 def test_rag_ingest_without_token_is_401(anon_client: TestClient) -> None:
     response = anon_client.post(
         "/v1/rag/ingest",
-        json={"layer": 1, "doc_id": "x", "title": "t", "text": "hotel occupancy peak season"},
+        json={"layer": 1, "doc_id": "x", "title": "t", "text": "vehicle inventory VIN testdrive"},
     )
     assert response.status_code == 401
 
@@ -76,7 +78,7 @@ def test_admin_export_requires_matching_secret(anon_client: TestClient) -> None:
 
 
 def test_operator_token_attributes_actor(client: TestClient) -> None:
-    response = client.post("/v1/booking_management", json=SCHEMA_SAMPLE)
+    response = client.post("/v1/automotive_core", json=SCHEMA_SAMPLE)
     assert response.status_code == 200
     body = response.json()
     assert body.get("ok") is not False
@@ -85,19 +87,19 @@ def test_operator_token_attributes_actor(client: TestClient) -> None:
     rec = body.get("record") or {}
     assert rec.get("actor") == "operator"
     assert rec.get("actor_role") == "operator"
-    assert rec.get("stay_total") == 189.0
-    assert rec.get("stay_nights") == 1
+    assert rec.get("list_price") == 42000.0
+    assert rec.get("model_year") == 2026
     assert rec.get("claimed_actor") is None
 
 
 def test_forged_actor_is_claimed_only(client: TestClient) -> None:
-    forged = {**SCHEMA_SAMPLE, "actor": "forged-hotel-admin", "user_id": "spoof"}
-    response = client.post("/v1/booking_management", json=forged)
+    forged = {**SCHEMA_SAMPLE, "actor": "forged-lot-admin", "user_id": "spoof"}
+    response = client.post("/v1/automotive_core", json=forged)
     assert response.status_code == 200
     rec = response.json().get("record") or {}
     assert rec.get("actor") == "operator"
     assert rec.get("actor_role") == "operator"
-    assert rec.get("claimed_actor") == "forged-hotel-admin"
+    assert rec.get("claimed_actor") == "forged-lot-admin"
     assert rec.get("user_id") != "spoof"
     assert rec.get("user_id") == "operator"
 

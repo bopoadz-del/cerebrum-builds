@@ -35,12 +35,14 @@ FLOOR = (
     "authorship==receipt",
 )
 
-CORE = "booking_management"
+CORE = "automotive_core"
 CORE_BODY = {
     "reference": "sample",
     "status": "open",
-    "stay_kind": "night",
-    "room_label": "sample",
+    "listing_kind": "new",
+    "branch_code": "sample",
+    "make": "sample",
+    "model": "sample",
 }
 
 
@@ -97,7 +99,7 @@ def main() -> int:
         results.append(
             _line(
                 "PASS"
-                if ui.status_code == 200 and "Hotel Booking Platform" in ui.text
+                if ui.status_code == 200 and "Automotive Platform" in ui.text
                 else "FAIL",
                 "ui_served_200",
                 f"GET / -> {ui.status_code}",
@@ -109,12 +111,12 @@ def main() -> int:
             json={
                 "layer": 1,
                 "doc_id": "acc-pack",
-                "title": "Hotel occupancy pack",
-                "text": "Hotel occupancy, peak season night rate, and guest booking notes for the hospitality pilot.",
+                "title": "Vehicle inventory pack",
+                "text": "Vehicle inventory, VIN, test-drive booking, and financing notes for the dealership pilot.",
             },
             headers=AUTH_HEADERS,
         )
-        query = client.get("/v1/rag/query", params={"q": "hotel occupancy"})
+        query = client.get("/v1/rag/query", params={"q": "vehicle inventory"})
         hit = (
             ingest.status_code == 200
             and query.status_code == 200
@@ -149,7 +151,7 @@ def main() -> int:
 
         open_post = client.post(
             f"/v1/{CORE}",
-            json={"reference": "sample", "status": "open", "stay_kind": "night"},
+            json={"reference": "sample", "status": "open", "listing_kind": "new"},
         )
         results.append(
             _line(
@@ -160,7 +162,7 @@ def main() -> int:
         )
         open_ingest = client.post(
             "/v1/rag/ingest",
-            json={"layer": 1, "doc_id": "denied", "title": "x", "text": "hotel occupancy"},
+            json={"layer": 1, "doc_id": "denied", "title": "x", "text": "vehicle inventory"},
         )
         results.append(
             _line(
@@ -189,18 +191,18 @@ def main() -> int:
             )
         )
         rec = (quoted.json() or {}).get("record") or {} if quoted.status_code == 200 else {}
-        total = rec.get("stay_total")
+        price = rec.get("list_price")
         computed = (
             quoted.status_code == 200
-            and total not in (None, 1, 1.0)
-            and rec.get("stay_nights") == 1
+            and price not in (None, 1, 1.0)
+            and rec.get("model_year") == 2026
             and rec.get("actor") == "operator"
         )
         results.append(
             _line(
                 "PASS" if computed else "FAIL",
-                "core_stay_total_computed",
-                f"stay_total={total} nights={rec.get('stay_nights')} actor={rec.get('actor')}",
+                "core_list_price_computed",
+                f"list_price={price} year={rec.get('model_year')} actor={rec.get('actor')}",
             )
         )
 
@@ -275,7 +277,7 @@ def main() -> int:
     if receipt_path.is_file():
         receipt = json.loads(receipt_path.read_text(encoding="utf-8"))
         listed = sorted(receipt.get("authored_handlers") or receipt.get("cli_authored_ids") or [])
-        match = listed == authored and len(authored) >= 5
+        match = listed == authored and len(authored) >= 4
         results.append(
             _line(
                 "PASS" if match else "FAIL",
@@ -292,7 +294,7 @@ def main() -> int:
     )
     results.append(
         _line(
-            "PASS" if len(REQUIRED_CAPABILITY_IDS) == 7 else "FAIL",
+            "PASS" if len(REQUIRED_CAPABILITY_IDS) == 4 else "FAIL",
             "capability_roster",
             f"{len(REQUIRED_CAPABILITY_IDS)} capabilities",
         )

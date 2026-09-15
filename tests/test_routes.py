@@ -67,16 +67,16 @@ def test_one_record_round_trip_per_capability(client: TestClient) -> None:
         records = got.json().get("records") or []
         assert records, f"{capability_id} GET did not return the persisted record"
         assert any(row.get("reference") == payload["reference"] for row in records)
-        if capability_id == "booking_management":
+        if capability_id == "automotive_core":
             rec = body.get("record") or {}
-            assert rec.get("stay_total") == 189.0
-            assert rec.get("stay_nights") == 1
+            assert rec.get("list_price") == 42000.0
+            assert rec.get("model_year") == 2026
             assert rec.get("actor") == "operator"
             remembered = next(
                 row for row in records if row.get("reference") == payload["reference"]
             )
-            assert remembered.get("stay_total") == 189.0
-            assert remembered.get("nightly_rate") == 189.0
+            assert remembered.get("list_price") == 42000.0
+            assert remembered.get("monthly_payment") == 829.67
 
 
 def test_health_and_ui(client: TestClient) -> None:
@@ -84,8 +84,9 @@ def test_health_and_ui(client: TestClient) -> None:
     assert health.status_code == 200
     ui = client.get("/")
     assert ui.status_code == 200
-    assert "Hotel Booking Platform" in ui.text
+    assert "Automotive Platform" in ui.text
     assert "OPERATOR_TOKEN" in ui.text
     assert "Airport Operations Platform" not in ui.text
     assert "Retail Ops Tracker" not in ui.text
     assert "Veterinary Care Platform" not in ui.text
+    assert "Hotel Booking Platform" not in ui.text

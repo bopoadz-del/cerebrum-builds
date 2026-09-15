@@ -3,29 +3,29 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Hotel Booking Platform</title>
+  <title>Automotive Platform</title>
   <style>
-    :root { font-family: "IBM Plex Sans", "Segoe UI", sans-serif; background: #10141c; color: #e8eef6; }
+    :root { font-family: "IBM Plex Sans", "Segoe UI", sans-serif; background: #12110f; color: #f3efe6; }
     body { margin: 0; }
-    header { padding: 1.2rem 1.5rem; border-bottom: 1px solid #2a3548; background: #141a24; }
+    header { padding: 1.2rem 1.5rem; border-bottom: 1px solid #3a3428; background: #1b1914; }
     h1 { margin: 0; font-size: 1.4rem; }
-    p.sub { margin: 0.35rem 0 0; color: #93a3bd; }
+    p.sub { margin: 0.35rem 0 0; color: #b7ad98; }
     nav { display: flex; flex-wrap: wrap; gap: 0.4rem; padding: 0.8rem 1.5rem; }
-    nav button { background: #1c2430; color: #e8eef6; border: 1px solid #3a4c68; padding: 0.35rem 0.7rem; cursor: pointer; }
-    nav button.active { background: #0d4d73; }
+    nav button { background: #26221b; color: #f3efe6; border: 1px solid #5a4e38; padding: 0.35rem 0.7rem; cursor: pointer; }
+    nav button.active { background: #8a5a12; }
     main { padding: 1rem 1.5rem 3rem; }
     label { display: block; margin: 0.6rem 0 0.2rem; }
-    input, textarea, select { width: 100%; max-width: 36rem; background: #0d1118; color: #e8eef6; border: 1px solid #3a4c68; padding: 0.4rem; }
-    button.act { margin-top: 0.8rem; background: #0d4d73; color: #fff; border: 0; padding: 0.5rem 1rem; cursor: pointer; }
-    pre { background: #0d1118; padding: 0.8rem; overflow: auto; }
+    input, textarea, select { width: 100%; max-width: 36rem; background: #0f0e0c; color: #f3efe6; border: 1px solid #5a4e38; padding: 0.4rem; }
+    button.act { margin-top: 0.8rem; background: #8a5a12; color: #fff; border: 0; padding: 0.5rem 1rem; cursor: pointer; }
+    pre { background: #0f0e0c; padding: 0.8rem; overflow: auto; }
     .mods { display: grid; gap: 0.6rem; grid-template-columns: repeat(auto-fill, minmax(14rem, 1fr)); }
-    .card { border: 1px solid #2a3548; padding: 0.7rem; }
+    .card { border: 1px solid #3a3428; padding: 0.7rem; }
   </style>
 </head>
 <body>
   <header>
-    <h1>Hotel Booking Platform</h1>
-    <p class="sub">Hospitality operators — bookings, properties, pricing, reviews, and guest notices. Operator / admin. Mutations require a bearer operator token. OPERATOR_TOKEN is not stored in git.</p>
+    <h1>Automotive Platform</h1>
+    <p class="sub">Automotive operators — inventory, leads, test-drives, and financing. Operator / admin. Mutations require a bearer operator token. OPERATOR_TOKEN is not stored in git.</p>
   </header>
   <nav id="nav"></nav>
   <main>
@@ -34,7 +34,7 @@
       <div class="mods" id="modules"></div>
     </section>
     <section id="live" class="panel">
-      <h2 id="cap-title">booking_management</h2>
+      <h2 id="cap-title">automotive_core</h2>
       <label>Operator token <input id="operator-token" type="password" autocomplete="off" placeholder="OPERATOR_TOKEN" /></label>
       <label>Capability
         <select id="capability"></select>
@@ -46,11 +46,11 @@
       <pre id="out">Ready.</pre>
     </section>
     <section id="operational_chat" class="panel">
-      <h2>Operational chat — property notes</h2>
-      <label>Title <input id="rag-title" value="Hotel occupancy pack" /></label>
-      <label>Text <textarea id="rag-text" rows="3">Hotel occupancy, peak season night rate, and guest booking notes for the hospitality pilot.</textarea></label>
+      <h2>Operational chat — lot notes</h2>
+      <label>Title <input id="rag-title" value="Vehicle inventory pack" /></label>
+      <label>Text <textarea id="rag-text" rows="3">Vehicle inventory, VIN, test-drive booking, and financing notes for the dealership pilot.</textarea></label>
       <button class="act" id="ingest-btn" type="button">Ingest pack</button>
-      <label>Query <input id="rag-q" value="hotel occupancy" /></label>
+      <label>Query <input id="rag-q" value="vehicle inventory" /></label>
       <button class="act" id="query-btn" type="button">Query notes</button>
     </section>
     <section id="resident_engineer" class="panel">
@@ -59,29 +59,21 @@
     </section>
   </main>
   <script>
-    const CAPS = [
-      "booking_management",
-      "property_management",
-      "dynamic_pricing",
-      "review_management",
-      "analytics_dashboard",
-      "notification_system",
-      "search_recommendation"
-    ];
+    const CAPS = ["automotive_core", "dashboard", "team", "audit"];
     const UI = ["command_center", "operational_chat", "resident_engineer"];
     const MAP = {
-      command_center: "booking_management",
-      operational_chat: "property_management",
-      resident_engineer: "analytics_dashboard"
+      command_center: "automotive_core",
+      operational_chat: "dashboard",
+      resident_engineer: "team"
     };
-    let current = "booking_management";
+    let current = "automotive_core";
     const nav = document.getElementById("nav");
     const modules = document.getElementById("modules");
     const capSelect = document.getElementById("capability");
     UI.forEach((name) => {
       const b = document.createElement("button");
       b.textContent = name;
-      b.onclick = () => select(MAP[name] || "booking_management", b);
+      b.onclick = () => select(MAP[name] || "automotive_core", b);
       nav.appendChild(b);
       const card = document.createElement("div");
       card.className = "card";
@@ -114,13 +106,10 @@
     }
     function extraFields(id) {
       const extras = {
-        booking_management: {stay_kind: "night", room_label: "sample"},
-        property_management: {property_kind: "hotel", property_name: "sample"},
-        dynamic_pricing: {season: "peak", rate_plan: "sample"},
-        review_management: {rating_band: "excellent", guest_name: "sample"},
-        analytics_dashboard: {view_name: "sample", horizon: "today"},
-        notification_system: {notice_kind: "confirmation", guest_name: "sample"},
-        search_recommendation: {stay_intent: "leisure", destination: "sample"}
+        automotive_core: {listing_kind: "new", branch_code: "sample", make: "sample", model: "sample"},
+        dashboard: {view_name: "sample", horizon: "today"},
+        team: {desk_kind: "sales", desk_name: "sample"},
+        audit: {event_kind: "listing", resource_label: "sample"}
       };
       return extras[id] || {};
     }
@@ -155,7 +144,7 @@
       document.getElementById("out").textContent = JSON.stringify(await res.json(), null, 2);
     };
     document.getElementById("query-btn").onclick = async () => {
-      const q = encodeURIComponent(document.getElementById("rag-q").value || "occupancy");
+      const q = encodeURIComponent(document.getElementById("rag-q").value || "inventory");
       const res = await fetch("/v1/rag/query?q=" + q);
       document.getElementById("out").textContent = JSON.stringify(await res.json(), null, 2);
     };

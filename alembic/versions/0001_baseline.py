@@ -14,13 +14,10 @@ branch_labels = None
 depends_on = None
 
 ENTITIES = (
-    "booking_management",
-    "property_management",
-    "dynamic_pricing",
-    "review_management",
-    "analytics_dashboard",
-    "notification_system",
-    "search_recommendation",
+    "automotive_core",
+    "dashboard",
+    "team",
+    "audit",
 )
 
 

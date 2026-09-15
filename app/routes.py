@@ -92,8 +92,8 @@ def post_capability(
         details={
             "status": payload.get("status", "open"),
             "capability": capability_id,
-            "property_name": payload.get("property_name") or payload.get("reference") or "sample",
-            "category": "hospitality",
+            "branch_code": payload.get("branch_code") or payload.get("reference") or "sample",
+            "category": "automotive",
         },
     )
     result.setdefault("ok", True)
@@ -122,6 +122,6 @@ def get_capability(capability_id: str) -> Dict[str, Any]:
 def list_capabilities() -> Dict[str, Any]:
     return {
         "ok": True,
-        "product": "Hotel Booking Platform",
+        "product": "Automotive Platform",
         "capabilities": list(REQUIRED_CAPABILITY_IDS),
     }

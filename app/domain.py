@@ -1,4 +1,4 @@
-"""Hotel booking kernel. Envelope-driven; no invented caller contracts."""
+"""Automotive dealership kernel. Envelope-driven; no invented caller contracts."""
 
 from __future__ import annotations
 
@@ -11,30 +11,25 @@ STATUS_NEXT: Dict[str, Tuple[str, ...]] = {
     "closed": (),
 }
 
-STAY_NIGHTS = {"night": 1, "week": 7, "group": 3}
-NIGHTLY_RATE = {"open": 189.0, "in_progress": 165.0, "closed": 149.0}
-BOOKING_QUEUE = {
-    "night": {"next_action": "confirm_room", "hold_minutes": 30, "queue": "front_desk"},
-    "week": {"next_action": "extend_hold", "hold_minutes": 90, "queue": "reservations"},
-    "group": {"next_action": "assign_block", "hold_minutes": 120, "queue": "groups"},
-}
+LISTING_KINDS = ("new", "used", "certified")
+DESK_KINDS = ("sales", "service", "finance")
+EVENT_KINDS = ("listing", "lead", "testdrive")
+HORIZONS = ("today", "week", "month")
 
-PROPERTY_ROOMS = {"hotel": 48, "resort": 120, "boutique": 18}
-PROPERTY_BAND = {"hotel": "urban", "resort": "destination", "boutique": "lifestyle"}
+LISTING_BASE = {"new": 42000.0, "used": 24500.0, "certified": 31200.0}
+STATUS_PRICE_ADJ = {"open": 1.0, "in_progress": 0.97, "closed": 0.93}
+YEAR_BY_KIND = {"new": 2026, "used": 2021, "certified": 2024}
+MILES_BY_KIND = {"new": 12, "used": 28400, "certified": 9800}
+HOLD_MINUTES = {"new": 45, "used": 30, "certified": 40}
+LEAD_SCORE = {"new": 0.82, "used": 0.64, "certified": 0.77}
+APR_BY_KIND = {"new": 0.069, "used": 0.089, "certified": 0.074}
+TERM_MONTHS = 60
 
-SEASON_FACTOR = {"peak": 1.45, "shoulder": 1.10, "off": 0.80}
-STATUS_RATE_ADJ = {"open": 1.0, "in_progress": 0.95, "closed": 0.90}
-BASE_RATE = 200.0
-
-RATING_SCORE = {"excellent": 4.8, "good": 3.6, "poor": 1.9}
-REVIEW_PUBLISH = {"open": "pending_moderation", "in_progress": "published", "closed": "archived"}
-
-OCCUPANCY = {"open": 0.42, "in_progress": 0.71, "closed": 0.88}
-ADR = {"today": 189.0, "week": 205.0, "month": 176.0}
-HORIZON_BAND = {"today": "tactical", "week": "planning", "month": "strategic"}
-
-NOTICE_PRIORITY = {"confirmation": "high", "reminder": "normal", "update": "normal"}
-INTENT_MATCH = {"leisure": 0.82, "business": 0.74, "family": 0.88}
+BRANCH_STOCK = {"north": 18, "south": 12, "east": 9, "sample": 14}
+UNITS_ON_LOT = {"today": 24, "week": 31, "month": 40}
+CLOSE_RATE = {"open": 0.18, "in_progress": 0.41, "closed": 0.67}
+SEAT_COUNT = {"sales": 8, "service": 6, "finance": 4}
+AUDIT_WEIGHT = {"listing": 1.0, "lead": 1.4, "testdrive": 2.1}
 
 
 def envelope_status(payload: Dict[str, Any]) -> str:
@@ -46,63 +41,78 @@ def allowed_next_status(status: str) -> Tuple[str, ...]:
     return STATUS_NEXT.get(status, ())
 
 
-def stay_nights(stay_kind: str) -> int:
-    return STAY_NIGHTS.get(stay_kind, STAY_NIGHTS["night"])
+def listing_kind_of(payload: Dict[str, Any]) -> str:
+    kind = str(payload.get("listing_kind") or "new")
+    return kind if kind in LISTING_KINDS else "new"
 
 
-def nightly_rate(status: str) -> float:
-    return NIGHTLY_RATE.get(status, NIGHTLY_RATE["open"])
+def desk_kind_of(payload: Dict[str, Any]) -> str:
+    kind = str(payload.get("desk_kind") or "sales")
+    return kind if kind in DESK_KINDS else "sales"
 
 
-def stay_total(status: str, stay_kind: str) -> float:
-    return round(nightly_rate(status) * stay_nights(stay_kind), 2)
+def event_kind_of(payload: Dict[str, Any]) -> str:
+    kind = str(payload.get("event_kind") or "listing")
+    return kind if kind in EVENT_KINDS else "listing"
 
 
-def booking_cascade(stay_kind: str) -> Dict[str, Any]:
-    return dict(BOOKING_QUEUE.get(stay_kind, BOOKING_QUEUE["night"]))
+def horizon_of(payload: Dict[str, Any]) -> str:
+    horizon = str(payload.get("horizon") or "today")
+    return horizon if horizon in HORIZONS else "today"
 
 
-def property_room_count(property_kind: str) -> int:
-    return PROPERTY_ROOMS.get(property_kind, PROPERTY_ROOMS["hotel"])
+def list_price(listing_kind: str, status: str) -> float:
+    base = LISTING_BASE.get(listing_kind, LISTING_BASE["new"])
+    adj = STATUS_PRICE_ADJ.get(status, STATUS_PRICE_ADJ["open"])
+    return round(base * adj, 2)
 
 
-def property_band(property_kind: str) -> str:
-    return PROPERTY_BAND.get(property_kind, PROPERTY_BAND["hotel"])
+def model_year(listing_kind: str) -> int:
+    return YEAR_BY_KIND.get(listing_kind, YEAR_BY_KIND["new"])
 
 
-def night_rate(season: str, status: str) -> float:
-    factor = SEASON_FACTOR.get(season, SEASON_FACTOR["peak"])
-    adj = STATUS_RATE_ADJ.get(status, STATUS_RATE_ADJ["open"])
-    return round(BASE_RATE * factor * adj, 2)
+def odometer_miles(listing_kind: str) -> int:
+    return MILES_BY_KIND.get(listing_kind, MILES_BY_KIND["new"])
 
 
-def review_score(rating_band: str) -> float:
-    return RATING_SCORE.get(rating_band, RATING_SCORE["excellent"])
+def testdrive_hold_minutes(listing_kind: str) -> int:
+    return HOLD_MINUTES.get(listing_kind, HOLD_MINUTES["new"])
 
 
-def review_publish_state(status: str) -> str:
-    return REVIEW_PUBLISH.get(status, REVIEW_PUBLISH["open"])
+def lead_score(listing_kind: str) -> float:
+    return LEAD_SCORE.get(listing_kind, LEAD_SCORE["new"])
 
 
-def occupancy_pct(status: str) -> float:
-    return OCCUPANCY.get(status, OCCUPANCY["open"])
+def monthly_payment(listing_kind: str, status: str) -> float:
+    """60-month simple payment from list_price and kind APR — not a stub 1.0."""
+    principal = list_price(listing_kind, status)
+    apr = APR_BY_KIND.get(listing_kind, APR_BY_KIND["new"])
+    monthly_rate = apr / 12.0
+    factor = (1.0 + monthly_rate) ** TERM_MONTHS
+    payment = principal * (monthly_rate * factor) / (factor - 1.0)
+    return round(payment, 2)
 
 
-def adr_for(horizon: str) -> float:
-    return ADR.get(horizon, ADR["today"])
+def branch_stock(branch_code: str) -> int:
+    return BRANCH_STOCK.get(branch_code, BRANCH_STOCK["sample"])
 
 
-def revpar(status: str, horizon: str) -> float:
-    return round(occupancy_pct(status) * adr_for(horizon), 2)
+def units_on_lot(horizon: str) -> int:
+    return UNITS_ON_LOT.get(horizon, UNITS_ON_LOT["today"])
 
 
-def dashboard_band(horizon: str) -> str:
-    return HORIZON_BAND.get(horizon, HORIZON_BAND["today"])
+def close_rate(status: str) -> float:
+    return CLOSE_RATE.get(status, CLOSE_RATE["open"])
 
 
-def notice_priority(notice_kind: str) -> str:
-    return NOTICE_PRIORITY.get(notice_kind, "normal")
+def avg_list_price(horizon: str, status: str) -> float:
+    units = units_on_lot(horizon)
+    return round(list_price("new" if horizon == "today" else "used", status) * (units / 24.0), 2)
 
 
-def match_score(stay_intent: str) -> float:
-    return INTENT_MATCH.get(stay_intent, INTENT_MATCH["leisure"])
+def seat_count(desk_kind: str) -> int:
+    return SEAT_COUNT.get(desk_kind, SEAT_COUNT["sales"])
+
+
+def audit_weight(event_kind: str) -> float:
+    return AUDIT_WEIGHT.get(event_kind, AUDIT_WEIGHT["listing"])

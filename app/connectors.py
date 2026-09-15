@@ -3,9 +3,9 @@
 STATUS = "not_implemented"
 
 PLACEHOLDERS = (
-    "pms_stub",
-    "channel_manager_stub",
-    "payments_stub",
+    "dms_stub",
+    "oem_inventory_stub",
+    "lender_stub",
 )
 
 

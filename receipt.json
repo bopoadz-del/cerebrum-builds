@@ -1,36 +1,27 @@
 {
   "schema": "cli_receipt.v1",
-  "product": "Hotel Booking Platform",
-  "product_id": "hospitality",
-  "brand": "StayFlow Hospitality Platform",
-  "session_id": "sess_548ff6a3ec9d4bd2",
-  "branch": "build/sess_548ff6a3ec9d4bd2-ac0a3e19",
+  "product": "Automotive Platform",
+  "product_id": "automotive",
+  "brand": "Automotive Platform",
+  "session_id": "sess_4f5ad77f42a14781",
+  "branch": "build/sess_4f5ad77f42a14781-77450a87",
   "cli_authored_ids": [
-    "analytics_dashboard",
-    "booking_management",
-    "dynamic_pricing",
-    "notification_system",
-    "property_management",
-    "review_management",
-    "search_recommendation"
+    "audit",
+    "automotive_core",
+    "dashboard",
+    "team"
   ],
   "authored_handlers": [
-    "analytics_dashboard",
-    "booking_management",
-    "dynamic_pricing",
-    "notification_system",
-    "property_management",
-    "review_management",
-    "search_recommendation"
+    "audit",
+    "automotive_core",
+    "dashboard",
+    "team"
   ],
   "block_ids": {
-    "booking_management": ["workflow", "database", "validation", "event_bus", "queue", "audit"],
-    "property_management": ["database", "team", "workflow", "audit"],
-    "dynamic_pricing": ["formula_executor", "recommendation_template", "analytics", "database"],
-    "review_management": ["capture", "knowledge", "vector_search", "analytics", "notification"],
-    "analytics_dashboard": ["dashboard", "analytics", "database"],
-    "notification_system": ["notification", "event_bus", "queue", "workflow"],
-    "search_recommendation": ["vector_search", "knowledge", "recommendation_template", "memory", "analytics"]
+    "automotive_core": [],
+    "dashboard": ["dashboard"],
+    "team": ["team"],
+    "audit": ["audit"]
   },
   "gates": {
     "code": {"suite": "pytest -m 'not pilot'", "passed": 17, "ok": true},

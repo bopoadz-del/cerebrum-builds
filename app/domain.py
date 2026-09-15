@@ -1,8 +1,9 @@
-"""Hotel booking kernel. Envelope-driven; no invented caller contracts."""
+"""Notes kernel. Envelope-driven; no invented caller contracts."""
 
 from __future__ import annotations
 
-from typing import Any, Dict, Tuple
+import re
+from typing import Any, Dict, List, Tuple
 
 STATUS_VALUES = ("open", "in_progress", "closed")
 STATUS_NEXT: Dict[str, Tuple[str, ...]] = {
@@ -11,30 +12,8 @@ STATUS_NEXT: Dict[str, Tuple[str, ...]] = {
     "closed": (),
 }
 
-STAY_NIGHTS = {"night": 1, "week": 7, "group": 3}
-NIGHTLY_RATE = {"open": 189.0, "in_progress": 165.0, "closed": 149.0}
-BOOKING_QUEUE = {
-    "night": {"next_action": "confirm_room", "hold_minutes": 30, "queue": "front_desk"},
-    "week": {"next_action": "extend_hold", "hold_minutes": 90, "queue": "reservations"},
-    "group": {"next_action": "assign_block", "hold_minutes": 120, "queue": "groups"},
-}
-
-PROPERTY_ROOMS = {"hotel": 48, "resort": 120, "boutique": 18}
-PROPERTY_BAND = {"hotel": "urban", "resort": "destination", "boutique": "lifestyle"}
-
-SEASON_FACTOR = {"peak": 1.45, "shoulder": 1.10, "off": 0.80}
-STATUS_RATE_ADJ = {"open": 1.0, "in_progress": 0.95, "closed": 0.90}
-BASE_RATE = 200.0
-
-RATING_SCORE = {"excellent": 4.8, "good": 3.6, "poor": 1.9}
-REVIEW_PUBLISH = {"open": "pending_moderation", "in_progress": "published", "closed": "archived"}
-
-OCCUPANCY = {"open": 0.42, "in_progress": 0.71, "closed": 0.88}
-ADR = {"today": 189.0, "week": 205.0, "month": 176.0}
-HORIZON_BAND = {"today": "tactical", "week": "planning", "month": "strategic"}
-
-NOTICE_PRIORITY = {"confirmation": "high", "reminder": "normal", "update": "normal"}
-INTENT_MATCH = {"leisure": 0.82, "business": 0.74, "family": 0.88}
+AUDIT_CATEGORIES = ("data_access", "auth", "system", "admin")
+PREVIEW_LIMIT = 72
 
 
 def envelope_status(payload: Dict[str, Any]) -> str:
@@ -46,63 +25,42 @@ def allowed_next_status(status: str) -> Tuple[str, ...]:
     return STATUS_NEXT.get(status, ())
 
 
-def stay_nights(stay_kind: str) -> int:
-    return STAY_NIGHTS.get(stay_kind, STAY_NIGHTS["night"])
+def as_text(value: Any) -> str:
+    return "" if value is None else str(value)
 
 
-def nightly_rate(status: str) -> float:
-    return NIGHTLY_RATE.get(status, NIGHTLY_RATE["open"])
+def word_count(*parts: Any) -> int:
+    text = " ".join(as_text(part) for part in parts if as_text(part))
+    return len([token for token in text.split() if token])
 
 
-def stay_total(status: str, stay_kind: str) -> float:
-    return round(nightly_rate(status) * stay_nights(stay_kind), 2)
+def char_count(*parts: Any) -> int:
+    return sum(len(as_text(part)) for part in parts)
 
 
-def booking_cascade(stay_kind: str) -> Dict[str, Any]:
-    return dict(BOOKING_QUEUE.get(stay_kind, BOOKING_QUEUE["night"]))
+def preview(text: Any, limit: int = PREVIEW_LIMIT) -> str:
+    raw = as_text(text).strip()
+    if len(raw) <= limit:
+        return raw
+    return raw[: limit - 1].rstrip() + "…"
 
 
-def property_room_count(property_kind: str) -> int:
-    return PROPERTY_ROOMS.get(property_kind, PROPERTY_ROOMS["hotel"])
+def tokens(text: Any) -> List[str]:
+    return re.findall(r"[a-z0-9]+", as_text(text).lower())
 
 
-def property_band(property_kind: str) -> str:
-    return PROPERTY_BAND.get(property_kind, PROPERTY_BAND["hotel"])
+def matches_keyword(title: Any, body: Any, keyword: Any) -> bool:
+    needle = as_text(keyword).strip().lower()
+    if not needle:
+        return True
+    haystack = f"{as_text(title)} {as_text(body)}".lower()
+    return needle in haystack
 
 
-def night_rate(season: str, status: str) -> float:
-    factor = SEASON_FACTOR.get(season, SEASON_FACTOR["peak"])
-    adj = STATUS_RATE_ADJ.get(status, STATUS_RATE_ADJ["open"])
-    return round(BASE_RATE * factor * adj, 2)
+def note_summary(title: Any, body: Any, status: str = "open") -> str:
+    return f"note {as_text(title) or 'untitled'} status={status} words={word_count(title, body)}"
 
 
-def review_score(rating_band: str) -> float:
-    return RATING_SCORE.get(rating_band, RATING_SCORE["excellent"])
-
-
-def review_publish_state(status: str) -> str:
-    return REVIEW_PUBLISH.get(status, REVIEW_PUBLISH["open"])
-
-
-def occupancy_pct(status: str) -> float:
-    return OCCUPANCY.get(status, OCCUPANCY["open"])
-
-
-def adr_for(horizon: str) -> float:
-    return ADR.get(horizon, ADR["today"])
-
-
-def revpar(status: str, horizon: str) -> float:
-    return round(occupancy_pct(status) * adr_for(horizon), 2)
-
-
-def dashboard_band(horizon: str) -> str:
-    return HORIZON_BAND.get(horizon, HORIZON_BAND["today"])
-
-
-def notice_priority(notice_kind: str) -> str:
-    return NOTICE_PRIORITY.get(notice_kind, "normal")
-
-
-def match_score(stay_intent: str) -> float:
-    return INTENT_MATCH.get(stay_intent, INTENT_MATCH["leisure"])
+def audit_category(value: Any) -> str:
+    category = as_text(value) or "data_access"
+    return category if category in AUDIT_CATEGORIES else "data_access"

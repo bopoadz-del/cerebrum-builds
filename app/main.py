@@ -1,4 +1,4 @@
-"""Hotel Booking Platform FastAPI entry. Bind 0.0.0.0:$PORT on Render."""
+"""Productivity Platform FastAPI entry. Bind 0.0.0.0:$PORT on Render."""
 
 from __future__ import annotations
 
@@ -42,11 +42,11 @@ async def lifespan(_app: FastAPI):
 
 
 app = FastAPI(
-    title="Hotel Booking Platform",
+    title="Productivity Platform",
     version="1.0.0",
     description=(
-        "Cerebrum Hotel Booking Platform — guests search, compare, and reserve rooms; "
-        "operators manage inventory, pricing, reviews, and notifications. "
+        "Cerebrum Productivity Platform — a tiny notes app for productivity operators: "
+        "save a note with a title and body, list notes, search by keyword, delete a note. "
         "Mutations require a bearer operator token."
     ),
     lifespan=lifespan,

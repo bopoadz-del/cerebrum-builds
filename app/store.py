@@ -9,6 +9,7 @@ import threading
 from pathlib import Path
 from typing import Any, Dict, List
 
+from app.domain import matches_keyword
 from app.schema import SPECS
 
 COLUMNS: Dict[str, List[str]] = {
@@ -107,3 +108,27 @@ def list_all(entity: str) -> List[Dict[str, Any]]:
         body.setdefault("status", row["status"])
         rows.append(body)
     return rows
+
+
+def search(entity: str, keyword: str) -> List[Dict[str, Any]]:
+    needle = (keyword or "").strip()
+    rows = list_all(entity)
+    if not needle:
+        return rows
+    return [
+        row
+        for row in rows
+        if matches_keyword(row.get("title"), row.get("body") or row.get("reference"), needle)
+        or needle.lower() in json.dumps(row, default=str).lower()
+    ]
+
+
+def delete(entity: str, reference: str) -> int:
+    if entity not in COLUMNS:
+        raise ValueError(f"unknown entity: {entity}")
+    ensure_schema()
+    conn = _connect()
+    cur = conn.cursor()
+    cur.execute(f"DELETE FROM {entity} WHERE reference = ?", (str(reference),))
+    conn.commit()
+    return int(cur.rowcount or 0)

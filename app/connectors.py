@@ -3,9 +3,7 @@
 STATUS = "not_implemented"
 
 PLACEHOLDERS = (
-    "pms_stub",
-    "channel_manager_stub",
-    "payments_stub",
+    "local_notes_stub",
 )
 
 

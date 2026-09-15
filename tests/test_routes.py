@@ -67,16 +67,46 @@ def test_one_record_round_trip_per_capability(client: TestClient) -> None:
         records = got.json().get("records") or []
         assert records, f"{capability_id} GET did not return the persisted record"
         assert any(row.get("reference") == payload["reference"] for row in records)
-        if capability_id == "booking_management":
+        if capability_id == "productivity_core":
             rec = body.get("record") or {}
-            assert rec.get("stay_total") == 189.0
-            assert rec.get("stay_nights") == 1
+            assert rec.get("word_count") == 2
+            assert rec.get("title") == "sample"
+            assert rec.get("body") == "sample"
             assert rec.get("actor") == "operator"
             remembered = next(
                 row for row in records if row.get("reference") == payload["reference"]
             )
-            assert remembered.get("stay_total") == 189.0
-            assert remembered.get("nightly_rate") == 189.0
+            assert remembered.get("word_count") == 2
+            assert remembered.get("title") == "sample"
+
+
+def test_notes_search_and_delete(client: TestClient) -> None:
+    first = {
+        "reference": "note-alpha",
+        "status": "open",
+        "title": "standup",
+        "body": "keyword search for tomorrow",
+    }
+    second = {
+        "reference": "note-beta",
+        "status": "open",
+        "title": "grocery",
+        "body": "milk and eggs",
+    }
+    assert client.post("/v1/productivity_core", json=first).json().get("ok") is not False
+    assert client.post("/v1/productivity_core", json=second).json().get("ok") is not False
+    found = client.get("/v1/productivity_core", params={"q": "keyword"})
+    assert found.status_code == 200
+    refs = [row.get("reference") for row in (found.json().get("records") or [])]
+    assert "note-alpha" in refs
+    assert "note-beta" not in refs
+    deleted = client.delete("/v1/productivity_core", params={"reference": "note-alpha"})
+    assert deleted.status_code == 200
+    assert deleted.json().get("deleted") == 1
+    remaining = client.get("/v1/productivity_core")
+    leftover = [row.get("reference") for row in (remaining.json().get("records") or [])]
+    assert "note-alpha" not in leftover
+    assert "note-beta" in leftover
 
 
 def test_health_and_ui(client: TestClient) -> None:
@@ -84,8 +114,9 @@ def test_health_and_ui(client: TestClient) -> None:
     assert health.status_code == 200
     ui = client.get("/")
     assert ui.status_code == 200
-    assert "Hotel Booking Platform" in ui.text
+    assert "Productivity Platform" in ui.text
     assert "OPERATOR_TOKEN" in ui.text
+    assert "Hotel Booking Platform" not in ui.text
     assert "Airport Operations Platform" not in ui.text
     assert "Retail Ops Tracker" not in ui.text
     assert "Veterinary Care Platform" not in ui.text

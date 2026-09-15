@@ -36,81 +36,23 @@ def _spec(
 
 
 SPECS: Dict[str, Dict[str, Any]] = {
-    "booking_management": _spec(
-        "booking_management",
-        ["workflow", "database", "validation", "event_bus", "queue", "audit"],
+    "productivity_core": _spec(
+        "productivity_core",
+        [],
         extra_fields={
-            "stay_kind": {"type": "string"},
-            "room_label": {"type": "string"},
-        },
-        extra_constraints={
-            "stay_kind": {"allowed_values": ["night", "week", "group"]},
+            "title": {"type": "string"},
+            "body": {"type": "string"},
         },
     ),
-    "property_management": _spec(
-        "property_management",
-        ["database", "team", "workflow", "audit"],
+    "audit": _spec(
+        "audit",
+        ["audit"],
         extra_fields={
-            "property_kind": {"type": "string"},
-            "property_name": {"type": "string"},
+            "event_kind": {"type": "string"},
+            "resource_ref": {"type": "string"},
         },
         extra_constraints={
-            "property_kind": {"allowed_values": ["hotel", "resort", "boutique"]},
-        },
-    ),
-    "dynamic_pricing": _spec(
-        "dynamic_pricing",
-        ["formula_executor", "recommendation_template", "analytics", "database"],
-        extra_fields={
-            "season": {"type": "string"},
-            "rate_plan": {"type": "string"},
-        },
-        extra_constraints={
-            "season": {"allowed_values": ["peak", "shoulder", "off"]},
-        },
-    ),
-    "review_management": _spec(
-        "review_management",
-        ["capture", "knowledge", "vector_search", "analytics", "notification"],
-        extra_fields={
-            "rating_band": {"type": "string"},
-            "guest_name": {"type": "string"},
-        },
-        extra_constraints={
-            "rating_band": {"allowed_values": ["excellent", "good", "poor"]},
-        },
-    ),
-    "analytics_dashboard": _spec(
-        "analytics_dashboard",
-        ["dashboard", "analytics", "database"],
-        extra_fields={
-            "view_name": {"type": "string"},
-            "horizon": {"type": "string"},
-        },
-        extra_constraints={
-            "horizon": {"allowed_values": ["today", "week", "month"]},
-        },
-    ),
-    "notification_system": _spec(
-        "notification_system",
-        ["notification", "event_bus", "queue", "workflow"],
-        extra_fields={
-            "notice_kind": {"type": "string"},
-            "guest_name": {"type": "string"},
-        },
-        extra_constraints={
-            "notice_kind": {"allowed_values": ["confirmation", "reminder", "update"]},
-        },
-    ),
-    "search_recommendation": _spec(
-        "search_recommendation",
-        ["vector_search", "knowledge", "recommendation_template", "memory", "analytics"],
-        extra_fields={
-            "stay_intent": {"type": "string"},
-            "destination": {"type": "string"},
-        },
-        extra_constraints={
-            "stay_intent": {"allowed_values": ["leisure", "business", "family"]},
+            "event_kind": {"allowed_values": ["create", "update", "delete"]},
         },
     ),
 }

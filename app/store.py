@@ -107,3 +107,14 @@ def list_all(entity: str) -> List[Dict[str, Any]]:
         body.setdefault("status", row["status"])
         rows.append(body)
     return rows
+
+
+def delete_by_reference(entity: str, reference: str) -> int:
+    if entity not in COLUMNS:
+        raise ValueError(f"unknown entity: {entity}")
+    ensure_schema()
+    conn = _connect()
+    cur = conn.cursor()
+    cur.execute(f"DELETE FROM {entity} WHERE reference = ?", (reference,))
+    conn.commit()
+    return int(cur.rowcount)

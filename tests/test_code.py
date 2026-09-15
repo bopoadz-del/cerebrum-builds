@@ -12,40 +12,39 @@ from app.schema import REQUIRED_CAPABILITY_IDS, SPECS
 pytestmark = pytest.mark.not_pilot
 
 EXPECTED = {
-    "booking_management",
-    "property_management",
-    "dynamic_pricing",
-    "review_management",
-    "analytics_dashboard",
-    "notification_system",
-    "search_recommendation",
+    "productivity_core",
+    "audit",
 }
 
 
 def test_domain_kernel_is_not_a_stub() -> None:
     from app.domain import (
-        booking_cascade,
-        match_score,
-        night_rate,
-        notice_priority,
-        occupancy_pct,
-        property_room_count,
-        revpar,
-        review_score,
-        stay_total,
+        compose_note,
+        filter_notes,
+        matches_keyword,
+        note_kind,
+        preview,
+        title_norm,
+        word_count,
     )
 
-    assert stay_total("open", "night") == 189.0
-    assert stay_total("closed", "week") == 1043.0
-    assert booking_cascade("group")["hold_minutes"] == 120
-    assert property_room_count("boutique") == 18
-    assert night_rate("peak", "open") == 290.0
-    assert night_rate("off", "open") == 160.0
-    assert review_score("excellent") == 4.8
-    assert occupancy_pct("open") == 0.42
-    assert revpar("open", "today") == 79.38
-    assert notice_priority("confirmation") == "high"
-    assert match_score("family") == 0.88
+    assert word_count("sample", "sample") == 2
+    assert word_count("inbox keyword", "delete this note") == 5
+    assert note_kind("open") == "inbox"
+    assert note_kind("in_progress") == "active"
+    assert note_kind("closed") == "archived"
+    assert title_norm("Meeting Notes") == "meeting notes"
+    assert preview("short") == "short"
+    composed = compose_note({"reference": "sample", "status": "open", "title": "sample", "body": "sample"})
+    assert composed["word_count"] == 2
+    assert composed["note_kind"] == "inbox"
+    assert matches_keyword({"title": "inbox pack", "body": "keyword search"}, "inbox keyword")
+    assert not matches_keyword({"title": "inbox pack", "body": "keyword search"}, "hotel occupancy")
+    found = filter_notes(
+        [{"title": "standup", "body": "ship notes"}, {"title": "other", "body": "x"}],
+        "standup",
+    )
+    assert len(found) == 1
 
 
 def test_workspace_imports() -> None:
@@ -53,7 +52,8 @@ def test_workspace_imports() -> None:
     from app.dispatch import BLOCK_DEFAULT_ACTIONS, execute
     from app.store import COLUMNS, list_all, save
 
-    assert app.title == "Hotel Booking Platform"
+    assert app.title == "Productivity Platform"
+    assert BLOCK_DEFAULT_ACTIONS["audit"] == "log"
     assert BLOCK_DEFAULT_ACTIONS["dashboard"] == "render"
     assert BLOCK_DEFAULT_ACTIONS["vector_search"] == "search"
     assert BLOCK_DEFAULT_ACTIONS["formula_executor"] == "execute"
@@ -111,6 +111,8 @@ def test_no_airport_or_retail_product_ids() -> None:
         "inventory_tracking",
         "Retail Ops Tracker",
         "Airport Operations Platform",
+        "Hotel Booking Platform",
+        "Veterinary Care Platform",
     )
     app_text = (root / "app" / "main.py").read_text(encoding="utf-8")
     for token in forbidden:
@@ -118,7 +120,13 @@ def test_no_airport_or_retail_product_ids() -> None:
     leftover = [
         p.name
         for p in (root / "app" / "actions").glob("*.py")
-        if p.stem.startswith("airport") or p.stem in {"inventory_tracking", "order_management"}
+        if p.stem.startswith("airport")
+        or p.stem in {
+            "inventory_tracking",
+            "order_management",
+            "booking_management",
+            "property_management",
+        }
     ]
     assert leftover == []
 
@@ -126,6 +134,6 @@ def test_no_airport_or_retail_product_ids() -> None:
 def test_full_pilot_authorship_floor() -> None:
     root = Path(__file__).resolve().parents[1] / "app" / "actions"
     authored = [p for p in root.glob("*.py") if p.name != "__init__.py"]
-    assert len(authored) >= 5
+    assert len(authored) >= 2
     assert len(authored) == len(REQUIRED_CAPABILITY_IDS)
     assert {p.stem for p in authored} == EXPECTED

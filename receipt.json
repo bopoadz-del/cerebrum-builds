@@ -1,42 +1,27 @@
 {
   "schema": "cli_receipt.v1",
-  "product": "Hotel Booking Platform",
-  "product_id": "hospitality",
-  "brand": "StayFlow Hospitality Platform",
-  "session_id": "sess_548ff6a3ec9d4bd2",
-  "branch": "build/sess_548ff6a3ec9d4bd2-ac0a3e19",
+  "product": "Productivity Platform",
+  "product_id": "productivity",
+  "brand": "Productivity Platform",
+  "session_id": "sess_6d15e13638e24d2d",
+  "branch": "build/sess_6d15e13638e24d2d-da578409",
   "cli_authored_ids": [
-    "analytics_dashboard",
-    "booking_management",
-    "dynamic_pricing",
-    "notification_system",
-    "property_management",
-    "review_management",
-    "search_recommendation"
+    "audit",
+    "productivity_core"
   ],
   "authored_handlers": [
-    "analytics_dashboard",
-    "booking_management",
-    "dynamic_pricing",
-    "notification_system",
-    "property_management",
-    "review_management",
-    "search_recommendation"
+    "audit",
+    "productivity_core"
   ],
   "block_ids": {
-    "booking_management": ["workflow", "database", "validation", "event_bus", "queue", "audit"],
-    "property_management": ["database", "team", "workflow", "audit"],
-    "dynamic_pricing": ["formula_executor", "recommendation_template", "analytics", "database"],
-    "review_management": ["capture", "knowledge", "vector_search", "analytics", "notification"],
-    "analytics_dashboard": ["dashboard", "analytics", "database"],
-    "notification_system": ["notification", "event_bus", "queue", "workflow"],
-    "search_recommendation": ["vector_search", "knowledge", "recommendation_template", "memory", "analytics"]
+    "productivity_core": [],
+    "audit": ["audit"]
   },
   "gates": {
-    "code": {"suite": "pytest -m 'not pilot'", "passed": 17, "ok": true},
-    "product": {"suite": "pytest -m pilot", "passed": 3, "ok": true},
-    "store": {"suite": "scripts/acceptance.py", "score": "12/12", "ok": true}
+    "code": {"suite": "pytest -m 'not pilot'", "passed": 0, "ok": false},
+    "product": {"suite": "pytest -m pilot", "passed": 0, "ok": false},
+    "store": {"suite": "scripts/acceptance.py", "score": "0/12", "ok": false}
   },
-  "pilot_ready": true,
-  "level_grade": "STORE_GREEN"
+  "pilot_ready": false,
+  "level_grade": "CODE_GREEN"
 }

@@ -2,16 +2,17 @@
 
 from __future__ import annotations
 
-from typing import Any, Dict
+from typing import Any, Dict, Optional
 
-from fastapi import APIRouter, HTTPException, Request
+from fastapi import APIRouter, HTTPException, Query, Request
 from fastapi.responses import JSONResponse
 
 from app.auth import require_operator
 from app.block_inputs import record_mutation_audit
 from app.dispatch import load_handler
+from app.domain import filter_notes
 from app.schema import RESERVED_FIELDS, REQUIRED_CAPABILITY_IDS, SPECS, STATUS_VALUES, get_spec
-from app.store import list_all
+from app.store import delete_by_reference, list_all
 
 router = APIRouter()
 
@@ -92,8 +93,8 @@ def post_capability(
         details={
             "status": payload.get("status", "open"),
             "capability": capability_id,
-            "property_name": payload.get("property_name") or payload.get("reference") or "sample",
-            "category": "hospitality",
+            "title": payload.get("title") or payload.get("reference") or "sample",
+            "category": "productivity",
         },
     )
     result.setdefault("ok", True)
@@ -104,17 +105,47 @@ def post_capability(
 
 
 @router.get("/v1/{capability_id}")
-def get_capability(capability_id: str) -> Dict[str, Any]:
+def get_capability(
+    capability_id: str,
+    q: Optional[str] = Query(None, description="keyword search over title and body"),
+) -> Dict[str, Any]:
     if capability_id not in SPECS:
         raise HTTPException(status_code=404, detail="unknown capability")
     spec = get_spec(capability_id)
     records = list_all(spec["entity"])
+    if q:
+        records = filter_notes(records, q)
     return {
         "ok": True,
         "capability": capability_id,
         "entity": spec["entity"],
         "records": records,
         "count": len(records),
+        "q": q,
+    }
+
+
+@router.delete("/v1/{capability_id}/{reference}")
+def delete_capability(capability_id: str, reference: str, request: Request) -> Dict[str, Any]:
+    principal = require_operator(request)
+    if capability_id not in SPECS:
+        raise HTTPException(status_code=404, detail="unknown capability")
+    spec = get_spec(capability_id)
+    removed = delete_by_reference(spec["entity"], reference)
+    record_mutation_audit(
+        principal,
+        action=f"delete:{capability_id}",
+        resource=reference,
+        details={"status": "closed", "capability": capability_id, "category": "productivity"},
+    )
+    return {
+        "ok": True,
+        "capability": capability_id,
+        "entity": spec["entity"],
+        "reference": reference,
+        "deleted": removed,
+        "actor": principal.subject,
+        "actor_role": principal.role,
     }
 
 
@@ -122,6 +153,6 @@ def get_capability(capability_id: str) -> Dict[str, Any]:
 def list_capabilities() -> Dict[str, Any]:
     return {
         "ok": True,
-        "product": "Hotel Booking Platform",
+        "product": "Productivity Platform",
         "capabilities": list(REQUIRED_CAPABILITY_IDS),
     }

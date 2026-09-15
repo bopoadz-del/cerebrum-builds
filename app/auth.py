@@ -125,6 +125,6 @@ def install_cors(app) -> None:
         CORSMiddleware,
         allow_origins=cors_allowlist(),
         allow_credentials=False,
-        allow_methods=["GET", "POST", "OPTIONS"],
+        allow_methods=["GET", "POST", "DELETE", "OPTIONS"],
         allow_headers=["Authorization", "Content-Type", "X-API-Token"],
     )

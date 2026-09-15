@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Hotel Booking Platform</title>
+  <title>Productivity Platform</title>
   <style>
     :root { font-family: "IBM Plex Sans", "Segoe UI", sans-serif; background: #10141c; color: #e8eef6; }
     body { margin: 0; }
@@ -13,19 +13,25 @@
     nav { display: flex; flex-wrap: wrap; gap: 0.4rem; padding: 0.8rem 1.5rem; }
     nav button { background: #1c2430; color: #e8eef6; border: 1px solid #3a4c68; padding: 0.35rem 0.7rem; cursor: pointer; }
     nav button.active { background: #0d4d73; }
-    main { padding: 1rem 1.5rem 3rem; }
+    main { padding: 1rem 1.5rem 3rem; display: grid; gap: 1.2rem; }
     label { display: block; margin: 0.6rem 0 0.2rem; }
     input, textarea, select { width: 100%; max-width: 36rem; background: #0d1118; color: #e8eef6; border: 1px solid #3a4c68; padding: 0.4rem; }
-    button.act { margin-top: 0.8rem; background: #0d4d73; color: #fff; border: 0; padding: 0.5rem 1rem; cursor: pointer; }
+    button.act { margin-top: 0.8rem; margin-right: 0.4rem; background: #0d4d73; color: #fff; border: 0; padding: 0.5rem 1rem; cursor: pointer; }
+    button.danger { background: #6b2430; }
     pre { background: #0d1118; padding: 0.8rem; overflow: auto; }
     .mods { display: grid; gap: 0.6rem; grid-template-columns: repeat(auto-fill, minmax(14rem, 1fr)); }
     .card { border: 1px solid #2a3548; padding: 0.7rem; }
+    .note-list { display: grid; gap: 0.6rem; max-width: 40rem; }
+    .note-card { border: 1px solid #2a3548; padding: 0.7rem; background: #141a24; }
+    .note-card h3 { margin: 0 0 0.3rem; font-size: 1rem; }
+    .note-card p { margin: 0; color: #93a3bd; white-space: pre-wrap; }
+    .note-meta { font-size: 0.8rem; color: #6d7d96; margin-top: 0.4rem; }
   </style>
 </head>
 <body>
   <header>
-    <h1>Hotel Booking Platform</h1>
-    <p class="sub">Hospitality operators — bookings, properties, pricing, reviews, and guest notices. Operator / admin. Mutations require a bearer operator token. OPERATOR_TOKEN is not stored in git.</p>
+    <h1>Productivity Platform</h1>
+    <p class="sub">Notes for productivity operators — save a title and body, list, search by keyword, delete. Operator / admin. Mutations require a bearer operator token. OPERATOR_TOKEN is not stored in git.</p>
   </header>
   <nav id="nav"></nav>
   <main>
@@ -33,55 +39,62 @@
       <h2>Command center</h2>
       <div class="mods" id="modules"></div>
     </section>
-    <section id="live" class="panel">
-      <h2 id="cap-title">booking_management</h2>
+    <section id="notes" class="panel">
+      <h2>Notes</h2>
       <label>Operator token <input id="operator-token" type="password" autocomplete="off" placeholder="OPERATOR_TOKEN" /></label>
-      <label>Capability
-        <select id="capability"></select>
-      </label>
       <label>Reference <input id="reference" value="sample" /></label>
-      <label>Status <input id="status" value="open" /></label>
-      <button class="act" id="post-btn" type="button">POST create</button>
-      <button class="act" id="get-btn" type="button">GET records</button>
+      <label>Status
+        <select id="status">
+          <option value="open" selected>open</option>
+          <option value="in_progress">in_progress</option>
+          <option value="closed">closed</option>
+        </select>
+      </label>
+      <label>Title <input id="title" value="" placeholder="Note title" /></label>
+      <label>Body <textarea id="body" rows="5" placeholder="Note body"></textarea></label>
+      <button class="act" id="save-btn" type="button">Save note</button>
+      <button class="act" id="list-btn" type="button">List notes</button>
+      <label>Search keyword <input id="keyword" value="" placeholder="keyword" /></label>
+      <button class="act" id="search-btn" type="button">Search notes</button>
+      <label>Delete reference <input id="delete-ref" value="" placeholder="reference to delete" /></label>
+      <button class="act danger" id="delete-btn" type="button">Delete note</button>
+      <div class="note-list" id="note-list"></div>
       <pre id="out">Ready.</pre>
     </section>
     <section id="operational_chat" class="panel">
-      <h2>Operational chat — property notes</h2>
-      <label>Title <input id="rag-title" value="Hotel occupancy pack" /></label>
-      <label>Text <textarea id="rag-text" rows="3">Hotel occupancy, peak season night rate, and guest booking notes for the hospitality pilot.</textarea></label>
+      <h2>Operational chat — operator notes</h2>
+      <label>Pack title <input id="rag-title" value="Notes inbox pack" /></label>
+      <label>Text <textarea id="rag-text" rows="3">Operator notes inbox keyword search and delete for the productivity pilot.</textarea></label>
       <button class="act" id="ingest-btn" type="button">Ingest pack</button>
-      <label>Query <input id="rag-q" value="hotel occupancy" /></label>
+      <label>Query <input id="rag-q" value="notes inbox" /></label>
       <button class="act" id="query-btn" type="button">Query notes</button>
     </section>
     <section id="resident_engineer" class="panel">
       <h2>Resident engineer</h2>
-      <p class="sub">Same live POST/GET routes. No second API.</p>
+      <p class="sub">Same live POST/GET /v1/productivity_core and /v1/audit routes. No second API.</p>
+      <label>Capability
+        <select id="capability">
+          <option value="productivity_core" selected>productivity_core</option>
+          <option value="audit">audit</option>
+        </select>
+      </label>
+      <button class="act" id="post-btn" type="button">POST create</button>
+      <button class="act" id="get-btn" type="button">GET records</button>
     </section>
   </main>
   <script>
-    const CAPS = [
-      "booking_management",
-      "property_management",
-      "dynamic_pricing",
-      "review_management",
-      "analytics_dashboard",
-      "notification_system",
-      "search_recommendation"
-    ];
+    const CAPS = ["productivity_core", "audit"];
     const UI = ["command_center", "operational_chat", "resident_engineer"];
-    const MAP = {
-      command_center: "booking_management",
-      operational_chat: "property_management",
-      resident_engineer: "analytics_dashboard"
-    };
-    let current = "booking_management";
     const nav = document.getElementById("nav");
     const modules = document.getElementById("modules");
-    const capSelect = document.getElementById("capability");
     UI.forEach((name) => {
       const b = document.createElement("button");
       b.textContent = name;
-      b.onclick = () => select(MAP[name] || "booking_management", b);
+      b.onclick = () => {
+        [...nav.children].forEach((el) => el.classList.remove("active"));
+        b.classList.add("active");
+        document.getElementById(name === "command_center" ? "notes" : name).scrollIntoView({behavior: "smooth"});
+      };
       nav.appendChild(b);
       const card = document.createElement("div");
       card.className = "card";
@@ -93,56 +106,93 @@
       card.className = "card";
       card.textContent = name;
       modules.appendChild(card);
-      const opt = document.createElement("option");
-      opt.value = name;
-      opt.textContent = name;
-      capSelect.appendChild(opt);
     });
-    capSelect.onchange = () => select(capSelect.value);
-    function select(id, btn) {
-      current = id;
-      document.getElementById("cap-title").textContent = id;
-      capSelect.value = id;
-      [...nav.children].forEach((el) => el.classList.remove("active"));
-      if (btn) btn.classList.add("active");
-    }
     function authHeaders() {
       const headers = {"Content-Type": "application/json"};
       const token = (document.getElementById("operator-token").value || "").trim();
       if (token) headers["Authorization"] = "Bearer " + token;
       return headers;
     }
-    function extraFields(id) {
-      const extras = {
-        booking_management: {stay_kind: "night", room_label: "sample"},
-        property_management: {property_kind: "hotel", property_name: "sample"},
-        dynamic_pricing: {season: "peak", rate_plan: "sample"},
-        review_management: {rating_band: "excellent", guest_name: "sample"},
-        analytics_dashboard: {view_name: "sample", horizon: "today"},
-        notification_system: {notice_kind: "confirmation", guest_name: "sample"},
-        search_recommendation: {stay_intent: "leisure", destination: "sample"}
-      };
-      return extras[id] || {};
-    }
-    document.getElementById("post-btn").onclick = async () => {
-      const body = {
+    function notePayload() {
+      return {
         reference: document.getElementById("reference").value || "sample",
         status: document.getElementById("status").value || "open",
-        ...extraFields(current)
+        title: document.getElementById("title").value || "sample",
+        body: document.getElementById("body").value || "sample"
       };
-      const res = await fetch("/v1/" + current, {
+    }
+    function renderNotes(records) {
+      const list = document.getElementById("note-list");
+      list.innerHTML = "";
+      (records || []).forEach((row) => {
+        const card = document.createElement("div");
+        card.className = "note-card";
+        const title = document.createElement("h3");
+        title.textContent = row.title || row.reference || "untitled";
+        const body = document.createElement("p");
+        body.textContent = row.body || row.preview || "";
+        const meta = document.createElement("div");
+        meta.className = "note-meta";
+        meta.textContent = (row.reference || "") + " · " + (row.status || "") + " · " + (row.note_kind || "") + " · " + (row.word_count || 0) + " words";
+        const del = document.createElement("button");
+        del.className = "act danger";
+        del.textContent = "Delete";
+        del.onclick = () => {
+          document.getElementById("delete-ref").value = row.reference || "";
+          document.getElementById("delete-btn").click();
+        };
+        card.appendChild(title);
+        card.appendChild(body);
+        card.appendChild(meta);
+        card.appendChild(del);
+        list.appendChild(card);
+      });
+    }
+    async function show(res) {
+      const body = await res.json();
+      document.getElementById("out").textContent = JSON.stringify(body, null, 2);
+      if (body.records) renderNotes(body.records);
+      return body;
+    }
+    document.getElementById("save-btn").onclick = async () => {
+      const res = await fetch("/v1/productivity_core", {
         method: "POST",
         headers: authHeaders(),
-        body: JSON.stringify(body)
+        body: JSON.stringify(notePayload())
       });
-      document.getElementById("out").textContent = JSON.stringify(await res.json(), null, 2);
+      await show(res);
+      const listed = await fetch("/v1/productivity_core");
+      await show(listed);
+    };
+    document.getElementById("list-btn").onclick = async () => {
+      await show(await fetch("/v1/productivity_core"));
+    };
+    document.getElementById("search-btn").onclick = async () => {
+      const q = encodeURIComponent(document.getElementById("keyword").value || "");
+      await show(await fetch("/v1/productivity_core?q=" + q));
+    };
+    document.getElementById("delete-btn").onclick = async () => {
+      const ref = document.getElementById("delete-ref").value || document.getElementById("reference").value || "sample";
+      const res = await fetch("/v1/productivity_core/" + encodeURIComponent(ref), {
+        method: "DELETE",
+        headers: authHeaders()
+      });
+      await show(res);
+      await show(await fetch("/v1/productivity_core"));
+    };
+    document.getElementById("post-btn").onclick = async () => {
+      const cap = document.getElementById("capability").value;
+      const body = cap === "audit"
+        ? {reference: document.getElementById("reference").value || "sample", status: "open", event_kind: "create", resource_ref: "sample"}
+        : notePayload();
+      await show(await fetch("/v1/" + cap, {method: "POST", headers: authHeaders(), body: JSON.stringify(body)}));
     };
     document.getElementById("get-btn").onclick = async () => {
-      const res = await fetch("/v1/" + current);
-      document.getElementById("out").textContent = JSON.stringify(await res.json(), null, 2);
+      const cap = document.getElementById("capability").value;
+      await show(await fetch("/v1/" + cap));
     };
     document.getElementById("ingest-btn").onclick = async () => {
-      const res = await fetch("/v1/rag/ingest", {
+      await show(await fetch("/v1/rag/ingest", {
         method: "POST",
         headers: authHeaders(),
         body: JSON.stringify({
@@ -151,13 +201,11 @@
           title: document.getElementById("rag-title").value,
           text: document.getElementById("rag-text").value
         })
-      });
-      document.getElementById("out").textContent = JSON.stringify(await res.json(), null, 2);
+      }));
     };
     document.getElementById("query-btn").onclick = async () => {
-      const q = encodeURIComponent(document.getElementById("rag-q").value || "occupancy");
-      const res = await fetch("/v1/rag/query?q=" + q);
-      document.getElementById("out").textContent = JSON.stringify(await res.json(), null, 2);
+      const q = encodeURIComponent(document.getElementById("rag-q").value || "notes");
+      await show(await fetch("/v1/rag/query?q=" + q));
     };
   </script>
 </body>

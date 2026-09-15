@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import os
 import shutil
+import sqlite3
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import List
@@ -25,11 +26,27 @@ def list_backups() -> List[Path]:
     return sorted(root.glob("platform-*.db"))
 
 
+def _checkpoint() -> None:
+    """Flush WAL into the main db file so a file copy is a complete snapshot."""
+    source = db_path()
+    if not source.is_file():
+        return
+    reset_connection()
+    conn = sqlite3.connect(str(source))
+    try:
+        conn.execute("PRAGMA wal_checkpoint(TRUNCATE)")
+        conn.commit()
+    finally:
+        conn.close()
+    reset_connection()
+
+
 def create_backup() -> Path:
     root = backup_root()
     root.mkdir(parents=True, exist_ok=True)
     stamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
     archive = root / f"platform-{stamp}.db"
+    _checkpoint()
     source = db_path()
     if source.is_file():
         shutil.copy2(source, archive)
@@ -48,10 +65,11 @@ def wipe_database() -> None:
 
 
 def restore_backup(archive: Path) -> Path:
-    reset_connection()
+    wipe_database()
     target = db_path()
     target.parent.mkdir(parents=True, exist_ok=True)
     shutil.copy2(archive, target)
+    reset_connection()
     return target
 
 

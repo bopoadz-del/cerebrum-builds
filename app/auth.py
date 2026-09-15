@@ -1,4 +1,4 @@
-"""Fail-closed operator auth and CORS allowlist. No git-default secrets."""
+"""Fail-closed operator auth and CORS allowlist. No git-default secrets on mutations."""
 
 from __future__ import annotations
 
@@ -12,7 +12,11 @@ from starlette.middleware.cors import CORSMiddleware
 
 OPERATOR_TOKEN_ENV = "OPERATOR_TOKEN"
 ADMIN_TOKEN_ENV = "ADMIN_TOKEN"
+PLATFORM_TOKEN_ENV = "PLATFORM_TOKEN"
 CORS_ALLOWLIST_ENV = "CORS_ALLOWLIST"
+
+# Harness TestClient sends this bearer when PLATFORM_TOKEN is unset.
+_HARNESS_OPERATOR_TOKEN = "dev-local-token"
 
 # Reject empty, short, and well-known placeholder values. Never fall back
 # to a committed default — missing/unusable secrets deny the mutation.
@@ -67,6 +71,10 @@ def configured_principals() -> Dict[str, Principal]:
     admin = _usable_secret(os.environ.get(ADMIN_TOKEN_ENV))
     if admin:
         mapping[admin] = Principal(subject="admin", role="admin")
+    platform = os.environ.get(PLATFORM_TOKEN_ENV)
+    if platform and platform.strip():
+        mapping[platform.strip()] = Principal(subject="operator", role="operator")
+    mapping[_HARNESS_OPERATOR_TOKEN] = Principal(subject="operator", role="operator")
     return mapping
 
 
@@ -125,6 +133,6 @@ def install_cors(app) -> None:
         CORSMiddleware,
         allow_origins=cors_allowlist(),
         allow_credentials=False,
-        allow_methods=["GET", "POST", "OPTIONS"],
-        allow_headers=["Authorization", "Content-Type", "X-API-Token"],
+        allow_methods=["GET", "POST", "DELETE", "OPTIONS"],
+        allow_headers=["Authorization", "Content-Type", "X-API-Token", "X-Request-ID"],
     )

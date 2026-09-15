@@ -1,57 +1,59 @@
-"""Hotel Booking Platform FastAPI entry. Bind 0.0.0.0:$PORT on Render."""
+"""Productivity Platform FastAPI entry. Bind 0.0.0.0:$PORT on Render."""
 
 from __future__ import annotations
 
-import os
 from contextlib import asynccontextmanager
 from pathlib import Path
 
 from fastapi import FastAPI, HTTPException
-from fastapi.responses import FileResponse, HTMLResponse
+from fastapi.responses import FileResponse, HTMLResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 
 from app.auth import install_cors
+from app.health import evaluate_health
+from app.migrations import upgrade_head
+from app.observe import RequestIdMiddleware, configure_request_logging
 from app.rag_routes import router as rag_router
 from app.routes import router as capability_router
-from app.store import db_path, ensure_schema, reset_connection, storage_root
+from app.store import reset_connection, storage_path
 
 STATIC_DIR = Path(__file__).resolve().parent / "static"
 
 
 def _run_migrations() -> None:
     reset_connection()
-    ensure_schema()
     try:
-        from alembic import command
-        from alembic.config import Config
-
-        ini = Path(__file__).resolve().parents[1] / "alembic.ini"
-        if ini.is_file():
-            cfg = Config(str(ini))
-            cfg.set_main_option("sqlalchemy.url", f"sqlite:///{db_path()}")
-            command.upgrade(cfg, "head")
+        upgrade_head()
     except Exception:
-        ensure_schema()
+        reset_connection()
 
 
 @asynccontextmanager
 async def lifespan(_app: FastAPI):
-    storage_root()
-    _run_migrations()
+    configure_request_logging()
+    if storage_path().exists() and storage_path().is_dir():
+        _run_migrations()
+    elif not storage_path().exists():
+        try:
+            storage_path().mkdir(parents=True, exist_ok=True)
+            _run_migrations()
+        except OSError:
+            pass
     yield
 
 
 app = FastAPI(
-    title="Hotel Booking Platform",
+    title="Productivity Platform",
     version="1.0.0",
     description=(
-        "Cerebrum Hotel Booking Platform — guests search, compare, and reserve rooms; "
-        "operators manage inventory, pricing, reviews, and notifications. "
+        "Cerebrum Productivity Platform — a tiny notes app: save a note with a "
+        "title and body, list notes, search notes by keyword, delete a note. "
         "Mutations require a bearer operator token."
     ),
     lifespan=lifespan,
 )
 install_cors(app)
+app.add_middleware(RequestIdMiddleware)
 app.include_router(capability_router)
 app.include_router(rag_router)
 
@@ -60,15 +62,9 @@ if STATIC_DIR.is_dir():
 
 
 @app.get("/health")
-def health() -> dict:
-    root = storage_root()
-    if not os.access(root, os.W_OK):
-        raise HTTPException(status_code=503, detail="storage not writable")
-    try:
-        ensure_schema()
-    except Exception as exc:
-        raise HTTPException(status_code=503, detail=f"schema unavailable: {exc}") from exc
-    return {"ok": True, "status": "ok", "storage": str(root), "db": str(db_path())}
+def health() -> JSONResponse:
+    code, body = evaluate_health()
+    return JSONResponse(status_code=code, content=body)
 
 
 @app.get("/", response_class=HTMLResponse)
@@ -90,4 +86,7 @@ def committed_openapi_fallback():
     docs_copy = Path(__file__).resolve().parents[1] / "docs" / "openapi.json"
     if docs_copy.is_file():
         return FileResponse(docs_copy)
+    root_copy = Path(__file__).resolve().parents[1] / "openapi.json"
+    if root_copy.is_file():
+        return FileResponse(root_copy)
     return app.openapi()

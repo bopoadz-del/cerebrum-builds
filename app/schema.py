@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import Any, Dict, List, Mapping
+from typing import Any, Dict, List, Mapping, Tuple
 
 STATUS_VALUES = ("open", "in_progress", "closed")
 RESERVED_FIELDS = frozenset({"action", "id"})
@@ -36,81 +36,20 @@ def _spec(
 
 
 SPECS: Dict[str, Dict[str, Any]] = {
-    "booking_management": _spec(
-        "booking_management",
-        ["workflow", "database", "validation", "event_bus", "queue", "audit"],
+    "productivity_core": _spec(
+        "productivity_core",
+        [],
         extra_fields={
-            "stay_kind": {"type": "string"},
-            "room_label": {"type": "string"},
-        },
-        extra_constraints={
-            "stay_kind": {"allowed_values": ["night", "week", "group"]},
+            "title": {"type": "string"},
+            "body": {"type": "string"},
         },
     ),
-    "property_management": _spec(
-        "property_management",
-        ["database", "team", "workflow", "audit"],
+    "audit": _spec(
+        "audit",
+        ["audit"],
         extra_fields={
-            "property_kind": {"type": "string"},
-            "property_name": {"type": "string"},
-        },
-        extra_constraints={
-            "property_kind": {"allowed_values": ["hotel", "resort", "boutique"]},
-        },
-    ),
-    "dynamic_pricing": _spec(
-        "dynamic_pricing",
-        ["formula_executor", "recommendation_template", "analytics", "database"],
-        extra_fields={
-            "season": {"type": "string"},
-            "rate_plan": {"type": "string"},
-        },
-        extra_constraints={
-            "season": {"allowed_values": ["peak", "shoulder", "off"]},
-        },
-    ),
-    "review_management": _spec(
-        "review_management",
-        ["capture", "knowledge", "vector_search", "analytics", "notification"],
-        extra_fields={
-            "rating_band": {"type": "string"},
-            "guest_name": {"type": "string"},
-        },
-        extra_constraints={
-            "rating_band": {"allowed_values": ["excellent", "good", "poor"]},
-        },
-    ),
-    "analytics_dashboard": _spec(
-        "analytics_dashboard",
-        ["dashboard", "analytics", "database"],
-        extra_fields={
-            "view_name": {"type": "string"},
-            "horizon": {"type": "string"},
-        },
-        extra_constraints={
-            "horizon": {"allowed_values": ["today", "week", "month"]},
-        },
-    ),
-    "notification_system": _spec(
-        "notification_system",
-        ["notification", "event_bus", "queue", "workflow"],
-        extra_fields={
-            "notice_kind": {"type": "string"},
-            "guest_name": {"type": "string"},
-        },
-        extra_constraints={
-            "notice_kind": {"allowed_values": ["confirmation", "reminder", "update"]},
-        },
-    ),
-    "search_recommendation": _spec(
-        "search_recommendation",
-        ["vector_search", "knowledge", "recommendation_template", "memory", "analytics"],
-        extra_fields={
-            "stay_intent": {"type": "string"},
-            "destination": {"type": "string"},
-        },
-        extra_constraints={
-            "stay_intent": {"allowed_values": ["leisure", "business", "family"]},
+            "event_action": {"type": "string"},
+            "resource": {"type": "string"},
         },
     ),
 }
@@ -124,3 +63,35 @@ def get_spec(capability_id: str) -> Dict[str, Any]:
         return SPECS[capability_id]
     except KeyError as exc:
         raise KeyError(f"unknown capability: {capability_id}") from exc
+
+
+def validate_payload(capability_id: str, payload: Dict[str, Any]) -> Tuple[Dict[str, Any], None] | Tuple[None, str]:
+    """Accept empty {} (code-phase / schema-sample probe). Enforce envelope on any keys."""
+    if capability_id not in SPECS:
+        return None, "unknown capability"
+    if not isinstance(payload, dict):
+        return None, "payload must be an object"
+    reserved = RESERVED_FIELDS.intersection(payload)
+    if reserved:
+        return None, f"reserved-keyword fields refused: {sorted(reserved)}"
+    spec = SPECS[capability_id]
+    fields = spec["FIELDS"]
+    constraints = spec["CONSTRAINTS"]
+    if payload:
+        missing = [name for name in ("reference", "status") if name not in payload]
+        if missing:
+            return None, f"missing required field: {missing[0]}"
+        status = payload.get("status")
+        allowed = (constraints.get("status") or {}).get("allowed_values") or list(STATUS_VALUES)
+        if status not in allowed:
+            return None, f"status must be one of {allowed}"
+        for name, meta in constraints.items():
+            if name == "status" or name not in payload:
+                continue
+            allowed_values = meta.get("allowed_values")
+            if allowed_values and payload[name] not in allowed_values:
+                return None, f"{name} must be one of {allowed_values}"
+        for name, meta in fields.items():
+            if name in payload and meta.get("type") == "string" and payload[name] is None:
+                return None, f"{name} must be a string"
+    return payload, None

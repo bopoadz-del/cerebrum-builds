@@ -13,8 +13,8 @@ from app.main import app
 from app.observe import JsonFormatter, REQUEST_ID_HEADER, strip_emoji
 from app.revision import MARK_BASELINE, REVISION_N
 
-ENTITY = ''
-SAMPLE = {}
+ENTITY = 'productivity_core'
+SAMPLE = {'reference': 'sample', 'status': 'open', 'title': 'sample', 'body': 'sample'}
 
 
 @pytest.fixture

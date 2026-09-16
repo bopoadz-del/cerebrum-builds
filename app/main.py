@@ -1,93 +1,95 @@
-"""Hotel Booking Platform FastAPI entry. Bind 0.0.0.0:$PORT on Render."""
+"""Entrypoint for the generated platform.
+
+Runs standalone: uvicorn app.main:app. No factory, no block store, no
+outbound dependency at runtime (P1: Delivered platforms run in-process against vendored blocks; local/scripted OCR only; no Store URL, no cloud LLM, no Ollama, no outbound HTTP at runtime.).
+Kernel jobs are at GET /v1/jobs.
+GET /health is fail-closed (process, disk, DB, Alembic head).
+
+RAG surface (tenant-scoped, in-process): POST /v1/rag/ingest and
+POST|GET /v1/rag/query, served by app/rag_routes.py over app/retrieval.py.
+Capability coverage: app/routers/capabilities.py.
+
+Written by the factory WRITER role (codewhale exec)
+"""
 
 from __future__ import annotations
 
-import os
 from contextlib import asynccontextmanager
+
 from pathlib import Path
 
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI
 from fastapi.responses import FileResponse, HTMLResponse
-from fastapi.staticfiles import StaticFiles
 
-from app.auth import install_cors
-from app.rag_routes import router as rag_router
-from app.routes import router as capability_router
-from app.store import db_path, ensure_schema, reset_connection, storage_root
+from app.health import health_response
+from app.observe import install_observability
+from app.paths import ensure_runtime_paths
+from app.routes import router
 
-STATIC_DIR = Path(__file__).resolve().parent / "static"
+# One persistence root, and the sealed-vendor substitution, before any route
+# can be called: the vendored Store runtime is deliberately untouched, so the
+# platform binds DATA_DIR to STORAGE_PATH and adopts an offline adapter only
+# for a sealed module that cannot be imported (app/offline_blocks.py).
+ensure_runtime_paths()
+from app.offline_blocks import install_offline_block_adapters
 
-
-def _run_migrations() -> None:
-    reset_connection()
-    ensure_schema()
-    try:
-        from alembic import command
-        from alembic.config import Config
-
-        ini = Path(__file__).resolve().parents[1] / "alembic.ini"
-        if ini.is_file():
-            cfg = Config(str(ini))
-            cfg.set_main_option("sqlalchemy.url", f"sqlite:///{db_path()}")
-            command.upgrade(cfg, "head")
-    except Exception:
-        ensure_schema()
+install_offline_block_adapters()
 
 
 @asynccontextmanager
 async def lifespan(_app: FastAPI):
-    storage_root()
-    _run_migrations()
+    # Fail-closed: a revision behind head refuses boot.
+    from app.migrations import upgrade_head
+    from app.observe import configure_logging
+
+    upgrade_head()
+    # Platform preconditions, BEFORE any capability can be called
+    # (R1c). A block that mints its own id needs that id to exist
+    # first; leaving it to each handler is how residential-lettings
+    # answered 'Team access denied' from a handler whose calling
+    # convention was correct. Never raises: a platform that cannot
+    # reach a block at boot still starts and reports the fact.
+    try:
+        from app.preconditions import ensure_all
+
+        ensure_all()
+    except Exception:  # noqa: BLE001 - boot must not die here
+        import logging
+
+        logging.getLogger(__name__).exception(
+            'platform preconditions did not run'
+        )
+    # Uvicorn configures logging after import; win it back for JSON lines.
+    configure_logging()
     yield
 
 
-app = FastAPI(
-    title="Hotel Booking Platform",
-    version="1.0.0",
-    description=(
-        "Cerebrum Hotel Booking Platform — guests search, compare, and reserve rooms; "
-        "operators manage inventory, pricing, reviews, and notifications. "
-        "Mutations require a bearer operator token."
-    ),
-    lifespan=lifespan,
-)
-install_cors(app)
-app.include_router(capability_router)
-app.include_router(rag_router)
+app = FastAPI(title="LexManage", lifespan=lifespan)
+install_observability(app)
+app.include_router(router, prefix="/v1")
+try:
+    from app.routers.capabilities import router as capability_router
 
-if STATIC_DIR.is_dir():
-    app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
+    app.include_router(capability_router)
+except ImportError:  # pragma: no cover - router is part of the delivered tree
+    pass
+try:
+    from app.rag_routes import router as rag_router
+
+    app.include_router(rag_router)
+except ImportError:
+    pass
+
+
+@app.get("/")
+def ui_root():
+    here = Path(__file__).resolve().parent
+    for candidate in (here / 'static' / 'index.html', here.parent / 'frontend' / 'index.html'):
+        if candidate.is_file():
+            return FileResponse(candidate, media_type='text/html')
+    return HTMLResponse("<!doctype html><html><body><h1>LexManage</h1></body></html>")
 
 
 @app.get("/health")
-def health() -> dict:
-    root = storage_root()
-    if not os.access(root, os.W_OK):
-        raise HTTPException(status_code=503, detail="storage not writable")
-    try:
-        ensure_schema()
-    except Exception as exc:
-        raise HTTPException(status_code=503, detail=f"schema unavailable: {exc}") from exc
-    return {"ok": True, "status": "ok", "storage": str(root), "db": str(db_path())}
-
-
-@app.get("/", response_class=HTMLResponse)
-def ui_index() -> HTMLResponse:
-    index = STATIC_DIR / "index.html"
-    if index.is_file():
-        return HTMLResponse(index.read_text(encoding="utf-8"))
-    raise HTTPException(status_code=503, detail="ui missing")
-
-
-@app.get("/ui", response_class=HTMLResponse)
-def ui_alias() -> HTMLResponse:
-    return ui_index()
-
-
-@app.get("/openapi.json", include_in_schema=False)
-def committed_openapi_fallback():
-    # BA jail: committed spec lives only at docs/openapi.json.
-    docs_copy = Path(__file__).resolve().parents[1] / "docs" / "openapi.json"
-    if docs_copy.is_file():
-        return FileResponse(docs_copy)
-    return app.openapi()
+def health():
+    return health_response()

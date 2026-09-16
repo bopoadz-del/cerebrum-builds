@@ -1,0 +1,75 @@
+{
+  "actions": [
+    {
+      "block_ids": [
+        "workflow",
+        "database",
+        "document_engine",
+        "notification"
+      ],
+      "capability_id": "matter_management",
+      "strategy": "REUSE"
+    },
+    {
+      "block_ids": [
+        "workflow",
+        "formula_executor",
+        "validation",
+        "document_engine"
+      ],
+      "capability_id": "client_intake",
+      "strategy": "REUSE"
+    },
+    {
+      "block_ids": [
+        "storage",
+        "document_engine",
+        "vector_search",
+        "audit"
+      ],
+      "capability_id": "document_management",
+      "strategy": "REUSE"
+    },
+    {
+      "block_ids": [
+        "formula_executor",
+        "database",
+        "notification",
+        "analytics"
+      ],
+      "capability_id": "time_and_billing",
+      "strategy": "REUSE"
+    },
+    {
+      "block_ids": [
+        "dashboard",
+        "document_engine",
+        "notification",
+        "storage"
+      ],
+      "capability_id": "client_portal",
+      "strategy": "REUSE"
+    },
+    {
+      "block_ids": [
+        "analytics",
+        "dashboard",
+        "portfolio_rollup",
+        "knowledge"
+      ],
+      "capability_id": "legal_analytics",
+      "strategy": "REUSE"
+    },
+    {
+      "block_ids": [
+        "audit",
+        "validation",
+        "readiness_engine",
+        "evidence_verifier"
+      ],
+      "capability_id": "compliance_audit",
+      "strategy": "REUSE"
+    }
+  ],
+  "schema_version": "1.0.0"
+}

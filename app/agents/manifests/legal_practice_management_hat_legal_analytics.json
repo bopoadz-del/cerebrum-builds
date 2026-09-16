@@ -1,0 +1,49 @@
+{
+  "activation": {
+    "default_enabled": true,
+    "mode": "hybrid",
+    "put_off_by": [
+      "disable:legal_practice_management.hat.legal_analytics"
+    ],
+    "triggers": [
+      {
+        "type": "intent",
+        "value": "legal_analytics"
+      },
+      {
+        "type": "capability",
+        "value": "legal_analytics"
+      }
+    ]
+  },
+  "agent_id": "legal_practice_management.hat.legal_analytics",
+  "allowed_actions": [
+    "legal_practice_management.legal_analytics"
+  ],
+  "block_ids": [
+    "analytics",
+    "dashboard",
+    "portfolio_rollup",
+    "knowledge"
+  ],
+  "discipline": "legal_analytics",
+  "display_name": "LexManage Legal Analytics Hat",
+  "extends": "legal_practice_management.base",
+  "handoffs": [],
+  "human_authority": true,
+  "kind": "hat",
+  "manifest_version": "1.0.0",
+  "memory": {
+    "pii_policy": "never_store_pii",
+    "save": [],
+    "scope": "tenant_project"
+  },
+  "strategy": "REUSE",
+  "summary": "Specialized hat for capability 'legal_analytics' (strategy=REUSE). Adapted from TEKsystems retail hat pattern; estate/product-neutral.",
+  "tags": [
+    "hat",
+    "factory-generated",
+    "legal_practice_management",
+    "legal_analytics"
+  ]
+}

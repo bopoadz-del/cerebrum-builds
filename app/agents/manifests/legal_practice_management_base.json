@@ -1,0 +1,50 @@
+{
+  "activation": {
+    "default_enabled": true,
+    "mode": "auto",
+    "put_off_by": [
+      "disable:legal_practice_management.base"
+    ],
+    "triggers": [
+      {
+        "type": "intent",
+        "value": "unknown"
+      }
+    ]
+  },
+  "agent_id": "legal_practice_management.base",
+  "allowed_actions": [
+    "legal_practice_management.matter_management",
+    "legal_practice_management.client_intake",
+    "legal_practice_management.document_management",
+    "legal_practice_management.time_and_billing",
+    "legal_practice_management.client_portal",
+    "legal_practice_management.legal_analytics",
+    "legal_practice_management.compliance_audit"
+  ],
+  "context_sources": [
+    {
+      "description": "Tenant/project documents via hybrid retrieval",
+      "kind": "project_documents",
+      "source_id": "project_docs"
+    }
+  ],
+  "discipline": "base",
+  "display_name": "LexManage Base Agent",
+  "extends": null,
+  "handoffs": [],
+  "human_authority": true,
+  "kind": "base",
+  "manifest_version": "1.0.0",
+  "memory": {
+    "pii_policy": "never_store_pii",
+    "save": [],
+    "scope": "tenant_project"
+  },
+  "summary": "Shared product cortex adapted from TEKsystems hat patterns: trusted context, ActionRegistry awareness, honesty policies. Discipline hats specialize this base \u2014 they never replace it.",
+  "tags": [
+    "base",
+    "factory-generated",
+    "legal_practice_management"
+  ]
+}

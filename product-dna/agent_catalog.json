@@ -1,0 +1,398 @@
+{
+  "agents": [
+    {
+      "activation": {
+        "default_enabled": true,
+        "mode": "auto",
+        "put_off_by": [
+          "disable:legal_practice_management.base"
+        ],
+        "triggers": [
+          {
+            "type": "intent",
+            "value": "unknown"
+          }
+        ]
+      },
+      "agent_id": "legal_practice_management.base",
+      "allowed_actions": [
+        "legal_practice_management.matter_management",
+        "legal_practice_management.client_intake",
+        "legal_practice_management.document_management",
+        "legal_practice_management.time_and_billing",
+        "legal_practice_management.client_portal",
+        "legal_practice_management.legal_analytics",
+        "legal_practice_management.compliance_audit"
+      ],
+      "context_sources": [
+        {
+          "description": "Tenant/project documents via hybrid retrieval",
+          "kind": "project_documents",
+          "source_id": "project_docs"
+        }
+      ],
+      "discipline": "base",
+      "display_name": "LexManage Base Agent",
+      "extends": null,
+      "handoffs": [],
+      "human_authority": true,
+      "kind": "base",
+      "manifest_version": "1.0.0",
+      "memory": {
+        "pii_policy": "never_store_pii",
+        "save": [],
+        "scope": "tenant_project"
+      },
+      "summary": "Shared product cortex adapted from TEKsystems hat patterns: trusted context, ActionRegistry awareness, honesty policies. Discipline hats specialize this base \u2014 they never replace it.",
+      "tags": [
+        "base",
+        "factory-generated",
+        "legal_practice_management"
+      ]
+    },
+    {
+      "activation": {
+        "default_enabled": true,
+        "mode": "hybrid",
+        "put_off_by": [
+          "disable:legal_practice_management.hat.matter_management"
+        ],
+        "triggers": [
+          {
+            "type": "intent",
+            "value": "matter_management"
+          },
+          {
+            "type": "capability",
+            "value": "matter_management"
+          }
+        ]
+      },
+      "agent_id": "legal_practice_management.hat.matter_management",
+      "allowed_actions": [
+        "legal_practice_management.matter_management"
+      ],
+      "block_ids": [
+        "workflow",
+        "database",
+        "document_engine",
+        "notification"
+      ],
+      "discipline": "matter_management",
+      "display_name": "LexManage Matter Management Hat",
+      "extends": "legal_practice_management.base",
+      "handoffs": [],
+      "human_authority": true,
+      "kind": "hat",
+      "manifest_version": "1.0.0",
+      "memory": {
+        "pii_policy": "never_store_pii",
+        "save": [],
+        "scope": "tenant_project"
+      },
+      "strategy": "REUSE",
+      "summary": "Specialized hat for capability 'matter_management' (strategy=REUSE). Adapted from TEKsystems retail hat pattern; estate/product-neutral.",
+      "tags": [
+        "hat",
+        "factory-generated",
+        "legal_practice_management",
+        "matter_management"
+      ]
+    },
+    {
+      "activation": {
+        "default_enabled": true,
+        "mode": "hybrid",
+        "put_off_by": [
+          "disable:legal_practice_management.hat.client_intake"
+        ],
+        "triggers": [
+          {
+            "type": "intent",
+            "value": "client_intake"
+          },
+          {
+            "type": "capability",
+            "value": "client_intake"
+          }
+        ]
+      },
+      "agent_id": "legal_practice_management.hat.client_intake",
+      "allowed_actions": [
+        "legal_practice_management.client_intake"
+      ],
+      "block_ids": [
+        "workflow",
+        "formula_executor",
+        "validation",
+        "document_engine"
+      ],
+      "discipline": "client_intake",
+      "display_name": "LexManage Client Intake Hat",
+      "extends": "legal_practice_management.base",
+      "handoffs": [],
+      "human_authority": true,
+      "kind": "hat",
+      "manifest_version": "1.0.0",
+      "memory": {
+        "pii_policy": "never_store_pii",
+        "save": [],
+        "scope": "tenant_project"
+      },
+      "strategy": "REUSE",
+      "summary": "Specialized hat for capability 'client_intake' (strategy=REUSE). Adapted from TEKsystems retail hat pattern; estate/product-neutral.",
+      "tags": [
+        "hat",
+        "factory-generated",
+        "legal_practice_management",
+        "client_intake"
+      ]
+    },
+    {
+      "activation": {
+        "default_enabled": true,
+        "mode": "hybrid",
+        "put_off_by": [
+          "disable:legal_practice_management.hat.document_management"
+        ],
+        "triggers": [
+          {
+            "type": "intent",
+            "value": "document_management"
+          },
+          {
+            "type": "capability",
+            "value": "document_management"
+          }
+        ]
+      },
+      "agent_id": "legal_practice_management.hat.document_management",
+      "allowed_actions": [
+        "legal_practice_management.document_management"
+      ],
+      "block_ids": [
+        "storage",
+        "document_engine",
+        "vector_search",
+        "audit"
+      ],
+      "discipline": "document_management",
+      "display_name": "LexManage Document Management Hat",
+      "extends": "legal_practice_management.base",
+      "handoffs": [],
+      "human_authority": true,
+      "kind": "hat",
+      "manifest_version": "1.0.0",
+      "memory": {
+        "pii_policy": "never_store_pii",
+        "save": [],
+        "scope": "tenant_project"
+      },
+      "strategy": "REUSE",
+      "summary": "Specialized hat for capability 'document_management' (strategy=REUSE). Adapted from TEKsystems retail hat pattern; estate/product-neutral.",
+      "tags": [
+        "hat",
+        "factory-generated",
+        "legal_practice_management",
+        "document_management"
+      ]
+    },
+    {
+      "activation": {
+        "default_enabled": true,
+        "mode": "hybrid",
+        "put_off_by": [
+          "disable:legal_practice_management.hat.time_and_billing"
+        ],
+        "triggers": [
+          {
+            "type": "intent",
+            "value": "time_and_billing"
+          },
+          {
+            "type": "capability",
+            "value": "time_and_billing"
+          }
+        ]
+      },
+      "agent_id": "legal_practice_management.hat.time_and_billing",
+      "allowed_actions": [
+        "legal_practice_management.time_and_billing"
+      ],
+      "block_ids": [
+        "formula_executor",
+        "database",
+        "notification",
+        "analytics"
+      ],
+      "discipline": "time_and_billing",
+      "display_name": "LexManage Time And Billing Hat",
+      "extends": "legal_practice_management.base",
+      "handoffs": [],
+      "human_authority": true,
+      "kind": "hat",
+      "manifest_version": "1.0.0",
+      "memory": {
+        "pii_policy": "never_store_pii",
+        "save": [],
+        "scope": "tenant_project"
+      },
+      "strategy": "REUSE",
+      "summary": "Specialized hat for capability 'time_and_billing' (strategy=REUSE). Adapted from TEKsystems retail hat pattern; estate/product-neutral.",
+      "tags": [
+        "hat",
+        "factory-generated",
+        "legal_practice_management",
+        "time_and_billing"
+      ]
+    },
+    {
+      "activation": {
+        "default_enabled": true,
+        "mode": "hybrid",
+        "put_off_by": [
+          "disable:legal_practice_management.hat.client_portal"
+        ],
+        "triggers": [
+          {
+            "type": "intent",
+            "value": "client_portal"
+          },
+          {
+            "type": "capability",
+            "value": "client_portal"
+          }
+        ]
+      },
+      "agent_id": "legal_practice_management.hat.client_portal",
+      "allowed_actions": [
+        "legal_practice_management.client_portal"
+      ],
+      "block_ids": [
+        "dashboard",
+        "document_engine",
+        "notification",
+        "storage"
+      ],
+      "discipline": "client_portal",
+      "display_name": "LexManage Client Portal Hat",
+      "extends": "legal_practice_management.base",
+      "handoffs": [],
+      "human_authority": true,
+      "kind": "hat",
+      "manifest_version": "1.0.0",
+      "memory": {
+        "pii_policy": "never_store_pii",
+        "save": [],
+        "scope": "tenant_project"
+      },
+      "strategy": "REUSE",
+      "summary": "Specialized hat for capability 'client_portal' (strategy=REUSE). Adapted from TEKsystems retail hat pattern; estate/product-neutral.",
+      "tags": [
+        "hat",
+        "factory-generated",
+        "legal_practice_management",
+        "client_portal"
+      ]
+    },
+    {
+      "activation": {
+        "default_enabled": true,
+        "mode": "hybrid",
+        "put_off_by": [
+          "disable:legal_practice_management.hat.legal_analytics"
+        ],
+        "triggers": [
+          {
+            "type": "intent",
+            "value": "legal_analytics"
+          },
+          {
+            "type": "capability",
+            "value": "legal_analytics"
+          }
+        ]
+      },
+      "agent_id": "legal_practice_management.hat.legal_analytics",
+      "allowed_actions": [
+        "legal_practice_management.legal_analytics"
+      ],
+      "block_ids": [
+        "analytics",
+        "dashboard",
+        "portfolio_rollup",
+        "knowledge"
+      ],
+      "discipline": "legal_analytics",
+      "display_name": "LexManage Legal Analytics Hat",
+      "extends": "legal_practice_management.base",
+      "handoffs": [],
+      "human_authority": true,
+      "kind": "hat",
+      "manifest_version": "1.0.0",
+      "memory": {
+        "pii_policy": "never_store_pii",
+        "save": [],
+        "scope": "tenant_project"
+      },
+      "strategy": "REUSE",
+      "summary": "Specialized hat for capability 'legal_analytics' (strategy=REUSE). Adapted from TEKsystems retail hat pattern; estate/product-neutral.",
+      "tags": [
+        "hat",
+        "factory-generated",
+        "legal_practice_management",
+        "legal_analytics"
+      ]
+    },
+    {
+      "activation": {
+        "default_enabled": true,
+        "mode": "hybrid",
+        "put_off_by": [
+          "disable:legal_practice_management.hat.compliance_audit"
+        ],
+        "triggers": [
+          {
+            "type": "intent",
+            "value": "compliance_audit"
+          },
+          {
+            "type": "capability",
+            "value": "compliance_audit"
+          }
+        ]
+      },
+      "agent_id": "legal_practice_management.hat.compliance_audit",
+      "allowed_actions": [
+        "legal_practice_management.compliance_audit"
+      ],
+      "block_ids": [
+        "audit",
+        "validation",
+        "readiness_engine",
+        "evidence_verifier"
+      ],
+      "discipline": "compliance_audit",
+      "display_name": "LexManage Compliance Audit Hat",
+      "extends": "legal_practice_management.base",
+      "handoffs": [],
+      "human_authority": true,
+      "kind": "hat",
+      "manifest_version": "1.0.0",
+      "memory": {
+        "pii_policy": "never_store_pii",
+        "save": [],
+        "scope": "tenant_project"
+      },
+      "strategy": "REUSE",
+      "summary": "Specialized hat for capability 'compliance_audit' (strategy=REUSE). Adapted from TEKsystems retail hat pattern; estate/product-neutral.",
+      "tags": [
+        "hat",
+        "factory-generated",
+        "legal_practice_management",
+        "compliance_audit"
+      ]
+    }
+  ],
+  "schema_version": "1.0.0"
+}

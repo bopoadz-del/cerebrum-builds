@@ -1,0 +1,49 @@
+{
+  "activation": {
+    "default_enabled": true,
+    "mode": "hybrid",
+    "put_off_by": [
+      "disable:legal_practice_management.hat.compliance_audit"
+    ],
+    "triggers": [
+      {
+        "type": "intent",
+        "value": "compliance_audit"
+      },
+      {
+        "type": "capability",
+        "value": "compliance_audit"
+      }
+    ]
+  },
+  "agent_id": "legal_practice_management.hat.compliance_audit",
+  "allowed_actions": [
+    "legal_practice_management.compliance_audit"
+  ],
+  "block_ids": [
+    "audit",
+    "validation",
+    "readiness_engine",
+    "evidence_verifier"
+  ],
+  "discipline": "compliance_audit",
+  "display_name": "LexManage Compliance Audit Hat",
+  "extends": "legal_practice_management.base",
+  "handoffs": [],
+  "human_authority": true,
+  "kind": "hat",
+  "manifest_version": "1.0.0",
+  "memory": {
+    "pii_policy": "never_store_pii",
+    "save": [],
+    "scope": "tenant_project"
+  },
+  "strategy": "REUSE",
+  "summary": "Specialized hat for capability 'compliance_audit' (strategy=REUSE). Adapted from TEKsystems retail hat pattern; estate/product-neutral.",
+  "tags": [
+    "hat",
+    "factory-generated",
+    "legal_practice_management",
+    "compliance_audit"
+  ]
+}

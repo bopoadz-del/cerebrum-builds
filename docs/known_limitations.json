@@ -1,0 +1,56 @@
+{
+  "connectors": {
+    "implemented": [],
+    "note": "No external connector ships. The platform is offline by posture: no outbound HTTP at runtime.",
+    "placeholders": []
+  },
+  "honesty": "No stub passes here. Every substitution below is a named blocker on a sealed Store module, with a real in-process implementation standing in.",
+  "known_gaps": [
+    "No live court-calendar or accounting-system integration ships: the pilot is offline by posture.",
+    "Email is spooled locally (delivered=false) because no SMTP credential is configured for the pilot."
+  ],
+  "llm": {
+    "missing_credential": "raises MissingCredentialError naming LEXMANAGE_LLM_PROVIDER/LEXMANAGE_LLM_API_KEY",
+    "note": "The platform's own answers are extractive (app/retrieval.py). No provider is called in this pilot.",
+    "provider_required": false,
+    "with_credential": "raises NetworkPostureRefused - the offline posture forbids the call"
+  },
+  "product_id": "legal-practice-management",
+  "product_name": "LexManage",
+  "sealed_vendor_substitutions": [
+    {
+      "behaviour": "spools to $STORAGE_PATH/notifications.jsonl, reports delivered=false, offline=true",
+      "defect": "IndentationError: the factory's offline emission transform left a try: with no body",
+      "import_name": "vendor.cerebrum.blocks.notification",
+      "sealed_path": "vendor/cerebrum/blocks/notification.py",
+      "substitute": "app.offline_blocks.OfflineNotificationBlock",
+      "truth": "no message leaves the process"
+    },
+    {
+      "behaviour": "answers from this platform's tenant-scoped corpus (app/retrieval.py) with citations; grounded=false when the corpus has no match",
+      "defect": "ImportError: cannot import name 'vector_store' from 'vendor.cerebrum.core'",
+      "import_name": "vendor.cerebrum.blocks.knowledge",
+      "sealed_path": "vendor/cerebrum/blocks/knowledge.py",
+      "substitute": "app.offline_blocks.OfflineKnowledgeBlock",
+      "truth": "answers are extractive, never generated"
+    },
+    {
+      "behaviour": "extracts text from what the caller actually supplied (text, JSON, CSV, or a PDF text stream)",
+      "defect": "FileNotFoundError: vendor/cerebrum/blocks/document_engine_block.py is absent from the sealed vendor",
+      "import_name": "vendor.cerebrum.blocks.document_engine",
+      "sealed_path": "vendor/cerebrum/blocks/document_engine/__init__.py",
+      "substitute": "app.offline_blocks.OfflineDocumentEngineBlock",
+      "truth": "extracted_from names the origin; empty input yields empty text, never invented text"
+    }
+  ],
+  "ui": {
+    "modules": [
+      "command_center",
+      "operational_chat",
+      "resident_engineer"
+    ],
+    "note": "The console calls the live POST/GET routes; there is no second API.",
+    "served": "app/static/index.html at GET /"
+  },
+  "written_by": "factory WRITER role (codewhale exec)"
+}

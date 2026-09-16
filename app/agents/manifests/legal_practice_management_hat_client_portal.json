@@ -1,0 +1,49 @@
+{
+  "activation": {
+    "default_enabled": true,
+    "mode": "hybrid",
+    "put_off_by": [
+      "disable:legal_practice_management.hat.client_portal"
+    ],
+    "triggers": [
+      {
+        "type": "intent",
+        "value": "client_portal"
+      },
+      {
+        "type": "capability",
+        "value": "client_portal"
+      }
+    ]
+  },
+  "agent_id": "legal_practice_management.hat.client_portal",
+  "allowed_actions": [
+    "legal_practice_management.client_portal"
+  ],
+  "block_ids": [
+    "dashboard",
+    "document_engine",
+    "notification",
+    "storage"
+  ],
+  "discipline": "client_portal",
+  "display_name": "LexManage Client Portal Hat",
+  "extends": "legal_practice_management.base",
+  "handoffs": [],
+  "human_authority": true,
+  "kind": "hat",
+  "manifest_version": "1.0.0",
+  "memory": {
+    "pii_policy": "never_store_pii",
+    "save": [],
+    "scope": "tenant_project"
+  },
+  "strategy": "REUSE",
+  "summary": "Specialized hat for capability 'client_portal' (strategy=REUSE). Adapted from TEKsystems retail hat pattern; estate/product-neutral.",
+  "tags": [
+    "hat",
+    "factory-generated",
+    "legal_practice_management",
+    "client_portal"
+  ]
+}

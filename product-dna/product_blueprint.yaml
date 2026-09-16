@@ -1,0 +1,91 @@
+schema_version: product_blueprint.v1
+product_id: legal-practice-management
+product_name: LexManage
+vertical: legal_practice_management
+summary: LexManage is a comprehensive practice management platform for law firms,
+  streamlining case management, client intake, document handling, billing, and matter
+  tracking. It centralizes workflows, automates repetitive tasks, and provides real-time
+  insights, enabling attorneys and staff to focus on delivering high-quality legal
+  services.
+capabilities:
+- id: matter_management
+  description: Centralized tracking and management of legal matters, including case
+    details, deadlines, and associated documents.
+  block_ids:
+  - workflow
+  - database
+  - document_engine
+  - notification
+  strategy_hint: REUSE
+  required: true
+- id: client_intake
+  description: Streamlined intake process for new clients, including forms, conflict
+    checks, and client onboarding.
+  block_ids:
+  - workflow
+  - formula_executor
+  - validation
+  - document_engine
+  strategy_hint: REUSE
+  required: true
+- id: document_management
+  description: Secure storage, organization, and retrieval of legal documents with
+    version control and full-text search.
+  block_ids:
+  - storage
+  - document_engine
+  - vector_search
+  - audit
+  strategy_hint: REUSE
+  required: true
+- id: time_and_billing
+  description: Capture billable hours, generate invoices, and track payments with
+    integration to accounting systems.
+  block_ids:
+  - formula_executor
+  - database
+  - notification
+  - analytics
+  strategy_hint: REUSE
+  required: true
+- id: client_portal
+  description: Secure online portal for clients to access case information, documents,
+    and invoices, and to communicate with attorneys.
+  block_ids:
+  - dashboard
+  - document_engine
+  - notification
+  - storage
+  strategy_hint: REUSE
+  required: true
+- id: legal_analytics
+  description: Insights and reporting on case outcomes, attorney performance, and
+    financial metrics to inform strategic decisions.
+  block_ids:
+  - analytics
+  - dashboard
+  - portfolio_rollup
+  - knowledge
+  strategy_hint: REUSE
+  required: true
+- id: compliance_audit
+  description: Ensures regulatory compliance and provides audit trails for all actions
+    within the system.
+  block_ids:
+  - audit
+  - validation
+  - readiness_engine
+  - evidence_verifier
+  strategy_hint: REUSE
+  required: true
+ui_modules:
+- command_center
+- operational_chat
+- resident_engineer
+connectors: []
+edge_profile: standard
+human_authority: true
+factory_scenario: CREATE_PRODUCT
+drafting_mode: architect_llm
+drafting_note: null
+delivery_format: zip

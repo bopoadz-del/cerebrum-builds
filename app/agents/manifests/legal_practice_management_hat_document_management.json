@@ -1,0 +1,49 @@
+{
+  "activation": {
+    "default_enabled": true,
+    "mode": "hybrid",
+    "put_off_by": [
+      "disable:legal_practice_management.hat.document_management"
+    ],
+    "triggers": [
+      {
+        "type": "intent",
+        "value": "document_management"
+      },
+      {
+        "type": "capability",
+        "value": "document_management"
+      }
+    ]
+  },
+  "agent_id": "legal_practice_management.hat.document_management",
+  "allowed_actions": [
+    "legal_practice_management.document_management"
+  ],
+  "block_ids": [
+    "storage",
+    "document_engine",
+    "vector_search",
+    "audit"
+  ],
+  "discipline": "document_management",
+  "display_name": "LexManage Document Management Hat",
+  "extends": "legal_practice_management.base",
+  "handoffs": [],
+  "human_authority": true,
+  "kind": "hat",
+  "manifest_version": "1.0.0",
+  "memory": {
+    "pii_policy": "never_store_pii",
+    "save": [],
+    "scope": "tenant_project"
+  },
+  "strategy": "REUSE",
+  "summary": "Specialized hat for capability 'document_management' (strategy=REUSE). Adapted from TEKsystems retail hat pattern; estate/product-neutral.",
+  "tags": [
+    "hat",
+    "factory-generated",
+    "legal_practice_management",
+    "document_management"
+  ]
+}

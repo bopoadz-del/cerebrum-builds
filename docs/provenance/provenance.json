@@ -1,0 +1,112 @@
+{
+  "blocks_commit": "unknown",
+  "blueprint_id": "legal-practice-management:product_blueprint.v1",
+  "factory": "CerebrumDev.ai",
+  "factory_commit": "unknown",
+  "generated_at": "blueprint:798bc99175ee1bf27b9980c70275f2b01b1d8ac8018116d274923cb7368ae1ff",
+  "inputs_hash": "798bc99175ee1bf27b9980c70275f2b01b1d8ac8018116d274923cb7368ae1ff",
+  "kernel_version": "1.0.0",
+  "plan": {
+    "capabilities": [
+      {
+        "block_ids": [
+          "workflow",
+          "database",
+          "document_engine",
+          "notification"
+        ],
+        "capability_id": "matter_management",
+        "notes": "dual-registered",
+        "strategy": "REUSE"
+      },
+      {
+        "block_ids": [
+          "workflow",
+          "formula_executor",
+          "validation",
+          "document_engine"
+        ],
+        "capability_id": "client_intake",
+        "notes": "dual-registered",
+        "strategy": "REUSE"
+      },
+      {
+        "block_ids": [
+          "storage",
+          "document_engine",
+          "vector_search",
+          "audit"
+        ],
+        "capability_id": "document_management",
+        "notes": "dual-registered",
+        "strategy": "REUSE"
+      },
+      {
+        "block_ids": [
+          "formula_executor",
+          "database",
+          "notification",
+          "analytics"
+        ],
+        "capability_id": "time_and_billing",
+        "notes": "dual-registered",
+        "strategy": "REUSE"
+      },
+      {
+        "block_ids": [
+          "dashboard",
+          "document_engine",
+          "notification",
+          "storage"
+        ],
+        "capability_id": "client_portal",
+        "notes": "dual-registered",
+        "strategy": "REUSE"
+      },
+      {
+        "block_ids": [
+          "analytics",
+          "dashboard",
+          "portfolio_rollup",
+          "knowledge"
+        ],
+        "capability_id": "legal_analytics",
+        "notes": "dual-registered",
+        "strategy": "REUSE"
+      },
+      {
+        "block_ids": [
+          "audit",
+          "validation",
+          "readiness_engine",
+          "evidence_verifier"
+        ],
+        "capability_id": "compliance_audit",
+        "notes": "dual-registered",
+        "strategy": "REUSE"
+      }
+    ],
+    "dual_registered_blocks": [
+      "analytics",
+      "audit",
+      "dashboard",
+      "database",
+      "document_engine",
+      "evidence_verifier",
+      "formula_executor",
+      "knowledge",
+      "notification",
+      "portfolio_rollup",
+      "readiness_engine",
+      "storage",
+      "validation",
+      "vector_search",
+      "workflow"
+    ],
+    "fail_closed": true,
+    "product_id": "legal-practice-management",
+    "unsupported": []
+  },
+  "product_id": "legal-practice-management",
+  "schema": "factory_provenance.v1"
+}

@@ -1,0 +1,49 @@
+{
+  "activation": {
+    "default_enabled": true,
+    "mode": "hybrid",
+    "put_off_by": [
+      "disable:legal_practice_management.hat.time_and_billing"
+    ],
+    "triggers": [
+      {
+        "type": "intent",
+        "value": "time_and_billing"
+      },
+      {
+        "type": "capability",
+        "value": "time_and_billing"
+      }
+    ]
+  },
+  "agent_id": "legal_practice_management.hat.time_and_billing",
+  "allowed_actions": [
+    "legal_practice_management.time_and_billing"
+  ],
+  "block_ids": [
+    "formula_executor",
+    "database",
+    "notification",
+    "analytics"
+  ],
+  "discipline": "time_and_billing",
+  "display_name": "LexManage Time And Billing Hat",
+  "extends": "legal_practice_management.base",
+  "handoffs": [],
+  "human_authority": true,
+  "kind": "hat",
+  "manifest_version": "1.0.0",
+  "memory": {
+    "pii_policy": "never_store_pii",
+    "save": [],
+    "scope": "tenant_project"
+  },
+  "strategy": "REUSE",
+  "summary": "Specialized hat for capability 'time_and_billing' (strategy=REUSE). Adapted from TEKsystems retail hat pattern; estate/product-neutral.",
+  "tags": [
+    "hat",
+    "factory-generated",
+    "legal_practice_management",
+    "time_and_billing"
+  ]
+}

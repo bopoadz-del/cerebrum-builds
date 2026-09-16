@@ -1,0 +1,49 @@
+{
+  "activation": {
+    "default_enabled": true,
+    "mode": "hybrid",
+    "put_off_by": [
+      "disable:legal_practice_management.hat.client_intake"
+    ],
+    "triggers": [
+      {
+        "type": "intent",
+        "value": "client_intake"
+      },
+      {
+        "type": "capability",
+        "value": "client_intake"
+      }
+    ]
+  },
+  "agent_id": "legal_practice_management.hat.client_intake",
+  "allowed_actions": [
+    "legal_practice_management.client_intake"
+  ],
+  "block_ids": [
+    "workflow",
+    "formula_executor",
+    "validation",
+    "document_engine"
+  ],
+  "discipline": "client_intake",
+  "display_name": "LexManage Client Intake Hat",
+  "extends": "legal_practice_management.base",
+  "handoffs": [],
+  "human_authority": true,
+  "kind": "hat",
+  "manifest_version": "1.0.0",
+  "memory": {
+    "pii_policy": "never_store_pii",
+    "save": [],
+    "scope": "tenant_project"
+  },
+  "strategy": "REUSE",
+  "summary": "Specialized hat for capability 'client_intake' (strategy=REUSE). Adapted from TEKsystems retail hat pattern; estate/product-neutral.",
+  "tags": [
+    "hat",
+    "factory-generated",
+    "legal_practice_management",
+    "client_intake"
+  ]
+}

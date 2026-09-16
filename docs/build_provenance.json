@@ -1,0 +1,43 @@
+{
+  "artifact_sources": {
+    "Dockerfile, render.yaml, Procfile, requirements.txt, README.md, scripts/": "factory deploy emitters + WRITER role",
+    "app/actions/*.py": "FACTORY_CODE_CLI (codewhale exec, WRITER role) - seven capability handlers authored for this blueprint, each stamped and factory-grounded on store.save(ENTITY, ...)",
+    "app/dispatch.py, app/block_inputs.py": "factory deterministic emitter with this build's harvested block contracts",
+    "app/kernel_bridge.py, app/domain_ops.py, app/work_queue.py": "factory deterministic emitter",
+    "app/models.py": "factory emitter from the WRITER's model specs (MODELS + FIELDS/CONSTRAINTS)",
+    "app/routes.py": "factory emitter (kernel execute_action template) over the WRITER's specs",
+    "app/store.py, alembic/": "factory deterministic emitter (data_lifecycle) from the same specs",
+    "app/tenancy.py, app/security.py, app/authority.py, app/retrieval.py, app/formulas.py, app/llm.py, app/rag_routes.py, app/offline_blocks.py": "WRITER role - governed surfaces authored for this product",
+    "frontend/, product-dna/, app/agents/, app/workflows/, docs/blueprint/, docs/certification/": "factory ProductGenerator emitters over this blueprint",
+    "tests/": "harness TESTER emitters (code-phase + pilot contracts) plus WRITER-authored pilot round-trip and domain tests"
+  },
+  "authorship": {
+    "agent_written_handlers": 7,
+    "floor": 5,
+    "stamp": "Written by the factory WRITER role (codewhale exec)"
+  },
+  "engine": "role_runner",
+  "handlers": [
+    "matter_management",
+    "client_intake",
+    "document_management",
+    "time_and_billing",
+    "client_portal",
+    "legal_analytics",
+    "compliance_audit"
+  ],
+  "kernel_agents": {
+    "CLONER": "deterministic - vendored 15 registry-verified blocks",
+    "COLLECTOR": "registry inventory (REUSE roster, zero gaps)",
+    "STORE_MANAGER": "deterministic - Store acceptance inside the built image",
+    "TESTER": "harness acceptance - not an LLM role",
+    "WRITER": {
+      "artifacts": 7,
+      "seat": "FACTORY_CODE_CLI (codewhale exec)"
+    }
+  },
+  "network_posture": "offline_in_process",
+  "product_id": "legal-practice-management",
+  "product_name": "LexManage",
+  "schema_version": "build_provenance.v1"
+}

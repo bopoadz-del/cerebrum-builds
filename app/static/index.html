@@ -1,164 +1,139 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Hotel Booking Platform</title>
+  <title>Hotel Front Desk Log</title>
+  <!--
+    Hotel Front Desk Log front-desk console.
+
+    Written by the factory WRITER role (codewhale exec)
+
+    This page is served by app/main.py (GET /) and talks to the same live API
+    as frontend/ (the React source): POST /v1/record_guest_check_in,
+    GET /v1/list_todays_check_ins, GET /v1/record_guest_check_in, GET /health. It
+    needs no build step, so a deployed platform always has a working UI. The
+    React app in frontend/ is the richer shell; `npm run build` emits dist/.
+  -->
   <style>
-    :root { font-family: "IBM Plex Sans", "Segoe UI", sans-serif; background: #10141c; color: #e8eef6; }
-    body { margin: 0; }
-    header { padding: 1.2rem 1.5rem; border-bottom: 1px solid #2a3548; background: #141a24; }
-    h1 { margin: 0; font-size: 1.4rem; }
-    p.sub { margin: 0.35rem 0 0; color: #93a3bd; }
-    nav { display: flex; flex-wrap: wrap; gap: 0.4rem; padding: 0.8rem 1.5rem; }
-    nav button { background: #1c2430; color: #e8eef6; border: 1px solid #3a4c68; padding: 0.35rem 0.7rem; cursor: pointer; }
-    nav button.active { background: #0d4d73; }
-    main { padding: 1rem 1.5rem 3rem; }
-    label { display: block; margin: 0.6rem 0 0.2rem; }
-    input, textarea, select { width: 100%; max-width: 36rem; background: #0d1118; color: #e8eef6; border: 1px solid #3a4c68; padding: 0.4rem; }
-    button.act { margin-top: 0.8rem; background: #0d4d73; color: #fff; border: 0; padding: 0.5rem 1rem; cursor: pointer; }
-    pre { background: #0d1118; padding: 0.8rem; overflow: auto; }
-    .mods { display: grid; gap: 0.6rem; grid-template-columns: repeat(auto-fill, minmax(14rem, 1fr)); }
-    .card { border: 1px solid #2a3548; padding: 0.7rem; }
+    :root { color-scheme: light dark; font-family: system-ui, sans-serif; }
+    main { max-width: 1000px; margin: 0 auto; padding: 1rem; }
+    table { border-collapse: collapse; width: 100%; margin-top: .5rem; }
+    th, td { border-bottom: 1px solid #8884; text-align: left; padding: .25rem .5rem; }
+    button { margin: .25rem .25rem .25rem 0; padding: .35rem .7rem; }
+    label { display: inline-block; margin-right: .75rem; }
+    input { padding: .25rem; }
+    .error { color: #b3261e; }
+    .ok { color: #1b7f3b; }
+    pre { background: #8881; padding: .5rem; overflow: auto; }
+    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
   </style>
 </head>
 <body>
-  <header>
-    <h1>Hotel Booking Platform</h1>
-    <p class="sub">Hospitality operators — bookings, properties, pricing, reviews, and guest notices. Operator / admin. Mutations require a bearer operator token. OPERATOR_TOKEN is not stored in git.</p>
-  </header>
-  <nav id="nav"></nav>
-  <main>
-    <section id="command_center" class="panel">
-      <h2>Command center</h2>
-      <div class="mods" id="modules"></div>
+<main>
+  <h1>Hotel Front Desk Log</h1>
+  <p>Record a guest check-in, and read today's check-ins. Nothing else.</p>
+  <p>
+    <label>Platform token <input id="token" value="dev-local-token" /></label>
+    <button id="reload">Reload</button>
+  </p>
+  <p id="status"></p>
+  <section>
+    <h2>Check a guest in</h2>
+    <p>
+      <label>Guest <input id="guest" value="A. Guest" /></label>
+      <label>Room <input id="room" value="101" /></label>
+      <label>Guests <input id="count" type="number" min="1" max="20" value="1" /></label>
+      <button id="checkin">Record check-in</button>
+    </p>
+    <pre id="checkinResult"></pre>
+  </section>
+  <div class="grid">
+    <section>
+      <h2>Today's check-ins</h2>
+      <p>Read back from the platform: what the desk actually recorded.</p>
+      <div id="today"></div>
     </section>
-    <section id="live" class="panel">
-      <h2 id="cap-title">booking_management</h2>
-      <label>Operator token <input id="operator-token" type="password" autocomplete="off" placeholder="OPERATOR_TOKEN" /></label>
-      <label>Capability
-        <select id="capability"></select>
-      </label>
-      <label>Reference <input id="reference" value="sample" /></label>
-      <label>Status <input id="status" value="open" /></label>
-      <button class="act" id="post-btn" type="button">POST create</button>
-      <button class="act" id="get-btn" type="button">GET records</button>
-      <pre id="out">Ready.</pre>
+    <section>
+      <h2>Platform health</h2>
+      <pre id="health">…</pre>
     </section>
-    <section id="operational_chat" class="panel">
-      <h2>Operational chat — property notes</h2>
-      <label>Title <input id="rag-title" value="Hotel occupancy pack" /></label>
-      <label>Text <textarea id="rag-text" rows="3">Hotel occupancy, peak season night rate, and guest booking notes for the hospitality pilot.</textarea></label>
-      <button class="act" id="ingest-btn" type="button">Ingest pack</button>
-      <label>Query <input id="rag-q" value="hotel occupancy" /></label>
-      <button class="act" id="query-btn" type="button">Query notes</button>
-    </section>
-    <section id="resident_engineer" class="panel">
-      <h2>Resident engineer</h2>
-      <p class="sub">Same live POST/GET routes. No second API.</p>
-    </section>
-  </main>
-  <script>
-    const CAPS = [
-      "booking_management",
-      "property_management",
-      "dynamic_pricing",
-      "review_management",
-      "analytics_dashboard",
-      "notification_system",
-      "search_recommendation"
-    ];
-    const UI = ["command_center", "operational_chat", "resident_engineer"];
-    const MAP = {
-      command_center: "booking_management",
-      operational_chat: "property_management",
-      resident_engineer: "analytics_dashboard"
-    };
-    let current = "booking_management";
-    const nav = document.getElementById("nav");
-    const modules = document.getElementById("modules");
-    const capSelect = document.getElementById("capability");
-    UI.forEach((name) => {
-      const b = document.createElement("button");
-      b.textContent = name;
-      b.onclick = () => select(MAP[name] || "booking_management", b);
-      nav.appendChild(b);
-      const card = document.createElement("div");
-      card.className = "card";
-      card.textContent = name;
-      modules.appendChild(card);
-    });
-    CAPS.forEach((name) => {
-      const card = document.createElement("div");
-      card.className = "card";
-      card.textContent = name;
-      modules.appendChild(card);
-      const opt = document.createElement("option");
-      opt.value = name;
-      opt.textContent = name;
-      capSelect.appendChild(opt);
-    });
-    capSelect.onchange = () => select(capSelect.value);
-    function select(id, btn) {
-      current = id;
-      document.getElementById("cap-title").textContent = id;
-      capSelect.value = id;
-      [...nav.children].forEach((el) => el.classList.remove("active"));
-      if (btn) btn.classList.add("active");
-    }
-    function authHeaders() {
-      const headers = {"Content-Type": "application/json"};
-      const token = (document.getElementById("operator-token").value || "").trim();
-      if (token) headers["Authorization"] = "Bearer " + token;
-      return headers;
-    }
-    function extraFields(id) {
-      const extras = {
-        booking_management: {stay_kind: "night", room_label: "sample"},
-        property_management: {property_kind: "hotel", property_name: "sample"},
-        dynamic_pricing: {season: "peak", rate_plan: "sample"},
-        review_management: {rating_band: "excellent", guest_name: "sample"},
-        analytics_dashboard: {view_name: "sample", horizon: "today"},
-        notification_system: {notice_kind: "confirmation", guest_name: "sample"},
-        search_recommendation: {stay_intent: "leisure", destination: "sample"}
-      };
-      return extras[id] || {};
-    }
-    document.getElementById("post-btn").onclick = async () => {
-      const body = {
-        reference: document.getElementById("reference").value || "sample",
-        status: document.getElementById("status").value || "open",
-        ...extraFields(current)
-      };
-      const res = await fetch("/v1/" + current, {
-        method: "POST",
-        headers: authHeaders(),
-        body: JSON.stringify(body)
+  </div>
+</main>
+<script>
+(function () {
+  function token() { return document.getElementById("token").value || "dev-local-token"; }
+  function headers(extra) {
+    var base = { Authorization: "Bearer " + token(), Accept: "application/json" };
+    return Object.assign(base, extra || {});
+  }
+  function call(path, init) {
+    return fetch(path, init || { headers: headers() }).then(function (response) {
+      return response.text().then(function (text) {
+        var body = text ? JSON.parse(text) : {};
+        if (!response.ok) { throw new Error(response.status + " " + JSON.stringify(body).slice(0, 200)); }
+        return body;
       });
-      document.getElementById("out").textContent = JSON.stringify(await res.json(), null, 2);
+    });
+  }
+  function status(message, bad) {
+    var node = document.getElementById("status");
+    node.textContent = message;
+    node.className = bad ? "error" : "ok";
+  }
+  function day() { return new Date().toISOString().slice(0, 10); }
+  function loadToday() {
+    call("/v1/record_guest_check_in?limit=50").then(function (payload) {
+      var rows = (payload.items || []).filter(function (record) {
+        return String(record.checked_in_at || "").slice(0, 10) === day();
+      }).map(function (record) {
+        return "<tr><td>" + record.id + "</td><td>" + (record.room_number || "") + "</td><td>" +
+          (record.guest_name || "") + "</td><td>" + (record.checked_in_at || "") + "</td><td>" +
+          (record.guests_count == null ? "" : record.guests_count) + "</td></tr>";
+      }).join("");
+      document.getElementById("today").innerHTML =
+        "<table><thead><tr><th>id</th><th>room</th><th>guest</th><th>checked in</th><th>guests</th></tr></thead><tbody>" +
+        rows + "</tbody></table>" +
+        "<p>" + (payload.total || 0) + " check-in record(s) on file for " + day() + ".</p>";
+    }).catch(function (exc) { status(String(exc), true); });
+  }
+  function loadHealth() {
+    call("/health").then(function (body) {
+      document.getElementById("health").textContent = JSON.stringify(body, null, 2);
+    }).catch(function (exc) { document.getElementById("health").textContent = String(exc); });
+  }
+  function reload() {
+    status("loading…");
+    loadToday();
+    loadHealth();
+    status("front desk log ready for " + day());
+  }
+  document.getElementById("reload").addEventListener("click", reload);
+  document.getElementById("checkin").addEventListener("click", function () {
+    var stamp = new Date().toISOString();
+    var payload = {
+      reference: "FD-" + Date.now().toString(36),
+      guest_name: document.getElementById("guest").value || "guest",
+      room_number: document.getElementById("room").value || "unassigned",
+      checked_in_at: stamp,
+      guests_count: Number(document.getElementById("count").value || 1),
+      status: "open",
+      notes: "recorded at the front desk"
     };
-    document.getElementById("get-btn").onclick = async () => {
-      const res = await fetch("/v1/" + current);
-      document.getElementById("out").textContent = JSON.stringify(await res.json(), null, 2);
-    };
-    document.getElementById("ingest-btn").onclick = async () => {
-      const res = await fetch("/v1/rag/ingest", {
-        method: "POST",
-        headers: authHeaders(),
-        body: JSON.stringify({
-          layer: 1,
-          doc_id: document.getElementById("reference").value || "sample",
-          title: document.getElementById("rag-title").value,
-          text: document.getElementById("rag-text").value
-        })
-      });
-      document.getElementById("out").textContent = JSON.stringify(await res.json(), null, 2);
-    };
-    document.getElementById("query-btn").onclick = async () => {
-      const q = encodeURIComponent(document.getElementById("rag-q").value || "occupancy");
-      const res = await fetch("/v1/rag/query?q=" + q);
-      document.getElementById("out").textContent = JSON.stringify(await res.json(), null, 2);
-    };
-  </script>
+    status("recording check-in…");
+    call("/v1/record_guest_check_in", {
+      method: "POST",
+      headers: headers({ "Content-Type": "application/json" }),
+      body: JSON.stringify(payload)
+    }).then(function (body) {
+      if (body.ok === false) { status(body.error || "refused", true); return; }
+      document.getElementById("checkinResult").textContent = JSON.stringify(body.check_in || body, null, 2);
+      status("check-in recorded");
+      loadToday();
+    }).catch(function (exc) { status(String(exc), true); });
+  });
+  reload();
+}());
+</script>
 </body>
 </html>

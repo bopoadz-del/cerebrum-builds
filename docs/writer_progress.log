@@ -1,0 +1,18 @@
+STEP 1: STEP 0 inventory read — Store registry verified for record_guest_check_in [capture, database, validation] and list_todays_check_ins [database, dashboard]; no GENERATE gaps; vendored blocks on disk confirmed at vendor/blocks/*
+STEP 2: Capability ids bound exactly (record_guest_check_in, list_todays_check_ins); aliases removed so no handler is missing at PHASE 1 accept
+STEP 3: app/models.py emitted — MODELS with RecordGuestCheckIn / ListTodaysCheckIns, FIELDS, CONSTRAINTS (status vocab open|in_progress|closed), ENTITY, from_dict/to_dict
+STEP 4: app/store.py emitted — COLUMNS and save/list_all/get/query for both alembic entities (record_guest_check_in, list_todays_check_ins)
+STEP 5: app/dispatch.py emitted — offline local block runtime, BLOCK_CONTRACTS for the vendored ids, execute(block_id, payload, action=) keyword dispatch
+STEP 6: app/block_inputs.py emitted — BLOCK_DEFAULT_ACTIONS harvest, prepare_block_input/split_execute_action so handlers construct block inputs
+STEP 7: PHASE 1 backend written — app/main.py (app factory + /health), app/routes.py (/v1/{capability} POST+GET, token + payload guard), app/routers/, app/security.py, app/tenancy.py, app/authority.py (precedence.v1), app/retrieval.py, app/formulas.py, app/llm.py
+STEP 8: app/actions/record_guest_check_in.py authored — BLOCK_IDS [capture, database, validation], BLOCK_DEFAULT_ACTIONS {capture: extract, database: insert, validation: validate_pipeline}, constructed block inputs, store.save(ENTITY, record)
+STEP 9: app/actions/list_todays_check_ins.py authored — BLOCK_IDS [database, dashboard], BLOCK_DEFAULT_ACTIONS {database: query, dashboard: render}, reads the check-in table, store.save(ENTITY, snapshot)
+STEP 10: Schema-poisoning fix — both handlers create the entity table with its declared column set before any read/write; the record handler rebuilds a partial table once and retries the insert
+STEP 11: alembic 0001_baseline + 0002_lifecycle_audit emitted for the two entities and the runtime tables; app/migrations.py upgrade_head() applies head
+STEP 12: PHASE 1 acceptance — code suite green (49 passed); one-record POST/GET round-trip green for both capabilities on an isolated STORAGE_PATH
+STEP 13: PHASE 2 frontend emitted — frontend/src/App.tsx, api.ts, main.tsx over the live POST/GET routes; modules command_center.tsx, operational_chat.tsx, resident_engineer.tsx (none placeholder)
+STEP 14: PHASE 2 RAG surface — no rag/dual_rag capability or block in this inventory, so no RAG ingest/query route is claimed; app/rag_routes.py ships the vector_search-backed surface without inventing a second store
+STEP 15: PHASE 3 integration — Dockerfile, render.yaml, Procfile, .dockerignore, .env.example, requirements.txt, README.md, app/static/index.html, openapi.json, .github/workflows/ci.yml
+STEP 16: scripts/acceptance.py (12 measured checks) and scripts/release_gate.py emitted; authorship_floor measures the stamped app/actions/*.py floor against the blueprint n_required
+STEP 17: LOCAL VERIFICATION — pytest -m "not pilot" 46 passed; pytest -m pilot 3 passed; writer_behaviour probe exits 0 with no GATE-MISS (schema accept, F11, F1, round-trip); reuse_accept / persist_accept / writer-phase checks green
+STEP 18: docs/writer_progress.log written; docs/domain_pack.json, data_lifecycle.json, deploy.json, permissions.json, network_posture.json, sbom.cdx.json stamped for the STORE surface

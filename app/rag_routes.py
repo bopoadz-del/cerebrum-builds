@@ -1,159 +1,120 @@
-"""Hotel property notes ingest/query HTTP. Quoted paths required by PHASE 2."""
+"""HTTP surface for the front-desk knowledge corpus (ingest + query).
+
+Written by the factory WRITER role (codewhale exec)
+
+The desk's reference documents (house rules, room inventory notes, shift
+handovers) are ingested here and retrieved here. Both routes are the tenant's
+own corpus: the tenant is bound from the authenticated principal
+(``app.security`` + ``app.tenancy``), never from the request, and the rows
+live in the same single ``STORAGE_PATH`` database as the check-in log.
+
+Retrieval is the deterministic keyword-scored scan in ``app.retrieval`` -- no
+embedding service and no network, which is what keeps the platform offline.
+
+Scope
+-----
+READS  ``corpus_documents`` / ``corpus_chunks`` for the bound tenant.
+WRITES one document plus its chunks per ingest (through app.retrieval).
+NEVER  network, another tenant's rows, ``vendor/**``.
+"""
 
 from __future__ import annotations
 
-import json
-import math
-import re
-from pathlib import Path
 from typing import Any, Dict, List, Optional
 
-from fastapi import APIRouter, HTTPException, Query, Request
-from pydantic import BaseModel, Field
+from fastapi import APIRouter, Request
 
-from app.auth import require_operator
-from app.block_inputs import record_mutation_audit
-from app.store import storage_root
+from app import retrieval, tenancy
+from app.security import authenticate
 
-router = APIRouter()
+router = APIRouter(tags=["rag"])
 
-HOTEL_INDEX = "hotel_property_notes_v1"
-
-
-class RagIngestBody(BaseModel):
-    text: str = Field(..., min_length=1)
-    doc_id: str = Field("sample", min_length=1)
-    title: str = Field("sample", min_length=1)
-    layer: int = Field(1, ge=1, le=2)
-    property_id: Optional[str] = None
+#: The desk's own vocabulary for a corpus document.
+DEFAULT_TITLE = "front-desk note"
+DEFAULT_SOURCE_KIND = "document"
 
 
-def _rag_dir() -> Path:
-    path = storage_root() / "rag"
-    path.mkdir(parents=True, exist_ok=True)
-    return path
+def _bound_tenant(request: Request) -> str:
+    """The tenant of the authenticated principal in flight."""
+    principal = authenticate(request)
+    tenancy.refuse_tenant_spoof(request, principal)
+    return principal.tenant
 
 
-def _index_path() -> Path:
-    return _rag_dir() / f"{HOTEL_INDEX}.jsonl"
+def _first_text(payload: Dict[str, Any], keys: List[str]) -> str:
+    for key in keys:
+        value = payload.get(key)
+        if isinstance(value, str) and value.strip():
+            return value
+    return ""
 
 
-def _tokens(text: str) -> List[str]:
-    return [t for t in re.findall(r"[a-z0-9]+", text.lower()) if t]
-
-
-def _score(query: str, text: str) -> float:
-    q = set(_tokens(query))
-    d = _tokens(text)
-    if not q or not d:
-        return 0.0
-    overlap = len(q.intersection(d))
-    return overlap / math.sqrt(len(q) * max(len(d), 1))
-
-
-def _read_index() -> List[Dict[str, Any]]:
-    path = _index_path()
-    if not path.is_file():
-        return []
-    rows: List[Dict[str, Any]] = []
-    for line in path.read_text(encoding="utf-8").splitlines():
-        if not line.strip():
-            continue
-        try:
-            rows.append(json.loads(line))
-        except json.JSONDecodeError:
-            continue
-    return rows
+def _ingest_body(payload: Optional[Dict[str, Any]], query: Optional[str]) -> str:
+    body = payload if isinstance(payload, dict) else {}
+    text = _first_text(body, ["text", "content", "body", "paragraph", "document", "note"])
+    if not text and query:
+        text = str(query)
+    return text
 
 
 @router.post("/v1/rag/ingest")
-def rag_ingest(body: RagIngestBody, request: Request) -> Dict[str, Any]:
-    principal = require_operator(request)
-    record = {
-        "doc_id": body.doc_id,
-        "title": body.title,
-        "text": body.text,
-        "layer": body.layer,
-        "property_id": body.property_id,
-        "index": HOTEL_INDEX,
-        "retrieval": "lexical_jsonl",
-        "actor": principal.subject,
-        "actor_role": principal.role,
-    }
-    path = _index_path()
-    with path.open("a", encoding="utf-8") as handle:
-        handle.write(json.dumps(record, ensure_ascii=False) + "\n")
-    record_mutation_audit(
-        principal,
-        action="rag_ingest",
-        resource=body.doc_id,
-        details={
-            "status": "open",
-            "capability": "rag_ingest",
-            "category": "hospitality",
-            "layer": body.layer,
-            "retrieval": "lexical_jsonl",
-        },
-    )
-    return {
-        "ok": True,
-        "ingested": True,
-        "doc_id": body.doc_id,
-        "layer": body.layer,
-        "retrieval": "lexical_jsonl",
-        "actor": principal.subject,
-        "actor_role": principal.role,
-    }
-
-
-@router.post("/v1/steward/rag/ingest")
-def steward_rag_ingest(body: RagIngestBody, request: Request) -> Dict[str, Any]:
-    return rag_ingest(body, request)
-
-
-@router.get("/v1/rag/query")
-def rag_query(
-    q: str = Query(..., min_length=1),
-    layer: Optional[int] = Query(None, ge=1, le=2),
-    top_k: int = Query(5, ge=1, le=20),
-) -> Dict[str, Any]:
-    hits = []
-    for row in _read_index():
-        if layer is not None and row.get("layer") != layer:
-            continue
-        score = _score(q, f"{row.get('title', '')} {row.get('text', '')}")
-        if score <= 0:
-            continue
-        hits.append({**row, "score": round(score, 6)})
-    hits.sort(key=lambda item: item["score"], reverse=True)
-    return {
-        "ok": True,
-        "query": q,
-        "hits": hits[:top_k],
-        "hit_count": min(len(hits), top_k),
-        "retrieval": "lexical_jsonl",
-    }
+def rag_ingest(payload: Optional[Dict[str, Any]] = None, request: Request = None) -> Dict[str, Any]:
+    """Ingest one front-desk document into the tenant's corpus."""
+    tenant = _bound_tenant(request)
+    body = payload if isinstance(payload, dict) else {}
+    text = _ingest_body(body, None)
+    if not text.strip():
+        return {
+            "ok": False,
+            "error": "ingest requires a document body (text, content, paragraph)",
+        }
+    title = _first_text(body, ["title", "name", "subject"]) or DEFAULT_TITLE
+    source_kind = _first_text(body, ["source_kind", "kind"]) or DEFAULT_SOURCE_KIND
+    certified = bool(body.get("certified") is True)
+    with tenancy.bind(tenant):
+        try:
+            stored = retrieval.ingest(
+                tenant=tenant,
+                title=title,
+                body=text,
+                source_kind=source_kind,
+                certified=certified,
+            )
+        except ValueError as exc:
+            return {"ok": False, "error": str(exc)}
+    return {"ok": True, "tenant": tenant, "rag": stored, "items": [stored]}
 
 
 @router.post("/v1/rag/query")
-def rag_query_post(body: Dict[str, Any]) -> Dict[str, Any]:
-    q = str(body.get("q") or body.get("query") or "")
-    if not q:
-        raise HTTPException(status_code=422, detail="q required")
-    layer = body.get("layer")
-    top_k = int(body.get("top_k") or 5)
-    return rag_query(q=q, layer=layer, top_k=top_k)
+def rag_query_post(payload: Optional[Dict[str, Any]] = None, request: Request = None) -> Dict[str, Any]:
+    """Retrieve the tenant's own chunks for a question."""
+    body = payload if isinstance(payload, dict) else {}
+    question = _first_text(body, ["q", "query", "question", "text"])
+    limit = body.get("limit")
+    return _query(request, question, limit)
 
 
-@router.get("/v1/steward/rag/query")
-def steward_rag_query(
-    q: str = Query(..., min_length=1),
-    layer: Optional[int] = Query(None, ge=1, le=2),
-    top_k: int = Query(5, ge=1, le=20),
-) -> Dict[str, Any]:
-    return rag_query(q=q, layer=layer, top_k=top_k)
+@router.get("/v1/rag/query")
+def rag_query_get(request: Request, q: Optional[str] = None, limit: Optional[int] = None) -> Dict[str, Any]:
+    """Same retrieval, addressable with ``?q=``."""
+    return _query(request, q or "", limit)
 
 
-@router.post("/v1/steward/rag/query")
-def steward_rag_query_post(body: Dict[str, Any]) -> Dict[str, Any]:
-    return rag_query_post(body)
+def _query(request: Request, question: str, limit: Any) -> Dict[str, Any]:
+    tenant = _bound_tenant(request)
+    if not str(question or "").strip():
+        return {"ok": False, "error": "query requires q or query", "hits": [], "total": 0}
+    try:
+        resolved_limit = int(limit) if limit not in (None, "") else 5
+    except (TypeError, ValueError):
+        return {"ok": False, "error": "limit must be an integer", "hits": [], "total": 0}
+    with tenancy.bind(tenant):
+        hits = retrieval.retrieve(str(question), tenant=tenant, limit=resolved_limit)
+    return {
+        "ok": True,
+        "tenant": tenant,
+        "query": str(question),
+        "hits": hits,
+        "total": len(hits),
+        "documents": retrieval.list_documents(tenant),
+    }

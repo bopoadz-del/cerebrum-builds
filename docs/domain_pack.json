@@ -1,0 +1,494 @@
+{
+  "PILOT_READY": false,
+  "contract": "backend/app/factory/delivery_standard.py:DOMAIN_PACK_FIELDS",
+  "domain_id": "hospitality",
+  "field_count": 15,
+  "fields": {
+    "authoritative_calculations": {
+      "kernel": {
+        "action_ids": [
+          "product.create",
+          "product.update"
+        ],
+        "check_digit_claimed": false,
+        "closes": "F3",
+        "confirmation_required": false,
+        "contracts": [
+          "app.cerebrum_product_kernel.contract.runtime.execute_action",
+          "app.cerebrum_product_kernel.contract.schema_validation.validate"
+        ],
+        "entry": "app.cerebrum_product_kernel.contract.runtime.execute_action",
+        "input_schema": {
+          "properties": {
+            "vin": {
+              "description": "ISO 3779 VIN class; check-digit math is not claimed",
+              "maxLength": 17,
+              "minLength": 17,
+              "pattern": "^[A-HJ-NPR-Z0-9]{17}$",
+              "type": "string"
+            }
+          },
+          "required": [
+            "vin"
+          ],
+          "type": "object"
+        },
+        "outcomes": [
+          "missing_field_rejected"
+        ],
+        "permissions": [
+          "product.write"
+        ]
+      },
+      "value": [
+        "none claimed beyond persisted fields"
+      ]
+    },
+    "core_business_workflows": {
+      "kernel": {
+        "action_ids": [
+          "product.enqueue",
+          "product.process"
+        ],
+        "confirmation_required": false,
+        "contracts": [
+          "app.cerebrum_product_kernel.contract.runtime.execute_action"
+        ],
+        "entry": "app.cerebrum_product_kernel.contract.runtime.execute_action",
+        "outcomes": [
+          "queue_item_processed"
+        ],
+        "permissions": [
+          "product.write",
+          "product.process"
+        ]
+      },
+      "value": [
+        "one-record round-trip for record_guest_check_in",
+        "one-record round-trip for list_todays_check_ins"
+      ]
+    },
+    "data_sources": {
+      "kernel": {
+        "action_ids": [
+          "product.create"
+        ],
+        "confirmation_required": false,
+        "contracts": [
+          "app.factory.build.converge:app/connectors"
+        ],
+        "entry": "app.cerebrum_product_kernel.contract.runtime.execute_action",
+        "outcomes": [],
+        "permissions": [
+          "product.write"
+        ]
+      },
+      "value": [
+        "vendored Store blocks",
+        "local sqlite"
+      ]
+    },
+    "demo_data_requirements": {
+      "kernel": {
+        "action_ids": [
+          "product.create"
+        ],
+        "confirmation_required": false,
+        "contracts": [
+          "app.cerebrum_product_kernel.contract.models.ActionSpec.evaluation_fixtures"
+        ],
+        "entry": "app.cerebrum_product_kernel.contract.runtime.execute_action",
+        "outcomes": [],
+        "permissions": [
+          "product.write"
+        ]
+      },
+      "value": [
+        "one persisted record per capability"
+      ]
+    },
+    "domain_acceptance_conditions": {
+      "kernel": {
+        "action_ids": [
+          "product.create",
+          "product.read",
+          "product.update",
+          "product.delete",
+          "product.list",
+          "product.enqueue",
+          "product.process",
+          "product.refuse"
+        ],
+        "confirmation_required": false,
+        "contracts": [
+          "app.factory.build.domain_acceptance.perform_all",
+          "app.cerebrum_product_kernel.contract.runtime.execute_action"
+        ],
+        "entry": "app.cerebrum_product_kernel.contract.runtime.execute_action",
+        "outcomes": [
+          "create_persists",
+          "read_returns_persisted",
+          "update_persists",
+          "delete_persists",
+          "list_only_persisted",
+          "queue_item_processed",
+          "refused_action_errors",
+          "idempotent_duplicate_safe",
+          "unauthorized_rejected",
+          "missing_field_rejected"
+        ],
+        "permissions": [
+          "product.write",
+          "product.read",
+          "product.process"
+        ]
+      },
+      "value": [
+        "product boots",
+        "own gates green",
+        "one-record round-trip per capability",
+        "envelope vocab open|in_progress|closed enforced by schema, not prose"
+      ]
+    },
+    "domain_purpose": {
+      "kernel": {
+        "action_ids": [
+          "product.create",
+          "product.read",
+          "product.update",
+          "product.delete",
+          "product.list"
+        ],
+        "confirmation_required": false,
+        "contracts": [
+          "app.cerebrum_product_kernel.contract.runtime.execute_action"
+        ],
+        "entry": "app.cerebrum_product_kernel.contract.runtime.execute_action",
+        "outcomes": [
+          "create_persists",
+          "read_returns_persisted"
+        ],
+        "permissions": [
+          "product.write",
+          "product.read"
+        ]
+      },
+      "value": "A minimal front-desk logging tool for small hotels and guesthouses that lets staff record guest check-ins and view the current day's check-ins in a simple, focused interface."
+    },
+    "domain_rules": {
+      "kernel": {
+        "action_ids": [
+          "product.update"
+        ],
+        "confirmation_required": false,
+        "contracts": [
+          "app.cerebrum_product_kernel.contract.runtime.execute_action"
+        ],
+        "entry": "app.cerebrum_product_kernel.contract.runtime.execute_action",
+        "outcomes": [],
+        "permissions": [
+          "product.write"
+        ],
+        "status_machine": {
+          "closes": "F7",
+          "entity": "vehicle",
+          "field": "status",
+          "initial": "inbound",
+          "skip_is": "validation_error",
+          "states": [
+            "inbound",
+            "inspected",
+            "priced",
+            "listed",
+            "sold",
+            "delivered",
+            "unwound"
+          ],
+          "terminal": [
+            "delivered",
+            "unwound"
+          ],
+          "transitions": [
+            [
+              "inbound",
+              "inspected"
+            ],
+            [
+              "inspected",
+              "priced"
+            ],
+            [
+              "priced",
+              "listed"
+            ],
+            [
+              "listed",
+              "sold"
+            ],
+            [
+              "sold",
+              "delivered"
+            ],
+            [
+              "listed",
+              "unwound"
+            ],
+            [
+              "sold",
+              "unwound"
+            ]
+          ],
+          "via": "execute_action product.update"
+        }
+      },
+      "value": [
+        "status vocabulary is schema-enforced: open, in_progress, closed",
+        "reserved-keyword fields are refused"
+      ]
+    },
+    "high_impact_actions": {
+      "kernel": {
+        "action_ids": [
+          "product.update",
+          "product.process"
+        ],
+        "confirmation_required": true,
+        "contracts": [
+          "app.cerebrum_product_kernel.contract.models.ActionSpec"
+        ],
+        "entry": "app.cerebrum_product_kernel.contract.runtime.execute_action",
+        "outcomes": [],
+        "permissions": [
+          "product.write",
+          "product.process"
+        ],
+        "risk_classification": "high"
+      },
+      "value": [
+        "create",
+        "update",
+        "delete"
+      ]
+    },
+    "primary_users": {
+      "kernel": {
+        "action_ids": [
+          "product.read"
+        ],
+        "confirmation_required": false,
+        "contracts": [
+          "app.cerebrum_product_kernel.contract.models.ActionContext"
+        ],
+        "entry": "app.cerebrum_product_kernel.contract.runtime.execute_action",
+        "outcomes": [],
+        "permissions": [
+          "product.read"
+        ]
+      },
+      "value": [
+        "hospitality operators"
+      ]
+    },
+    "prohibited_autonomous_actions": {
+      "kernel": {
+        "action_ids": [
+          "product.refuse"
+        ],
+        "confirmation_required": false,
+        "contracts": [
+          "app.cerebrum_product_kernel.contract.runtime.execute_action"
+        ],
+        "entry": "app.cerebrum_product_kernel.contract.runtime.execute_action",
+        "outcomes": [
+          "refused_action_errors",
+          "unauthorized_rejected"
+        ],
+        "permissions": [
+          "product.write"
+        ],
+        "status": "permission_denied"
+      },
+      "value": [
+        "deploy",
+        "store publish",
+        "export when the pilot suite is red"
+      ]
+    },
+    "required_connectors": {
+      "kernel": {
+        "action_ids": [
+          "product.create"
+        ],
+        "confirmation_required": false,
+        "contracts": [
+          "app/connectors"
+        ],
+        "entry": "app.cerebrum_product_kernel.contract.runtime.execute_action",
+        "network": false,
+        "outcomes": [],
+        "permissions": [
+          "product.write"
+        ],
+        "posture": "P1"
+      },
+      "value": []
+    },
+    "required_exports": {
+      "kernel": {
+        "action_ids": [
+          "product.read",
+          "product.list"
+        ],
+        "confirmation_required": false,
+        "contracts": [
+          "app.cerebrum_product_kernel.contract.runtime.execute_action"
+        ],
+        "entry": "app.cerebrum_product_kernel.contract.runtime.execute_action",
+        "outcomes": [],
+        "permissions": [
+          "product.read"
+        ],
+        "read_only": true
+      },
+      "value": [
+        "pilot_candidate zip after PRODUCT+STORE green"
+      ]
+    },
+    "required_product_modules": {
+      "kernel": {
+        "action_ids": [
+          "product.create",
+          "product.read",
+          "product.update",
+          "product.delete",
+          "product.list"
+        ],
+        "capabilities": [
+          "analytics_surface",
+          "dashboard_surface"
+        ],
+        "confirmation_required": false,
+        "contracts": [
+          "app.factory.build.domain_acceptance.compact_specs",
+          "app.cerebrum_product_kernel.contract.runtime.execute_action"
+        ],
+        "entry": "app.cerebrum_product_kernel.contract.runtime.execute_action",
+        "outcomes": [],
+        "permissions": [
+          "product.write",
+          "product.read"
+        ]
+      },
+      "value": [
+        "record_guest_check_in",
+        "list_todays_check_ins"
+      ]
+    },
+    "required_roles": {
+      "kernel": {
+        "action_ids": [
+          "product.create",
+          "product.read",
+          "product.update",
+          "product.delete",
+          "product.list",
+          "product.enqueue",
+          "product.process"
+        ],
+        "confirmation_required": false,
+        "contracts": [
+          "app.cerebrum_product_kernel.contract.models.ActionSpec.permissions"
+        ],
+        "entry": "app.cerebrum_product_kernel.contract.runtime.execute_action",
+        "outcomes": [],
+        "permissions": [
+          "product.write",
+          "product.read",
+          "product.process"
+        ]
+      },
+      "value": [
+        "operator",
+        "admin"
+      ]
+    },
+    "security_regulatory_rules": {
+      "kernel": {
+        "action_ids": [
+          "product.read"
+        ],
+        "confirmation_required": false,
+        "contracts": [
+          "app.cerebrum_product_kernel.isolation",
+          "app.cerebrum_product_kernel.contract.models.RESERVED_CONTEXT_KEYS"
+        ],
+        "entry": "app.cerebrum_product_kernel.contract.runtime.execute_action",
+        "outcomes": [
+          "unauthorized_rejected"
+        ],
+        "permissions": [
+          "product.read"
+        ]
+      },
+      "value": [
+        "offline platform \u2014 no network, no HTTP store callbacks"
+      ]
+    }
+  },
+  "fields_order": [
+    "domain_purpose",
+    "primary_users",
+    "required_roles",
+    "required_product_modules",
+    "core_business_workflows",
+    "authoritative_calculations",
+    "domain_rules",
+    "high_impact_actions",
+    "prohibited_autonomous_actions",
+    "data_sources",
+    "required_connectors",
+    "required_exports",
+    "security_regulatory_rules",
+    "demo_data_requirements",
+    "domain_acceptance_conditions"
+  ],
+  "header": {
+    "domain": "Hospitality front-desk operations",
+    "mission": "A minimal front-desk logging tool for small hotels and guesthouses that lets staff record guest check-ins and view the current day's check-ins in a simple, focused interface.",
+    "platform_name": "Hotel Front Desk Log",
+    "product_type": "Front-desk check-in log",
+    "target_users": "Front-desk operators and hotel administrators"
+  },
+  "kernel_entry": "app.cerebrum_product_kernel.contract.runtime.execute_action",
+  "lotdesk": "fixture only; not patched",
+  "product_id": "hospitality",
+  "product_name": "Hotel Front Desk Log",
+  "schema_version": "domain_pack.v1",
+  "status_machine": {
+    "entity": "record_guest_check_in",
+    "field": "status",
+    "initial": "open",
+    "states": [
+      "open",
+      "in_progress",
+      "closed"
+    ],
+    "terminal": [
+      "closed"
+    ],
+    "transitions": [
+      [
+        "open",
+        "in_progress"
+      ],
+      [
+        "in_progress",
+        "closed"
+      ],
+      [
+        "open",
+        "closed"
+      ]
+    ]
+  }
+}

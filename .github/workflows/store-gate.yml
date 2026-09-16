@@ -12,12 +12,12 @@
 #   ui_served_200
 #   rag_roundtrip_hit
 #   single_persistence_root
-#   ci_present_full_suite
+#   ci_present_and_full_suite
 #   handler_bodies_distinct
 #   health_fail_closed
 #   openapi_committed
 #   docker_health_200
-#   authorship==receipt
+#   authorship_floor
 
 name: Store acceptance gate
 
@@ -47,8 +47,35 @@ jobs:
       - name: Run scripts/acceptance.py inside the image
         run: |
           set -euo pipefail
-          docker run --rm cerebrum-artifact:${{ github.sha }} \
-            python scripts/acceptance.py | tee acceptance.out
+          CONTAINER="cerebrum-gate-${{ github.sha }}"
+          # The image ENTRYPOINT boots the server (alembic + uvicorn); the
+          # acceptance script probes it over HTTP. Run detached, wait for
+          # /health, then exec the script - a foreground `docker run image
+          # python scripts/acceptance.py` passes the script as ARGS to the
+          # entrypoint, which ignores them: the script never runs and the
+          # step hangs until the workflow timeout.
+          docker run -d --name "$CONTAINER" \
+            -e PLATFORM_TOKEN=dev-local-token \
+            -e STORAGE_PATH=/app/storage \
+            -v storegate-storage-${{ github.sha }}:/app/storage \
+            cerebrum-artifact:${{ github.sha }}
+          trap 'docker rm -f "$CONTAINER" >/dev/null 2>&1 || true' EXIT
+          healthy=0
+          for i in $(seq 1 60); do
+            if docker exec "$CONTAINER" python3 -c "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health', timeout=2)" >/dev/null 2>&1; then
+              healthy=1
+              break
+            fi
+            sleep 2
+          done
+          if [ "$healthy" != "1" ]; then
+            echo "service never became healthy inside the container"
+            docker logs "$CONTAINER" || true
+            exit 1
+          fi
+          docker exec -e PLATFORM_TOKEN=dev-local-token \
+            -e STORE_DOCKER_HEALTH=200 "$CONTAINER" \
+            python3 scripts/acceptance.py | tee acceptance.out
 
       - name: Parse k/12 and write result
         run: |
@@ -66,12 +93,12 @@ jobs:
               "ui_served_200",
               "rag_roundtrip_hit",
               "single_persistence_root",
-              "ci_present_full_suite",
+              "ci_present_and_full_suite",
               "handler_bodies_distinct",
               "health_fail_closed",
               "openapi_committed",
               "docker_health_200",
-              "authorship==receipt",
+              "authorship_floor",
           )
           LINE = re.compile(
               r"^(PASS|FAIL|SKIP)\s+(\S+)\s*(?:—|-|:)?\s*(.*)$",

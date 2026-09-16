@@ -1,0 +1,101 @@
+schema_version: product_blueprint.v1
+product_id: veterinary-clinic
+product_name: VetClinicOS
+vertical: veterinary_clinic
+summary: 'VetClinicOS is an integrated practice management platform for veterinary
+  clinics, serving vets, receptionists, and admins. It centralizes patient (animal)
+  records, appointment scheduling, treatment documentation, billing and invoicing,
+  and supply inventory, while maintaining a complete, tamper-evident audit trail for
+  regulatory compliance and operational accountability. The platform streamlines daily
+  clinical and front-desk workflows, reducing administrative overhead and improving
+  continuity of '
+capabilities:
+- id: patient_records
+  description: Manage comprehensive patient (animal) records including owner details,
+    medical history, vaccinations, allergies, and clinical notes, accessible to authorized
+    staff.
+  block_ids:
+  - database
+  - storage
+  - knowledge
+  - memory
+  strategy_hint: REUSE
+  required: true
+- id: appointment_scheduling
+  description: Schedule, reschedule, and track appointments across veterinarians,
+    with calendar views, reminders, and status updates for receptionists and vets.
+  block_ids:
+  - workflow
+  - queue
+  - notification
+  - team
+  strategy_hint: REUSE
+  required: true
+- id: treatment_management
+  description: Document and manage treatments, prescriptions, procedures, and clinical
+    observations, linking them to patient records and notifying relevant staff.
+  block_ids:
+  - workflow
+  - document_engine
+  - capture
+  - notification
+  strategy_hint: REUSE
+  required: true
+- id: billing_invoicing
+  description: Generate invoices from treatments and services, calculate totals with
+    formulas, process payments, and produce billing statements for clients.
+  block_ids:
+  - formula_executor
+  - document_engine
+  - database
+  - notification
+  strategy_hint: REUSE
+  required: true
+- id: inventory_management
+  description: Track medical supplies, medications, and retail inventory with stock
+    levels, reorder alerts, and usage tracking tied to treatments.
+  block_ids:
+  - database
+  - readiness_engine
+  - notification
+  - analytics
+  strategy_hint: REUSE
+  required: true
+- id: audit_trail
+  description: Maintain an immutable, searchable log of all system activities including
+    record access, modifications, and financial transactions for compliance and security.
+  block_ids:
+  - audit
+  - file_hasher
+  - evidence_verifier
+  - event_bus
+  strategy_hint: REUSE
+  required: true
+- id: role_management
+  description: Define and enforce role-based access controls for vets, receptionists,
+    and admins, ensuring data privacy and operational boundaries.
+  block_ids:
+  - team
+  - validation
+  - knowledge
+  strategy_hint: REUSE
+  required: true
+- id: clinic_analytics
+  description: Provide dashboards and reports on clinic performance, patient outcomes,
+    revenue, and inventory trends to support decision-making.
+  block_ids:
+  - dashboard
+  - analytics
+  - portfolio_rollup
+  strategy_hint: REUSE
+  required: true
+ui_modules:
+- command_center
+- operational_chat
+- resident_engineer
+connectors: []
+edge_profile: standard
+human_authority: true
+factory_scenario: CREATE_PRODUCT
+drafting_mode: architect_llm
+drafting_note: null

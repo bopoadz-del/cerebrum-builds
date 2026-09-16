@@ -1,0 +1,14 @@
+{
+  "blocks_commit": "bootstrap",
+  "connectors": [],
+  "factory_commit": "bootstrap",
+  "factory_scenario": "CREATE_PRODUCT",
+  "product_dna_version": "1.0.0",
+  "product_id": "veterinary-clinic",
+  "schema_version": "1.0.0",
+  "ui_modules": [
+    "command_center",
+    "operational_chat",
+    "resident_engineer"
+  ]
+}

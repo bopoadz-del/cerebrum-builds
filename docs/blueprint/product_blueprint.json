@@ -2,55 +2,84 @@
   "capabilities": [
     {
       "block_ids": [
-        "workflow",
         "database",
-        "validation",
-        "event_bus",
-        "queue",
-        "audit"
+        "storage",
+        "knowledge",
+        "memory"
       ],
-      "description": "Handles the full reservation lifecycle including availability checks, real-time booking, modifications, cancellations, and stay records across all channels.",
-      "id": "booking_management",
+      "description": "Manage comprehensive patient (animal) records including owner details, medical history, vaccinations, allergies, and clinical notes, accessible to authorized staff.",
+      "id": "patient_records",
       "required": true,
       "strategy_hint": "REUSE"
     },
     {
       "block_ids": [
-        "estate_registry",
-        "estate_maintenance",
-        "database",
-        "team",
         "workflow",
-        "audit"
+        "queue",
+        "notification",
+        "team"
       ],
-      "description": "Manages rooms, rate plans, seasonal inventory, and property configuration for one or many hotel properties.",
-      "id": "property_management",
+      "description": "Schedule, reschedule, and track appointments across veterinarians, with calendar views, reminders, and status updates for receptionists and vets.",
+      "id": "appointment_scheduling",
+      "required": true,
+      "strategy_hint": "REUSE"
+    },
+    {
+      "block_ids": [
+        "workflow",
+        "document_engine",
+        "capture",
+        "notification"
+      ],
+      "description": "Document and manage treatments, prescriptions, procedures, and clinical observations, linking them to patient records and notifying relevant staff.",
+      "id": "treatment_management",
       "required": true,
       "strategy_hint": "REUSE"
     },
     {
       "block_ids": [
         "formula_executor",
-        "readiness_engine",
-        "recommendation_template",
-        "analytics",
-        "database"
+        "document_engine",
+        "database",
+        "notification"
       ],
-      "description": "Calculates and adjusts room rates in real time based on demand, occupancy, seasonality, competitor signals, and configurable pricing rules.",
-      "id": "dynamic_pricing",
+      "description": "Generate invoices from treatments and services, calculate totals with formulas, process payments, and produce billing statements for clients.",
+      "id": "billing_invoicing",
       "required": true,
       "strategy_hint": "REUSE"
     },
     {
       "block_ids": [
-        "capture",
-        "knowledge",
-        "vector_search",
-        "analytics",
-        "notification"
+        "database",
+        "readiness_engine",
+        "notification",
+        "analytics"
       ],
-      "description": "Collects, moderates, and responds to guest reviews; analyzes sentiment and surfaces reputation trends for each property.",
-      "id": "review_management",
+      "description": "Track medical supplies, medications, and retail inventory with stock levels, reorder alerts, and usage tracking tied to treatments.",
+      "id": "inventory_management",
+      "required": true,
+      "strategy_hint": "REUSE"
+    },
+    {
+      "block_ids": [
+        "audit",
+        "file_hasher",
+        "evidence_verifier",
+        "event_bus"
+      ],
+      "description": "Maintain an immutable, searchable log of all system activities including record access, modifications, and financial transactions for compliance and security.",
+      "id": "audit_trail",
+      "required": true,
+      "strategy_hint": "REUSE"
+    },
+    {
+      "block_ids": [
+        "team",
+        "validation",
+        "knowledge"
+      ],
+      "description": "Define and enforce role-based access controls for vets, receptionists, and admins, ensuring data privacy and operational boundaries.",
+      "id": "role_management",
       "required": true,
       "strategy_hint": "REUSE"
     },
@@ -58,36 +87,10 @@
       "block_ids": [
         "dashboard",
         "analytics",
-        "portfolio_rollup",
-        "database"
+        "portfolio_rollup"
       ],
-      "description": "Provides operational dashboards and reports covering occupancy, revenue, booking pace, channel performance, and guest satisfaction.",
-      "id": "analytics_dashboard",
-      "required": true,
-      "strategy_hint": "REUSE"
-    },
-    {
-      "block_ids": [
-        "notification",
-        "event_bus",
-        "queue",
-        "workflow"
-      ],
-      "description": "Sends timely booking confirmations, reminders, pricing alerts, and internal staff notifications via email, SMS, and in-app channels.",
-      "id": "notification_system",
-      "required": true,
-      "strategy_hint": "REUSE"
-    },
-    {
-      "block_ids": [
-        "vector_search",
-        "knowledge",
-        "recommendation_template",
-        "memory",
-        "analytics"
-      ],
-      "description": "Enables guests to search properties and rooms with filters, and recommends personalized stays, packages, and upsells based on preferences and history.",
-      "id": "search_recommendation",
+      "description": "Provide dashboards and reports on clinic performance, patient outcomes, revenue, and inventory trends to support decision-making.",
+      "id": "clinic_analytics",
       "required": true,
       "strategy_hint": "REUSE"
     }
@@ -98,15 +101,15 @@
   "edge_profile": "standard",
   "factory_scenario": "CREATE_PRODUCT",
   "human_authority": true,
-  "n_required": 7,
-  "product_id": "hospitality",
-  "product_name": "StayFlow Hospitality Platform",
+  "n_required": 8,
+  "product_id": "veterinary-clinic",
+  "product_name": "VetClinicOS",
   "schema_version": "product_blueprint.v1",
-  "summary": "StayFlow is an all-in-one hotel booking and property management platform for independent hotels, boutique inns, and small hotel groups. It unifies real-time reservation management, room inventory and rate control, dynamic pricing, guest reviews, and operational analytics, while keeping staff and guests informed with automated notifications and AI-assisted search and recommendations.",
+  "summary": "VetClinicOS is an integrated practice management platform for veterinary clinics, serving vets, receptionists, and admins. It centralizes patient (animal) records, appointment scheduling, treatment documentation, billing and invoicing, and supply inventory, while maintaining a complete, tamper-evident audit trail for regulatory compliance and operational accountability. The platform streamlines daily clinical and front-desk workflows, reducing administrative overhead and improving continuity of ",
   "ui_modules": [
     "command_center",
     "operational_chat",
     "resident_engineer"
   ],
-  "vertical": "hospitality"
+  "vertical": "veterinary_clinic"
 }

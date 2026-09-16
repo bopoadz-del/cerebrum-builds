@@ -1,0 +1,48 @@
+{
+  "activation": {
+    "default_enabled": true,
+    "mode": "hybrid",
+    "put_off_by": [
+      "disable:veterinary_clinic.hat.role_management"
+    ],
+    "triggers": [
+      {
+        "type": "intent",
+        "value": "role_management"
+      },
+      {
+        "type": "capability",
+        "value": "role_management"
+      }
+    ]
+  },
+  "agent_id": "veterinary_clinic.hat.role_management",
+  "allowed_actions": [
+    "veterinary_clinic.role_management"
+  ],
+  "block_ids": [
+    "team",
+    "validation",
+    "knowledge"
+  ],
+  "discipline": "role_management",
+  "display_name": "VetClinicOS Role Management Hat",
+  "extends": "veterinary_clinic.base",
+  "handoffs": [],
+  "human_authority": true,
+  "kind": "hat",
+  "manifest_version": "1.0.0",
+  "memory": {
+    "pii_policy": "never_store_pii",
+    "save": [],
+    "scope": "tenant_project"
+  },
+  "strategy": "REUSE",
+  "summary": "Specialized hat for capability 'role_management' (strategy=REUSE). Adapted from TEKsystems retail hat pattern; estate/product-neutral.",
+  "tags": [
+    "hat",
+    "factory-generated",
+    "veterinary_clinic",
+    "role_management"
+  ]
+}

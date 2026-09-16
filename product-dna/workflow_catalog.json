@@ -1,0 +1,44 @@
+{
+  "schema_version": "1.0.0",
+  "workflows": [
+    {
+      "description": "Default linear workflow over planned capabilities.",
+      "name": "Capability sequence",
+      "steps": [
+        {
+          "capability_id": "patient_records",
+          "role": "execute"
+        },
+        {
+          "capability_id": "appointment_scheduling",
+          "role": "execute"
+        },
+        {
+          "capability_id": "treatment_management",
+          "role": "execute"
+        },
+        {
+          "capability_id": "billing_invoicing",
+          "role": "execute"
+        },
+        {
+          "capability_id": "inventory_management",
+          "role": "execute"
+        },
+        {
+          "capability_id": "audit_trail",
+          "role": "execute"
+        },
+        {
+          "capability_id": "role_management",
+          "role": "execute"
+        },
+        {
+          "capability_id": "clinic_analytics",
+          "role": "execute"
+        }
+      ],
+      "workflow_id": "veterinary_clinic.capability_sequence"
+    }
+  ]
+}

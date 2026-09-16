@@ -1,0 +1,48 @@
+{
+  "activation": {
+    "default_enabled": true,
+    "mode": "hybrid",
+    "put_off_by": [
+      "disable:veterinary_clinic.hat.clinic_analytics"
+    ],
+    "triggers": [
+      {
+        "type": "intent",
+        "value": "clinic_analytics"
+      },
+      {
+        "type": "capability",
+        "value": "clinic_analytics"
+      }
+    ]
+  },
+  "agent_id": "veterinary_clinic.hat.clinic_analytics",
+  "allowed_actions": [
+    "veterinary_clinic.clinic_analytics"
+  ],
+  "block_ids": [
+    "dashboard",
+    "analytics",
+    "portfolio_rollup"
+  ],
+  "discipline": "clinic_analytics",
+  "display_name": "VetClinicOS Clinic Analytics Hat",
+  "extends": "veterinary_clinic.base",
+  "handoffs": [],
+  "human_authority": true,
+  "kind": "hat",
+  "manifest_version": "1.0.0",
+  "memory": {
+    "pii_policy": "never_store_pii",
+    "save": [],
+    "scope": "tenant_project"
+  },
+  "strategy": "REUSE",
+  "summary": "Specialized hat for capability 'clinic_analytics' (strategy=REUSE). Adapted from TEKsystems retail hat pattern; estate/product-neutral.",
+  "tags": [
+    "hat",
+    "factory-generated",
+    "veterinary_clinic",
+    "clinic_analytics"
+  ]
+}

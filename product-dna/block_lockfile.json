@@ -1,0 +1,87 @@
+{
+  "blocks_commit": "bootstrap",
+  "factory_commit": "bootstrap",
+  "pins": [
+    {
+      "block_id": "analytics",
+      "source": "dual_registry"
+    },
+    {
+      "block_id": "audit",
+      "source": "dual_registry"
+    },
+    {
+      "block_id": "capture",
+      "source": "dual_registry"
+    },
+    {
+      "block_id": "dashboard",
+      "source": "dual_registry"
+    },
+    {
+      "block_id": "database",
+      "source": "dual_registry"
+    },
+    {
+      "block_id": "document_engine",
+      "source": "dual_registry"
+    },
+    {
+      "block_id": "event_bus",
+      "source": "dual_registry"
+    },
+    {
+      "block_id": "evidence_verifier",
+      "source": "dual_registry"
+    },
+    {
+      "block_id": "file_hasher",
+      "source": "dual_registry"
+    },
+    {
+      "block_id": "formula_executor",
+      "source": "dual_registry"
+    },
+    {
+      "block_id": "knowledge",
+      "source": "dual_registry"
+    },
+    {
+      "block_id": "memory",
+      "source": "dual_registry"
+    },
+    {
+      "block_id": "notification",
+      "source": "dual_registry"
+    },
+    {
+      "block_id": "portfolio_rollup",
+      "source": "dual_registry"
+    },
+    {
+      "block_id": "queue",
+      "source": "dual_registry"
+    },
+    {
+      "block_id": "readiness_engine",
+      "source": "dual_registry"
+    },
+    {
+      "block_id": "storage",
+      "source": "dual_registry"
+    },
+    {
+      "block_id": "team",
+      "source": "dual_registry"
+    },
+    {
+      "block_id": "validation",
+      "source": "dual_registry"
+    },
+    {
+      "block_id": "workflow",
+      "source": "dual_registry"
+    }
+  ],
+  "schema_version": "1.0.0"
+}

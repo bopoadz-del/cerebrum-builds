@@ -1,0 +1,92 @@
+{
+  "capabilities": [
+    {
+      "block_ids": [
+        "database",
+        "storage",
+        "knowledge",
+        "memory"
+      ],
+      "capability_id": "patient_records",
+      "strategy": "REUSE"
+    },
+    {
+      "block_ids": [
+        "workflow",
+        "queue",
+        "notification",
+        "team"
+      ],
+      "capability_id": "appointment_scheduling",
+      "strategy": "REUSE"
+    },
+    {
+      "block_ids": [
+        "workflow",
+        "document_engine",
+        "capture",
+        "notification"
+      ],
+      "capability_id": "treatment_management",
+      "strategy": "REUSE"
+    },
+    {
+      "block_ids": [
+        "formula_executor",
+        "document_engine",
+        "database",
+        "notification"
+      ],
+      "capability_id": "billing_invoicing",
+      "strategy": "REUSE"
+    },
+    {
+      "block_ids": [
+        "database",
+        "readiness_engine",
+        "notification",
+        "analytics"
+      ],
+      "capability_id": "inventory_management",
+      "strategy": "REUSE"
+    },
+    {
+      "block_ids": [
+        "audit",
+        "file_hasher",
+        "evidence_verifier",
+        "event_bus"
+      ],
+      "capability_id": "audit_trail",
+      "strategy": "REUSE"
+    },
+    {
+      "block_ids": [
+        "team",
+        "validation",
+        "knowledge"
+      ],
+      "capability_id": "role_management",
+      "strategy": "REUSE"
+    },
+    {
+      "block_ids": [
+        "dashboard",
+        "analytics",
+        "portfolio_rollup"
+      ],
+      "capability_id": "clinic_analytics",
+      "strategy": "REUSE"
+    }
+  ],
+  "connectors": [],
+  "layers": [],
+  "product_id": "veterinary-clinic",
+  "schema_version": "1.0.0",
+  "ui_modules": [
+    "command_center",
+    "operational_chat",
+    "resident_engineer"
+  ],
+  "vertical": "veterinary_clinic"
+}

@@ -1,0 +1,175 @@
+{
+  "capabilities": [
+    {
+      "block_ids": [
+        "database",
+        "storage",
+        "knowledge",
+        "memory"
+      ],
+      "customer_words": "Manage comprehensive patient (animal) records including owner details, medical history, vaccinations, allergies, and clinical notes, accessible to authorized staff.",
+      "id": "patient_records",
+      "source_text": "VetClinicOS is an integrated practice management platform for veterinary clinics, serving vets, receptionists, and admins. It centralizes patient (animal) records, appointment scheduling, treatment documentation, billing and invoicing, and supply inventory, while maintaining a complete, tamper-evident audit trail for regulatory compliance and operational accountability. The platform streamlines da",
+      "source_turn": 0,
+      "strategy": "REUSE"
+    },
+    {
+      "block_ids": [
+        "workflow",
+        "queue",
+        "notification",
+        "team"
+      ],
+      "customer_words": "Schedule, reschedule, and track appointments across veterinarians, with calendar views, reminders, and status updates for receptionists and vets.",
+      "id": "appointment_scheduling",
+      "source_text": "VetClinicOS is an integrated practice management platform for veterinary clinics, serving vets, receptionists, and admins. It centralizes patient (animal) records, appointment scheduling, treatment documentation, billing and invoicing, and supply inventory, while maintaining a complete, tamper-evident audit trail for regulatory compliance and operational accountability. The platform streamlines da",
+      "source_turn": 0,
+      "strategy": "REUSE"
+    },
+    {
+      "block_ids": [
+        "workflow",
+        "document_engine",
+        "capture",
+        "notification"
+      ],
+      "customer_words": "Document and manage treatments, prescriptions, procedures, and clinical observations, linking them to patient records and notifying relevant staff.",
+      "id": "treatment_management",
+      "source_text": "VetClinicOS is an integrated practice management platform for veterinary clinics, serving vets, receptionists, and admins. It centralizes patient (animal) records, appointment scheduling, treatment documentation, billing and invoicing, and supply inventory, while maintaining a complete, tamper-evident audit trail for regulatory compliance and operational accountability. The platform streamlines da",
+      "source_turn": 0,
+      "strategy": "REUSE"
+    },
+    {
+      "block_ids": [
+        "formula_executor",
+        "document_engine",
+        "database",
+        "notification"
+      ],
+      "customer_words": "Generate invoices from treatments and services, calculate totals with formulas, process payments, and produce billing statements for clients.",
+      "id": "billing_invoicing",
+      "source_text": "VetClinicOS is an integrated practice management platform for veterinary clinics, serving vets, receptionists, and admins. It centralizes patient (animal) records, appointment scheduling, treatment documentation, billing and invoicing, and supply inventory, while maintaining a complete, tamper-evident audit trail for regulatory compliance and operational accountability. The platform streamlines da",
+      "source_turn": 0,
+      "strategy": "REUSE"
+    },
+    {
+      "block_ids": [
+        "database",
+        "readiness_engine",
+        "notification",
+        "analytics"
+      ],
+      "customer_words": "Track medical supplies, medications, and retail inventory with stock levels, reorder alerts, and usage tracking tied to treatments.",
+      "id": "inventory_management",
+      "source_text": "VetClinicOS is an integrated practice management platform for veterinary clinics, serving vets, receptionists, and admins. It centralizes patient (animal) records, appointment scheduling, treatment documentation, billing and invoicing, and supply inventory, while maintaining a complete, tamper-evident audit trail for regulatory compliance and operational accountability. The platform streamlines da",
+      "source_turn": 0,
+      "strategy": "REUSE"
+    },
+    {
+      "block_ids": [
+        "audit",
+        "file_hasher",
+        "evidence_verifier",
+        "event_bus"
+      ],
+      "customer_words": "Maintain an immutable, searchable log of all system activities including record access, modifications, and financial transactions for compliance and security.",
+      "id": "audit_trail",
+      "source_text": "VetClinicOS is an integrated practice management platform for veterinary clinics, serving vets, receptionists, and admins. It centralizes patient (animal) records, appointment scheduling, treatment documentation, billing and invoicing, and supply inventory, while maintaining a complete, tamper-evident audit trail for regulatory compliance and operational accountability. The platform streamlines da",
+      "source_turn": 0,
+      "strategy": "REUSE"
+    },
+    {
+      "block_ids": [
+        "team",
+        "validation",
+        "knowledge"
+      ],
+      "customer_words": "Define and enforce role-based access controls for vets, receptionists, and admins, ensuring data privacy and operational boundaries.",
+      "id": "role_management",
+      "source_text": "VetClinicOS is an integrated practice management platform for veterinary clinics, serving vets, receptionists, and admins. It centralizes patient (animal) records, appointment scheduling, treatment documentation, billing and invoicing, and supply inventory, while maintaining a complete, tamper-evident audit trail for regulatory compliance and operational accountability. The platform streamlines da",
+      "source_turn": 0,
+      "strategy": "REUSE"
+    },
+    {
+      "block_ids": [
+        "dashboard",
+        "analytics",
+        "portfolio_rollup"
+      ],
+      "customer_words": "Provide dashboards and reports on clinic performance, patient outcomes, revenue, and inventory trends to support decision-making.",
+      "id": "clinic_analytics",
+      "source_text": "VetClinicOS is an integrated practice management platform for veterinary clinics, serving vets, receptionists, and admins. It centralizes patient (animal) records, appointment scheduling, treatment documentation, billing and invoicing, and supply inventory, while maintaining a complete, tamper-evident audit trail for regulatory compliance and operational accountability. The platform streamlines da",
+      "source_turn": 0,
+      "strategy": "REUSE"
+    }
+  ],
+  "constraints": {
+    "source_text": "VetClinicOS is an integrated practice management platform for veterinary clinics, serving vets, receptionists, and admins. It centralizes patient (animal) records, appointment scheduling, treatment documentation, billing and invoicing, and supply inventory, while maintaining a complete, tamper-evident audit trail for regulatory compliance and operational accountability. The platform streamlines da",
+    "source_turn": 0,
+    "value": [
+      "status vocabulary is schema-enforced: open, in_progress, closed",
+      "reserved-keyword fields are refused"
+    ]
+  },
+  "data_sources": {
+    "source_text": "VetClinicOS is an integrated practice management platform for veterinary clinics, serving vets, receptionists, and admins. It centralizes patient (animal) records, appointment scheduling, treatment documentation, billing and invoicing, and supply inventory, while maintaining a complete, tamper-evident audit trail for regulatory compliance and operational accountability. The platform streamlines da",
+    "source_turn": 0,
+    "value": [
+      "vendored Store blocks",
+      "local sqlite"
+    ]
+  },
+  "done_when": {
+    "source_text": "VetClinicOS is an integrated practice management platform for veterinary clinics, serving vets, receptionists, and admins. It centralizes patient (animal) records, appointment scheduling, treatment documentation, billing and invoicing, and supply inventory, while maintaining a complete, tamper-evident audit trail for regulatory compliance and operational accountability. The platform streamlines da",
+    "source_turn": 0,
+    "value": [
+      "product boots",
+      "own gates green",
+      "one-record round-trip per capability",
+      "envelope vocab open|in_progress|closed enforced by schema, not prose"
+    ]
+  },
+  "integrations": {
+    "source_text": "VetClinicOS is an integrated practice management platform for veterinary clinics, serving vets, receptionists, and admins. It centralizes patient (animal) records, appointment scheduling, treatment documentation, billing and invoicing, and supply inventory, while maintaining a complete, tamper-evident audit trail for regulatory compliance and operational accountability. The platform streamlines da",
+    "source_turn": 0,
+    "value": [
+      "none claimed"
+    ]
+  },
+  "product_id": {
+    "source_text": "VetClinicOS is an integrated practice management platform for veterinary clinics, serving vets, receptionists, and admins. It centralizes patient (animal) records, appointment scheduling, treatment documentation, billing and invoicing, and supply inventory, while maintaining a complete, tamper-evident audit trail for regulatory compliance and operational accountability. The platform streamlines da",
+    "source_turn": 0,
+    "value": "veterinary-clinic"
+  },
+  "product_name": {
+    "source_text": "VetClinicOS is an integrated practice management platform for veterinary clinics, serving vets, receptionists, and admins. It centralizes patient (animal) records, appointment scheduling, treatment documentation, billing and invoicing, and supply inventory, while maintaining a complete, tamper-evident audit trail for regulatory compliance and operational accountability. The platform streamlines da",
+    "source_turn": 0,
+    "value": "VetClinicOS"
+  },
+  "roles": {
+    "source_text": "VetClinicOS is an integrated practice management platform for veterinary clinics, serving vets, receptionists, and admins. It centralizes patient (animal) records, appointment scheduling, treatment documentation, billing and invoicing, and supply inventory, while maintaining a complete, tamper-evident audit trail for regulatory compliance and operational accountability. The platform streamlines da",
+    "source_turn": 0,
+    "value": [
+      "operator",
+      "admin"
+    ]
+  },
+  "schema_version": "intake_blueprint.v1",
+  "summary": {
+    "source_text": "VetClinicOS is an integrated practice management platform for veterinary clinics, serving vets, receptionists, and admins. It centralizes patient (animal) records, appointment scheduling, treatment documentation, billing and invoicing, and supply inventory, while maintaining a complete, tamper-evident audit trail for regulatory compliance and operational accountability. The platform streamlines da",
+    "source_turn": 0,
+    "value": "VetClinicOS is an integrated practice management platform for veterinary clinics, serving vets, receptionists, and admins. It centralizes patient (animal) records, appointment scheduling, treatment documentation, billing and invoicing, and supply inventory, while maintaining a complete, tamper-evident audit trail for regulatory compliance and operational accountability. The platform streamlines daily clinical and front-desk workflows, reducing administrative overhead and improving continuity of "
+  },
+  "users": {
+    "source_text": "VetClinicOS is an integrated practice management platform for veterinary clinics, serving vets, receptionists, and admins. It centralizes patient (animal) records, appointment scheduling, treatment documentation, billing and invoicing, and supply inventory, while maintaining a complete, tamper-evident audit trail for regulatory compliance and operational accountability. The platform streamlines da",
+    "source_turn": 0,
+    "value": [
+      "veterinary clinic operators"
+    ]
+  },
+  "vertical": {
+    "source_text": "VetClinicOS is an integrated practice management platform for veterinary clinics, serving vets, receptionists, and admins. It centralizes patient (animal) records, appointment scheduling, treatment documentation, billing and invoicing, and supply inventory, while maintaining a complete, tamper-evident audit trail for regulatory compliance and operational accountability. The platform streamlines da",
+    "source_turn": 0,
+    "value": "veterinary_clinic"
+  }
+}

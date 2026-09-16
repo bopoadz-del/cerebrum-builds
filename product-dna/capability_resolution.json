@@ -1,0 +1,115 @@
+{
+  "capabilities": [
+    {
+      "block_ids": [
+        "database",
+        "storage",
+        "knowledge",
+        "memory"
+      ],
+      "capability_id": "patient_records",
+      "notes": "dual-registered",
+      "strategy": "REUSE"
+    },
+    {
+      "block_ids": [
+        "workflow",
+        "queue",
+        "notification",
+        "team"
+      ],
+      "capability_id": "appointment_scheduling",
+      "notes": "dual-registered",
+      "strategy": "REUSE"
+    },
+    {
+      "block_ids": [
+        "workflow",
+        "document_engine",
+        "capture",
+        "notification"
+      ],
+      "capability_id": "treatment_management",
+      "notes": "dual-registered",
+      "strategy": "REUSE"
+    },
+    {
+      "block_ids": [
+        "formula_executor",
+        "document_engine",
+        "database",
+        "notification"
+      ],
+      "capability_id": "billing_invoicing",
+      "notes": "dual-registered",
+      "strategy": "REUSE"
+    },
+    {
+      "block_ids": [
+        "database",
+        "readiness_engine",
+        "notification",
+        "analytics"
+      ],
+      "capability_id": "inventory_management",
+      "notes": "dual-registered",
+      "strategy": "REUSE"
+    },
+    {
+      "block_ids": [
+        "audit",
+        "file_hasher",
+        "evidence_verifier",
+        "event_bus"
+      ],
+      "capability_id": "audit_trail",
+      "notes": "dual-registered",
+      "strategy": "REUSE"
+    },
+    {
+      "block_ids": [
+        "team",
+        "validation",
+        "knowledge"
+      ],
+      "capability_id": "role_management",
+      "notes": "dual-registered",
+      "strategy": "REUSE"
+    },
+    {
+      "block_ids": [
+        "dashboard",
+        "analytics",
+        "portfolio_rollup"
+      ],
+      "capability_id": "clinic_analytics",
+      "notes": "dual-registered",
+      "strategy": "REUSE"
+    }
+  ],
+  "dual_registered_blocks": [
+    "analytics",
+    "audit",
+    "capture",
+    "dashboard",
+    "database",
+    "document_engine",
+    "event_bus",
+    "evidence_verifier",
+    "file_hasher",
+    "formula_executor",
+    "knowledge",
+    "memory",
+    "notification",
+    "portfolio_rollup",
+    "queue",
+    "readiness_engine",
+    "storage",
+    "team",
+    "validation",
+    "workflow"
+  ],
+  "notes": [],
+  "schema_version": "1.0.0",
+  "unsupported": []
+}

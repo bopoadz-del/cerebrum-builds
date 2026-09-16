@@ -1,0 +1,49 @@
+{
+  "activation": {
+    "default_enabled": true,
+    "mode": "hybrid",
+    "put_off_by": [
+      "disable:veterinary_clinic.hat.patient_records"
+    ],
+    "triggers": [
+      {
+        "type": "intent",
+        "value": "patient_records"
+      },
+      {
+        "type": "capability",
+        "value": "patient_records"
+      }
+    ]
+  },
+  "agent_id": "veterinary_clinic.hat.patient_records",
+  "allowed_actions": [
+    "veterinary_clinic.patient_records"
+  ],
+  "block_ids": [
+    "database",
+    "storage",
+    "knowledge",
+    "memory"
+  ],
+  "discipline": "patient_records",
+  "display_name": "VetClinicOS Patient Records Hat",
+  "extends": "veterinary_clinic.base",
+  "handoffs": [],
+  "human_authority": true,
+  "kind": "hat",
+  "manifest_version": "1.0.0",
+  "memory": {
+    "pii_policy": "never_store_pii",
+    "save": [],
+    "scope": "tenant_project"
+  },
+  "strategy": "REUSE",
+  "summary": "Specialized hat for capability 'patient_records' (strategy=REUSE). Adapted from TEKsystems retail hat pattern; estate/product-neutral.",
+  "tags": [
+    "hat",
+    "factory-generated",
+    "veterinary_clinic",
+    "patient_records"
+  ]
+}

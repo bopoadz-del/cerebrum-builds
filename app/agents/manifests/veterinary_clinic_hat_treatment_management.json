@@ -1,0 +1,49 @@
+{
+  "activation": {
+    "default_enabled": true,
+    "mode": "hybrid",
+    "put_off_by": [
+      "disable:veterinary_clinic.hat.treatment_management"
+    ],
+    "triggers": [
+      {
+        "type": "intent",
+        "value": "treatment_management"
+      },
+      {
+        "type": "capability",
+        "value": "treatment_management"
+      }
+    ]
+  },
+  "agent_id": "veterinary_clinic.hat.treatment_management",
+  "allowed_actions": [
+    "veterinary_clinic.treatment_management"
+  ],
+  "block_ids": [
+    "workflow",
+    "document_engine",
+    "capture",
+    "notification"
+  ],
+  "discipline": "treatment_management",
+  "display_name": "VetClinicOS Treatment Management Hat",
+  "extends": "veterinary_clinic.base",
+  "handoffs": [],
+  "human_authority": true,
+  "kind": "hat",
+  "manifest_version": "1.0.0",
+  "memory": {
+    "pii_policy": "never_store_pii",
+    "save": [],
+    "scope": "tenant_project"
+  },
+  "strategy": "REUSE",
+  "summary": "Specialized hat for capability 'treatment_management' (strategy=REUSE). Adapted from TEKsystems retail hat pattern; estate/product-neutral.",
+  "tags": [
+    "hat",
+    "factory-generated",
+    "veterinary_clinic",
+    "treatment_management"
+  ]
+}

@@ -1,0 +1,49 @@
+{
+  "activation": {
+    "default_enabled": true,
+    "mode": "hybrid",
+    "put_off_by": [
+      "disable:veterinary_clinic.hat.inventory_management"
+    ],
+    "triggers": [
+      {
+        "type": "intent",
+        "value": "inventory_management"
+      },
+      {
+        "type": "capability",
+        "value": "inventory_management"
+      }
+    ]
+  },
+  "agent_id": "veterinary_clinic.hat.inventory_management",
+  "allowed_actions": [
+    "veterinary_clinic.inventory_management"
+  ],
+  "block_ids": [
+    "database",
+    "readiness_engine",
+    "notification",
+    "analytics"
+  ],
+  "discipline": "inventory_management",
+  "display_name": "VetClinicOS Inventory Management Hat",
+  "extends": "veterinary_clinic.base",
+  "handoffs": [],
+  "human_authority": true,
+  "kind": "hat",
+  "manifest_version": "1.0.0",
+  "memory": {
+    "pii_policy": "never_store_pii",
+    "save": [],
+    "scope": "tenant_project"
+  },
+  "strategy": "REUSE",
+  "summary": "Specialized hat for capability 'inventory_management' (strategy=REUSE). Adapted from TEKsystems retail hat pattern; estate/product-neutral.",
+  "tags": [
+    "hat",
+    "factory-generated",
+    "veterinary_clinic",
+    "inventory_management"
+  ]
+}

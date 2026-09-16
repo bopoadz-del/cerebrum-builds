@@ -1,0 +1,45 @@
+{
+  "product_id": "veterinary-clinic",
+  "product_name": "VetClinicOS",
+  "written_by": "factory WRITER role (codewhale exec)",
+  "honesty": "No stub passes here. Every substitution below is a named blocker on a sealed Store module, with a real in-process implementation standing in.",
+  "sealed_vendor_substitutions": [
+    {
+      "import_name": "vendor.cerebrum.blocks.notification",
+      "sealed_path": "vendor/cerebrum/blocks/notification.py",
+      "defect": "IndentationError at line 231: the factory's offline emission transform left a try: with no body",
+      "substitute": "app.offline_blocks.OfflineNotificationBlock",
+      "behaviour": "spools to $STORAGE_PATH/notifications.jsonl, reports delivered=false, offline=true",
+      "truth": "no message leaves the process"
+    },
+    {
+      "import_name": "vendor.cerebrum.blocks.knowledge",
+      "sealed_path": "vendor/cerebrum/blocks/knowledge.py",
+      "defect": "ImportError: cannot import name 'vector_store' from 'vendor.cerebrum.core'",
+      "substitute": "app.offline_blocks.OfflineKnowledgeBlock",
+      "behaviour": "answers from this platform's tenant-scoped corpus (app/retrieval.py) with citations; grounded=false when the corpus has no match",
+      "truth": "answers are extractive, never generated"
+    },
+    {
+      "import_name": "vendor.cerebrum.blocks.document_engine",
+      "sealed_path": "vendor/cerebrum/blocks/document_engine/__init__.py",
+      "defect": "FileNotFoundError: vendor/cerebrum/blocks/document_engine_block.py is absent from the sealed vendor",
+      "substitute": "app.offline_blocks.OfflineDocumentEngineBlock",
+      "behaviour": "extracts text from what the caller actually supplied (text, JSON, CSV, or a PDF text stream)",
+      "truth": "extracted_from names the origin; empty input yields empty text, never invented text"
+    }
+  ],
+  "connectors": {
+    "implemented": [],
+    "placeholders": [],
+    "note": "No external connector ships. The platform is offline by posture (P1): no outbound HTTP at runtime."
+  },
+  "llm": {
+    "provider_required": false,
+    "missing_credential": "raises MissingCredentialError naming VETCLINIC_LLM_PROVIDER/VETCLINIC_LLM_API_KEY",
+    "with_credential": "raises NetworkPostureRefused — the offline posture forbids the call",
+    "offline_substitute": "app.llm.summarize (extractive, labelled)"
+  },
+  "sealed_block_storage": "The vendored Store storage block keeps its own spool under ./data/storage (its data_dir is config-only and not caller-settable). The platform's authoritative documents are written under $STORAGE_PATH/documents, and the block call is kept because the capability binds it.",
+  "data_lifecycle": "All platform tables are created by alembic 0001 under one STORAGE_PATH root; DATA_DIR is bound to the same root at boot so the vendored database block's mirror moves with the volume."
+}

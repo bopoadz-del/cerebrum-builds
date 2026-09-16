@@ -1,164 +1,90 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Hotel Booking Platform</title>
-  <style>
-    :root { font-family: "IBM Plex Sans", "Segoe UI", sans-serif; background: #10141c; color: #e8eef6; }
-    body { margin: 0; }
-    header { padding: 1.2rem 1.5rem; border-bottom: 1px solid #2a3548; background: #141a24; }
-    h1 { margin: 0; font-size: 1.4rem; }
-    p.sub { margin: 0.35rem 0 0; color: #93a3bd; }
-    nav { display: flex; flex-wrap: wrap; gap: 0.4rem; padding: 0.8rem 1.5rem; }
-    nav button { background: #1c2430; color: #e8eef6; border: 1px solid #3a4c68; padding: 0.35rem 0.7rem; cursor: pointer; }
-    nav button.active { background: #0d4d73; }
-    main { padding: 1rem 1.5rem 3rem; }
-    label { display: block; margin: 0.6rem 0 0.2rem; }
-    input, textarea, select { width: 100%; max-width: 36rem; background: #0d1118; color: #e8eef6; border: 1px solid #3a4c68; padding: 0.4rem; }
-    button.act { margin-top: 0.8rem; background: #0d4d73; color: #fff; border: 0; padding: 0.5rem 1rem; cursor: pointer; }
-    pre { background: #0d1118; padding: 0.8rem; overflow: auto; }
-    .mods { display: grid; gap: 0.6rem; grid-template-columns: repeat(auto-fill, minmax(14rem, 1fr)); }
-    .card { border: 1px solid #2a3548; padding: 0.7rem; }
-  </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>VetClinicOS — practice console</title>
+<!--
+  No-build console for the delivered platform.
+
+  Written by the factory WRITER role (codewhale exec).
+
+  Every panel calls the booted platform's own routes (/v1/{capability} POST
+  and GET, /v1/schema/{capability}, /v1/rag/query, /v1/offline, /health) with
+  the platform token. There is no second API and no mock data: this page and
+  frontend/src/App.tsx (the React build) drive the same live routes.
+-->
+<style>
+ :root{color-scheme:light dark;font-family:system-ui,Segoe UI,Roboto,sans-serif}
+ body{margin:0;padding:1.5rem;max-width:70rem}
+ header{display:flex;gap:.75rem;align-items:center;flex-wrap:wrap}
+ h2{margin-top:2rem}
+ table{border-collapse:collapse;width:100%;margin-top:.5rem}
+ th,td{border-bottom:1px solid #8884;padding:.35rem;text-align:left;font-size:.9rem}
+ input,select,textarea,button{font:inherit;padding:.3rem}
+ label{display:block;margin:.3rem 0}
+ #status{font-weight:600}
+ .muted{opacity:.7}
+</style>
 </head>
 <body>
-  <header>
-    <h1>Hotel Booking Platform</h1>
-    <p class="sub">Hospitality operators — bookings, properties, pricing, reviews, and guest notices. Operator / admin. Mutations require a bearer operator token. OPERATOR_TOKEN is not stored in git.</p>
-  </header>
-  <nav id="nav"></nav>
-  <main>
-    <section id="command_center" class="panel">
-      <h2>Command center</h2>
-      <div class="mods" id="modules"></div>
-    </section>
-    <section id="live" class="panel">
-      <h2 id="cap-title">booking_management</h2>
-      <label>Operator token <input id="operator-token" type="password" autocomplete="off" placeholder="OPERATOR_TOKEN" /></label>
-      <label>Capability
-        <select id="capability"></select>
-      </label>
-      <label>Reference <input id="reference" value="sample" /></label>
-      <label>Status <input id="status" value="open" /></label>
-      <button class="act" id="post-btn" type="button">POST create</button>
-      <button class="act" id="get-btn" type="button">GET records</button>
-      <pre id="out">Ready.</pre>
-    </section>
-    <section id="operational_chat" class="panel">
-      <h2>Operational chat — property notes</h2>
-      <label>Title <input id="rag-title" value="Hotel occupancy pack" /></label>
-      <label>Text <textarea id="rag-text" rows="3">Hotel occupancy, peak season night rate, and guest booking notes for the hospitality pilot.</textarea></label>
-      <button class="act" id="ingest-btn" type="button">Ingest pack</button>
-      <label>Query <input id="rag-q" value="hotel occupancy" /></label>
-      <button class="act" id="query-btn" type="button">Query notes</button>
-    </section>
-    <section id="resident_engineer" class="panel">
-      <h2>Resident engineer</h2>
-      <p class="sub">Same live POST/GET routes. No second API.</p>
-    </section>
-  </main>
-  <script>
-    const CAPS = [
-      "booking_management",
-      "property_management",
-      "dynamic_pricing",
-      "review_management",
-      "analytics_dashboard",
-      "notification_system",
-      "search_recommendation"
-    ];
-    const UI = ["command_center", "operational_chat", "resident_engineer"];
-    const MAP = {
-      command_center: "booking_management",
-      operational_chat: "property_management",
-      resident_engineer: "analytics_dashboard"
-    };
-    let current = "booking_management";
-    const nav = document.getElementById("nav");
-    const modules = document.getElementById("modules");
-    const capSelect = document.getElementById("capability");
-    UI.forEach((name) => {
-      const b = document.createElement("button");
-      b.textContent = name;
-      b.onclick = () => select(MAP[name] || "booking_management", b);
-      nav.appendChild(b);
-      const card = document.createElement("div");
-      card.className = "card";
-      card.textContent = name;
-      modules.appendChild(card);
-    });
-    CAPS.forEach((name) => {
-      const card = document.createElement("div");
-      card.className = "card";
-      card.textContent = name;
-      modules.appendChild(card);
-      const opt = document.createElement("option");
-      opt.value = name;
-      opt.textContent = name;
-      capSelect.appendChild(opt);
-    });
-    capSelect.onchange = () => select(capSelect.value);
-    function select(id, btn) {
-      current = id;
-      document.getElementById("cap-title").textContent = id;
-      capSelect.value = id;
-      [...nav.children].forEach((el) => el.classList.remove("active"));
-      if (btn) btn.classList.add("active");
-    }
-    function authHeaders() {
-      const headers = {"Content-Type": "application/json"};
-      const token = (document.getElementById("operator-token").value || "").trim();
-      if (token) headers["Authorization"] = "Bearer " + token;
-      return headers;
-    }
-    function extraFields(id) {
-      const extras = {
-        booking_management: {stay_kind: "night", room_label: "sample"},
-        property_management: {property_kind: "hotel", property_name: "sample"},
-        dynamic_pricing: {season: "peak", rate_plan: "sample"},
-        review_management: {rating_band: "excellent", guest_name: "sample"},
-        analytics_dashboard: {view_name: "sample", horizon: "today"},
-        notification_system: {notice_kind: "confirmation", guest_name: "sample"},
-        search_recommendation: {stay_intent: "leisure", destination: "sample"}
-      };
-      return extras[id] || {};
-    }
-    document.getElementById("post-btn").onclick = async () => {
-      const body = {
-        reference: document.getElementById("reference").value || "sample",
-        status: document.getElementById("status").value || "open",
-        ...extraFields(current)
-      };
-      const res = await fetch("/v1/" + current, {
-        method: "POST",
-        headers: authHeaders(),
-        body: JSON.stringify(body)
-      });
-      document.getElementById("out").textContent = JSON.stringify(await res.json(), null, 2);
-    };
-    document.getElementById("get-btn").onclick = async () => {
-      const res = await fetch("/v1/" + current);
-      document.getElementById("out").textContent = JSON.stringify(await res.json(), null, 2);
-    };
-    document.getElementById("ingest-btn").onclick = async () => {
-      const res = await fetch("/v1/rag/ingest", {
-        method: "POST",
-        headers: authHeaders(),
-        body: JSON.stringify({
-          layer: 1,
-          doc_id: document.getElementById("reference").value || "sample",
-          title: document.getElementById("rag-title").value,
-          text: document.getElementById("rag-text").value
-        })
-      });
-      document.getElementById("out").textContent = JSON.stringify(await res.json(), null, 2);
-    };
-    document.getElementById("query-btn").onclick = async () => {
-      const q = encodeURIComponent(document.getElementById("rag-q").value || "occupancy");
-      const res = await fetch("/v1/rag/query?q=" + q);
-      document.getElementById("out").textContent = JSON.stringify(await res.json(), null, 2);
-    };
-  </script>
+<header>
+  <h1>VetClinicOS</h1>
+  <label>Token <input id="token" value="dev-local-token"></label>
+  <button id="connect">Connect</button>
+  <span class="muted" id="tenant"></span>
+  <span class="muted" id="roles"></span>
+</header>
+
+<section>
+  <h2>Command centre</h2>
+  <label>Capability <select id="capability"></select></label>
+  <form id="create"><div id="fields"></div><button type="submit">Create record</button></form>
+  <p id="status">idle</p>
+  <table><thead><tr><th>id</th><th>reference</th><th>status</th><th></th></tr></thead><tbody id="rows"></tbody></table>
+</section>
+
+<section>
+  <h2>Ask the clinic</h2>
+  <textarea id="question" rows="2" cols="60">vaccination schedule for puppies</textarea>
+  <div><button id="ask">Ask</button> <button id="ingest">Ingest as document</button></div>
+  <p id="answer" class="muted"></p>
+  <ul id="hits"></ul>
+</section>
+
+<section>
+  <h2>Resident engineer</h2>
+  <button id="posture">Refresh posture</button>
+  <pre id="postureOut" class="muted"></pre>
+</section>
+
+<script>
+const CAPABILITIES=["patient_records","appointment_scheduling","treatment_management","billing_invoicing","inventory_management","audit_trail","role_management","clinic_analytics"];
+const $=id=>document.getElementById(id);
+const token=()=>$("token").value.trim();
+const headers=()=>({"Content-Type":"application/json","Authorization":"Bearer "+token()});
+const setStatus=t=>{$("status").textContent=t};
+
+async function jsonFetch(path,options){const r=await fetch(path,options);let b={};try{b=await r.json()}catch(e){}return[r,b]}
+
+function renderFields(contract){const box=$("fields");box.innerHTML="";(contract.fields||[]).forEach(name=>{const rules=(contract.constraints||{})[name]||{};const label=document.createElement("label");label.textContent=name+" ";const value=rules.allowed_values?rules.allowed_values[0]:(rules.required?"sample":"");let el;if(rules.allowed_values){el=document.createElement("select");rules.allowed_values.forEach(v=>{const o=document.createElement("option");o.value=v;o.textContent=v;el.appendChild(o)})}else{el=document.createElement("input");el.value=value}el.name=name;label.appendChild(el);box.appendChild(label)})}
+
+async function loadCapability(){const cap=$("capability").value;const [cr,contract]=await jsonFetch("/v1/schema/"+cap,{headers:headers()});if(cr.ok)renderFields(contract);const [lr,list]=await jsonFetch("/v1/"+cap,{headers:headers()});const rows=$("rows");rows.innerHTML="";(list.items||[]).forEach(item=>{const tr=document.createElement("tr");[item.id,item.reference,item.status].forEach(v=>{const td=document.createElement("td");td.textContent=v==null?"":v;tr.appendChild(td)});const td=document.createElement("td");const b=document.createElement("button");b.textContent="Document";b.onclick=async()=>{const [dr,doc]=await jsonFetch("/v1/"+cap+"/"+item.id+"/document",{method:"POST",headers:headers()});setStatus(dr.ok?"document: "+JSON.stringify(doc.document).slice(0,120):"document refused")};td.appendChild(b);tr.appendChild(td);rows.appendChild(tr)})}
+
+$("connect").onclick=async()=>{const [r,body]=await jsonFetch("/v1/roles",{headers:headers()});if(!r.ok){$("roles").textContent="connect refused ("+r.status+")";return}$("tenant").textContent="tenant: "+body.tenant.tenant_id;$("roles").textContent="roles: "+body.tenant.roles.join(", ");await loadCapability()};
+
+$("create").onsubmit=async event=>{event.preventDefault();const payload={};(document.getElementById("fields").querySelectorAll("input,select")).forEach(el=>{if(el.value!=="")payload[el.name]=el.value});const [r,body]=await jsonFetch("/v1/"+$("capability").value,{method:"POST",headers:headers(),body:JSON.stringify(payload)});setStatus(r.ok&&body.ok!==false?"stored":"refused: "+(body.error||r.status));await loadCapability()};
+
+$("capability").onchange=loadCapability;
+
+$("ask").onclick=async()=>{const q=$("question").value;const [r,body]=await jsonFetch("/v1/rag/query",{method:"POST",headers:headers(),body:JSON.stringify({query:q,top_k:5})});$("answer").textContent=r.ok?(body.grounded?body.answer:"no corpus match — ingest a document first"):"refused";const list=$("hits");list.innerHTML="";(body.hits||[]).forEach(hit=>{const li=document.createElement("li");li.textContent=hit.doc_id+" ("+hit.score+") "+hit.text.slice(0,160);list.appendChild(li)})};
+
+$("ingest").onclick=async()=>{await jsonFetch("/v1/rag/ingest",{method:"POST",headers:headers(),body:JSON.stringify({text:$("question").value,collection:"clinic_corpus"})});await $("ask").onclick()};
+
+$("posture").onclick=async()=>{const out={};for(const [label,path,opts] of [["health","/health",{}],["offline","/v1/offline",{headers:headers()}],["llm","/v1/llm",{headers:headers()}]]){const [r,b]=await jsonFetch(path,opts);out[label]=r.ok?b:("HTTP "+r.status)}$("postureOut").textContent=JSON.stringify(out,null,2)};
+
+CAPABILITIES.forEach(c=>{const o=document.createElement("option");o.value=c;o.textContent=c;$("capability").appendChild(o)});
+$("connect").onclick();
+</script>
 </body>
 </html>

@@ -1,0 +1,49 @@
+{
+  "activation": {
+    "default_enabled": true,
+    "mode": "hybrid",
+    "put_off_by": [
+      "disable:veterinary_clinic.hat.audit"
+    ],
+    "triggers": [
+      {
+        "type": "intent",
+        "value": "audit"
+      },
+      {
+        "type": "capability",
+        "value": "audit_trail"
+      }
+    ]
+  },
+  "agent_id": "veterinary_clinic.hat.audit",
+  "allowed_actions": [
+    "veterinary_clinic.audit_trail"
+  ],
+  "block_ids": [
+    "audit",
+    "file_hasher",
+    "evidence_verifier",
+    "event_bus"
+  ],
+  "discipline": "audit",
+  "display_name": "VetClinicOS Audit Hat",
+  "extends": "veterinary_clinic.base",
+  "handoffs": [],
+  "human_authority": true,
+  "kind": "hat",
+  "manifest_version": "1.0.0",
+  "memory": {
+    "pii_policy": "never_store_pii",
+    "save": [],
+    "scope": "tenant_project"
+  },
+  "strategy": "REUSE",
+  "summary": "Specialized hat for capability 'audit_trail' (strategy=REUSE). Adapted from TEKsystems retail hat pattern; estate/product-neutral.",
+  "tags": [
+    "hat",
+    "factory-generated",
+    "veterinary_clinic",
+    "audit"
+  ]
+}

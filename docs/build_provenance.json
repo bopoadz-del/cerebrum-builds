@@ -1,0 +1,180 @@
+{
+  "agent_written_handlers": [
+    "README.md",
+    "appointment_scheduling",
+    "audit_trail",
+    "billing_invoicing",
+    "clinic_analytics",
+    "inventory_management",
+    "patient_records",
+    "pytest.ini",
+    "role_management",
+    "tests",
+    "treatment_management"
+  ],
+  "artifact_sources": {
+    "Dockerfile": "factory deterministic emitter (ProductGenerator / RoleRunner)",
+    "README.md": "FACTORY_CODE_CLI (codewhale exec, WRITER role)",
+    "alembic": "factory deterministic emitter (ProductGenerator / RoleRunner)",
+    "app/auth.py": "factory deterministic emitter (ProductGenerator / RoleRunner)",
+    "app/authority.py": "FACTORY_CODE_CLI (codewhale exec, WRITER role)",
+    "app/backup.py": "factory deterministic emitter (ProductGenerator / RoleRunner)",
+    "app/block_inputs.py": "factory deterministic emitter (ProductGenerator / RoleRunner)",
+    "app/dispatch.py": "factory deterministic emitter (ProductGenerator / RoleRunner)",
+    "app/domain_ops.py": "factory deterministic emitter (ProductGenerator / RoleRunner)",
+    "app/formulas.py": "FACTORY_CODE_CLI (codewhale exec, WRITER role)",
+    "app/health.py": "factory deterministic emitter (ProductGenerator / RoleRunner)",
+    "app/jobs.py": "factory deterministic emitter (ProductGenerator / RoleRunner)",
+    "app/llm.py": "FACTORY_CODE_CLI (codewhale exec, WRITER role)",
+    "app/main.py": "factory deterministic emitter (ProductGenerator / RoleRunner)",
+    "app/migrations.py": "factory deterministic emitter (ProductGenerator / RoleRunner)",
+    "app/models.py": "factory deterministic emitter (ProductGenerator / RoleRunner)",
+    "app/observe.py": "factory deterministic emitter (ProductGenerator / RoleRunner)",
+    "app/offline_blocks.py": "FACTORY_CODE_CLI (codewhale exec, WRITER role)",
+    "app/paths.py": "FACTORY_CODE_CLI (codewhale exec, WRITER role)",
+    "app/preconditions.py": "factory deterministic emitter (ProductGenerator / RoleRunner)",
+    "app/rag_routes.py": "FACTORY_CODE_CLI (codewhale exec, WRITER role)",
+    "app/retrieval.py": "FACTORY_CODE_CLI (codewhale exec, WRITER role)",
+    "app/revision.py": "factory deterministic emitter (ProductGenerator / RoleRunner)",
+    "app/routers": "FACTORY_CODE_CLI (codewhale exec, WRITER role)",
+    "app/routes.py": "factory deterministic emitter (ProductGenerator / RoleRunner)",
+    "app/security.py": "FACTORY_CODE_CLI (codewhale exec, WRITER role)",
+    "app/static/index.html": "FACTORY_CODE_CLI (codewhale exec, WRITER role)",
+    "app/store.py": "factory deterministic emitter (ProductGenerator / RoleRunner)",
+    "app/tenancy.py": "FACTORY_CODE_CLI (codewhale exec, WRITER role)",
+    "app/work_queue.py": "factory deterministic emitter (ProductGenerator / RoleRunner)",
+    "appointment_scheduling": "FACTORY_CODE_CLI (codewhale exec, WRITER role)",
+    "audit_trail": "FACTORY_CODE_CLI (codewhale exec, WRITER role)",
+    "billing_invoicing": "FACTORY_CODE_CLI (codewhale exec, WRITER role)",
+    "clinic_analytics": "FACTORY_CODE_CLI (codewhale exec, WRITER role)",
+    "docs/build_provenance.json": "FACTORY_CODE_CLI (codewhale exec, WRITER role)",
+    "docs/data_lifecycle.json": "factory deterministic emitter (ProductGenerator / RoleRunner)",
+    "docs/domain_acceptance.json": "factory deterministic emitter (ProductGenerator / RoleRunner)",
+    "docs/known_limitations.json": "FACTORY_CODE_CLI (codewhale exec, WRITER role)",
+    "docs/openapi.json": "FACTORY_CODE_CLI (codewhale exec, WRITER role)",
+    "frontend/src/App.tsx": "FACTORY_CODE_CLI (codewhale exec, WRITER role)",
+    "frontend/src/modules": "FACTORY_CODE_CLI (codewhale exec, WRITER role)",
+    "inventory_management": "FACTORY_CODE_CLI (codewhale exec, WRITER role)",
+    "patient_records": "FACTORY_CODE_CLI (codewhale exec, WRITER role)",
+    "product-dna": "factory deterministic emitter (ProductGenerator / RoleRunner)",
+    "pytest.ini": "FACTORY_CODE_CLI (codewhale exec, WRITER role)",
+    "render.yaml": "factory deterministic emitter (ProductGenerator / RoleRunner)",
+    "requirements.txt": "factory deterministic emitter (ProductGenerator / RoleRunner)",
+    "role_management": "FACTORY_CODE_CLI (codewhale exec, WRITER role)",
+    "scripts/acceptance.py": "factory deterministic emitter (ProductGenerator / RoleRunner)",
+    "scripts/release_gate.py": "factory deterministic emitter (ProductGenerator / RoleRunner)",
+    "tests": "FACTORY_CODE_CLI (codewhale exec, WRITER role)",
+    "treatment_management": "FACTORY_CODE_CLI (codewhale exec, WRITER role)"
+  },
+  "product_id": "veterinary-clinic",
+  "product_name": "VetClinicOS",
+  "schema": "build_provenance.v1",
+  "sealed_vendor_substitutions": "docs/known_limitations.json",
+  "store_runtime": {
+    "commit": "a372e769e05e47dc4dbc274f7d83eebf29a836f1",
+    "files": 38
+  },
+  "vendored_blocks": {
+    "analytics": {
+      "commit": "a372e769e05e47dc4dbc274f7d83eebf29a836f1",
+      "path": "vendor/blocks/analytics",
+      "source": "cerebrum-blocks"
+    },
+    "audit": {
+      "commit": "a372e769e05e47dc4dbc274f7d83eebf29a836f1",
+      "path": "vendor/blocks/audit",
+      "source": "cerebrum-blocks"
+    },
+    "capture": {
+      "commit": "a372e769e05e47dc4dbc274f7d83eebf29a836f1",
+      "path": "vendor/blocks/capture",
+      "source": "cerebrum-blocks"
+    },
+    "dashboard": {
+      "commit": "a372e769e05e47dc4dbc274f7d83eebf29a836f1",
+      "path": "vendor/blocks/dashboard",
+      "source": "cerebrum-blocks"
+    },
+    "database": {
+      "commit": "a372e769e05e47dc4dbc274f7d83eebf29a836f1",
+      "path": "vendor/blocks/database",
+      "source": "cerebrum-blocks"
+    },
+    "document_engine": {
+      "commit": "a372e769e05e47dc4dbc274f7d83eebf29a836f1",
+      "path": "vendor/blocks/document_engine",
+      "source": "cerebrum-blocks"
+    },
+    "event_bus": {
+      "commit": "a372e769e05e47dc4dbc274f7d83eebf29a836f1",
+      "path": "vendor/blocks/event_bus",
+      "source": "cerebrum-blocks"
+    },
+    "evidence_verifier": {
+      "commit": "sha256:72ab472432f28f2c73f1bac7c83dc3ac364e0ac9",
+      "path": "vendor/blocks/evidence_verifier",
+      "source": "factory-vendor-mirror"
+    },
+    "file_hasher": {
+      "commit": "a372e769e05e47dc4dbc274f7d83eebf29a836f1",
+      "path": "vendor/blocks/file_hasher",
+      "source": "cerebrum-blocks"
+    },
+    "formula_executor": {
+      "commit": "a372e769e05e47dc4dbc274f7d83eebf29a836f1",
+      "path": "vendor/blocks/formula_executor",
+      "source": "cerebrum-blocks"
+    },
+    "knowledge": {
+      "commit": "a372e769e05e47dc4dbc274f7d83eebf29a836f1",
+      "path": "vendor/blocks/knowledge",
+      "source": "cerebrum-blocks"
+    },
+    "memory": {
+      "commit": "a372e769e05e47dc4dbc274f7d83eebf29a836f1",
+      "path": "vendor/blocks/memory",
+      "source": "cerebrum-blocks"
+    },
+    "notification": {
+      "commit": "a372e769e05e47dc4dbc274f7d83eebf29a836f1",
+      "path": "vendor/blocks/notification",
+      "source": "cerebrum-blocks"
+    },
+    "portfolio_rollup": {
+      "commit": "sha256:dde6d977d09a37cb19cf3fc16b01f0c8933bc11e",
+      "path": "vendor/blocks/portfolio_rollup",
+      "source": "factory-vendor-mirror"
+    },
+    "queue": {
+      "commit": "a372e769e05e47dc4dbc274f7d83eebf29a836f1",
+      "path": "vendor/blocks/queue",
+      "source": "cerebrum-blocks"
+    },
+    "readiness_engine": {
+      "commit": "sha256:bf5647824740c37f12b414c76a00a4be9247cbc1",
+      "path": "vendor/blocks/readiness_engine",
+      "source": "factory-vendor-mirror"
+    },
+    "storage": {
+      "commit": "a372e769e05e47dc4dbc274f7d83eebf29a836f1",
+      "path": "vendor/blocks/storage",
+      "source": "cerebrum-blocks"
+    },
+    "team": {
+      "commit": "a372e769e05e47dc4dbc274f7d83eebf29a836f1",
+      "path": "vendor/blocks/team",
+      "source": "cerebrum-blocks"
+    },
+    "validation": {
+      "commit": "a372e769e05e47dc4dbc274f7d83eebf29a836f1",
+      "path": "vendor/blocks/validation",
+      "source": "cerebrum-blocks"
+    },
+    "workflow": {
+      "commit": "a372e769e05e47dc4dbc274f7d83eebf29a836f1",
+      "path": "vendor/blocks/workflow",
+      "source": "cerebrum-blocks"
+    }
+  },
+  "written_by": "factory WRITER role (codewhale exec)"
+}

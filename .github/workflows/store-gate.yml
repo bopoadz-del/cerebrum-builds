@@ -115,8 +115,10 @@ jobs:
               "context": "store-gate",
               "description": f"acceptance.py in Docker {payload['passed']}/12",
           }
+          repo = os.environ["GITHUB_REPOSITORY"]
+          sha = os.environ["GITHUB_SHA"]
           req = urllib.request.Request(
-              f"https://api.github.com/repos/${{GITHUB_REPOSITORY}}/statuses/${{GITHUB_SHA}}",
+              f"https://api.github.com/repos/{repo}/statuses/{sha}",
               data=json.dumps(body).encode("utf-8"),
               method="POST",
               headers={

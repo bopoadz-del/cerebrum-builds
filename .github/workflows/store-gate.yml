@@ -78,6 +78,12 @@ jobs:
             python3 scripts/acceptance.py | tee acceptance.out
 
       - name: Parse k/12 and write result
+        # always(): acceptance.py exits non-zero on any k<12, which is honest -
+        # but without this the parse step is SKIPPED, store_gate.json is never
+        # written, and "Write commit status" falls back to 0/12. A real 11/12
+        # was being published as 0/12: the gate reporting on its own wiring
+        # instead of the platform.
+        if: always()
         run: |
           python3 <<'PY'
           import json

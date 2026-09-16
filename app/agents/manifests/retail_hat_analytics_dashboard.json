@@ -1,0 +1,7 @@
+{
+  "capability_id": "analytics_dashboard",
+  "description": "Dashboards and reports on sales and turnover",
+  "handler": "app/actions/analytics_dashboard.py",
+  "manifest_id": "retail_hat_analytics_dashboard",
+  "product_id": "retail"
+}

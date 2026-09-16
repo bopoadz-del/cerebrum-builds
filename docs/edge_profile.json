@@ -1,0 +1,13 @@
+{
+  "engines": [
+    "sqlite",
+    "alembic",
+    "fastapi",
+    "starlette"
+  ],
+  "network": false,
+  "persistence": "sqlite on STORAGE_PATH",
+  "product_id": "retail",
+  "runtime": "uvicorn app.main:app",
+  "schema_version": "edge_profile.v1"
+}

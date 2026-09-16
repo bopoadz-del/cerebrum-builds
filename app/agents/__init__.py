@@ -1,0 +1,1 @@
+"""Agent manifests for RetailOS."""

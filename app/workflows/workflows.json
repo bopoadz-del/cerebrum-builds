@@ -1,0 +1,37 @@
+[
+  {
+    "description": "Default linear workflow over planned capabilities.",
+    "name": "Capability sequence",
+    "steps": [
+      {
+        "capability_id": "inventory_management",
+        "role": "execute"
+      },
+      {
+        "capability_id": "sales_and_orders",
+        "role": "execute"
+      },
+      {
+        "capability_id": "customer_insights",
+        "role": "execute"
+      },
+      {
+        "capability_id": "analytics_dashboard",
+        "role": "execute"
+      },
+      {
+        "capability_id": "supplier_and_purchasing",
+        "role": "execute"
+      },
+      {
+        "capability_id": "omnichannel_integration",
+        "role": "execute"
+      },
+      {
+        "capability_id": "compliance_and_audit",
+        "role": "execute"
+      }
+    ],
+    "workflow_id": "retail.capability_sequence"
+  }
+]

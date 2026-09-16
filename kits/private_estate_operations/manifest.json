@@ -86,10 +86,8 @@
   "name": "Private Estate Operations",
   "price_cents": 0,
   "product_blocks": [
-    "estate_maintenance",
-    "estate_registry",
-    "portfolio_rollup",
-    "readiness_engine"
+    "evidence_verifier",
+    "portfolio_rollup"
   ],
   "prompts": [],
   "source": "factory-vendor-mirror",
@@ -101,10 +99,8 @@
     "certification"
   ],
   "vendored_blocks": {
-    "estate_maintenance": "vendor/blocks/estate_maintenance",
-    "estate_registry": "vendor/blocks/estate_registry",
-    "portfolio_rollup": "vendor/blocks/portfolio_rollup",
-    "readiness_engine": "vendor/blocks/readiness_engine"
+    "evidence_verifier": "vendor/blocks/evidence_verifier",
+    "portfolio_rollup": "vendor/blocks/portfolio_rollup"
   },
   "version": "1.3.0"
 }

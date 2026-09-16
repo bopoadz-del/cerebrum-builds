@@ -1,0 +1,7 @@
+{
+  "capability_id": "customer_insights",
+  "description": "Customer profiles, purchase history and segments",
+  "handler": "app/actions/customer_insights.py",
+  "manifest_id": "retail_hat_customer_insights",
+  "product_id": "retail"
+}

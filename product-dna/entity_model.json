@@ -1,0 +1,34 @@
+{
+  "entities": [
+    {
+      "capability_id": "inventory_management",
+      "entity": "inventory_management"
+    },
+    {
+      "capability_id": "sales_and_orders",
+      "entity": "sales_and_orders"
+    },
+    {
+      "capability_id": "customer_insights",
+      "entity": "customer_insights"
+    },
+    {
+      "capability_id": "analytics_dashboard",
+      "entity": "analytics_dashboard"
+    },
+    {
+      "capability_id": "supplier_and_purchasing",
+      "entity": "supplier_and_purchasing"
+    },
+    {
+      "capability_id": "omnichannel_integration",
+      "entity": "omnichannel_integration"
+    },
+    {
+      "capability_id": "compliance_and_audit",
+      "entity": "compliance_and_audit"
+    }
+  ],
+  "product_id": "retail",
+  "schema_version": "entity_model.v1"
+}

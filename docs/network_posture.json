@@ -1,0 +1,8 @@
+{
+  "block_dispatch": "in-process vendor/blocks via app/dispatch.py",
+  "cloud_llm_configured": false,
+  "product_id": "retail",
+  "runtime_outbound": false,
+  "schema_version": "network_posture.v1",
+  "store_url_configured": false
+}

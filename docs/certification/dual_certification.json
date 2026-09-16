@@ -1,0 +1,8 @@
+{
+  "code_phase": "pytest -m 'not pilot'",
+  "product_id": "retail",
+  "product_phase": "pytest -m pilot against the booted product",
+  "schema_version": "dual_certification.v1",
+  "store_phase": "scripts/acceptance.py inside the Store-built image",
+  "store_phase_status": "owner-gated: docker is not available in this checkout"
+}

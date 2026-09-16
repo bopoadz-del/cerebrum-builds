@@ -1,0 +1,34 @@
+{
+  "capabilities": [
+    "inventory_management",
+    "sales_and_orders",
+    "customer_insights",
+    "analytics_dashboard",
+    "supplier_and_purchasing",
+    "omnichannel_integration",
+    "compliance_and_audit"
+  ],
+  "generated_by": "factory WRITER role (codewhale exec)",
+  "product_id": "retail",
+  "product_name": "RetailOS",
+  "schema_version": "provenance.v1",
+  "source": "vendor/blocks (pinned in blocks.lock.json)",
+  "vendor_blocks": [
+    "analytics",
+    "audit",
+    "dashboard",
+    "database",
+    "event_bus",
+    "evidence_verifier",
+    "file_hasher",
+    "knowledge",
+    "notification",
+    "portfolio_rollup",
+    "queue",
+    "recommendation_template",
+    "storage",
+    "validation",
+    "vector_search",
+    "workflow"
+  ]
+}

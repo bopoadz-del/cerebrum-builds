@@ -1,0 +1,7 @@
+{
+  "capability_id": "supplier_and_purchasing",
+  "description": "Suppliers, purchase orders and lead times",
+  "handler": "app/actions/supplier_and_purchasing.py",
+  "manifest_id": "retail_hat_supplier_and_purchasing",
+  "product_id": "retail"
+}

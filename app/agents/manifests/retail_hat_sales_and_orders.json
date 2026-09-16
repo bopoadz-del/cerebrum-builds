@@ -1,0 +1,7 @@
+{
+  "capability_id": "sales_and_orders",
+  "description": "Sales transactions, orders, returns and exchanges",
+  "handler": "app/actions/sales_and_orders.py",
+  "manifest_id": "retail_hat_sales_and_orders",
+  "product_id": "retail"
+}

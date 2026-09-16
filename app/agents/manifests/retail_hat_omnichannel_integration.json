@@ -1,0 +1,7 @@
+{
+  "capability_id": "omnichannel_integration",
+  "description": "Store, e-commerce and marketplace sync",
+  "handler": "app/actions/omnichannel_integration.py",
+  "manifest_id": "retail_hat_omnichannel_integration",
+  "product_id": "retail"
+}

@@ -1,0 +1,7 @@
+{
+  "capability_id": "compliance_and_audit",
+  "description": "Audit trails, controls and evidence",
+  "handler": "app/actions/compliance_and_audit.py",
+  "manifest_id": "retail_hat_compliance_and_audit",
+  "product_id": "retail"
+}

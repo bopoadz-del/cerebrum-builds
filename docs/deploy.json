@@ -1,0 +1,10 @@
+{
+  "dockerfile": "Dockerfile (python:3.12-slim pinned by digest; release_gate at build time)",
+  "entrypoint": "scripts/entrypoint.sh (alembic upgrade head && uvicorn app.main:app)",
+  "health": "/health fail-closed (process, disk, database, alembic head)",
+  "live_deploy": false,
+  "note": "render-ready is not a live Render deploy and not Store Docker acceptance; both are owner-gated",
+  "product_id": "retail",
+  "render": "render.yaml (single web service, disk /app/data)",
+  "schema_version": "deploy.v1"
+}

@@ -2,55 +2,37 @@
   "capabilities": [
     {
       "block_ids": [
-        "workflow",
         "database",
-        "validation",
+        "workflow",
+        "notification",
+        "validation"
+      ],
+      "description": "Track stock levels across locations, manage SKUs, and automate reorder points to prevent stockouts and overstock.",
+      "id": "inventory_management",
+      "required": true,
+      "strategy_hint": "REUSE"
+    },
+    {
+      "block_ids": [
+        "database",
         "event_bus",
-        "queue",
-        "audit"
-      ],
-      "description": "Handles the full reservation lifecycle including availability checks, real-time booking, modifications, cancellations, and stay records across all channels.",
-      "id": "booking_management",
-      "required": true,
-      "strategy_hint": "REUSE"
-    },
-    {
-      "block_ids": [
-        "estate_registry",
-        "estate_maintenance",
-        "database",
-        "team",
         "workflow",
-        "audit"
+        "queue"
       ],
-      "description": "Manages rooms, rate plans, seasonal inventory, and property configuration for one or many hotel properties.",
-      "id": "property_management",
+      "description": "Process sales transactions, manage orders, returns, and exchanges across in-store and online channels.",
+      "id": "sales_and_orders",
       "required": true,
       "strategy_hint": "REUSE"
     },
     {
       "block_ids": [
-        "formula_executor",
-        "readiness_engine",
-        "recommendation_template",
+        "database",
         "analytics",
-        "database"
-      ],
-      "description": "Calculates and adjusts room rates in real time based on demand, occupancy, seasonality, competitor signals, and configurable pricing rules.",
-      "id": "dynamic_pricing",
-      "required": true,
-      "strategy_hint": "REUSE"
-    },
-    {
-      "block_ids": [
-        "capture",
-        "knowledge",
         "vector_search",
-        "analytics",
-        "notification"
+        "knowledge"
       ],
-      "description": "Collects, moderates, and responds to guest reviews; analyzes sentiment and surfaces reputation trends for each property.",
-      "id": "review_management",
+      "description": "Maintain customer profiles, purchase history, and segment customers for targeted marketing and loyalty programs.",
+      "id": "customer_insights",
       "required": true,
       "strategy_hint": "REUSE"
     },
@@ -59,54 +41,66 @@
         "dashboard",
         "analytics",
         "portfolio_rollup",
-        "database"
+        "storage"
       ],
-      "description": "Provides operational dashboards and reports covering occupancy, revenue, booking pace, channel performance, and guest satisfaction.",
+      "description": "Provide real-time dashboards and reports on sales, inventory turnover, and store performance for data-driven decisions.",
       "id": "analytics_dashboard",
       "required": true,
       "strategy_hint": "REUSE"
     },
     {
       "block_ids": [
-        "notification",
-        "event_bus",
-        "queue",
-        "workflow"
+        "database",
+        "workflow",
+        "recommendation_template",
+        "notification"
       ],
-      "description": "Sends timely booking confirmations, reminders, pricing alerts, and internal staff notifications via email, SMS, and in-app channels.",
-      "id": "notification_system",
+      "description": "Manage supplier relationships, purchase orders, and lead times, with automated reorder suggestions based on demand.",
+      "id": "supplier_and_purchasing",
       "required": true,
       "strategy_hint": "REUSE"
     },
     {
       "block_ids": [
-        "vector_search",
-        "knowledge",
-        "recommendation_template",
-        "memory",
-        "analytics"
+        "event_bus",
+        "workflow",
+        "queue",
+        "knowledge"
       ],
-      "description": "Enables guests to search properties and rooms with filters, and recommends personalized stays, packages, and upsells based on preferences and history.",
-      "id": "search_recommendation",
+      "description": "Connect physical stores, e-commerce platforms, and marketplaces for unified inventory and order management.",
+      "id": "omnichannel_integration",
+      "required": true,
+      "strategy_hint": "REUSE"
+    },
+    {
+      "block_ids": [
+        "audit",
+        "validation",
+        "file_hasher",
+        "evidence_verifier"
+      ],
+      "description": "Ensure regulatory compliance with audit trails, data privacy, and secure transaction logging.",
+      "id": "compliance_and_audit",
       "required": true,
       "strategy_hint": "REUSE"
     }
   ],
   "connectors": [],
+  "delivery_format": "zip",
   "drafting_mode": "architect_llm",
   "drafting_note": null,
   "edge_profile": "standard",
   "factory_scenario": "CREATE_PRODUCT",
   "human_authority": true,
   "n_required": 7,
-  "product_id": "hospitality",
-  "product_name": "StayFlow Hospitality Platform",
+  "product_id": "retail",
+  "product_name": "RetailOS",
   "schema_version": "product_blueprint.v1",
-  "summary": "StayFlow is an all-in-one hotel booking and property management platform for independent hotels, boutique inns, and small hotel groups. It unifies real-time reservation management, room inventory and rate control, dynamic pricing, guest reviews, and operational analytics, while keeping staff and guests informed with automated notifications and AI-assisted search and recommendations.",
+  "summary": "RetailOS is a modern retail operations platform that unifies inventory, sales, customers, and analytics for small to mid-sized retail businesses and multi-store operators. It provides real-time visibility into stock levels, automated replenishment recommendations, customer insights, and performance dashboards, all in a single cloud-based system.",
   "ui_modules": [
     "command_center",
     "operational_chat",
     "resident_engineer"
   ],
-  "vertical": "hospitality"
+  "vertical": "retail"
 }

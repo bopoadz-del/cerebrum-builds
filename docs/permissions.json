@@ -1,0 +1,8 @@
+{
+  "filesystem": true,
+  "install": true,
+  "network": false,
+  "product_id": "retail",
+  "runtime_outbound": "none: vendored blocks run in-process; notification uses the mcp channel",
+  "schema_version": "permissions.v1"
+}

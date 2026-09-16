@@ -1,0 +1,15 @@
+{
+  "authority": "precedence.v1",
+  "capabilities": [
+    "inventory_management",
+    "sales_and_orders",
+    "customer_insights",
+    "analytics_dashboard",
+    "supplier_and_purchasing",
+    "omnichannel_integration",
+    "compliance_and_audit"
+  ],
+  "manifest_id": "retail_base",
+  "product_id": "retail",
+  "role": "operator"
+}

@@ -1,0 +1,34 @@
+{
+  "capabilities": [
+    {
+      "id": "inventory_management",
+      "strategy": "REUSE"
+    },
+    {
+      "id": "sales_and_orders",
+      "strategy": "REUSE"
+    },
+    {
+      "id": "customer_insights",
+      "strategy": "REUSE"
+    },
+    {
+      "id": "analytics_dashboard",
+      "strategy": "REUSE"
+    },
+    {
+      "id": "supplier_and_purchasing",
+      "strategy": "REUSE"
+    },
+    {
+      "id": "omnichannel_integration",
+      "strategy": "REUSE"
+    },
+    {
+      "id": "compliance_and_audit",
+      "strategy": "REUSE"
+    }
+  ],
+  "product_id": "retail",
+  "schema_version": "capability_resolution.v1"
+}

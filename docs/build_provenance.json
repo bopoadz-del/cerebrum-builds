@@ -1,0 +1,142 @@
+{
+  "artifact_sources": {
+    "app/actions/analytics_dashboard.py": "coder CLI (codewhale exec)",
+    "app/actions/compliance_and_audit.py": "coder CLI (codewhale exec)",
+    "app/actions/customer_insights.py": "coder CLI (codewhale exec)",
+    "app/actions/inventory_management.py": "coder CLI (codewhale exec)",
+    "app/actions/omnichannel_integration.py": "coder CLI (codewhale exec)",
+    "app/actions/sales_and_orders.py": "coder CLI (codewhale exec)",
+    "app/actions/supplier_and_purchasing.py": "coder CLI (codewhale exec)",
+    "app/block_inputs.py": "factory WRITER scaffolding (codewhale exec)",
+    "app/dispatch.py": "factory WRITER scaffolding (codewhale exec)",
+    "app/main.py": "factory WRITER scaffolding (codewhale exec)",
+    "app/models.py": "factory WRITER scaffolding (codewhale exec)",
+    "app/rag_routes.py": "factory WRITER scaffolding (codewhale exec)",
+    "app/routes.py": "factory WRITER scaffolding (codewhale exec)",
+    "app/store.py": "factory WRITER scaffolding (codewhale exec)",
+    "frontend/src/App.tsx": "coder CLI (codewhale exec)",
+    "frontend/src/modules/command_center.tsx": "coder CLI (codewhale exec)",
+    "frontend/src/modules/operational_chat.tsx": "coder CLI (codewhale exec)",
+    "frontend/src/modules/resident_engineer.tsx": "coder CLI (codewhale exec)",
+    "scripts/acceptance.py": "factory WRITER scaffolding (codewhale exec)",
+    "scripts/release_gate.py": "factory WRITER scaffolding (codewhale exec)",
+    "tests/test_routes.py": "factory WRITER scaffolding (codewhale exec)",
+    "vendor/blocks/*": "CLONER vendored Store blocks (pinned)"
+  },
+  "authorship": {
+    "agent_written": 7,
+    "cli_authored_ids": [
+      "inventory_management",
+      "sales_and_orders",
+      "customer_insights",
+      "analytics_dashboard",
+      "supplier_and_purchasing",
+      "omnichannel_integration",
+      "compliance_and_audit"
+    ]
+  },
+  "capabilities": [
+    {
+      "block_ids": [
+        "database",
+        "workflow",
+        "notification",
+        "validation"
+      ],
+      "entity": "inventory_management",
+      "id": "inventory_management"
+    },
+    {
+      "block_ids": [
+        "database",
+        "event_bus",
+        "workflow",
+        "queue"
+      ],
+      "entity": "sales_and_orders",
+      "id": "sales_and_orders"
+    },
+    {
+      "block_ids": [
+        "database",
+        "analytics",
+        "vector_search",
+        "knowledge"
+      ],
+      "entity": "customer_insights",
+      "id": "customer_insights"
+    },
+    {
+      "block_ids": [
+        "dashboard",
+        "analytics",
+        "portfolio_rollup",
+        "storage"
+      ],
+      "entity": "analytics_dashboard",
+      "id": "analytics_dashboard"
+    },
+    {
+      "block_ids": [
+        "database",
+        "workflow",
+        "recommendation_template",
+        "notification"
+      ],
+      "entity": "supplier_and_purchasing",
+      "id": "supplier_and_purchasing"
+    },
+    {
+      "block_ids": [
+        "event_bus",
+        "workflow",
+        "queue",
+        "knowledge"
+      ],
+      "entity": "omnichannel_integration",
+      "id": "omnichannel_integration"
+    },
+    {
+      "block_ids": [
+        "audit",
+        "validation",
+        "file_hasher",
+        "evidence_verifier"
+      ],
+      "entity": "compliance_and_audit",
+      "id": "compliance_and_audit"
+    }
+  ],
+  "cli_authored_ids": [
+    "inventory_management",
+    "sales_and_orders",
+    "customer_insights",
+    "analytics_dashboard",
+    "supplier_and_purchasing",
+    "omnichannel_integration",
+    "compliance_and_audit"
+  ],
+  "product_id": "retail",
+  "product_name": "RetailOS",
+  "schema_version": "build_provenance.v1",
+  "vendor_blocks": [
+    "analytics",
+    "audit",
+    "dashboard",
+    "database",
+    "event_bus",
+    "evidence_verifier",
+    "file_hasher",
+    "knowledge",
+    "notification",
+    "portfolio_rollup",
+    "queue",
+    "recommendation_template",
+    "storage",
+    "validation",
+    "vector_search",
+    "workflow"
+  ],
+  "vertical": "retail",
+  "writer": "codewhale exec (WRITER role)"
+}

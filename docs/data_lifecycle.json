@@ -1,0 +1,19 @@
+{
+  "backup": "app/backup.py (create/restore drill in tests/test_data_lifecycle.py)",
+  "database": "sqlite platform.db",
+  "entities": [
+    "inventory_management",
+    "sales_and_orders",
+    "customer_insights",
+    "analytics_dashboard",
+    "supplier_and_purchasing",
+    "omnichannel_integration",
+    "compliance_and_audit"
+  ],
+  "migrations": [
+    "alembic/versions/0001_baseline.py",
+    "alembic/versions/0002_lifecycle_audit.py"
+  ],
+  "persistence_root": "STORAGE_PATH",
+  "schema_version": "data_lifecycle.v1"
+}

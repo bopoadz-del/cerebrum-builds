@@ -1,0 +1,7 @@
+{
+  "capability_id": "inventory_management",
+  "description": "Stock levels, SKUs and reorder points",
+  "handler": "app/actions/inventory_management.py",
+  "manifest_id": "retail_hat_inventory_management",
+  "product_id": "retail"
+}

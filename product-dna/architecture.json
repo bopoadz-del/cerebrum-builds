@@ -1,0 +1,12 @@
+{
+  "api": "app/routes.py (kernel routes + per-capability CRUD)",
+  "blocks": "vendor/blocks via app/dispatch.py",
+  "migrations": "alembic/versions",
+  "persistence": "app/store.py (sqlite, STORAGE_PATH)",
+  "product_id": "retail",
+  "ui_modules": [
+    "command_center",
+    "operational_chat",
+    "resident_engineer"
+  ]
+}

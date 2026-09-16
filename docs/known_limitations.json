@@ -1,0 +1,10 @@
+{
+  "limitations": [
+    "No live Render deployment and no Store-built Docker acceptance run in this checkout; both are owner-gated.",
+    "evidence_verifier and portfolio_rollup are vendored echo blocks: the platform feeds them real records and persists the answer; the upstream logic is not reimplemented here.",
+    "Marketplace/e-commerce connectors are not built: omnichannel publishes and records sync events on the in-process bus, it does not call a marketplace API (offline by contract).",
+    "sbom.cdx.json is not emitted on this writer path; dependency pins live in requirements.txt."
+  ],
+  "product_id": "retail",
+  "schema_version": "known_limitations.v1"
+}

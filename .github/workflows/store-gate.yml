@@ -76,7 +76,7 @@ jobs:
           lines = []
           passed = 0
           for name in names:
-              m = re.search(rf"\b{name}\b\s*[:=]\s*(PASS|FAIL)", text)
+              m = re.search(rf"(PASS|FAIL)\s+\b{name}\b", text)
               status = m.group(1) if m else "FAIL"
               if status == "PASS":
                   passed += 1

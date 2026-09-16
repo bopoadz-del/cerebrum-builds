@@ -1,0 +1,14 @@
+{
+  "argv": [
+    "/usr/local/bin/codewhale",
+    "--provider",
+    "deepseek",
+    "--api-key",
+    "[redacted]",
+    "exec",
+    "--auto",
+    "--json",
+    "<writer_worker_prompt.v2 for product hospitality \u2014 see docs/writer_prompt.txt notice: the original bytes were overwritten by a staging-tree copy during this build>"
+  ],
+  "record_notice": "Reconstructed. The worker's sanitized argv was overwritten along with docs/writer_prompt.txt; only the invocation shape (provider, redacted key, exec --auto --json, prompt last) is restored from app/factory/build/codewhale_worker.py:run_worker_job."
+}

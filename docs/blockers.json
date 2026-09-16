@@ -1,0 +1,7 @@
+{
+  "blockers": [],
+  "policy": "A block this platform cannot run is named here and reported on GET /v1/vendor_health. It is never stubbed into a passing call. Recorded for this checkout: none.",
+  "product_id": "hospitality",
+  "product_name": "Hotel Front Desk Log",
+  "recorded_at": "2026-09-16"
+}

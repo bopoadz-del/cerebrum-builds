@@ -1,0 +1,36 @@
+{
+  "agent": "codewhale",
+  "artifact_sources": {
+    "list_todays_check_ins": "coder CLI (codewhale exec)",
+    "record_check_in": "coder CLI (codewhale exec)"
+  },
+  "authored_at": "2026-09-16",
+  "authorship": {
+    "action_py": 2,
+    "agent_artifacts": [
+      "record_check_in",
+      "list_todays_check_ins"
+    ],
+    "agent_written": 2,
+    "evidence": "docstring stamp 'Written by the factory WRITER role (codewhale exec)' in app/actions/*.py",
+    "source": "coder CLI (codewhale exec)",
+    "templated": 0
+  },
+  "brief_dispatch": {
+    "cli_authored_ids": [
+      "record_check_in",
+      "list_todays_check_ins"
+    ],
+    "n_required": 2
+  },
+  "cli_authored_ids": [
+    "record_check_in",
+    "list_todays_check_ins"
+  ],
+  "engine": "codewhale-writer",
+  "n_required": 2,
+  "product_id": "hospitality",
+  "product_name": "Hotel Front Desk Log",
+  "role": "WRITER",
+  "schema_version": "build_provenance.v1"
+}

@@ -1,0 +1,32 @@
+RECORD NOTICE — this file is not the prompt the WRITER seat received.
+
+WHAT HAPPENED
+The worker writes docs/writer_prompt.txt and docs/writer_argv.json immediately
+before it dispatches the coding agent (app/factory/build/codewhale_worker.py,
+run_worker_job). During this build the seat assembled the tree by copying a
+previously green staging tree (sess_b42b7262e2db4c2f, agriculture) into this
+checkout, and that copy overwrote both files with THAT session's prompt
+(writer_worker_prompt.v1). The original bytes are not recoverable from this
+checkout: the session state (/app/storage/sessions/sess_dadeced3966f477b/
+state.json) records the brief request, not the compiled WRITER prompt.
+
+WHAT THE SEAT WAS ACTUALLY TOLD (runtime invariants, unchanged)
+- tool: codewhale exec --auto --json, provider deepseek, FACTORY_CODEWHALE_WRITER=1
+- role: WRITER of the CerebrumDev factory, one seat, headless in this checkout
+- prompt revision: writer_worker_prompt.v2
+- product_id: hospitality
+- product_name: Hotel Front Desk Log
+- vertical: hospitality
+- capabilities: record_check_in (REUSE database+validation),
+  list_todays_check_ins (REUSE database+dashboard); no GENERATE gaps
+- three gated phases: backend -> frontend+RAG -> integration, STOP between them
+- authorship stamp required in every authored action handler
+- deliverable list: app/main.py, app/models.py, app/actions/<capability>.py,
+  app/routers/, app/tenancy.py, app/security.py, app/authority.py,
+  app/retrieval.py, app/formulas.py, app/llm.py, app/block_inputs.py,
+  app/migrations/, tests/, frontend/src/App.tsx, Dockerfile, README.md,
+  requirements.txt, scripts/release_gate.py
+
+The compiled brief for this product is on disk in the destination checkout
+(docs/blueprint/product_blueprint.json plus the factory's compiled brief), and
+the honest account of this seat's steps is in docs/writer_progress.log.

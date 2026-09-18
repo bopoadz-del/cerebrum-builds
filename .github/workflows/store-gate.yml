@@ -5,7 +5,7 @@
 # This job needs `docker build` + `docker run` on a host that already has Docker
 # (GitHub-hosted ubuntu-latest, or an equivalent self-hosted builder).
 #
-# N3 12-line floor (exact names). k/12 is the only green.
+# N3 12-line floor (exact names). k/13 is the only green.
 #   no_token_401
 #   missing_field_422
 #   enum_422
@@ -17,6 +17,7 @@
 #   health_fail_closed
 #   openapi_committed
 #   docker_health_200
+#   cross_tenant_404
 #   authorship_floor
 
 name: Store acceptance gate
@@ -35,7 +36,7 @@ permissions:
 
 jobs:
   store-gate:
-    name: acceptance.py in Docker (k/12)
+    name: acceptance.py in Docker (k/13)
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
@@ -77,7 +78,7 @@ jobs:
             -e STORE_DOCKER_HEALTH=200 "$CONTAINER" \
             python3 scripts/acceptance.py | tee acceptance.out
 
-      - name: Parse k/12 and write result
+      - name: Parse k/13 and write result
         # always(): acceptance.py exits non-zero on any k<12, which is honest -
         # but without this the parse step is SKIPPED, store_gate.json is never
         # written, and "Write commit status" falls back to 0/12. A real 11/12
@@ -104,6 +105,7 @@ jobs:
               "health_fail_closed",
               "openapi_committed",
               "docker_health_200",
+              "cross_tenant_404",
               "authorship_floor",
           )
           LINE = re.compile(
@@ -148,7 +150,7 @@ jobs:
           sys.exit(0 if ok else 1)
           PY
 
-      - name: Upload k/12 artifact
+      - name: Upload k/13 artifact
         if: always()
         uses: actions/upload-artifact@v4
         with:
@@ -168,7 +170,7 @@ jobs:
             score=$(python3 -c "import json; print(json.load(open('store_gate.json'))['score'])")
             ok=$(python3 -c "import json; print('true' if json.load(open('store_gate.json'))['ok'] else 'false')")
           else
-            score="0/12"
+            score="0/13"
             ok="false"
           fi
           if [ "$ok" = "true" ]; then state=success; else state=failure; fi

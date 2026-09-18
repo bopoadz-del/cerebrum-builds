@@ -18,11 +18,7 @@ _BLOCK_DEFS = {
     "memory": ("vendor.cerebrum.blocks.memory", "MemoryBlock"),
     "notification": ("vendor.cerebrum.blocks.notification", "NotificationBlock"),
     "queue": ("vendor.cerebrum.blocks.queue", "QueueBlock"),
-    "recommendation_template": ("vendor.cerebrum.blocks.recommendation_template", "RecommendationTemplateBlock"),
-    "team": ("vendor.cerebrum.blocks.team", "TeamBlock"),
     "validation": ("vendor.cerebrum.blocks.validation", "ValidationBlock"),
-    "vector_search": ("vendor.cerebrum.blocks.vector_search", "VectorSearchBlock"),
-    "workflow": ("vendor.cerebrum.blocks.workflow", "WorkflowBlock"),
 }
 
 

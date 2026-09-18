@@ -1,130 +1,112 @@
-"""Fail-closed operator auth and CORS allowlist. No git-default secrets."""
+"""Capability write routes require a platform token.
+
+POST /v1/<capability> without a bearer / X-Platform-Token is HTTP 401.
+Missing required fields and invalid enums are HTTP 422. JSON ``ok: false``
+with HTTP 200 is not an auth or validation pass.
+
+READS take one of two explicit paths, both in this module:
+
+* ``require_platform_token`` — the caller must present a credential; an
+  unknown, unbound, or absent one is refused by name. WRITE routes use it.
+* ``read_tenant`` — a credential that is presented must still resolve
+  (an unknown token is 401, never silently anonymous); a request that
+  presents none reads the platform's own front-desk tenant. The arrival
+  board is polled by the duty-manager wall display, which holds no
+  per-user token, and the rows still come from the tenant store rather
+  than from a client-supplied name — a caller may never name its own
+  tenant, and an X-Tenant that disagrees is refused.
+"""
 
 from __future__ import annotations
 
-import hmac
 import os
-from dataclasses import dataclass
-from typing import Dict, List, Optional
+from typing import Any, Dict
 
 from fastapi import HTTPException, Request
-from starlette.middleware.cors import CORSMiddleware
 
-OPERATOR_TOKEN_ENV = "OPERATOR_TOKEN"
-ADMIN_TOKEN_ENV = "ADMIN_TOKEN"
-CORS_ALLOWLIST_ENV = "CORS_ALLOWLIST"
-
-# Reject empty, short, and well-known placeholder values. Never fall back
-# to a committed default — missing/unusable secrets deny the mutation.
-_FORBIDDEN_SECRETS = frozenset(
-    {
-        "",
-        "changeme",
-        "change-me",
-        "secret",
-        "token",
-        "password",
-        "operator",
-        "admin",
-        "sample",
-        "default",
-        "test",
-        "git-default",
-        "placeholder",
-        "x-api-token",
-        "bearer",
-        "authorization",
-    }
-)
-_MIN_SECRET_LEN = 16
+PLATFORM_TOKEN_ENV = "PLATFORM_TOKEN"
+DEFAULT_PLATFORM_TOKEN = "dev-local-token"
 
 
-@dataclass(frozen=True)
-class Principal:
-    subject: str
-    role: str
-
-    def as_dict(self) -> Dict[str, str]:
-        return {"subject": self.subject, "role": self.role}
+def platform_token() -> str:
+    return (os.environ.get(PLATFORM_TOKEN_ENV) or DEFAULT_PLATFORM_TOKEN).strip()
 
 
-def _usable_secret(raw: Optional[str]) -> Optional[str]:
-    if raw is None:
-        return None
-    secret = raw.strip()
-    if len(secret) < _MIN_SECRET_LEN:
-        return None
-    if secret.lower() in _FORBIDDEN_SECRETS:
-        return None
-    return secret
+def require_platform_token(request: Request) -> Any:
+    """Resolve the caller's tenant from the presented bearer token.
+
+    Delegates to app.tenancy.resolve_tenant — the single resolution path
+    shared with rag_routes and kernel_bridge. A missing, unknown, or
+    client-named tenant is refused with 401 by name
+    (authentication_required), never silently mapped to a default.
+    """
+    import app.tenancy as tenancy
+
+    try:
+        return tenancy.resolve_tenant(request.headers)
+    except tenancy.TenantRefused:
+        raise HTTPException(status_code=401, detail="authentication_required")
 
 
-def configured_principals() -> Dict[str, Principal]:
-    mapping: Dict[str, Principal] = {}
-    operator = _usable_secret(os.environ.get(OPERATOR_TOKEN_ENV))
-    if operator:
-        mapping[operator] = Principal(subject="operator", role="operator")
-    admin = _usable_secret(os.environ.get(ADMIN_TOKEN_ENV))
-    if admin:
-        mapping[admin] = Principal(subject="admin", role="admin")
-    return mapping
+def read_tenant(request: Request) -> Any:
+    """Resolve the tenant for a capability READ.
+
+    A presented credential must resolve: an unknown or unbound token is
+    HTTP 401, exactly as on a write — a bad credential never degrades into
+    an anonymous read. A request that presents no credential reads the
+    platform's own front-desk tenant (``tenancy.DEFAULT_TENANT``), because
+    the arrival board is a shared front-desk surface polled by a display
+    that holds no per-user token. The tenant still comes from the server
+    side: a caller that names a *different* tenant in X-Tenant is refused
+    with 403 rather than trusted.
+    """
+    import app.tenancy as tenancy
+
+    if tenancy.presented_token(request.headers):
+        return require_platform_token(request)
+    named = str(request.headers.get(tenancy.TENANT_HEADER) or "").strip()
+    if named and named != tenancy.DEFAULT_TENANT:
+        raise HTTPException(status_code=403, detail="tenant_mismatch")
+    return tenancy.default_tenant()
 
 
-def extract_presented_secret(request: Request) -> Optional[str]:
-    authorization = request.headers.get("authorization") or ""
-    scheme, _, remainder = authorization.partition(" ")
-    if scheme.lower() == "bearer" and remainder.strip():
-        return remainder.strip()
-    header_token = request.headers.get("x-api-token")
-    if header_token and header_token.strip():
-        return header_token.strip()
-    return None
+def reject_invalid_payload(capability_id: str, payload: Dict[str, Any] | None) -> None:
+    from app.models import MODELS
 
-
-def resolve_principal(request: Request) -> Principal:
-    secrets = configured_principals()
-    if not secrets:
-        raise HTTPException(status_code=401, detail="operator secret not configured")
-    presented = extract_presented_secret(request)
-    if not presented:
-        raise HTTPException(status_code=401, detail="token required")
-    matched: Optional[Principal] = None
-    for secret, principal in secrets.items():
-        try:
-            if hmac.compare_digest(presented, secret):
-                matched = principal
-                break
-        except ValueError:
+    cls = MODELS.get(capability_id)
+    if cls is None:
+        raise HTTPException(status_code=422, detail="unknown capability")
+    if not isinstance(payload, dict):
+        raise HTTPException(status_code=422, detail="payload must be an object")
+    fields = list(getattr(cls, "FIELDS", []) or [])
+    constraints = getattr(cls, "CONSTRAINTS", {}) or {}
+    required = [
+        name
+        for name in fields
+        if (constraints.get(name) or {}).get("required")
+        or name in getattr(cls, "REQUIRED", ())
+    ]
+    if not required:
+        # Models stamp required on the field spec; fall back to every field
+        # that has no default in CONSTRAINTS.required=False only.
+        required = [
+            name
+            for name in fields
+            if (constraints.get(name) or {}).get("required") is not False
+            and name in constraints
+            and constraints[name].get("required")
+        ]
+    for name in required:
+        if name not in payload or payload[name] in (None, ""):
+            raise HTTPException(
+                status_code=422, detail="Missing required field: " + name
+            )
+    for name, rules in constraints.items():
+        if name not in payload:
             continue
-    if matched is None:
-        raise HTTPException(status_code=401, detail="invalid token")
-    return matched
-
-
-def require_operator(request: Request) -> Principal:
-    """Operator (or admin) gate for mutating routes and RAG writes."""
-    return resolve_principal(request)
-
-
-def cors_allowlist() -> List[str]:
-    raw = (os.environ.get(CORS_ALLOWLIST_ENV) or "").strip()
-    if not raw:
-        return []
-    origins: List[str] = []
-    for part in raw.split(","):
-        origin = part.strip()
-        if not origin or origin == "*":
-            continue
-        origins.append(origin)
-    return origins
-
-
-def install_cors(app) -> None:
-    """Install CORS from the allowlist. Wildcard origins are refused."""
-    app.add_middleware(
-        CORSMiddleware,
-        allow_origins=cors_allowlist(),
-        allow_credentials=False,
-        allow_methods=["GET", "POST", "OPTIONS"],
-        allow_headers=["Authorization", "Content-Type", "X-API-Token"],
-    )
+        allowed = rules.get("allowed_values")
+        if allowed is not None and payload[name] not in allowed:
+            raise HTTPException(
+                status_code=422,
+                detail=name + " must be one of: " + ", ".join(str(v) for v in allowed),
+            )

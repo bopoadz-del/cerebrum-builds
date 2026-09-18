@@ -1,164 +1,167 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Hotel Booking Platform</title>
-  <style>
-    :root { font-family: "IBM Plex Sans", "Segoe UI", sans-serif; background: #10141c; color: #e8eef6; }
-    body { margin: 0; }
-    header { padding: 1.2rem 1.5rem; border-bottom: 1px solid #2a3548; background: #141a24; }
-    h1 { margin: 0; font-size: 1.4rem; }
-    p.sub { margin: 0.35rem 0 0; color: #93a3bd; }
-    nav { display: flex; flex-wrap: wrap; gap: 0.4rem; padding: 0.8rem 1.5rem; }
-    nav button { background: #1c2430; color: #e8eef6; border: 1px solid #3a4c68; padding: 0.35rem 0.7rem; cursor: pointer; }
-    nav button.active { background: #0d4d73; }
-    main { padding: 1rem 1.5rem 3rem; }
-    label { display: block; margin: 0.6rem 0 0.2rem; }
-    input, textarea, select { width: 100%; max-width: 36rem; background: #0d1118; color: #e8eef6; border: 1px solid #3a4c68; padding: 0.4rem; }
-    button.act { margin-top: 0.8rem; background: #0d4d73; color: #fff; border: 0; padding: 0.5rem 1rem; cursor: pointer; }
-    pre { background: #0d1118; padding: 0.8rem; overflow: auto; }
-    .mods { display: grid; gap: 0.6rem; grid-template-columns: repeat(auto-fill, minmax(14rem, 1fr)); }
-    .card { border: 1px solid #2a3548; padding: 0.7rem; }
-  </style>
-</head>
-<body>
-  <header>
-    <h1>Hotel Booking Platform</h1>
-    <p class="sub">Hospitality operators — bookings, properties, pricing, reviews, and guest notices. Operator / admin. Mutations require a bearer operator token. OPERATOR_TOKEN is not stored in git.</p>
-  </header>
-  <nav id="nav"></nav>
-  <main>
-    <section id="command_center" class="panel">
-      <h2>Command center</h2>
-      <div class="mods" id="modules"></div>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Boutique Front Desk</title>
+    <style>
+      :root { color-scheme: light; font-family: system-ui, sans-serif; }
+      body { margin: 0; padding: 1.5rem; background: #f6f5f2; color: #1d1d1b; }
+      h1 { font-size: 1.4rem; margin: 0 0 .25rem; }
+      header p { margin: 0 0 1rem; color: #5c5a55; }
+      section { background: #fff; border: 1px solid #e2e0da; border-radius: 8px;
+                padding: 1rem; margin-bottom: 1rem; max-width: 60rem; }
+      table { width: 100%; border-collapse: collapse; }
+      th, td { text-align: left; padding: .35rem .5rem; border-bottom: 1px solid #eee; }
+      input, button { font: inherit; padding: .35rem .5rem; }
+      input { border: 1px solid #c9c7c0; border-radius: 4px; margin-right: .35rem; }
+      button { border: 0; border-radius: 4px; background: #1d1d1b; color: #fff; cursor: pointer; }
+      .row { display: flex; flex-wrap: wrap; gap: .35rem; align-items: center; }
+      .warn { background: #fff4e5; border-color: #f0c98a; }
+      .error { color: #a3231f; }
+      .ok { color: #1c6b3c; }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>Boutique Front Desk</h1>
+      <p>40 rooms. One arrival board. No paper log.</p>
+      <div class="row">
+        <label>Platform token <input id="token" size="24" /></label>
+        <button id="reload">Reload board</button>
+      </div>
+    </header>
+
+    <section id="health" class="warn" hidden></section>
+
+    <section>
+      <h2>Today's arrivals</h2>
+      <table>
+        <thead><tr><th>Guest</th><th>Room</th><th>Date</th><th>Arrived</th><th>Status</th></tr></thead>
+        <tbody id="board"></tbody>
+      </table>
+      <p id="board-empty" hidden>No arrivals recorded yet.</p>
     </section>
-    <section id="live" class="panel">
-      <h2 id="cap-title">booking_management</h2>
-      <label>Operator token <input id="operator-token" type="password" autocomplete="off" placeholder="OPERATOR_TOKEN" /></label>
-      <label>Capability
-        <select id="capability"></select>
-      </label>
-      <label>Reference <input id="reference" value="sample" /></label>
-      <label>Status <input id="status" value="open" /></label>
-      <button class="act" id="post-btn" type="button">POST create</button>
-      <button class="act" id="get-btn" type="button">GET records</button>
-      <pre id="out">Ready.</pre>
+
+    <section>
+      <h2>Record a check-in</h2>
+      <form id="checkin" class="row">
+        <input name="reference" placeholder="reference" value="FD-1" required />
+        <input name="guest_name" placeholder="guest name" required />
+        <input name="room_number" placeholder="room" required />
+        <input name="nights" type="number" min="1" max="30" value="1" required />
+        <input name="arrival_time" placeholder="HH:MM:SS" value="15:00:00" required />
+        <button type="submit">Record</button>
+      </form>
+      <p id="checkin-status"></p>
     </section>
-    <section id="operational_chat" class="panel">
-      <h2>Operational chat — property notes</h2>
-      <label>Title <input id="rag-title" value="Hotel occupancy pack" /></label>
-      <label>Text <textarea id="rag-text" rows="3">Hotel occupancy, peak season night rate, and guest booking notes for the hospitality pilot.</textarea></label>
-      <button class="act" id="ingest-btn" type="button">Ingest pack</button>
-      <label>Query <input id="rag-q" value="hotel occupancy" /></label>
-      <button class="act" id="query-btn" type="button">Query notes</button>
+
+    <section>
+      <h2>Room availability</h2>
+      <form id="availability" class="row">
+        <input name="room_number" placeholder="room" required />
+        <input name="check_in_date" type="date" required />
+        <input name="check_out_date" type="date" required />
+        <button type="submit">Check</button>
+      </form>
+      <p id="availability-status"></p>
     </section>
-    <section id="resident_engineer" class="panel">
-      <h2>Resident engineer</h2>
-      <p class="sub">Same live POST/GET routes. No second API.</p>
-    </section>
-  </main>
-  <script>
-    const CAPS = [
-      "booking_management",
-      "property_management",
-      "dynamic_pricing",
-      "review_management",
-      "analytics_dashboard",
-      "notification_system",
-      "search_recommendation"
-    ];
-    const UI = ["command_center", "operational_chat", "resident_engineer"];
-    const MAP = {
-      command_center: "booking_management",
-      operational_chat: "property_management",
-      resident_engineer: "analytics_dashboard"
-    };
-    let current = "booking_management";
-    const nav = document.getElementById("nav");
-    const modules = document.getElementById("modules");
-    const capSelect = document.getElementById("capability");
-    UI.forEach((name) => {
-      const b = document.createElement("button");
-      b.textContent = name;
-      b.onclick = () => select(MAP[name] || "booking_management", b);
-      nav.appendChild(b);
-      const card = document.createElement("div");
-      card.className = "card";
-      card.textContent = name;
-      modules.appendChild(card);
-    });
-    CAPS.forEach((name) => {
-      const card = document.createElement("div");
-      card.className = "card";
-      card.textContent = name;
-      modules.appendChild(card);
-      const opt = document.createElement("option");
-      opt.value = name;
-      opt.textContent = name;
-      capSelect.appendChild(opt);
-    });
-    capSelect.onchange = () => select(capSelect.value);
-    function select(id, btn) {
-      current = id;
-      document.getElementById("cap-title").textContent = id;
-      capSelect.value = id;
-      [...nav.children].forEach((el) => el.classList.remove("active"));
-      if (btn) btn.classList.add("active");
-    }
-    function authHeaders() {
-      const headers = {"Content-Type": "application/json"};
-      const token = (document.getElementById("operator-token").value || "").trim();
-      if (token) headers["Authorization"] = "Bearer " + token;
-      return headers;
-    }
-    function extraFields(id) {
-      const extras = {
-        booking_management: {stay_kind: "night", room_label: "sample"},
-        property_management: {property_kind: "hotel", property_name: "sample"},
-        dynamic_pricing: {season: "peak", rate_plan: "sample"},
-        review_management: {rating_band: "excellent", guest_name: "sample"},
-        analytics_dashboard: {view_name: "sample", horizon: "today"},
-        notification_system: {notice_kind: "confirmation", guest_name: "sample"},
-        search_recommendation: {stay_intent: "leisure", destination: "sample"}
-      };
-      return extras[id] || {};
-    }
-    document.getElementById("post-btn").onclick = async () => {
-      const body = {
-        reference: document.getElementById("reference").value || "sample",
-        status: document.getElementById("status").value || "open",
-        ...extraFields(current)
-      };
-      const res = await fetch("/v1/" + current, {
-        method: "POST",
-        headers: authHeaders(),
-        body: JSON.stringify(body)
+
+    <script>
+      const TOKEN_KEY = "front-desk-token";
+      const tokenInput = document.getElementById("token");
+      tokenInput.value = localStorage.getItem(TOKEN_KEY) || "dev-local-token";
+      tokenInput.addEventListener("change", () => {
+        localStorage.setItem(TOKEN_KEY, tokenInput.value);
       });
-      document.getElementById("out").textContent = JSON.stringify(await res.json(), null, 2);
-    };
-    document.getElementById("get-btn").onclick = async () => {
-      const res = await fetch("/v1/" + current);
-      document.getElementById("out").textContent = JSON.stringify(await res.json(), null, 2);
-    };
-    document.getElementById("ingest-btn").onclick = async () => {
-      const res = await fetch("/v1/rag/ingest", {
-        method: "POST",
-        headers: authHeaders(),
-        body: JSON.stringify({
-          layer: 1,
-          doc_id: document.getElementById("reference").value || "sample",
-          title: document.getElementById("rag-title").value,
-          text: document.getElementById("rag-text").value
-        })
+      const headers = () => ({
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + (localStorage.getItem(TOKEN_KEY) || "dev-local-token"),
       });
-      document.getElementById("out").textContent = JSON.stringify(await res.json(), null, 2);
-    };
-    document.getElementById("query-btn").onclick = async () => {
-      const q = encodeURIComponent(document.getElementById("rag-q").value || "occupancy");
-      const res = await fetch("/v1/rag/query?q=" + q);
-      document.getElementById("out").textContent = JSON.stringify(await res.json(), null, 2);
-    };
-  </script>
-</body>
+      const show = (id, text, cls) => {
+        const node = document.getElementById(id);
+        node.textContent = text;
+        node.className = cls || "";
+      };
+      const formData = (form) => Object.fromEntries(new FormData(form).entries());
+
+      async function loadBoard() {
+        try {
+          const board = await (await fetch("/v1/todays_arrivals_board", { headers: headers() })).json();
+          const ledger = await (await fetch("/v1/record_checkin", { headers: headers() })).json();
+          const rows = board.items || [];
+          const body = document.getElementById("board");
+          body.innerHTML = "";
+          for (const row of rows) {
+            const tr = document.createElement("tr");
+            for (const value of [row.guest_name, row.room_number, row.arrival_date,
+                                 row.arrived ? "arrived" : "expected", row.status]) {
+              const td = document.createElement("td");
+              td.textContent = String(value ?? "");
+              tr.appendChild(td);
+            }
+            body.appendChild(tr);
+          }
+          document.getElementById("board-empty").hidden = rows.length > 0;
+          if (!rows.length && (ledger.items || []).length) {
+            document.getElementById("board-empty").textContent =
+              (ledger.items || []).length + " check-in(s) recorded; no arrivals board rows yet.";
+            document.getElementById("board-empty").hidden = false;
+          }
+        } catch (err) {
+          show("board-empty", String(err), "error");
+          document.getElementById("board-empty").hidden = false;
+        }
+      }
+
+      async function loadHealth() {
+        try {
+          const health = await (await fetch("/v1/vendor_health", { headers: headers() })).json();
+          const node = document.getElementById("health");
+          if (health.ok) { node.hidden = true; return; }
+          node.hidden = false;
+          node.textContent = "Vendored blocks unavailable: " + (health.unavailable || []).join(", ");
+        } catch (err) { /* health banner is advisory */ }
+      }
+
+      document.getElementById("reload").addEventListener("click", loadBoard);
+      document.getElementById("checkin").addEventListener("submit", async (event) => {
+        event.preventDefault();
+        const payload = formData(event.target);
+        payload.nights = Number(payload.nights);
+        payload.status = "open";
+        try {
+          const body = await (await fetch("/v1/record_checkin", {
+            method: "POST", headers: headers(), body: JSON.stringify(payload),
+          })).json();
+          if (body.ok === false) { show("checkin-status", body.error, "error"); return; }
+          show("checkin-status", "Recorded " + payload.guest_name + " in room " + payload.room_number, "ok");
+          event.target.reset();
+          await loadBoard();
+        } catch (err) { show("checkin-status", String(err), "error"); }
+      });
+      document.getElementById("availability").addEventListener("submit", async (event) => {
+        event.preventDefault();
+        const payload = formData(event.target);
+        payload.reference = "desk-check";
+        payload.status = "open";
+        try {
+          const body = await (await fetch("/v1/room_availability_check", {
+            method: "POST", headers: headers(), body: JSON.stringify(payload),
+          })).json();
+          if (body.ok === false) { show("availability-status", body.error, "error"); return; }
+          const stay = body.availability || {};
+          show("availability-status",
+            stay.is_available
+              ? "Room " + stay.room_number + " is free for " + stay.nights + " night(s); charge "
+                + (body.stay || {}).estimated_charge + " " + (body.stay || {}).currency
+              : "Room " + stay.room_number + " is booked for those dates",
+            stay.is_available ? "ok" : "error");
+        } catch (err) { show("availability-status", String(err), "error"); }
+      });
+
+      loadBoard();
+      loadHealth();
+    </script>
+  </body>
 </html>

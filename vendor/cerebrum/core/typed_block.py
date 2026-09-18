@@ -419,6 +419,14 @@ class TypedBlock(UniversalBlock):
         # Ensure result is JSON-serializable (convert dataclasses, enums, etc.)
         result = self._serialize_value(result)
 
+        # Gated execution-audit note — dormant by default. Activated only by
+        # BLOCK_EXECUTION_AUDIT_ENABLED=1; the off path is a byte-for-byte
+        # noop (vendor.cerebrum.core.activation).
+        from vendor.cerebrum.core.activation import emit_block_execution_note
+
+        status = result.get("status", "ok") if isinstance(result, dict) else "ok"
+        emit_block_execution_note(self.name, request_id, str(status))
+
         return result
 
     def _serialize_value(self, obj: Any) -> Any:

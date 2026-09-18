@@ -1,0 +1,21 @@
+{
+ "blockers": [
+  {
+   "block_id": "knowledge",
+   "evidence": "vendor/cerebrum/blocks/knowledge.py imports vendor.cerebrum.core.vector_store, which the vendored core slice does not ship (ImportError: cannot import name 'vector_store' from 'vendor.cerebrum.core'). The knowledge block cannot load. Mitigation: guest_notes_and_preferences stores notes through the database block and caches them in the memory block; tenant retrieval runs through app/retrieval.py.",
+   "mitigation": "guest_notes_and_preferences persists via the database block and caches via the memory block; the platform's own corpus (app/retrieval.py) is exposed at POST /v1/corpus/documents, POST /v1/rag/ingest and POST|GET /v1/rag/query",
+   "owner_action": "Store fix required: ship vendor/cerebrum/core/vector_store.py in the vendored core slice",
+   "recorded_at": "2026-09-18"
+  },
+  {
+   "block_id": "notification",
+   "evidence": "vendor/cerebrum/blocks/notification.py does not parse: IndentationError: expected an indented block after 'try' statement on line 230 (notification.py, line 231) -- the Store notify slice cannot be imported at all, so notification/event_bus MCP push cannot run. Mitigation: checkin_notifications delivers the alert over the event_bus publish path with a durable queue follow-up.",
+   "mitigation": "checkin_notifications publishes the prepared MCP event on the event_bus slice (topic, payload dict, message, channel=mcp, tool=event_bus) and enqueues a durable queue job; the check-in row the route persists is the record of the alert. The notification slice is not bound by any capability.",
+   "owner_action": "Store fix required: ship a parseable vendor/cerebrum/blocks/notification.py",
+   "recorded_at": "2026-09-18"
+  }
+ ],
+ "policy": "A block this platform cannot run is named here and reported on GET /v1/vendor_health. It is never stubbed into a passing call, and no capability binds it.",
+ "product_id": "hospitality",
+ "product_name": "Boutique Front Desk"
+}

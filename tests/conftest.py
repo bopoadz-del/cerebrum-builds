@@ -1,57 +1,64 @@
-from __future__ import annotations
+"""Test bootstrap for the generated platform.
 
+Puts the platform root on sys.path and points persistence at a scratch
+directory, so running the suite never touches a real data file.
+
+STORAGE_PATH is FORCED, not defaulted. The build environment legitimately
+carries its own STORAGE_PATH (the factory backend sets one), and a
+``setdefault`` here made every tester round share one database file: a
+table created by round N rejected round N+1's columns, and the rework loop
+burned its budget chasing schema errors no round had actually caused.
+
+Outbound network is BLOCKED, not merely unconfigured. Stripping the store
+env only proves the platform does not call the store; a handler that posts
+to an arbitrary public URL still passed, and one did -- "sent" a webhook to
+the open internet from a platform whose whole claim is running offline.
+Loopback stays open so TestClient-style local servers keep working.
+P1: this blocker is unchanged. Do not add local-inference or cloud hosts.
+"""
+
+import os
+import socket
 import sys
+import tempfile
 from pathlib import Path
 
-import pytest
-from fastapi.testclient import TestClient
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+os.environ["STORAGE_PATH"] = tempfile.mkdtemp(prefix="platform-test-")
 
-# Factory harness may set PYTHONPATH; keep collection working without it.
-ROOT = Path(__file__).resolve().parents[1]
-if str(ROOT) not in sys.path:
-    sys.path.insert(0, str(ROOT))
+# Schema is versioned. connect() does not CREATE TABLE. Apply head so
+# model/route tests have tables; a missing revision fails the suite.
+# ImportError is only for isolation probes that exec this file without app/.
+try:
+    from app.migrations import upgrade_head  # noqa: E402
 
+    upgrade_head()
+except ImportError:
+    pass
 
-def pytest_configure(config: pytest.Config) -> None:
-    config.addinivalue_line("markers", "pilot: product-gate tests against the booted app")
-    config.addinivalue_line("markers", "not_pilot: code-gate imports, routes, and handlers")
-
-
-OPERATOR_SECRET = "pytest-operator-secret-rx01"
-
-
-@pytest.fixture
-def isolated_storage(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Path:
-    root = tmp_path / "storage"
-    root.mkdir()
-    monkeypatch.setenv("STORAGE_PATH", str(root))
-    monkeypatch.delenv("VECTOR_DB_URL", raising=False)
-    monkeypatch.setenv("VECTOR_DB_URL", "")
-    from app.store import reset_connection
-
-    reset_connection()
-    return root
+_LOCAL_HOSTS = {"localhost", "127.0.0.1", "::1"}
+_real_connect = socket.socket.connect
 
 
-@pytest.fixture
-def operator_secret(monkeypatch: pytest.MonkeyPatch) -> str:
-    monkeypatch.setenv("OPERATOR_TOKEN", OPERATOR_SECRET)
-    monkeypatch.delenv("ADMIN_TOKEN", raising=False)
-    return OPERATOR_SECRET
+def _offline_connect(self, address):
+    host = address[0] if isinstance(address, tuple) else address
+    if isinstance(host, (bytes, bytearray)):
+        host = host.decode("utf-8", "replace")
+    if str(host) not in _LOCAL_HOSTS:
+        raise OSError(
+            f"offline suite: outbound connection to {host!r} refused -- this "
+            "platform must run with no network"
+        )
+    return _real_connect(self, address)
 
 
-@pytest.fixture
-def client(isolated_storage: Path, operator_secret: str) -> TestClient:
-    from app.main import app
-
-    with TestClient(app) as test_client:
-        test_client.headers.update({"Authorization": f"Bearer {operator_secret}"})
-        yield test_client
+socket.socket.connect = _offline_connect
 
 
-@pytest.fixture
-def anon_client(isolated_storage: Path, operator_secret: str) -> TestClient:
-    from app.main import app
-
-    with TestClient(app) as test_client:
-        yield test_client
+def pytest_configure(config):
+    """Register the factory vs pilot split. TESTER's lane is tests/** so
+    this cannot live in a repo-root pytest.ini."""
+    config.addinivalue_line(
+        "markers",
+        "pilot: Store-backed execute-all; excluded from the factory code-phase gate",
+    )

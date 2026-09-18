@@ -2,67 +2,45 @@
   "capabilities": [
     {
       "block_ids": [
-        "workflow",
-        "database",
+        "capture",
         "validation",
-        "event_bus",
-        "queue",
-        "audit"
-      ],
-      "description": "Handles the full reservation lifecycle including availability checks, real-time booking, modifications, cancellations, and stay records across all channels.",
-      "id": "booking_management",
-      "required": true,
-      "strategy_hint": "REUSE"
-    },
-    {
-      "block_ids": [
-        "estate_registry",
-        "estate_maintenance",
-        "database",
-        "team",
-        "workflow",
-        "audit"
-      ],
-      "description": "Manages rooms, rate plans, seasonal inventory, and property configuration for one or many hotel properties.",
-      "id": "property_management",
-      "required": true,
-      "strategy_hint": "REUSE"
-    },
-    {
-      "block_ids": [
-        "formula_executor",
-        "readiness_engine",
-        "recommendation_template",
-        "analytics",
         "database"
       ],
-      "description": "Calculates and adjusts room rates in real time based on demand, occupancy, seasonality, competitor signals, and configurable pricing rules.",
-      "id": "dynamic_pricing",
-      "required": true,
-      "strategy_hint": "REUSE"
-    },
-    {
-      "block_ids": [
-        "capture",
-        "knowledge",
-        "vector_search",
-        "analytics",
-        "notification"
-      ],
-      "description": "Collects, moderates, and responds to guest reviews; analyzes sentiment and surfaces reputation trends for each property.",
-      "id": "review_management",
+      "description": "Capture a guest check-in with guest name, room number, number of nights, and arrival time.",
+      "id": "record_checkin",
       "required": true,
       "strategy_hint": "REUSE"
     },
     {
       "block_ids": [
         "dashboard",
-        "analytics",
-        "portfolio_rollup",
-        "database"
+        "database",
+        "analytics"
       ],
-      "description": "Provides operational dashboards and reports covering occupancy, revenue, booking pace, channel performance, and guest satisfaction.",
-      "id": "analytics_dashboard",
+      "description": "Show all of today's check-ins in a live list, indicating which guests have arrived, for the duty manager.",
+      "id": "todays_arrivals_board",
+      "required": true,
+      "strategy_hint": "REUSE"
+    },
+    {
+      "block_ids": [
+        "validation",
+        "database",
+        "formula_executor"
+      ],
+      "description": "Check whether a room is free for the requested dates and prevent double-booking at check-in.",
+      "id": "room_availability_check",
+      "required": true,
+      "strategy_hint": "REUSE"
+    },
+    {
+      "block_ids": [
+        "knowledge",
+        "database",
+        "memory"
+      ],
+      "description": "Store short guest notes and preferences for front-desk staff to see during the stay.",
+      "id": "guest_notes_and_preferences",
       "required": true,
       "strategy_hint": "REUSE"
     },
@@ -70,29 +48,37 @@
       "block_ids": [
         "notification",
         "event_bus",
-        "queue",
-        "workflow"
+        "queue"
       ],
-      "description": "Sends timely booking confirmations, reminders, pricing alerts, and internal staff notifications via email, SMS, and in-app channels.",
-      "id": "notification_system",
+      "description": "Notify housekeeping and the duty manager when a guest checks in.",
+      "id": "checkin_notifications",
       "required": true,
       "strategy_hint": "REUSE"
     },
     {
       "block_ids": [
-        "vector_search",
-        "knowledge",
-        "recommendation_template",
-        "memory",
-        "analytics"
+        "analytics",
+        "database",
+        "dashboard"
       ],
-      "description": "Enables guests to search properties and rooms with filters, and recommends personalized stays, packages, and upsells based on preferences and history.",
-      "id": "search_recommendation",
+      "description": "Produce an end-of-day summary of arrivals, occupancy, and no-shows for the manager.",
+      "id": "daily_checkin_summary",
+      "required": true,
+      "strategy_hint": "REUSE"
+    },
+    {
+      "block_ids": [
+        "audit",
+        "database"
+      ],
+      "description": "Keep a record of who recorded or changed each check-in for accountability.",
+      "id": "audit_trail",
       "required": true,
       "strategy_hint": "REUSE"
     }
   ],
   "connectors": [],
+  "delivery_format": "zip",
   "drafting_mode": "architect_llm",
   "drafting_note": null,
   "edge_profile": "standard",
@@ -100,9 +86,9 @@
   "human_authority": true,
   "n_required": 7,
   "product_id": "hospitality",
-  "product_name": "StayFlow Hospitality Platform",
+  "product_name": "Boutique Front Desk",
   "schema_version": "product_blueprint.v1",
-  "summary": "StayFlow is an all-in-one hotel booking and property management platform for independent hotels, boutique inns, and small hotel groups. It unifies real-time reservation management, room inventory and rate control, dynamic pricing, guest reviews, and operational analytics, while keeping staff and guests informed with automated notifications and AI-assisted search and recommendations.",
+  "summary": "A lightweight front-desk platform for a 40-room boutique hotel that lets staff quickly record guest check-ins and gives the duty manager a live view of today's arrivals. It replaces paper logs and ad-hoc spreadsheets with a shared, reliable arrival board for small hotel teams.",
   "ui_modules": [
     "command_center",
     "operational_chat",

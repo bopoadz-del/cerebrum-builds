@@ -11,11 +11,7 @@
     "memory",
     "notification",
     "queue",
-    "recommendation_template",
-    "team",
-    "validation",
-    "vector_search",
-    "workflow"
+    "validation"
   ],
   "id": "platform",
   "name": "Platform",
@@ -31,11 +27,7 @@
     "memory",
     "notification",
     "queue",
-    "recommendation_template",
-    "team",
-    "validation",
-    "vector_search",
-    "workflow"
+    "validation"
   ],
   "source": "synthesized-from-factory-shelf",
   "vendored_blocks": {
@@ -50,11 +42,7 @@
     "memory": "vendor/blocks/memory",
     "notification": "vendor/blocks/notification",
     "queue": "vendor/blocks/queue",
-    "recommendation_template": "vendor/blocks/recommendation_template",
-    "team": "vendor/blocks/team",
-    "validation": "vendor/blocks/validation",
-    "vector_search": "vendor/blocks/vector_search",
-    "workflow": "vendor/blocks/workflow"
+    "validation": "vendor/blocks/validation"
   },
   "version": "1.0.0"
 }

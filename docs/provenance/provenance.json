@@ -1,0 +1,121 @@
+{
+  "artifacts": {
+    "acceptance": "scripts/acceptance.py",
+    "handlers": [
+      "app/actions/patient_and_owner_records.py",
+      "app/actions/appointment_scheduling.py",
+      "app/actions/clinical_visit_notes_and_treatment_plans.py",
+      "app/actions/vaccination_tracking.py",
+      "app/actions/billing_and_invoicing.py",
+      "app/actions/analytics_and_reporting.py",
+      "app/actions/compliance_and_audit_trail.py",
+      "app/actions/client_communication_and_reminders.py"
+    ],
+    "models": "app/models.py",
+    "release_gate": "scripts/release_gate.py",
+    "routes": "app/routes.py",
+    "store": "app/store.py",
+    "vendor_runtime_compat": "app/vendor_compat/"
+  },
+  "blocks_commit": "a198eba6655fabc68df06e3fab4f9c8089065b50",
+  "blueprint_id": "veterinary-practice:product_blueprint.v1",
+  "factory": "CerebrumDev.ai",
+  "factory_commit": "unknown",
+  "generated_at": "blueprint:1f5442c8ead1ea24420a6d726b03f020ac3704951ce59fe618f09dce9c6e8e33",
+  "inputs_hash": "1f5442c8ead1ea24420a6d726b03f020ac3704951ce59fe618f09dce9c6e8e33",
+  "kernel_version": "1.0.0",
+  "plan": {
+    "capabilities": [
+      {
+        "block_ids": [
+          "database",
+          "storage",
+          "validation",
+          "audit"
+        ],
+        "capability_id": "patient_and_owner_records",
+        "notes": "registry-verified Store blocks",
+        "strategy": "REUSE"
+      },
+      {
+        "block_ids": [
+          "workflow",
+          "notification",
+          "queue",
+          "team"
+        ],
+        "capability_id": "appointment_scheduling",
+        "notes": "registry-verified Store blocks",
+        "strategy": "REUSE"
+      },
+      {
+        "block_ids": [
+          "document_engine",
+          "capture",
+          "knowledge",
+          "formula_executor"
+        ],
+        "capability_id": "clinical_visit_notes_and_treatment_plans",
+        "notes": "registry-verified Store blocks",
+        "strategy": "REUSE"
+      },
+      {
+        "block_ids": [
+          "estate_registry",
+          "readiness_engine",
+          "notification",
+          "audit"
+        ],
+        "capability_id": "vaccination_tracking",
+        "notes": "registry-verified Store blocks",
+        "strategy": "REUSE"
+      },
+      {
+        "block_ids": [
+          "portfolio_rollup",
+          "formula_executor",
+          "document_engine",
+          "validation"
+        ],
+        "capability_id": "billing_and_invoicing",
+        "notes": "registry-verified Store blocks",
+        "strategy": "REUSE"
+      },
+      {
+        "block_ids": [
+          "analytics",
+          "dashboard",
+          "portfolio_rollup",
+          "event_bus"
+        ],
+        "capability_id": "analytics_and_reporting",
+        "notes": "registry-verified Store blocks",
+        "strategy": "REUSE"
+      },
+      {
+        "block_ids": [
+          "audit",
+          "file_hasher",
+          "evidence_verifier",
+          "validation"
+        ],
+        "capability_id": "compliance_and_audit_trail",
+        "notes": "registry-verified Store blocks",
+        "strategy": "REUSE"
+      },
+      {
+        "block_ids": [
+          "notification",
+          "recommendation_template",
+          "event_bus"
+        ],
+        "capability_id": "client_communication_and_reminders",
+        "notes": "registry-verified Store blocks",
+        "strategy": "REUSE"
+      }
+    ],
+    "fail_closed": true,
+    "product_id": "veterinary-practice"
+  },
+  "schema_version": "provenance.v1"
+}

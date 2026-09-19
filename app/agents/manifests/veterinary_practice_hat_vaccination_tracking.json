@@ -1,0 +1,49 @@
+{
+  "activation": {
+    "default_enabled": true,
+    "mode": "hybrid",
+    "put_off_by": [
+      "disable:veterinary_practice.hat.vaccination_tracking"
+    ],
+    "triggers": [
+      {
+        "type": "intent",
+        "value": "vaccination_tracking"
+      },
+      {
+        "type": "capability",
+        "value": "vaccination_tracking"
+      }
+    ]
+  },
+  "agent_id": "veterinary_practice.hat.vaccination_tracking",
+  "allowed_actions": [
+    "veterinary_practice.vaccination_tracking"
+  ],
+  "block_ids": [
+    "estate_registry",
+    "readiness_engine",
+    "notification",
+    "audit"
+  ],
+  "discipline": "vaccination_tracking",
+  "display_name": "VetClinic Operations Platform Vaccination Tracking Hat",
+  "extends": "veterinary_practice.base",
+  "handoffs": [],
+  "human_authority": true,
+  "kind": "hat",
+  "manifest_version": "1.0.0",
+  "memory": {
+    "pii_policy": "never_store_pii",
+    "save": [],
+    "scope": "tenant_project"
+  },
+  "strategy": "REUSE",
+  "summary": "Specialized hat for capability 'vaccination_tracking' (strategy=REUSE). Adapted from TEKsystems retail hat pattern; estate/product-neutral.",
+  "tags": [
+    "hat",
+    "factory-generated",
+    "veterinary_practice",
+    "vaccination_tracking"
+  ]
+}

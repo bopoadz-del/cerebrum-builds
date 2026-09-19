@@ -1,0 +1,117 @@
+{
+  "capabilities": [
+    {
+      "block_ids": [
+        "database",
+        "storage",
+        "validation",
+        "audit"
+      ],
+      "capability_id": "patient_and_owner_records",
+      "notes": "bound to registry-verified Store blocks",
+      "strategy": "REUSE"
+    },
+    {
+      "block_ids": [
+        "workflow",
+        "notification",
+        "queue",
+        "team"
+      ],
+      "capability_id": "appointment_scheduling",
+      "notes": "bound to registry-verified Store blocks",
+      "strategy": "REUSE"
+    },
+    {
+      "block_ids": [
+        "document_engine",
+        "capture",
+        "knowledge",
+        "formula_executor"
+      ],
+      "capability_id": "clinical_visit_notes_and_treatment_plans",
+      "notes": "bound to registry-verified Store blocks",
+      "strategy": "REUSE"
+    },
+    {
+      "block_ids": [
+        "estate_registry",
+        "readiness_engine",
+        "notification",
+        "audit"
+      ],
+      "capability_id": "vaccination_tracking",
+      "notes": "bound to registry-verified Store blocks",
+      "strategy": "REUSE"
+    },
+    {
+      "block_ids": [
+        "portfolio_rollup",
+        "formula_executor",
+        "document_engine",
+        "validation"
+      ],
+      "capability_id": "billing_and_invoicing",
+      "notes": "bound to registry-verified Store blocks",
+      "strategy": "REUSE"
+    },
+    {
+      "block_ids": [
+        "analytics",
+        "dashboard",
+        "portfolio_rollup",
+        "event_bus"
+      ],
+      "capability_id": "analytics_and_reporting",
+      "notes": "bound to registry-verified Store blocks",
+      "strategy": "REUSE"
+    },
+    {
+      "block_ids": [
+        "audit",
+        "file_hasher",
+        "evidence_verifier",
+        "validation"
+      ],
+      "capability_id": "compliance_and_audit_trail",
+      "notes": "bound to registry-verified Store blocks",
+      "strategy": "REUSE"
+    },
+    {
+      "block_ids": [
+        "notification",
+        "recommendation_template",
+        "event_bus"
+      ],
+      "capability_id": "client_communication_and_reminders",
+      "notes": "bound to registry-verified Store blocks",
+      "strategy": "REUSE"
+    }
+  ],
+  "dual_registered_blocks": [
+    "analytics",
+    "audit",
+    "capture",
+    "dashboard",
+    "database",
+    "document_engine",
+    "estate_registry",
+    "event_bus",
+    "evidence_verifier",
+    "file_hasher",
+    "formula_executor",
+    "knowledge",
+    "notification",
+    "portfolio_rollup",
+    "queue",
+    "readiness_engine",
+    "recommendation_template",
+    "storage",
+    "team",
+    "validation",
+    "workflow"
+  ],
+  "notes": [],
+  "schema_version": "1.0.0",
+  "unsupported": []
+}

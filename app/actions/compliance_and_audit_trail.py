@@ -1,0 +1,157 @@
+"""Handler for capability compliance_and_audit_trail.
+
+Written by the factory WRITER role (codewhale exec). Blocks are invoked through the
+local dispatch runtime -- this module makes no network call.
+
+Persistence is route-scoped (factory-grounded persist envelope): the ROUTE's
+tenant-scoped save writes the request after SUCCESS; handle() is pure
+dispatch and must not persist directly (Phase 2 §0.2).
+"""
+
+from __future__ import annotations
+
+from typing import Any, Dict
+
+from app.dispatch import execute
+
+CAPABILITY_ID = "compliance_and_audit_trail"
+ENTITY = 'compliance_and_audit_trail'
+BLOCK_IDS = ['audit', 'file_hasher', 'evidence_verifier', 'validation']
+#: Each block's declared default action (from its block.json). Blocks are
+#: action-dispatched; calling one with no action is answered with an error.
+BLOCK_DEFAULT_ACTIONS = {'audit': 'log', 'file_hasher': 'hash', 'evidence_verifier': 'verify', 'validation': 'validate_pipeline'}
+#: This capability's own domain columns. The kernel strips trust-scope keys
+#: from caller arguments; a column that shares one of those names (project_id
+#: is the obvious one for construction) would be deleted before handle() ever
+#: saw it. Declaring the names here tells the kernel they are domain data.
+CAPABILITY_FIELDS = ['reference', 'status', 'record_type', 'subject_ref', 'content', 'content_hash', 'reviewer', 'reviewed_on', 'retention_until']
+
+
+def handle(payload: Dict[str, Any]) -> Dict[str, Any]:
+    import app.dispatch as _dispatch
+    try:
+        from app.block_inputs import prepare_block_input as _prepare_block_input
+    except ImportError:  # pragma: no cover - unit stubs without the module
+        def _prepare_block_input(block_id, data, **_kw):
+            return data if isinstance(data, dict) else {'value': data}
+    try:
+        from app.block_inputs import default_block_action as _default_block_action
+    except ImportError:  # pragma: no cover - unit stubs / older emit
+        def _default_block_action(block_id, default_actions=None):
+            defaults = default_actions if isinstance(default_actions, dict) else {}
+            cand = defaults.get(block_id)
+            return cand if isinstance(cand, str) and cand.strip() else None
+    try:
+        from app.block_inputs import split_execute_action as _split_execute_action
+    except ImportError:  # pragma: no cover - unit stubs / older emit
+        def _split_execute_action(payload, action=None, default_action=None):
+            data = dict(payload) if isinstance(payload, dict) else (
+                {} if payload is None else {'value': payload}
+            )
+            inner = data.get('input') if isinstance(data.get('input'), dict) else {}
+            resolved = action
+            if not (isinstance(resolved, str) and resolved.strip()):
+                for cand in (data.get('action'), inner.get('action'), default_action):
+                    if isinstance(cand, str) and cand.strip():
+                        resolved = cand
+                        break
+                else:
+                    resolved = default_action
+            data.pop('action', None)
+            if isinstance(data.get('input'), dict):
+                data['input'] = dict(data['input'])
+                data['input'].pop('action', None)
+            return resolved, data
+    _block_errors = []
+    def _watched(block_id, *a, **kw):
+        data = a[0] if a else kw.get('payload', {})
+        action = kw.get('action')
+        if action is None and len(a) > 1:
+            action = a[1]
+        params = kw.get('params')
+        if params is None and len(a) > 2:
+            params = a[2]
+        action, data = _split_execute_action(
+            data,
+            action=action,
+            default_action=_default_block_action(
+                block_id, BLOCK_DEFAULT_ACTIONS
+            ),
+        )
+        prepared = _prepare_block_input(
+            block_id, data, action=action, roster=BLOCK_IDS,
+            entity=ENTITY,
+            default_actions=BLOCK_DEFAULT_ACTIONS,
+        )
+        if isinstance(prepared, dict):
+            prepared = dict(prepared)
+            prepared.pop('action', None)
+            if isinstance(prepared.get('input'), dict):
+                prepared['input'] = dict(prepared['input'])
+                prepared['input'].pop('action', None)
+        res = _dispatch.execute(
+            block_id, prepared, action=action, params=params
+        )
+        if isinstance(res, dict) and (
+            res.get("status") == "error" or "error" in res
+        ):
+            _block_errors.append(
+                "%s: %s" % (block_id, str(res.get("error") or res.get("status"))[:160])
+            )
+        return res
+    def _impl(payload, execute=_watched):
+        if not isinstance(payload, dict):
+            return {"ok": False, "capability": CAPABILITY_ID, "error": "payload must be an object"}
+        record = dict(payload)
+        record["record_type"] = str(record.get("record_type") or "").strip()
+        record["subject_ref"] = str(record.get("subject_ref") or "").strip()
+        content = str(record.get("content") or "")
+        if not record["subject_ref"] or not content:
+            return {"ok": False, "capability": CAPABILITY_ID,
+                    "error": "Missing required fields: subject_ref, content"}
+        import hashlib
+        record["content"] = content
+        record["content_hash"] = hashlib.sha256(content.encode("utf-8")).hexdigest()
+        results = {}
+        errors = {}
+        for block_id in BLOCK_IDS:
+            result = execute(
+                block_id, record, action=BLOCK_DEFAULT_ACTIONS.get(block_id)
+            )
+            results[block_id] = result
+            if isinstance(result, dict) and (
+                result.get("status") == "error" or "error" in result
+            ):
+                errors[block_id] = str(result.get("error") or result)[:200]
+        if errors:
+            return {
+                "ok": False,
+                "capability": CAPABILITY_ID,
+                "error": "; ".join(f"{b}: {e}" for b, e in sorted(errors.items())),
+                "results": results,
+            }
+        record["status"] = record.get("status") or "open"
+        return {
+            "ok": True,
+            "capability": CAPABILITY_ID,
+            "entity": ENTITY,
+            "record": record,
+            "results": results,
+        }
+    result = _impl(payload)
+    if _block_errors and (
+        not isinstance(result, dict) or result.get("ok") is not False
+    ):
+        return {
+            "ok": False,
+            "capability": CAPABILITY_ID,
+            "error": "block failed: " + "; ".join(_block_errors),
+            "result": result,
+        }
+    if isinstance(result, dict) and result.get('ok') is False:
+        return result
+    if isinstance(result, dict):
+        result = dict(result)
+        result.setdefault('ok', True)
+        return result
+    return {'ok': True, 'capability': CAPABILITY_ID, 'result': result}

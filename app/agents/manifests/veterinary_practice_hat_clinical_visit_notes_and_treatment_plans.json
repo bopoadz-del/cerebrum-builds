@@ -1,0 +1,49 @@
+{
+  "activation": {
+    "default_enabled": true,
+    "mode": "hybrid",
+    "put_off_by": [
+      "disable:veterinary_practice.hat.clinical_visit_notes_and_treatment_plans"
+    ],
+    "triggers": [
+      {
+        "type": "intent",
+        "value": "clinical_visit_notes_and_treatment_plans"
+      },
+      {
+        "type": "capability",
+        "value": "clinical_visit_notes_and_treatment_plans"
+      }
+    ]
+  },
+  "agent_id": "veterinary_practice.hat.clinical_visit_notes_and_treatment_plans",
+  "allowed_actions": [
+    "veterinary_practice.clinical_visit_notes_and_treatment_plans"
+  ],
+  "block_ids": [
+    "document_engine",
+    "capture",
+    "knowledge",
+    "formula_executor"
+  ],
+  "discipline": "clinical_visit_notes_and_treatment_plans",
+  "display_name": "VetClinic Operations Platform Clinical Visit Notes And Treatment Plans Hat",
+  "extends": "veterinary_practice.base",
+  "handoffs": [],
+  "human_authority": true,
+  "kind": "hat",
+  "manifest_version": "1.0.0",
+  "memory": {
+    "pii_policy": "never_store_pii",
+    "save": [],
+    "scope": "tenant_project"
+  },
+  "strategy": "REUSE",
+  "summary": "Specialized hat for capability 'clinical_visit_notes_and_treatment_plans' (strategy=REUSE). Adapted from TEKsystems retail hat pattern; estate/product-neutral.",
+  "tags": [
+    "hat",
+    "factory-generated",
+    "veterinary_practice",
+    "clinical_visit_notes_and_treatment_plans"
+  ]
+}

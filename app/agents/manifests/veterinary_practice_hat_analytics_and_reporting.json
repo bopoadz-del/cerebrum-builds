@@ -1,0 +1,49 @@
+{
+  "activation": {
+    "default_enabled": true,
+    "mode": "hybrid",
+    "put_off_by": [
+      "disable:veterinary_practice.hat.analytics_and_reporting"
+    ],
+    "triggers": [
+      {
+        "type": "intent",
+        "value": "analytics_and_reporting"
+      },
+      {
+        "type": "capability",
+        "value": "analytics_and_reporting"
+      }
+    ]
+  },
+  "agent_id": "veterinary_practice.hat.analytics_and_reporting",
+  "allowed_actions": [
+    "veterinary_practice.analytics_and_reporting"
+  ],
+  "block_ids": [
+    "analytics",
+    "dashboard",
+    "portfolio_rollup",
+    "event_bus"
+  ],
+  "discipline": "analytics_and_reporting",
+  "display_name": "VetClinic Operations Platform Analytics And Reporting Hat",
+  "extends": "veterinary_practice.base",
+  "handoffs": [],
+  "human_authority": true,
+  "kind": "hat",
+  "manifest_version": "1.0.0",
+  "memory": {
+    "pii_policy": "never_store_pii",
+    "save": [],
+    "scope": "tenant_project"
+  },
+  "strategy": "REUSE",
+  "summary": "Specialized hat for capability 'analytics_and_reporting' (strategy=REUSE). Adapted from TEKsystems retail hat pattern; estate/product-neutral.",
+  "tags": [
+    "hat",
+    "factory-generated",
+    "veterinary_practice",
+    "analytics_and_reporting"
+  ]
+}

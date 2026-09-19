@@ -1,0 +1,14 @@
+{
+  "blocks_commit": "vendored",
+  "connectors": [],
+  "factory_commit": "writer-role",
+  "factory_scenario": "CREATE_PRODUCT",
+  "product_dna_version": "1.0.0",
+  "product_id": "veterinary-practice",
+  "schema_version": "1.0.0",
+  "ui_modules": [
+    "command_center",
+    "operational_chat",
+    "resident_engineer"
+  ]
+}

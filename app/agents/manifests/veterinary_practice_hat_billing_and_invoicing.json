@@ -1,0 +1,49 @@
+{
+  "activation": {
+    "default_enabled": true,
+    "mode": "hybrid",
+    "put_off_by": [
+      "disable:veterinary_practice.hat.billing_and_invoicing"
+    ],
+    "triggers": [
+      {
+        "type": "intent",
+        "value": "billing_and_invoicing"
+      },
+      {
+        "type": "capability",
+        "value": "billing_and_invoicing"
+      }
+    ]
+  },
+  "agent_id": "veterinary_practice.hat.billing_and_invoicing",
+  "allowed_actions": [
+    "veterinary_practice.billing_and_invoicing"
+  ],
+  "block_ids": [
+    "portfolio_rollup",
+    "formula_executor",
+    "document_engine",
+    "validation"
+  ],
+  "discipline": "billing_and_invoicing",
+  "display_name": "VetClinic Operations Platform Billing And Invoicing Hat",
+  "extends": "veterinary_practice.base",
+  "handoffs": [],
+  "human_authority": true,
+  "kind": "hat",
+  "manifest_version": "1.0.0",
+  "memory": {
+    "pii_policy": "never_store_pii",
+    "save": [],
+    "scope": "tenant_project"
+  },
+  "strategy": "REUSE",
+  "summary": "Specialized hat for capability 'billing_and_invoicing' (strategy=REUSE). Adapted from TEKsystems retail hat pattern; estate/product-neutral.",
+  "tags": [
+    "hat",
+    "factory-generated",
+    "veterinary_practice",
+    "billing_and_invoicing"
+  ]
+}

@@ -1,0 +1,89 @@
+{
+  "artifact_sources": {
+    "acceptance": "deterministic store acceptance harness",
+    "analytics_and_reporting": "coder CLI (codewhale exec)",
+    "app_factory_authorship": "in-tree authorship measurement (acceptance harness import target)",
+    "appointment_scheduling": "coder CLI (codewhale exec)",
+    "authority": "coder CLI (codewhale exec)",
+    "billing_and_invoicing": "coder CLI (codewhale exec)",
+    "client_communication_and_reminders": "coder CLI (codewhale exec)",
+    "clinical_visit_notes_and_treatment_plans": "coder CLI (codewhale exec)",
+    "compliance_and_audit_trail": "coder CLI (codewhale exec)",
+    "deploy_observe": "factory deploy emitter",
+    "deploy_scaffold": "deterministic deploy scaffold",
+    "domain_acceptance": "factory domain acceptance emitter",
+    "domain_pack": "factory domain pack emitter",
+    "formulas": "coder CLI (codewhale exec)",
+    "frontend": "coder CLI (codewhale exec)",
+    "llm": "coder CLI (codewhale exec)",
+    "migrations": "coder CLI (codewhale exec)",
+    "models": "coder CLI (codewhale exec)",
+    "network_posture": "offline_platform",
+    "patient_and_owner_records": "coder CLI (codewhale exec)",
+    "permissions": "factory supply chain emitter",
+    "persistence": "coder CLI (codewhale exec)",
+    "rag_routes": "coder CLI (codewhale exec)",
+    "readme": "coder CLI (codewhale exec)",
+    "release_gate": "deterministic deploy scaffold",
+    "retrieval": "coder CLI (codewhale exec)",
+    "routers": "coder CLI (codewhale exec)",
+    "routes": "coder CLI (codewhale exec)",
+    "sbom": "factory supply chain emitter",
+    "security": "coder CLI (codewhale exec)",
+    "store_document_column": "coder CLI (codewhale exec)",
+    "vaccination_tracking": "coder CLI (codewhale exec)",
+    "vendor_runtime_compat": "factory-grounded vendored-runtime repair (same Store commit a198eba6)"
+  },
+  "block_default_action_overrides": {
+    "file_hasher": "hash",
+    "team": "get_team_context"
+  },
+  "brief_dispatch": {
+    "cli_authored_ids": [
+      "patient_and_owner_records",
+      "appointment_scheduling",
+      "clinical_visit_notes_and_treatment_plans",
+      "vaccination_tracking",
+      "billing_and_invoicing",
+      "analytics_and_reporting",
+      "compliance_and_audit_trail",
+      "client_communication_and_reminders"
+    ],
+    "via": "cli"
+  },
+  "coder_failures": {},
+  "engine": "role_runner",
+  "kernel_agents": {
+    "CLONER": "deterministic \u2014 no agent",
+    "COLLECTOR": {
+      "model": "",
+      "reviews": []
+    },
+    "STORE_MANAGER": "deterministic \u2014 no agent",
+    "TESTER": "harness acceptance \u2014 not an LLM role",
+    "WRITER": {
+      "artifacts": 8,
+      "authored_ids": [
+        "patient_and_owner_records",
+        "appointment_scheduling",
+        "clinical_visit_notes_and_treatment_plans",
+        "vaccination_tracking",
+        "billing_and_invoicing",
+        "analytics_and_reporting",
+        "compliance_and_audit_trail",
+        "client_communication_and_reminders"
+      ]
+    }
+  },
+  "n_required": 8,
+  "n_required_capabilities": 8,
+  "network_posture": "offline_platform",
+  "product_id": "veterinary-practice",
+  "product_name": "VetClinic Operations Platform",
+  "schema_version": "build_provenance.v1",
+  "vendor_runtime_compat": {
+    "reason": "the sealed checkout's runtime slice omitted vendor/cerebrum/core/vector_store.py, could not load vendor/cerebrum/blocks/document_engine_block.py, and the CLONER rewrite left vendor/cerebrum/blocks/notification.py with an empty try body",
+    "repair": "app/vendor_compat registers the same Store commit's sources under the vendored module names; nothing under vendor/** is written",
+    "store_commit": "a198eba6655fabc68df06e3fab4f9c8089065b50"
+  }
+}

@@ -1,0 +1,49 @@
+{
+  "activation": {
+    "default_enabled": true,
+    "mode": "hybrid",
+    "put_off_by": [
+      "disable:veterinary_practice.hat.appointment_scheduling"
+    ],
+    "triggers": [
+      {
+        "type": "intent",
+        "value": "appointment_scheduling"
+      },
+      {
+        "type": "capability",
+        "value": "appointment_scheduling"
+      }
+    ]
+  },
+  "agent_id": "veterinary_practice.hat.appointment_scheduling",
+  "allowed_actions": [
+    "veterinary_practice.appointment_scheduling"
+  ],
+  "block_ids": [
+    "workflow",
+    "notification",
+    "queue",
+    "team"
+  ],
+  "discipline": "appointment_scheduling",
+  "display_name": "VetClinic Operations Platform Appointment Scheduling Hat",
+  "extends": "veterinary_practice.base",
+  "handoffs": [],
+  "human_authority": true,
+  "kind": "hat",
+  "manifest_version": "1.0.0",
+  "memory": {
+    "pii_policy": "never_store_pii",
+    "save": [],
+    "scope": "tenant_project"
+  },
+  "strategy": "REUSE",
+  "summary": "Specialized hat for capability 'appointment_scheduling' (strategy=REUSE). Adapted from TEKsystems retail hat pattern; estate/product-neutral.",
+  "tags": [
+    "hat",
+    "factory-generated",
+    "veterinary_practice",
+    "appointment_scheduling"
+  ]
+}

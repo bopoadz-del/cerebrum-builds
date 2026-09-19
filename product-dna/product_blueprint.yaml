@@ -1,0 +1,104 @@
+schema_version: product_blueprint.v1
+product_id: veterinary-practice
+product_name: VetClinic Operations Platform
+vertical: veterinary_practice
+summary: A comprehensive practice management platform for veterinary clinics, enabling
+  staff to maintain animal patient records, client/owner profiles, appointment scheduling,
+  clinical visit notes, treatments and prescriptions, vaccination tracking, and billing/invoicing.
+  It serves veterinarians, vet technicians, front-desk staff, and clinic administrators,
+  centralizing all operational, clinical, and financial workflows to improve care
+  quality and practice efficiency.
+capabilities:
+- id: patient_and_owner_records
+  description: Maintain detailed records for animal patients and their owners, including
+    demographics, medical history, owner contact details, and relationships between
+    pets and clients.
+  block_ids:
+  - database
+  - storage
+  - validation
+  - audit
+  strategy_hint: REUSE
+  required: true
+- id: appointment_scheduling
+  description: Schedule, reschedule, and manage appointments for veterinary services,
+    with reminders, calendar views, and resource allocation for rooms and staff.
+  block_ids:
+  - workflow
+  - notification
+  - queue
+  - team
+  strategy_hint: REUSE
+  required: true
+- id: clinical_visit_notes_and_treatment_plans
+  description: Capture and store visit notes, diagnoses, treatment plans, and prescriptions,
+    including medication details, dosages, and administration instructions.
+  block_ids:
+  - document_engine
+  - capture
+  - knowledge
+  - formula_executor
+  strategy_hint: REUSE
+  required: true
+- id: vaccination_tracking
+  description: Track vaccination history for each animal, including vaccine type,
+    date administered, next due date, and reminders for upcoming vaccinations.
+  block_ids:
+  - estate_registry
+  - readiness_engine
+  - notification
+  - audit
+  strategy_hint: REUSE
+  required: true
+- id: billing_and_invoicing
+  description: Generate invoices for services, treatments, and products, track payments,
+    manage billing cycles, and integrate with accounting systems.
+  block_ids:
+  - portfolio_rollup
+  - formula_executor
+  - document_engine
+  - validation
+  strategy_hint: REUSE
+  required: true
+- id: analytics_and_reporting
+  description: Provide dashboards and reports on practice performance, patient outcomes,
+    appointment trends, and financial metrics to support decision-making.
+  block_ids:
+  - analytics
+  - dashboard
+  - portfolio_rollup
+  - event_bus
+  strategy_hint: REUSE
+  required: true
+- id: compliance_and_audit_trail
+  description: Ensure all clinical and financial records are immutable and auditable,
+    meeting veterinary regulatory requirements and data privacy standards.
+  block_ids:
+  - audit
+  - file_hasher
+  - evidence_verifier
+  - validation
+  strategy_hint: REUSE
+  required: true
+- id: client_communication_and_reminders
+  description: Send automated reminders for appointments, vaccinations, and follow-ups
+    via email or SMS, and manage client communications.
+  block_ids:
+  - notification
+  - recommendation_template
+  - event_bus
+  strategy_hint: REUSE
+  required: true
+ui_modules:
+- command_center
+- operational_chat
+- resident_engineer
+connectors: []
+edge_profile: standard
+human_authority: true
+factory_scenario: CREATE_PRODUCT
+drafting_mode: architect_llm
+drafting_note: 'inventory: ''veterinary_practice'' is not on the declared-ready list
+  (hotels, insurance, construction, finance, retail); the Store kit for this vertical
+  is unverified — domain depth not guaranteed'
+delivery_format: zip

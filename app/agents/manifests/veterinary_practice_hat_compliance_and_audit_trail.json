@@ -1,0 +1,49 @@
+{
+  "activation": {
+    "default_enabled": true,
+    "mode": "hybrid",
+    "put_off_by": [
+      "disable:veterinary_practice.hat.compliance_and_audit_trail"
+    ],
+    "triggers": [
+      {
+        "type": "intent",
+        "value": "compliance_and_audit_trail"
+      },
+      {
+        "type": "capability",
+        "value": "compliance_and_audit_trail"
+      }
+    ]
+  },
+  "agent_id": "veterinary_practice.hat.compliance_and_audit_trail",
+  "allowed_actions": [
+    "veterinary_practice.compliance_and_audit_trail"
+  ],
+  "block_ids": [
+    "audit",
+    "file_hasher",
+    "evidence_verifier",
+    "validation"
+  ],
+  "discipline": "compliance_and_audit_trail",
+  "display_name": "VetClinic Operations Platform Compliance And Audit Trail Hat",
+  "extends": "veterinary_practice.base",
+  "handoffs": [],
+  "human_authority": true,
+  "kind": "hat",
+  "manifest_version": "1.0.0",
+  "memory": {
+    "pii_policy": "never_store_pii",
+    "save": [],
+    "scope": "tenant_project"
+  },
+  "strategy": "REUSE",
+  "summary": "Specialized hat for capability 'compliance_and_audit_trail' (strategy=REUSE). Adapted from TEKsystems retail hat pattern; estate/product-neutral.",
+  "tags": [
+    "hat",
+    "factory-generated",
+    "veterinary_practice",
+    "compliance_and_audit_trail"
+  ]
+}

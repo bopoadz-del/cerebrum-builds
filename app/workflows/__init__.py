@@ -1,0 +1,41 @@
+WORKFLOWS = [
+  {
+    "description": "Default linear workflow over planned capabilities.",
+    "name": "Capability sequence",
+    "steps": [
+      {
+        "capability_id": "patient_and_owner_records",
+        "role": "execute"
+      },
+      {
+        "capability_id": "appointment_scheduling",
+        "role": "execute"
+      },
+      {
+        "capability_id": "clinical_visit_notes_and_treatment_plans",
+        "role": "execute"
+      },
+      {
+        "capability_id": "vaccination_tracking",
+        "role": "execute"
+      },
+      {
+        "capability_id": "billing_and_invoicing",
+        "role": "execute"
+      },
+      {
+        "capability_id": "analytics_and_reporting",
+        "role": "execute"
+      },
+      {
+        "capability_id": "compliance_and_audit_trail",
+        "role": "execute"
+      },
+      {
+        "capability_id": "client_communication_and_reminders",
+        "role": "execute"
+      }
+    ],
+    "workflow_id": "veterinary_practice.capability_sequence"
+  }
+]

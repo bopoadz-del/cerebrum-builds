@@ -1,0 +1,48 @@
+{
+  "activation": {
+    "default_enabled": true,
+    "mode": "hybrid",
+    "put_off_by": [
+      "disable:veterinary_practice.hat.client_communication_and_reminders"
+    ],
+    "triggers": [
+      {
+        "type": "intent",
+        "value": "client_communication_and_reminders"
+      },
+      {
+        "type": "capability",
+        "value": "client_communication_and_reminders"
+      }
+    ]
+  },
+  "agent_id": "veterinary_practice.hat.client_communication_and_reminders",
+  "allowed_actions": [
+    "veterinary_practice.client_communication_and_reminders"
+  ],
+  "block_ids": [
+    "notification",
+    "recommendation_template",
+    "event_bus"
+  ],
+  "discipline": "client_communication_and_reminders",
+  "display_name": "VetClinic Operations Platform Client Communication And Reminders Hat",
+  "extends": "veterinary_practice.base",
+  "handoffs": [],
+  "human_authority": true,
+  "kind": "hat",
+  "manifest_version": "1.0.0",
+  "memory": {
+    "pii_policy": "never_store_pii",
+    "save": [],
+    "scope": "tenant_project"
+  },
+  "strategy": "REUSE",
+  "summary": "Specialized hat for capability 'client_communication_and_reminders' (strategy=REUSE). Adapted from TEKsystems retail hat pattern; estate/product-neutral.",
+  "tags": [
+    "hat",
+    "factory-generated",
+    "veterinary_practice",
+    "client_communication_and_reminders"
+  ]
+}

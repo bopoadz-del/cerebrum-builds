@@ -1,0 +1,49 @@
+{
+  "activation": {
+    "default_enabled": true,
+    "mode": "hybrid",
+    "put_off_by": [
+      "disable:veterinary_practice.hat.patient_and_owner_records"
+    ],
+    "triggers": [
+      {
+        "type": "intent",
+        "value": "patient_and_owner_records"
+      },
+      {
+        "type": "capability",
+        "value": "patient_and_owner_records"
+      }
+    ]
+  },
+  "agent_id": "veterinary_practice.hat.patient_and_owner_records",
+  "allowed_actions": [
+    "veterinary_practice.patient_and_owner_records"
+  ],
+  "block_ids": [
+    "database",
+    "storage",
+    "validation",
+    "audit"
+  ],
+  "discipline": "patient_and_owner_records",
+  "display_name": "VetClinic Operations Platform Patient And Owner Records Hat",
+  "extends": "veterinary_practice.base",
+  "handoffs": [],
+  "human_authority": true,
+  "kind": "hat",
+  "manifest_version": "1.0.0",
+  "memory": {
+    "pii_policy": "never_store_pii",
+    "save": [],
+    "scope": "tenant_project"
+  },
+  "strategy": "REUSE",
+  "summary": "Specialized hat for capability 'patient_and_owner_records' (strategy=REUSE). Adapted from TEKsystems retail hat pattern; estate/product-neutral.",
+  "tags": [
+    "hat",
+    "factory-generated",
+    "veterinary_practice",
+    "patient_and_owner_records"
+  ]
+}

@@ -1,0 +1,84 @@
+{
+  "actions": [
+    {
+      "block_ids": [
+        "database",
+        "storage",
+        "validation",
+        "audit"
+      ],
+      "capability_id": "patient_and_owner_records",
+      "strategy": "REUSE"
+    },
+    {
+      "block_ids": [
+        "workflow",
+        "notification",
+        "queue",
+        "team"
+      ],
+      "capability_id": "appointment_scheduling",
+      "strategy": "REUSE"
+    },
+    {
+      "block_ids": [
+        "document_engine",
+        "capture",
+        "knowledge",
+        "formula_executor"
+      ],
+      "capability_id": "clinical_visit_notes_and_treatment_plans",
+      "strategy": "REUSE"
+    },
+    {
+      "block_ids": [
+        "estate_registry",
+        "readiness_engine",
+        "notification",
+        "audit"
+      ],
+      "capability_id": "vaccination_tracking",
+      "strategy": "REUSE"
+    },
+    {
+      "block_ids": [
+        "portfolio_rollup",
+        "formula_executor",
+        "document_engine",
+        "validation"
+      ],
+      "capability_id": "billing_and_invoicing",
+      "strategy": "REUSE"
+    },
+    {
+      "block_ids": [
+        "analytics",
+        "dashboard",
+        "portfolio_rollup",
+        "event_bus"
+      ],
+      "capability_id": "analytics_and_reporting",
+      "strategy": "REUSE"
+    },
+    {
+      "block_ids": [
+        "audit",
+        "file_hasher",
+        "evidence_verifier",
+        "validation"
+      ],
+      "capability_id": "compliance_and_audit_trail",
+      "strategy": "REUSE"
+    },
+    {
+      "block_ids": [
+        "notification",
+        "recommendation_template",
+        "event_bus"
+      ],
+      "capability_id": "client_communication_and_reminders",
+      "strategy": "REUSE"
+    }
+  ],
+  "schema_version": "1.0.0"
+}

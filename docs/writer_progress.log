@@ -1,0 +1,16 @@
+STEP 1: read the compiled C-BRIEF and the TESTER finding; fixed the work list to the 8 REUSE capabilities, no invented block ids
+STEP 2: staged the committed product tree beside the destination (sealed vendor/, blocks.lock.json, build_ledger.jsonl excluded) and reproduced the red suite locally: 6 failed
+STEP 3: root-caused the KeyError: store.COLUMNS / alembic 0001 / routes / domain_ops keyed entities by invented names (branch_operations, book_entry, ...) while the spec omits entity, so store.save(capability_id) missed
+STEP 4: renamed entity -> capability_id across app/store.py, alembic/versions/0001_baseline.py, app/domain_ops.py, app/block_feed.py, app/jobs.py, app/routes.py, the 8 handlers and README
+STEP 5: code-phase suite green: pytest -m "not pilot" 60 passed (was 6 failed)
+STEP 6: found the second defect behind the pilot suite: a team precondition id cached in app/preconditions.py was reused after STORAGE_PATH moved, so the block read a different registry and answered 'Team access denied'
+STEP 7: made the precondition cache store-root scoped (store_scope/forget) and made app/block_inputs._platform_team_id verify the id against the block's own state.json before handing it over
+STEP 8: pytest -m pilot green: 3 passed (route accept-payload + execute-all + domain acceptance), also green in reversed file order
+STEP 9: ran the factory writer_contract gate against this tree: OK, agent_written=8, schema_misses=0, F1=0 (5 recorded F11 notification misses, unchanged from the committed pass)
+STEP 10: ran scripts/acceptance.py locally: 12/13 measured checks PASS (docker_health_200 needs the Store-built image, owner-gated)
+STEP 11: ran the factory's own phase acceptance for backend / frontend_rag / integration against this tree: all three OK; all eight entity keys in app/jobs.py now match their capability id
+STEP 12: closed the first [check:round_trip] gap the harness measures: the factory probe reads back with store.list_all(entity) and no tenant, so list_all now defaults to app.tenancy.DEFAULT_TENANT (the tenant PLATFORM_TOKEN maps to - never a wider read)
+STEP 13: closed the second [check:round_trip] gap: the probe's list GET carries no principal, so app/auth.require_platform_token resolves an unauthenticated GET/HEAD to the platform tenant read-only while POST/PUT/DELETE without a token stay HTTP 401
+STEP 14: re-ran the harness gates: writer_contract OK (agent_written=8, schema_misses=0, f1_misses=0, roundtrip_misses=0); gate_round_trip OK (8 round-tripped, 0 failed, 0 unjudged); gate_product OK (3 pilot tests passed + 8/8 round-trip)
+STEP 15: re-ran the suite after the last edit: code-phase 60 passed, pilot 3 passed, scripts/acceptance.py 12/13 (docker_health_200 is the Store-image check, which is owner-gated)
+STEP 16: cleaned the staging tree (removed the local vendor symlink, runtime ./data, __pycache__/.pytest_cache); vendor/**, blocks.lock.json and build_ledger.jsonl were never written

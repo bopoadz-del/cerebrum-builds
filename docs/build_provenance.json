@@ -1,0 +1,66 @@
+{
+  "artifact_sources": {
+    "app/actions/branch_and_consolidated_operations.py": "coder CLI (codewhale exec)",
+    "app/actions/branch_books_and_accounting.py": "coder CLI (codewhale exec)",
+    "app/actions/delivery_and_dispatch.py": "coder CLI (codewhale exec)",
+    "app/actions/document_grounded_knowledge.py": "coder CLI (codewhale exec)",
+    "app/actions/events_supply.py": "coder CLI (codewhale exec)",
+    "app/actions/inventory_and_replenishment.py": "coder CLI (codewhale exec)",
+    "app/actions/order_follow_up.py": "coder CLI (codewhale exec)",
+    "app/actions/outlook_branch_messaging_integration.py": "coder CLI (codewhale exec)"
+  },
+  "authorship": {
+    "action_py": 8,
+    "agent_artifacts": [
+      "branch_and_consolidated_operations",
+      "branch_books_and_accounting",
+      "delivery_and_dispatch",
+      "document_grounded_knowledge",
+      "events_supply",
+      "inventory_and_replenishment",
+      "order_follow_up",
+      "outlook_branch_messaging_integration"
+    ],
+    "cli_authored_ids": [
+      "branch_and_consolidated_operations",
+      "branch_books_and_accounting",
+      "delivery_and_dispatch",
+      "document_grounded_knowledge",
+      "events_supply",
+      "inventory_and_replenishment",
+      "order_follow_up",
+      "outlook_branch_messaging_integration"
+    ]
+  },
+  "capabilities": [
+    "branch_and_consolidated_operations",
+    "inventory_and_replenishment",
+    "branch_books_and_accounting",
+    "delivery_and_dispatch",
+    "order_follow_up",
+    "events_supply",
+    "document_grounded_knowledge",
+    "outlook_branch_messaging_integration"
+  ],
+  "engine": "codewhale_worker",
+  "handlers": {
+    "branch_and_consolidated_operations": "app/actions/branch_and_consolidated_operations.py",
+    "branch_books_and_accounting": "app/actions/branch_books_and_accounting.py",
+    "delivery_and_dispatch": "app/actions/delivery_and_dispatch.py",
+    "document_grounded_knowledge": "app/actions/document_grounded_knowledge.py",
+    "events_supply": "app/actions/events_supply.py",
+    "inventory_and_replenishment": "app/actions/inventory_and_replenishment.py",
+    "order_follow_up": "app/actions/order_follow_up.py",
+    "outlook_branch_messaging_integration": "app/actions/outlook_branch_messaging_integration.py"
+  },
+  "n_required": 8,
+  "notes": [
+    "handlers are the coding agent's; app/block_feed.py, app/retrieval.py, app/llm.py,",
+    "app/notifications.py, app/vendor_compat.py, app/formulas.py, app/authority.py and",
+    "app/rag_routes.py are the same pass's authorship."
+  ],
+  "product_id": "bakery-operations",
+  "product_name": "Bakery Branch Operations Platform",
+  "schema_version": "build_provenance.v1",
+  "written_by": "the factory WRITER role (codewhale exec)"
+}

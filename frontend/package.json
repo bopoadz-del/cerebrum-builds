@@ -1,0 +1,18 @@
+{
+  "name": "bakery-operations-console",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Console for the Bakery Branch Operations Platform. Builds against the live HTTP surface.",
+  "scripts": {
+    "build": "tsc --noEmit && vite build"
+  },
+  "dependencies": {
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.3",
+    "typescript": "^5.5.4",
+    "vite": "^5.4.0"
+  }
+}

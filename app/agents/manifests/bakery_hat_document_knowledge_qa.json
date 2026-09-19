@@ -1,0 +1,8 @@
+{
+  "id": "bakery_hat_document_knowledge_qa",
+  "capability": "document_knowledge_qa",
+  "title": "Document knowledge Q&A",
+  "purpose": "Recipes, cost sheets, price lists and delivery procedures indexed for grounded answers.",
+  "entity": "document_knowledge_qa",
+  "runtime": "offline / in-process vendored blocks"
+}

@@ -1,10 +1,35 @@
-"""Lazy capability handlers. Do not eager-import handler modules here."""
+"""Capability handlers for the Bakery Chain Operations & Delivery Platform.
+
+One module per capability, each exporting ``CAPABILITY_ID`` and
+``handle(payload)``. Nothing is re-exported eagerly here: importing
+``app.actions`` must not import a capability module (a capability module
+imports ``app.dispatch``, and an eager re-export is the circular import that
+stops the workspace from importing at all).
+"""
 
 from __future__ import annotations
 
-import importlib
+__all__ = (
+    "CAPABILITY_IDS",
+    "handler_for",
+)
+
+CAPABILITY_IDS = (
+    "stock_inventory_management",
+    "product_pricing",
+    "delivery_dispatch_tracking",
+    "fleet_cost_tracking",
+    "management_reporting_dashboard",
+    "user_roles_workforce",
+    "document_knowledge_qa",
+    "procedures_readiness_and_audit_trail",
+)
 
 
-def load_handler(capability_id: str):
-    module = importlib.import_module(f"app.actions.{capability_id}")
+def handler_for(capability_id: str):
+    """Import and return ``handle`` for *capability_id* (lazy, no re-export)."""
+    import importlib
+
+    name = str(capability_id or "").replace("-", "_")
+    module = importlib.import_module(f"app.actions.{name}")
     return module.handle

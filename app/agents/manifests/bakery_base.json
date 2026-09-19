@@ -1,0 +1,19 @@
+{
+  "id": "bakery_base",
+  "product": "Bakery Chain Operations & Delivery Platform",
+  "vertical": "bakery_management",
+  "capabilities": [
+    "stock_inventory_management",
+    "product_pricing",
+    "delivery_dispatch_tracking",
+    "fleet_cost_tracking",
+    "management_reporting_dashboard",
+    "user_roles_workforce",
+    "document_knowledge_qa",
+    "procedures_readiness_and_audit_trail"
+  ],
+  "roles": [
+    "operator",
+    "admin"
+  ]
+}

@@ -1,0 +1,8 @@
+{
+  "id": "bakery_hat_fleet_cost_tracking",
+  "capability": "fleet_cost_tracking",
+  "title": "Fleet costs",
+  "purpose": "Running cost per vehicle \u2014 fuel or charge, maintenance, insurance and per-delivery cost.",
+  "entity": "fleet_cost_tracking",
+  "runtime": "offline / in-process vendored blocks"
+}

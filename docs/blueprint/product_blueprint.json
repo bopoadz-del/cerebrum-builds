@@ -2,55 +2,51 @@
   "capabilities": [
     {
       "block_ids": [
-        "workflow",
         "database",
         "validation",
-        "event_bus",
-        "queue",
-        "audit"
-      ],
-      "description": "Handles the full reservation lifecycle including availability checks, real-time booking, modifications, cancellations, and stay records across all channels.",
-      "id": "booking_management",
-      "required": true,
-      "strategy_hint": "REUSE"
-    },
-    {
-      "block_ids": [
-        "estate_registry",
-        "estate_maintenance",
-        "database",
-        "team",
         "workflow",
-        "audit"
-      ],
-      "description": "Manages rooms, rate plans, seasonal inventory, and property configuration for one or many hotel properties.",
-      "id": "property_management",
-      "required": true,
-      "strategy_hint": "REUSE"
-    },
-    {
-      "block_ids": [
-        "formula_executor",
-        "readiness_engine",
-        "recommendation_template",
-        "analytics",
-        "database"
-      ],
-      "description": "Calculates and adjusts room rates in real time based on demand, occupancy, seasonality, competitor signals, and configurable pricing rules.",
-      "id": "dynamic_pricing",
-      "required": true,
-      "strategy_hint": "REUSE"
-    },
-    {
-      "block_ids": [
-        "capture",
-        "knowledge",
-        "vector_search",
         "analytics",
         "notification"
       ],
-      "description": "Collects, moderates, and responds to guest reviews; analyzes sentiment and surfaces reputation trends for each property.",
-      "id": "review_management",
+      "description": "Track ingredient and finished-product stock levels, movements, wastage and reorder points across all five bakery shops, with per-shop views and cross-shop transfers.",
+      "id": "stock_inventory_management",
+      "required": true,
+      "strategy_hint": "REUSE"
+    },
+    {
+      "block_ids": [
+        "database",
+        "formula_executor",
+        "validation",
+        "analytics"
+      ],
+      "description": "Maintain a product catalogue with unit prices, cost sheets, margins and price list versions, and compute derived prices and profitability per product and per shop.",
+      "id": "product_pricing",
+      "required": true,
+      "strategy_hint": "REUSE"
+    },
+    {
+      "block_ids": [
+        "workflow",
+        "queue",
+        "event_bus",
+        "notification",
+        "analytics"
+      ],
+      "description": "Assign ~30 daily deliveries to drivers and vehicles, sequence routes, and track delivery status, completion and exceptions in near real time.",
+      "id": "delivery_dispatch_tracking",
+      "required": true,
+      "strategy_hint": "REUSE"
+    },
+    {
+      "block_ids": [
+        "database",
+        "analytics",
+        "validation",
+        "dashboard"
+      ],
+      "description": "Record and report running costs for 10 bikes and 2 cars \u2014 fuel or charge, maintenance, insurance and per-delivery cost \u2014 with per-vehicle and per-driver cost roll-ups.",
+      "id": "fleet_cost_tracking",
       "required": true,
       "strategy_hint": "REUSE"
     },
@@ -59,54 +55,78 @@
         "dashboard",
         "analytics",
         "portfolio_rollup",
-        "database"
+        "database",
+        "notification"
       ],
-      "description": "Provides operational dashboards and reports covering occupancy, revenue, booking pace, channel performance, and guest satisfaction.",
-      "id": "analytics_dashboard",
+      "description": "Provide a consolidated management dashboard covering sales, stock health, delivery performance and fleet costs across all locations, with drill-downs and scheduled reports.",
+      "id": "management_reporting_dashboard",
       "required": true,
       "strategy_hint": "REUSE"
     },
     {
       "block_ids": [
-        "notification",
-        "event_bus",
-        "queue",
-        "workflow"
+        "team",
+        "workflow",
+        "database",
+        "audit"
       ],
-      "description": "Sends timely booking confirmations, reminders, pricing alerts, and internal staff notifications via email, SMS, and in-app channels.",
-      "id": "notification_system",
+      "description": "Manage manager and driver accounts, roles and permissions, shift and capacity planning, and workforce records for the 5-shop, 12-vehicle operation.",
+      "id": "user_roles_workforce",
       "required": true,
       "strategy_hint": "REUSE"
     },
     {
       "block_ids": [
-        "vector_search",
         "knowledge",
-        "recommendation_template",
-        "memory",
-        "analytics"
+        "vector_search",
+        "storage",
+        "capture",
+        "document_engine"
       ],
-      "description": "Enables guests to search properties and rooms with filters, and recommends personalized stays, packages, and upsells based on preferences and history.",
-      "id": "search_recommendation",
+      "description": "Ingest recipes, cost sheets, price lists and delivery procedures uploaded by management, index them, and answer natural-language questions grounded in those documents with citations.",
+      "id": "document_knowledge_qa",
+      "required": true,
+      "strategy_hint": "REUSE"
+    },
+    {
+      "block_ids": [
+        "readiness_engine",
+        "workflow",
+        "audit",
+        "evidence_verifier",
+        "file_hasher",
+        "spec_analyzer"
+      ],
+      "description": "Define operational procedures and checklists per shop and per delivery run, assess readiness before service, and maintain an immutable evidence trail of actions and checks for audit.",
+      "id": "procedures_readiness_and_audit_trail",
       "required": true,
       "strategy_hint": "REUSE"
     }
   ],
   "connectors": [],
+  "delivery_format": "zip",
   "drafting_mode": "architect_llm",
-  "drafting_note": null,
+  "drafting_note": "inventory: 'bakery_management' is not on the declared-ready list (hotels, insurance, construction, finance, retail); the Store kit for this vertical is unverified \u2014 domain depth not guaranteed",
   "edge_profile": "standard",
   "factory_scenario": "CREATE_PRODUCT",
   "human_authority": true,
-  "n_required": 7,
-  "product_id": "hospitality",
-  "product_name": "StayFlow Hospitality Platform",
+  "n_required": 8,
+  "product_id": "bakery-management",
+  "product_name": "Bakery Chain Operations Hub",
   "schema_version": "product_blueprint.v1",
-  "summary": "StayFlow is an all-in-one hotel booking and property management platform for independent hotels, boutique inns, and small hotel groups. It unifies real-time reservation management, room inventory and rate control, dynamic pricing, guest reviews, and operational analytics, while keeping staff and guests informed with automated notifications and AI-assisted search and recommendations.",
+  "summary": "A management-only operations platform for a 5-shop bakery chain with its own delivery fleet. It centralises multi-shop stock and inventory, product pricing and unit costs, driver dispatch and delivery tracking for ~30 daily deliveries across 10 bikes and 2 cars, fleet cost tracking, workforce and role management, operational readiness checks, and a full audit evidence trail. It also provides a document knowledge Q&A layer over recipes, cost sheets, price lists and delivery procedures that manage",
   "ui_modules": [
     "command_center",
     "operational_chat",
-    "resident_engineer"
+    "resident_engineer",
+    "stock_inventory_management",
+    "product_pricing",
+    "delivery_dispatch_tracking",
+    "fleet_cost_tracking",
+    "management_reporting_dashboard",
+    "user_roles_workforce",
+    "document_knowledge_qa",
+    "procedures_readiness_and_audit_trail"
   ],
-  "vertical": "hospitality"
+  "vertical": "bakery_management"
 }

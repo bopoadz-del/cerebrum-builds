@@ -1,0 +1,138 @@
+{
+  "schema_version": "workflows.v1",
+  "workflows": [
+    {
+      "id": "stock_movement",
+      "capability": "stock_inventory_management",
+      "steps": [
+        {
+          "id": "step_0",
+          "block": "database",
+          "action": "insert"
+        },
+        {
+          "id": "step_1",
+          "block": "analytics",
+          "action": "track_event"
+        }
+      ]
+    },
+    {
+      "id": "price_list_update",
+      "capability": "product_pricing",
+      "steps": [
+        {
+          "id": "step_0",
+          "block": "formula_executor",
+          "action": "execute"
+        },
+        {
+          "id": "step_1",
+          "block": "database",
+          "action": "insert"
+        }
+      ]
+    },
+    {
+      "id": "delivery_dispatch",
+      "capability": "delivery_dispatch_tracking",
+      "steps": [
+        {
+          "id": "step_0",
+          "block": "database",
+          "action": "insert"
+        },
+        {
+          "id": "step_1",
+          "block": "event_bus",
+          "action": "publish"
+        },
+        {
+          "id": "step_2",
+          "block": "queue",
+          "action": "enqueue"
+        }
+      ]
+    },
+    {
+      "id": "fleet_cost_capture",
+      "capability": "fleet_cost_tracking",
+      "steps": [
+        {
+          "id": "step_0",
+          "block": "database",
+          "action": "insert"
+        },
+        {
+          "id": "step_1",
+          "block": "analytics",
+          "action": "track_event"
+        }
+      ]
+    },
+    {
+      "id": "chain_reporting",
+      "capability": "management_reporting_dashboard",
+      "steps": [
+        {
+          "id": "step_0",
+          "block": "analytics",
+          "action": "track_event"
+        },
+        {
+          "id": "step_1",
+          "block": "portfolio_rollup",
+          "action": "rollup"
+        }
+      ]
+    },
+    {
+      "id": "workforce_onboarding",
+      "capability": "user_roles_workforce",
+      "steps": [
+        {
+          "id": "step_0",
+          "block": "database",
+          "action": "insert"
+        },
+        {
+          "id": "step_1",
+          "block": "audit",
+          "action": "log"
+        }
+      ]
+    },
+    {
+      "id": "document_ingest",
+      "capability": "document_knowledge_qa",
+      "steps": [
+        {
+          "id": "step_0",
+          "block": "document_engine",
+          "action": "parse"
+        },
+        {
+          "id": "step_1",
+          "block": "knowledge",
+          "action": "ask"
+        }
+      ]
+    },
+    {
+      "id": "procedure_daily_run",
+      "capability": "procedures_readiness_and_audit_trail",
+      "steps": [
+        {
+          "id": "step_0",
+          "block": "audit",
+          "action": "log"
+        },
+        {
+          "id": "step_1",
+          "block": "file_hasher",
+          "action": "hash"
+        }
+      ]
+    }
+  ]
+}

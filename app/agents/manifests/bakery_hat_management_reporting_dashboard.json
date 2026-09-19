@@ -1,0 +1,8 @@
+{
+  "id": "bakery_hat_management_reporting_dashboard",
+  "capability": "management_reporting_dashboard",
+  "title": "Management reporting",
+  "purpose": "Consolidated sales, stock health, delivery performance and fleet cost metrics.",
+  "entity": "management_reporting_dashboard",
+  "runtime": "offline / in-process vendored blocks"
+}

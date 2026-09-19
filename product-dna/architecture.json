@@ -1,0 +1,124 @@
+{
+  "schema_version": "architecture.v1",
+  "product": "Bakery Chain Operations & Delivery Platform",
+  "vertical": "bakery_management",
+  "ui_modules": [
+    "command_center",
+    "operational_chat",
+    "resident_engineer",
+    "stock_inventory_management",
+    "product_pricing",
+    "delivery_dispatch_tracking",
+    "fleet_cost_tracking",
+    "management_reporting_dashboard",
+    "user_roles_workforce",
+    "document_knowledge_qa",
+    "procedures_readiness_and_audit_trail"
+  ],
+  "surfaces": {
+    "http": [
+      "/v1/{capability} POST",
+      "/v1/{capability} GET",
+      "/v1/{capability}/{id} GET",
+      "/v1/rag/ingest",
+      "/v1/rag/query",
+      "/health"
+    ],
+    "kernel": [
+      "/v1/jobs",
+      "/v1/catalog",
+      "/v1/capabilities",
+      "/v1/inventory",
+      "/v1/gates",
+      "/v1/provenance"
+    ],
+    "persistence": "single sqlite file at STORAGE_PATH/platform.db, tenant column + predicate"
+  },
+  "capabilities": [
+    {
+      "id": "stock_inventory_management",
+      "purpose": "Tracks per-shop ingredient, product and supply stock, waste and reorder shortfalls across the five shops.",
+      "blocks": [
+        "database",
+        "workflow",
+        "validation",
+        "notification",
+        "analytics"
+      ]
+    },
+    {
+      "id": "product_pricing",
+      "purpose": "Holds the product catalogue with unit costs, margins and price-list versions and prices each product per shop.",
+      "blocks": [
+        "database",
+        "formula_executor",
+        "validation",
+        "analytics"
+      ]
+    },
+    {
+      "id": "delivery_dispatch_tracking",
+      "purpose": "Assigns drivers and vehicles (bikes and cars) and follows each of the ~30 daily deliveries from pickup to drop-off.",
+      "blocks": [
+        "database",
+        "workflow",
+        "event_bus",
+        "queue",
+        "notification",
+        "analytics"
+      ]
+    },
+    {
+      "id": "fleet_cost_tracking",
+      "purpose": "Records fuel or charge, maintenance, insurance and per-delivery cost for the ten bikes and two cars.",
+      "blocks": [
+        "database",
+        "validation",
+        "dashboard",
+        "analytics"
+      ]
+    },
+    {
+      "id": "management_reporting_dashboard",
+      "purpose": "Consolidates sales, stock, delivery and fleet KPIs across the five bakeries.",
+      "blocks": [
+        "dashboard",
+        "analytics",
+        "portfolio_rollup"
+      ]
+    },
+    {
+      "id": "user_roles_workforce",
+      "purpose": "Manages manager and driver accounts, roles, shop assignment and shift planning.",
+      "blocks": [
+        "team",
+        "database",
+        "workflow",
+        "audit"
+      ]
+    },
+    {
+      "id": "document_knowledge_qa",
+      "purpose": "Ingests recipes, cost sheets, price lists and delivery procedures and answers questions over them with citations.",
+      "blocks": [
+        "document_engine",
+        "knowledge",
+        "vector_search",
+        "storage",
+        "capture"
+      ]
+    },
+    {
+      "id": "procedures_readiness_and_audit_trail",
+      "purpose": "Turns procedures into per-shop checklists, gates readiness before service and keeps the immutable evidence trail.",
+      "blocks": [
+        "audit",
+        "evidence_verifier",
+        "file_hasher",
+        "readiness_engine",
+        "spec_analyzer",
+        "workflow"
+      ]
+    }
+  ]
+}

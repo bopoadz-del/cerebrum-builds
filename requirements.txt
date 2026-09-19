@@ -1,10 +1,13 @@
-fastapi>=0.110
-uvicorn[standard]>=0.27
-pydantic>=2.0
-sqlalchemy>=2.0
-alembic>=1.13
-httpx>=0.27
-pytest>=8.0
-pyyaml>=6.0
-python-multipart>=0.0.9
-numpy>=2.1.0,<3
+fastapi==0.115.6
+uvicorn==0.34.0
+pydantic==2.10.4
+SQLAlchemy==2.0.36
+alembic==1.14.0
+httpx==0.28.1
+
+# Imported at module load by the vendored blocks this platform binds:
+# numpy by vector_search (document_knowledge_qa) and PyYAML by
+# document_engine (document_knowledge_qa). Without them the block cannot load inside the image
+# and /health reports the bound block as unavailable.
+numpy>=2.0,<3.0
+PyYAML==6.0.3

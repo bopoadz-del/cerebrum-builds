@@ -1,0 +1,8 @@
+{
+  "id": "bakery_hat_product_pricing",
+  "capability": "product_pricing",
+  "title": "Product pricing",
+  "purpose": "Unit costs, margins, price list versions and the derived selling price per product and shop.",
+  "entity": "product_pricing",
+  "runtime": "offline / in-process vendored blocks"
+}

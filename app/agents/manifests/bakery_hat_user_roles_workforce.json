@@ -1,0 +1,8 @@
+{
+  "id": "bakery_hat_user_roles_workforce",
+  "capability": "user_roles_workforce",
+  "title": "Workforce and roles",
+  "purpose": "Manager and driver accounts, roles, permissions and shift planning.",
+  "entity": "user_roles_workforce",
+  "runtime": "offline / in-process vendored blocks"
+}

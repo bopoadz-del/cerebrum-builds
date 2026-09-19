@@ -1,0 +1,8 @@
+{
+  "id": "bakery_hat_delivery_dispatch_tracking",
+  "capability": "delivery_dispatch_tracking",
+  "title": "Delivery dispatch",
+  "purpose": "Assigns the ~30 daily deliveries to drivers and the twelve bikes and cars, and tracks status and exceptions.",
+  "entity": "delivery_dispatch_tracking",
+  "runtime": "offline / in-process vendored blocks"
+}

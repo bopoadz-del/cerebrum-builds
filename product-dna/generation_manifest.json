@@ -1,0 +1,33 @@
+{
+  "schema_version": "generation_manifest.v1",
+  "product": "Bakery Chain Operations & Delivery Platform",
+  "vertical": "bakery_management",
+  "ui_modules": [
+    "command_center",
+    "operational_chat",
+    "resident_engineer",
+    "stock_inventory_management",
+    "product_pricing",
+    "delivery_dispatch_tracking",
+    "fleet_cost_tracking",
+    "management_reporting_dashboard",
+    "user_roles_workforce",
+    "document_knowledge_qa",
+    "procedures_readiness_and_audit_trail"
+  ],
+  "capabilities": [
+    "stock_inventory_management",
+    "product_pricing",
+    "delivery_dispatch_tracking",
+    "fleet_cost_tracking",
+    "management_reporting_dashboard",
+    "user_roles_workforce",
+    "document_knowledge_qa",
+    "procedures_readiness_and_audit_trail"
+  ],
+  "roles": [
+    "operator",
+    "admin"
+  ],
+  "network_posture": "P1"
+}

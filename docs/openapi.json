@@ -1,15 +1,15 @@
 {
   "openapi": "3.1.0",
   "info": {
-    "title": "Hotel Booking Platform",
-    "description": "Cerebrum Hotel Booking Platform \u2014 guests search, compare, and reserve rooms; operators manage inventory, pricing, reviews, and notifications. Mutations require a bearer operator token.",
+    "title": "Bakery Chain Operations & Delivery Platform",
     "version": "1.0.0"
   },
   "paths": {
-    "/v1/admin/export": {
+    "/v1/jobs": {
       "get": {
-        "summary": "Admin Export",
-        "operationId": "admin_export_v1_admin_export_get",
+        "summary": "List Jobs",
+        "description": "Roster of every kernel job description.",
+        "operationId": "list_jobs_v1_jobs_get",
         "responses": {
           "200": {
             "description": "Successful Response",
@@ -18,7 +18,7 @@
                 "schema": {
                   "additionalProperties": true,
                   "type": "object",
-                  "title": "Response Admin Export V1 Admin Export Get"
+                  "title": "Response List Jobs V1 Jobs Get"
                 }
               }
             }
@@ -26,32 +26,146 @@
         }
       }
     },
-    "/v1/{capability_id}": {
-      "post": {
-        "summary": "Post Capability",
-        "operationId": "post_capability_v1__capability_id__post",
-        "parameters": [
-          {
-            "name": "capability_id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "title": "Capability Id"
-            }
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "additionalProperties": true,
-                "title": "Request Payload"
+    "/v1/catalog": {
+      "get": {
+        "summary": "Catalog",
+        "description": "COLLECTOR - Binding surveyor.",
+        "operationId": "catalog_v1_catalog_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "type": "object",
+                  "title": "Response Catalog V1 Catalog Get"
+                }
               }
             }
           }
+        }
+      }
+    },
+    "/v1/capabilities": {
+      "get": {
+        "summary": "Capabilities",
+        "description": "WRITER - Platform manufacturer. Capability HTTP surface.",
+        "operationId": "capabilities_v1_capabilities_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "type": "object",
+                  "title": "Response Capabilities V1 Capabilities Get"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/inventory": {
+      "get": {
+        "summary": "Inventory",
+        "description": "CLONER - Block stocker. Read the pinned vendor lock live.",
+        "operationId": "inventory_v1_inventory_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "type": "object",
+                  "title": "Response Inventory V1 Inventory Get"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/gates": {
+      "get": {
+        "summary": "Gates",
+        "description": "TESTER - Acceptance inspector. Coverage only; does not run tests.",
+        "operationId": "gates_v1_gates_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "type": "object",
+                  "title": "Response Gates V1 Gates Get"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/provenance": {
+      "get": {
+        "summary": "Provenance",
+        "description": "STORE_MANAGER - Store registrar. Clone register and provenance.",
+        "operationId": "provenance_v1_provenance_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "type": "object",
+                  "title": "Response Provenance V1 Provenance Get"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/stock_inventory_management": {
+      "get": {
+        "summary": "Stock Inventory Management List",
+        "description": "List persisted stock_inventory_management records for the caller's tenant.",
+        "operationId": "stock_inventory_management_list_v1_stock_inventory_management_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "type": "object",
+                  "title": "Response Stock Inventory Management List V1 Stock Inventory Management Get"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Stock Inventory Management Create",
+        "description": "Create one stock_inventory_management record, then persist it for the request's tenant.",
+        "operationId": "stock_inventory_management_create_v1_stock_inventory_management_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "additionalProperties": true,
+                "type": "object",
+                "title": "Payload"
+              }
+            }
+          },
+          "required": true
         },
         "responses": {
           "200": {
@@ -59,48 +173,9 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
                   "additionalProperties": true,
-                  "title": "Response Post Capability V1  Capability Id  Post"
-                }
-              }
-            }
-          },
-          "422": {
-            "description": "Validation Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            }
-          }
-        }
-      },
-      "get": {
-        "summary": "Get Capability",
-        "operationId": "get_capability_v1__capability_id__get",
-        "parameters": [
-          {
-            "name": "capability_id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "title": "Capability Id"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful Response",
-            "content": {
-              "application/json": {
-                "schema": {
                   "type": "object",
-                  "additionalProperties": true,
-                  "title": "Response Get Capability V1  Capability Id  Get"
+                  "title": "Response Stock Inventory Management Create V1 Stock Inventory Management Post"
                 }
               }
             }
@@ -118,10 +193,53 @@
         }
       }
     },
-    "/v1": {
+    "/v1/stock_inventory_management/{record_id}": {
       "get": {
-        "summary": "List Capabilities",
-        "operationId": "list_capabilities_v1_get",
+        "summary": "Stock Inventory Management Read",
+        "description": "Read one persisted stock_inventory_management record.",
+        "operationId": "stock_inventory_management_read_v1_stock_inventory_management__record_id__get",
+        "parameters": [
+          {
+            "name": "record_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Record Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response Stock Inventory Management Read V1 Stock Inventory Management  Record Id  Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/product_pricing": {
+      "get": {
+        "summary": "Product Pricing List",
+        "description": "List persisted product_pricing records for the caller's tenant.",
+        "operationId": "product_pricing_list_v1_product_pricing_get",
         "responses": {
           "200": {
             "description": "Successful Response",
@@ -130,7 +248,714 @@
                 "schema": {
                   "additionalProperties": true,
                   "type": "object",
-                  "title": "Response List Capabilities V1 Get"
+                  "title": "Response Product Pricing List V1 Product Pricing Get"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Product Pricing Create",
+        "description": "Create one product_pricing record, then persist it for the request's tenant.",
+        "operationId": "product_pricing_create_v1_product_pricing_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "additionalProperties": true,
+                "type": "object",
+                "title": "Payload"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "type": "object",
+                  "title": "Response Product Pricing Create V1 Product Pricing Post"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/product_pricing/{record_id}": {
+      "get": {
+        "summary": "Product Pricing Read",
+        "description": "Read one persisted product_pricing record.",
+        "operationId": "product_pricing_read_v1_product_pricing__record_id__get",
+        "parameters": [
+          {
+            "name": "record_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Record Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response Product Pricing Read V1 Product Pricing  Record Id  Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/delivery_dispatch_tracking": {
+      "get": {
+        "summary": "Delivery Dispatch Tracking List",
+        "description": "List persisted delivery_dispatch_tracking records for the caller's tenant.",
+        "operationId": "delivery_dispatch_tracking_list_v1_delivery_dispatch_tracking_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "type": "object",
+                  "title": "Response Delivery Dispatch Tracking List V1 Delivery Dispatch Tracking Get"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Delivery Dispatch Tracking Create",
+        "description": "Create one delivery_dispatch_tracking record, then persist it for the request's tenant.",
+        "operationId": "delivery_dispatch_tracking_create_v1_delivery_dispatch_tracking_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "additionalProperties": true,
+                "type": "object",
+                "title": "Payload"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "type": "object",
+                  "title": "Response Delivery Dispatch Tracking Create V1 Delivery Dispatch Tracking Post"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/delivery_dispatch_tracking/{record_id}": {
+      "get": {
+        "summary": "Delivery Dispatch Tracking Read",
+        "description": "Read one persisted delivery_dispatch_tracking record.",
+        "operationId": "delivery_dispatch_tracking_read_v1_delivery_dispatch_tracking__record_id__get",
+        "parameters": [
+          {
+            "name": "record_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Record Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response Delivery Dispatch Tracking Read V1 Delivery Dispatch Tracking  Record Id  Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/fleet_cost_tracking": {
+      "get": {
+        "summary": "Fleet Cost Tracking List",
+        "description": "List persisted fleet_cost_tracking records for the caller's tenant.",
+        "operationId": "fleet_cost_tracking_list_v1_fleet_cost_tracking_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "type": "object",
+                  "title": "Response Fleet Cost Tracking List V1 Fleet Cost Tracking Get"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Fleet Cost Tracking Create",
+        "description": "Create one fleet_cost_tracking record, then persist it for the request's tenant.",
+        "operationId": "fleet_cost_tracking_create_v1_fleet_cost_tracking_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "additionalProperties": true,
+                "type": "object",
+                "title": "Payload"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "type": "object",
+                  "title": "Response Fleet Cost Tracking Create V1 Fleet Cost Tracking Post"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/fleet_cost_tracking/{record_id}": {
+      "get": {
+        "summary": "Fleet Cost Tracking Read",
+        "description": "Read one persisted fleet_cost_tracking record.",
+        "operationId": "fleet_cost_tracking_read_v1_fleet_cost_tracking__record_id__get",
+        "parameters": [
+          {
+            "name": "record_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Record Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response Fleet Cost Tracking Read V1 Fleet Cost Tracking  Record Id  Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/management_reporting_dashboard": {
+      "get": {
+        "summary": "Management Reporting Dashboard List",
+        "description": "List persisted management_reporting_dashboard records for the caller's tenant.",
+        "operationId": "management_reporting_dashboard_list_v1_management_reporting_dashboard_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "type": "object",
+                  "title": "Response Management Reporting Dashboard List V1 Management Reporting Dashboard Get"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Management Reporting Dashboard Create",
+        "description": "Create one management_reporting_dashboard record, then persist it for the request's tenant.",
+        "operationId": "management_reporting_dashboard_create_v1_management_reporting_dashboard_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "additionalProperties": true,
+                "type": "object",
+                "title": "Payload"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "type": "object",
+                  "title": "Response Management Reporting Dashboard Create V1 Management Reporting Dashboard Post"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/management_reporting_dashboard/{record_id}": {
+      "get": {
+        "summary": "Management Reporting Dashboard Read",
+        "description": "Read one persisted management_reporting_dashboard record.",
+        "operationId": "management_reporting_dashboard_read_v1_management_reporting_dashboard__record_id__get",
+        "parameters": [
+          {
+            "name": "record_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Record Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response Management Reporting Dashboard Read V1 Management Reporting Dashboard  Record Id  Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/user_roles_workforce": {
+      "get": {
+        "summary": "User Roles Workforce List",
+        "description": "List persisted user_roles_workforce records for the caller's tenant.",
+        "operationId": "user_roles_workforce_list_v1_user_roles_workforce_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "type": "object",
+                  "title": "Response User Roles Workforce List V1 User Roles Workforce Get"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "User Roles Workforce Create",
+        "description": "Create one user_roles_workforce record, then persist it for the request's tenant.",
+        "operationId": "user_roles_workforce_create_v1_user_roles_workforce_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "additionalProperties": true,
+                "type": "object",
+                "title": "Payload"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "type": "object",
+                  "title": "Response User Roles Workforce Create V1 User Roles Workforce Post"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/user_roles_workforce/{record_id}": {
+      "get": {
+        "summary": "User Roles Workforce Read",
+        "description": "Read one persisted user_roles_workforce record.",
+        "operationId": "user_roles_workforce_read_v1_user_roles_workforce__record_id__get",
+        "parameters": [
+          {
+            "name": "record_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Record Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response User Roles Workforce Read V1 User Roles Workforce  Record Id  Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/document_knowledge_qa": {
+      "get": {
+        "summary": "Document Knowledge Qa List",
+        "description": "List persisted document_knowledge_qa records for the caller's tenant.",
+        "operationId": "document_knowledge_qa_list_v1_document_knowledge_qa_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "type": "object",
+                  "title": "Response Document Knowledge Qa List V1 Document Knowledge Qa Get"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Document Knowledge Qa Create",
+        "description": "Create one document_knowledge_qa record, then persist it for the request's tenant.",
+        "operationId": "document_knowledge_qa_create_v1_document_knowledge_qa_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "additionalProperties": true,
+                "type": "object",
+                "title": "Payload"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "type": "object",
+                  "title": "Response Document Knowledge Qa Create V1 Document Knowledge Qa Post"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/document_knowledge_qa/{record_id}": {
+      "get": {
+        "summary": "Document Knowledge Qa Read",
+        "description": "Read one persisted document_knowledge_qa record.",
+        "operationId": "document_knowledge_qa_read_v1_document_knowledge_qa__record_id__get",
+        "parameters": [
+          {
+            "name": "record_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Record Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response Document Knowledge Qa Read V1 Document Knowledge Qa  Record Id  Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/procedures_readiness_and_audit_trail": {
+      "get": {
+        "summary": "Procedures Readiness And Audit Trail List",
+        "description": "List persisted procedures_readiness_and_audit_trail records for the caller's tenant.",
+        "operationId": "procedures_readiness_and_audit_trail_list_v1_procedures_readiness_and_audit_trail_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "type": "object",
+                  "title": "Response Procedures Readiness And Audit Trail List V1 Procedures Readiness And Audit Trail Get"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Procedures Readiness And Audit Trail Create",
+        "description": "Create one procedures_readiness_and_audit_trail record, then persist it for the request's tenant.",
+        "operationId": "procedures_readiness_and_audit_trail_create_v1_procedures_readiness_and_audit_trail_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "additionalProperties": true,
+                "type": "object",
+                "title": "Payload"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "type": "object",
+                  "title": "Response Procedures Readiness And Audit Trail Create V1 Procedures Readiness And Audit Trail Post"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/procedures_readiness_and_audit_trail/{record_id}": {
+      "get": {
+        "summary": "Procedures Readiness And Audit Trail Read",
+        "description": "Read one persisted procedures_readiness_and_audit_trail record.",
+        "operationId": "procedures_readiness_and_audit_trail_read_v1_procedures_readiness_and_audit_trail__record_id__get",
+        "parameters": [
+          {
+            "name": "record_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Record Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response Procedures Readiness And Audit Trail Read V1 Procedures Readiness And Audit Trail  Record Id  Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
                 }
               }
             }
@@ -140,13 +965,16 @@
     },
     "/v1/rag/ingest": {
       "post": {
+        "tags": [
+          "rag-surface"
+        ],
         "summary": "Rag Ingest",
         "operationId": "rag_ingest_v1_rag_ingest_post",
         "requestBody": {
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/RagIngestBody"
+                "$ref": "#/components/schemas/RagIngestRequest"
               }
             }
           },
@@ -178,50 +1006,13 @@
         }
       }
     },
-    "/v1/steward/rag/ingest": {
-      "post": {
-        "summary": "Steward Rag Ingest",
-        "operationId": "steward_rag_ingest_v1_steward_rag_ingest_post",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/RagIngestBody"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "description": "Successful Response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "additionalProperties": true,
-                  "type": "object",
-                  "title": "Response Steward Rag Ingest V1 Steward Rag Ingest Post"
-                }
-              }
-            }
-          },
-          "422": {
-            "description": "Validation Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "/v1/rag/query": {
       "get": {
-        "summary": "Rag Query",
-        "operationId": "rag_query_v1_rag_query_get",
+        "tags": [
+          "rag-surface"
+        ],
+        "summary": "Rag Query Get",
+        "operationId": "rag_query_get_v1_rag_query_get",
         "parameters": [
           {
             "name": "q",
@@ -231,24 +1022,6 @@
               "type": "string",
               "minLength": 1,
               "title": "Q"
-            }
-          },
-          {
-            "name": "layer",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "anyOf": [
-                {
-                  "type": "integer",
-                  "maximum": 2,
-                  "minimum": 1
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "title": "Layer"
             }
           },
           {
@@ -272,7 +1045,7 @@
                 "schema": {
                   "type": "object",
                   "additionalProperties": true,
-                  "title": "Response Rag Query V1 Rag Query Get"
+                  "title": "Response Rag Query Get V1 Rag Query Get"
                 }
               }
             }
@@ -290,6 +1063,9 @@
         }
       },
       "post": {
+        "tags": [
+          "rag-surface"
+        ],
         "summary": "Rag Query Post",
         "operationId": "rag_query_post_v1_rag_query_post",
         "requestBody": {
@@ -297,9 +1073,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "type": "object",
-                "additionalProperties": true,
-                "title": "Body"
+                "$ref": "#/components/schemas/RagQueryRequest"
               }
             }
           }
@@ -330,112 +1104,16 @@
         }
       }
     },
-    "/v1/steward/rag/query": {
+    "/": {
       "get": {
-        "summary": "Steward Rag Query",
-        "operationId": "steward_rag_query_v1_steward_rag_query_get",
-        "parameters": [
-          {
-            "name": "q",
-            "in": "query",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "minLength": 1,
-              "title": "Q"
-            }
-          },
-          {
-            "name": "layer",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "anyOf": [
-                {
-                  "type": "integer",
-                  "maximum": 2,
-                  "minimum": 1
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "title": "Layer"
-            }
-          },
-          {
-            "name": "top_k",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "integer",
-              "maximum": 20,
-              "minimum": 1,
-              "default": 5,
-              "title": "Top K"
-            }
-          }
-        ],
+        "summary": "Ui Root",
+        "operationId": "ui_root__get",
         "responses": {
           "200": {
             "description": "Successful Response",
             "content": {
               "application/json": {
-                "schema": {
-                  "type": "object",
-                  "additionalProperties": true,
-                  "title": "Response Steward Rag Query V1 Steward Rag Query Get"
-                }
-              }
-            }
-          },
-          "422": {
-            "description": "Validation Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            }
-          }
-        }
-      },
-      "post": {
-        "summary": "Steward Rag Query Post",
-        "operationId": "steward_rag_query_post_v1_steward_rag_query_post",
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "additionalProperties": true,
-                "title": "Body"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Successful Response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "additionalProperties": true,
-                  "title": "Response Steward Rag Query Post V1 Steward Rag Query Post"
-                }
-              }
-            }
-          },
-          "422": {
-            "description": "Validation Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
+                "schema": {}
               }
             }
           }
@@ -451,47 +1129,7 @@
             "description": "Successful Response",
             "content": {
               "application/json": {
-                "schema": {
-                  "additionalProperties": true,
-                  "type": "object",
-                  "title": "Response Health Health Get"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/": {
-      "get": {
-        "summary": "Ui Index",
-        "operationId": "ui_index__get",
-        "responses": {
-          "200": {
-            "description": "Successful Response",
-            "content": {
-              "text/html": {
-                "schema": {
-                  "type": "string"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/ui": {
-      "get": {
-        "summary": "Ui Alias",
-        "operationId": "ui_alias_ui_get",
-        "responses": {
-          "200": {
-            "description": "Successful Response",
-            "content": {
-              "text/html": {
-                "schema": {
-                  "type": "string"
-                }
+                "schema": {}
               }
             }
           }
@@ -514,33 +1152,9 @@
         "type": "object",
         "title": "HTTPValidationError"
       },
-      "RagIngestBody": {
+      "RagIngestRequest": {
         "properties": {
           "text": {
-            "type": "string",
-            "minLength": 1,
-            "title": "Text"
-          },
-          "doc_id": {
-            "type": "string",
-            "minLength": 1,
-            "title": "Doc Id",
-            "default": "sample"
-          },
-          "title": {
-            "type": "string",
-            "minLength": 1,
-            "title": "Title",
-            "default": "sample"
-          },
-          "layer": {
-            "type": "integer",
-            "maximum": 2.0,
-            "minimum": 1.0,
-            "title": "Layer",
-            "default": 1
-          },
-          "property_id": {
             "anyOf": [
               {
                 "type": "string"
@@ -549,14 +1163,117 @@
                 "type": "null"
               }
             ],
-            "title": "Property Id"
+            "title": "Text"
+          },
+          "content": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Content"
+          },
+          "paragraph": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Paragraph"
+          },
+          "title": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Title"
+          },
+          "doc_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Doc Id"
+          },
+          "layer": {
+            "type": "string",
+            "title": "Layer",
+            "default": "documents"
+          },
+          "tenant_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tenant Id"
           }
         },
         "type": "object",
-        "required": [
-          "text"
-        ],
-        "title": "RagIngestBody"
+        "title": "RagIngestRequest"
+      },
+      "RagQueryRequest": {
+        "properties": {
+          "q": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Q"
+          },
+          "query": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Query"
+          },
+          "text": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Text"
+          },
+          "top_k": {
+            "type": "integer",
+            "maximum": 20.0,
+            "minimum": 1.0,
+            "title": "Top K",
+            "default": 5
+          }
+        },
+        "type": "object",
+        "title": "RagQueryRequest"
       },
       "ValidationError": {
         "properties": {
@@ -581,13 +1298,6 @@
           "type": {
             "type": "string",
             "title": "Error Type"
-          },
-          "input": {
-            "title": "Input"
-          },
-          "ctx": {
-            "type": "object",
-            "title": "Context"
           }
         },
         "type": "object",

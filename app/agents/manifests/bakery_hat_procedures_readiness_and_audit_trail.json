@@ -1,0 +1,8 @@
+{
+  "id": "bakery_hat_procedures_readiness_and_audit_trail",
+  "capability": "procedures_readiness_and_audit_trail",
+  "title": "Procedures, readiness and audit",
+  "purpose": "Per-shop and per-run checklists, readiness before service, and the immutable evidence trail.",
+  "entity": "procedures_readiness_and_audit_trail",
+  "runtime": "offline / in-process vendored blocks"
+}

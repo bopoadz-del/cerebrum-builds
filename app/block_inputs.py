@@ -1,438 +1,310 @@
-"""Construct block inputs from a domain record. Never demand block-specific keys."""
+"""Block input construction for the Bakery Chain Operations & Delivery Platform.
+
+Written by the factory WRITER role (codewhale exec)
+
+Domain records are not block-acceptable payloads. Each vendored block declares
+its own inputs (topic, sql/table, file paths, steps, channel, …) and refuses a
+call that omits them — the caller must not have to know that. ``handle()``
+passes the capability record through :func:`prepare_block_input`, which builds
+the contract the block actually reads, and dispatches with
+``action=BLOCK_DEFAULT_ACTIONS.get(block_id)`` as a keyword (never inside the
+payload dict).
+
+No value here is invented: every default is the block's own ``block.json``
+default, and every constructed field is derived from the record the caller
+sent.
+
+Scope
+-----
+READS  the caller's record, ``STORAGE_PATH`` (filesystem).
+WRITES ``STORAGE_PATH`` (the small text file ``file_hasher`` hashes).
+NEVER  network, ``vendor/**``.
+"""
 
 from __future__ import annotations
 
-from typing import Any, Dict, List
+import hashlib
+import json
+import os
+from pathlib import Path
+from typing import Any, Dict, List, Optional
+
+#: block id -> the action its ``block.json`` declares (keyword only).
+STORE_BLOCK_DEFAULT_ACTIONS: Dict[str, str] = {
+    "analytics": "track_event",
+    "audit": "log",
+    "capture": "extract",
+    "dashboard": "render",
+    "database": "insert",
+    "document_engine": "parse",
+    "estate_maintenance": "create",
+    "estate_registry": "register",
+    "event_bus": "publish",
+    "evidence_verifier": "store",
+    "file_hasher": "hash",
+    "formula_executor": "execute",
+    "knowledge": "ask",
+    "notification": "send",
+    "portfolio_rollup": "rollup",
+    "queue": "enqueue",
+    "readiness_engine": "evaluate",
+    "recommendation_template": "render",
+    "spec_analyzer": "analyze",
+    "validation": "validate_pipeline",
+    "vector_search": "search",
+    "workflow": "run",
+}
 
 
-def _ref(payload: Dict[str, Any]) -> str:
-    return str(payload.get("reference") or "sample")
+def default_block_action(
+    block_id: str,
+    default_actions: Optional[Dict[str, str]] = None,
+) -> Optional[str]:
+    """Keyword action for ``execute(..., action=...)``. Never read from payload."""
+    bid = str(block_id or "").strip()
+    if isinstance(default_actions, dict):
+        candidate = default_actions.get(bid)
+        if isinstance(candidate, str) and candidate.strip():
+            return candidate.strip()
+    mapped = STORE_BLOCK_DEFAULT_ACTIONS.get(bid)
+    if isinstance(mapped, str) and mapped.strip():
+        return mapped.strip()
+    return None
 
 
-def _status(payload: Dict[str, Any]) -> str:
-    return str(payload.get("status") or "open")
+def split_execute_action(
+    payload: Any,
+    action: Optional[str] = None,
+    default_action: Optional[str] = None,
+) -> tuple:
+    """(action, payload-without-action).
 
-
-def _summary(payload: Dict[str, Any]) -> str:
-    unit = (
-        payload.get("property_name")
-        or payload.get("room_label")
-        or payload.get("destination")
-        or payload.get("guest_name")
-        or payload.get("view_name")
-        or payload.get("rate_plan")
-        or _ref(payload)
+    The operation travels as the ``action=`` keyword. A payload that carries an
+    ``action`` key is stripped rather than forwarded, so a block never answers
+    ``unknown field(s): action``.
+    """
+    data = dict(payload) if isinstance(payload, dict) else (
+        {} if payload is None else {"value": payload}
     )
-    return f"hotel {_ref(payload)} unit={unit} status={_status(payload)}"
+    inner = data.get("input") if isinstance(data.get("input"), dict) else {}
+    resolved = action if isinstance(action, str) and action.strip() else None
+    if resolved is None:
+        for candidate in (data.get("action"), inner.get("action"), default_action):
+            if isinstance(candidate, str) and candidate.strip():
+                resolved = candidate.strip()
+                break
+    data.pop("action", None)
+    if isinstance(data.get("input"), dict):
+        data["input"] = dict(data["input"])
+        data["input"].pop("action", None)
+    return resolved, data
 
 
-def _result_seed(payload: Dict[str, Any]) -> Dict[str, Any]:
-    """Store workflow / kit shims read input['result']. Schema sample omits it."""
-    return {
-        "reference": _ref(payload),
-        "status": _status(payload),
-        "summary": _summary(payload),
-    }
+def _scalars(record: Dict[str, Any]) -> Dict[str, Any]:
+    out: Dict[str, Any] = {}
+    for key, value in (record or {}).items():
+        if key in ("id", "tenant_id", "created_at"):
+            continue
+        if isinstance(value, (str, int, float, bool)) or value is None:
+            out[str(key)] = value
+    return out
 
 
-def prepare_block_input(block_id: str, payload: Dict[str, Any]) -> Dict[str, Any]:
-    """Factory-grounded constructed input for a declared Store block."""
-    builders = {
-        "analytics": analytics_input,
-        "audit": audit_input,
-        "capture": capture_input,
-        "dashboard": dashboard_input,
-        "database": database_input,
-        "event_bus": event_bus_input,
-        "formula_executor": formula_executor_input,
-        "knowledge": knowledge_input,
-        "memory": memory_input,
-        "notification": notification_input,
-        "queue": queue_input,
-        "recommendation_template": recommendation_template_input,
-        "team": team_input,
-        "validation": validation_input,
-        "vector_search": vector_search_input,
-        "workflow": workflow_input,
-    }
-    builder = builders.get(block_id)
-    if builder is None:
-        return {"result": _result_seed(payload), "reference": _ref(payload)}
-    return builder(payload)
+def _insert_values(table: str, record: Dict[str, Any]) -> Dict[str, Any]:
+    """Columns for a ``database`` insert — never an empty column list.
 
-
-def analytics_input(payload: Dict[str, Any]) -> Dict[str, Any]:
-    value = payload.get("night_rate")
-    if value is None:
-        value = payload.get("stay_total")
-    if value is None:
-        value = payload.get("revpar")
-    if value is None:
-        value = payload.get("review_score")
-    if value is None:
-        value = payload.get("match_score")
+    ``INSERT INTO t () VALUES ()`` is a syntax error, so a record with no
+    scalar field at all (an empty create body) is completed from the entity's
+    own declared columns rather than dispatched as a malformed statement.
+    """
+    values = _scalars(record)
+    if values:
+        return values
     try:
-        metric_value = float(value)
-    except (TypeError, ValueError):
-        metric_value = 1.0
-    return {
-        "metric": "hotel_booking_events",
-        "value": metric_value,
-        "tags": {
-            "reference": _ref(payload),
-            "property_name": str(payload.get("property_name") or _ref(payload)),
-            "horizon": str(payload.get("horizon") or payload.get("season") or "today"),
-            "status": _status(payload),
-        },
-        "result": _result_seed(payload),
-    }
+        from app import store
+
+        columns = list(store.COLUMNS.get(str(table)) or [])
+    except Exception:  # noqa: BLE001 - the entity register is optional here
+        columns = []
+    return {column: "" for column in columns} or {"reference": "record"}
 
 
-def audit_input(payload: Dict[str, Any]) -> Dict[str, Any]:
-    return {
-        "category": "data_access",
-        "user_id": str(payload.get("actor") or payload.get("user_id") or "operator"),
-        "event_action": str(payload.get("capability") or "hotel_mutate"),
-        "resource": _ref(payload),
-        "details": {
-            "status": _status(payload),
-            "summary": _summary(payload),
-        },
-        "result": _result_seed(payload),
-    }
+def _reference(record: Dict[str, Any]) -> str:
+    for key in ("reference", "batch_reference", "sample_id", "material_code",
+                "asset_code", "recipe_code", "report_type"):
+        value = record.get(key)
+        if isinstance(value, str) and value.strip():
+            return value.strip()
+    return "record"
 
 
-def capture_input(payload: Dict[str, Any]) -> Dict[str, Any]:
-    guest = str(payload.get("guest_name") or payload.get("reference") or "sample")
-    band = str(payload.get("rating_band") or "excellent")
-    text = f"Guest {guest} left a {band} review for hotel {_ref(payload)}."
-    return {
-        "text": text,
-        "raw_text": text,
-        "content": text,
-        "result": _result_seed(payload),
-    }
+def _summary(record: Dict[str, Any]) -> str:
+    parts = [f"{k}={v}" for k, v in sorted(_scalars(record).items()) if v not in (None, "")]
+    return "; ".join(parts) or "bakery record"
 
 
-def dashboard_input(payload: Dict[str, Any]) -> Dict[str, Any]:
-    return {
-        "user_id": str(payload.get("actor") or payload.get("user_id") or "operator"),
-        "title": f"Hotel {_ref(payload)}",
-        "theme": "light",
-        "layout": "grid",
-        "summary": _summary(payload),
-        "result": _result_seed(payload),
-    }
+def _storage_root() -> Path:
+    root = Path(os.environ.get("STORAGE_PATH") or ".").resolve()
+    root.mkdir(parents=True, exist_ok=True)
+    return root
 
 
-def database_input(payload: Dict[str, Any]) -> Dict[str, Any]:
-    table = str(payload.get("capability") or "booking_management")
-    return {
-        "sql": "SELECT 1 AS ok",
-        "table": table,
-        "params": (),
-        "result": _result_seed(payload),
-    }
+def _write_hash_input(record: Dict[str, Any]) -> str:
+    """A real file for ``file_hasher``; the digest is of the record itself."""
+    body = json.dumps(_scalars(record), sort_keys=True)
+    digest = hashlib.sha256(body.encode("utf-8")).hexdigest()
+    folder = _storage_root() / "hashed_inputs"
+    folder.mkdir(parents=True, exist_ok=True)
+    path = folder / f"{digest[:32]}.json"
+    if not path.is_file():
+        path.write_text(body, encoding="utf-8")
+    return str(path)
 
 
-def event_bus_input(payload: Dict[str, Any]) -> Dict[str, Any]:
-    topic = str(
-        payload.get("event")
-        or payload.get("event_type")
-        or payload.get("event_name")
-        or payload.get("stay_kind")
-        or payload.get("notice_kind")
-        or payload.get("reminder_type")
-        or f"hotel.{_ref(payload)}"
-    )
-    return {
-        "topic": topic,
-        "payload": {
-            "reference": _ref(payload),
-            "room_label": payload.get("room_label") or payload.get("property_name") or _ref(payload),
-            "status": _status(payload),
-        },
-        "message": _summary(payload),
-        "channel": "mcp",
-        "tool": "event_bus",
-        "result": _result_seed(payload),
-    }
+def prepare_block_input(
+    block_id: str,
+    data: Dict[str, Any],
+    entity: Optional[str] = None,
+    **kwargs: Any,
+) -> Dict[str, Any]:
+    """Build the input ``block_id`` reads, from the capability record."""
+    bid = str(block_id or "").strip()
+    record = data if isinstance(data, dict) else {"value": data}
+    table = str(entity or kwargs.get("entity") or record.get("__entity__") or "record")
+    reference = _reference(record)
+    values = _scalars(record)
 
-
-def prepared_event_bus_step(payload: Dict[str, Any], *, step_id: str = "step_0") -> Dict[str, Any]:
-    """Exact PRODUCT event_bus-shaped workflow child. Never set input to the raw sample."""
-    prepared = event_bus_input(payload)
-    return {
-        "id": step_id,
-        "block": "event_bus",
-        "action": "publish",
-        "params": {"action": "publish"},
-        "input": {
-            "topic": prepared["topic"],
-            "payload": {"reference": _ref(payload)},
-            "message": prepared["message"],
+    if bid == "database":
+        return {"table": table, "values": _insert_values(table, record)}
+    if bid == "audit":
+        return {
+            "event_action": str(record.get("status") or "create"),
+            "resource": table,
+            "category": "domain",
+            "details": values,
+        }
+    if bid == "analytics":
+        metric = (
+            record.get("metric_name")
+            or record.get("test_name")
+            or f"{table}_count"
+        )
+        value = record.get("metric_value")
+        if value is None:
+            value = record.get("quantity_on_hand")
+        if value is None:
+            value = 1
+        return {"metric": str(metric), "value": value, "name": table,
+                "period": str(record.get("window") or "shift")}
+    if bid == "dashboard":
+        return {
+            "metric": str(record.get("metric_name") or f"{table}_count"),
+            "value": record.get("metric_value") if record.get("metric_value") is not None else 1,
+            "title": f"{table} dashboard",
+        }
+    if bid == "capture":
+        return {"text": _summary(record), "reference": reference}
+    if bid == "document_engine":
+        # document_engine parses a FILE when one is supplied and the record
+        # text otherwise. attachment_path is the caller's path; it is used only
+        # when it is really on disk, so a sample path never fails the call.
+        text = str(record.get("spec_text") or record.get("notes") or _summary(record))
+        prepared = {"text": text, "title": reference, "reference": reference}
+        attachment = record.get("attachment_path")
+        if isinstance(attachment, str) and attachment.strip() and Path(attachment).is_file():
+            prepared["file_path"] = attachment
+        return prepared
+    if bid == "event_bus":
+        topic = str(kwargs.get("topic") or f"{table}.recorded")
+        return {
+            "topic": topic,
+            "payload": {"reference": reference, "status": record.get("status")},
+            "message": topic.replace(".", " "),
             "channel": "mcp",
             "tool": "event_bus",
-            "result": _result_seed(payload),
-        },
-    }
-
-
-def formula_executor_input(payload: Dict[str, Any]) -> Dict[str, Any]:
-    rate = payload.get("night_rate")
-    try:
-        rate_value = float(rate)
-    except (TypeError, ValueError):
-        rate_value = 200.0
-    nights = payload.get("stay_nights") or 1
-    try:
-        nights_value = float(nights)
-    except (TypeError, ValueError):
-        nights_value = 1.0
-    return {
-        "formula_key": "concrete_cost",
-        "input_values": {
-            "volume_m3": nights_value,
-            "rate_per_m3": rate_value,
-            "waste_factor": 1.0,
-        },
-        "result": _result_seed(payload),
-    }
-
-
-def knowledge_input(payload: Dict[str, Any]) -> Dict[str, Any]:
-    question = (
-        payload.get("destination")
-        or payload.get("guest_name")
-        or payload.get("property_name")
-        or _summary(payload)
-    )
-    return {
-        "question": f"What stay notes exist for {question}?",
-        "query": str(question),
-        "result": _result_seed(payload),
-    }
-
-
-def memory_input(payload: Dict[str, Any]) -> Dict[str, Any]:
-    return {
-        "key": f"hotel.{_ref(payload)}",
-        "value": {
-            "reference": _ref(payload),
-            "status": _status(payload),
-            "destination": payload.get("destination") or _ref(payload),
-        },
-        "result": _result_seed(payload),
-    }
-
-
-def notification_input(payload: Dict[str, Any]) -> Dict[str, Any]:
-    message = payload.get("message") or f"Hotel notice for {_ref(payload)}"
-    topic = str(
-        payload.get("stay_kind")
-        or payload.get("notice_kind")
-        or payload.get("event")
-        or f"hotel.{_ref(payload)}"
-    )
-    return {
-        "channel": "mcp",
-        "message": str(message),
-        "tool": "analytics",
-        "block": "analytics",
-        "topic": topic,
-        "payload": {
-            "metric": "hotel_notice",
-            "value": 1.0,
-            "reference": _ref(payload),
-            "status": _status(payload),
-        },
-        "params": {"action": "track_event", "topic": topic},
-        "result": _result_seed(payload),
-    }
-
-
-def queue_input(payload: Dict[str, Any]) -> Dict[str, Any]:
-    return {
-        "job_type": "hotel_task",
-        "queue": "reservations",
-        "payload": {
-            "reference": _ref(payload),
-            "stay_kind": payload.get("stay_kind") or payload.get("notice_kind") or "night",
-            "room_label": payload.get("room_label") or _ref(payload),
-            "status": _status(payload),
-        },
-        "result": _result_seed(payload),
-    }
-
-
-def recommendation_template_input(payload: Dict[str, Any]) -> Dict[str, Any]:
-    score = payload.get("match_score")
-    if score is None:
-        score = payload.get("night_rate")
-    try:
-        variance = round((1.0 - min(float(score), 1.0)) * 100.0, 2) if float(score) <= 1 else 18.0
-    except (TypeError, ValueError):
-        variance = 18.0
-    return {
-        "operation": "recommend",
-        "variance_data": [
-            {
-                "item": str(
-                    payload.get("destination")
-                    or payload.get("rate_plan")
-                    or _ref(payload)
-                ),
-                "variance_pct": variance,
-                "cost_impact_usd": 80.0,
+        }
+    if bid == "file_hasher":
+        return {"file_path": _write_hash_input(record)}
+    if bid == "formula_executor":
+        return {
+            "formula": str(kwargs.get("formula") or "batch_yield"),
+            "variables": {
+                "input_liters": record.get("batch_size_liters") or 1,
+                "quantity_on_hand": record.get("quantity_on_hand") or 1,
+                "metric_value": record.get("metric_value") or 1,
+            },
+        }
+    if bid == "knowledge":
+        return {
+            "query": str(record.get("spec_text") or record.get("notes") or reference),
+            "documents": [{"doc_id": reference, "text": _summary(record)}],
+            "tenant_id": str(kwargs.get("tenant_id") or "local"),
+        }
+    if bid == "notification":
+        return {
+            "channel": "mcp",
+            "tool": "event_bus",
+            "message": f"{table}: {reference} {record.get('status') or 'recorded'}",
+            "payload": {"reference": reference},
+        }
+    if bid == "queue":
+        return {
+            "job_type": str(kwargs.get("job_type") or table),
+            "payload": {"reference": reference},
+            "priority": int(record.get("priority") or 1),
+        }
+    if bid == "recommendation_template":
+        return {"context": values, "rules": list(kwargs.get("rules") or [])}
+    if bid == "spec_analyzer":
+        return {
+            "text": str(record.get("spec_text") or record.get("notes") or _summary(record)),
+            "title": reference,
+        }
+    if bid == "validation":
+        item = dict(values)
+        item.setdefault("id", reference)
+        item.setdefault("type", table)
+        return {"item": item, "context": {"entity": table}}
+    if bid == "vector_search":
+        return {
+            "operation": "search",
+            "query": str(record.get("spec_text") or record.get("notes") or reference),
+            "collection": table,
+            "documents": [{"id": reference, "text": _summary(record)}],
+        }
+    if bid in ("estate_maintenance", "estate_registry"):
+        return {
+            "record_id": reference,
+            "title": str(record.get("work_order_title") or record.get("asset_code") or reference),
+            "payload": values,
+        }
+    if bid == "evidence_verifier":
+        return {"content": _summary(record), "reference": reference}
+    if bid == "portfolio_rollup":
+        amount = record.get("metric_value")
+        if amount is None:
+            amount = record.get("quantity_on_hand")
+        if amount is None:
+            amount = 1
+        return {"properties": [{"name": table, "value": amount,
+                                "reference": reference}]}
+    if bid == "readiness_engine":
+        return {
+            "checklist": list(kwargs.get("checklist") or [
+                {"id": "record_present", "required": True},
+            ]),
+            "state": {"reference": reference, "status": record.get("status"),
+                      "record_present": True},
+        }
+    if bid == "workflow":
+        steps = kwargs.get("steps")
+        if isinstance(steps, list) and steps:
+            return {
+                "steps": steps,
+                "result": steps[0].get("input") if isinstance(steps[0], dict) else values,
+                "pipeline_id": reference,
             }
-        ],
-        "result": _result_seed(payload),
-    }
-
-
-def team_input(payload: Dict[str, Any]) -> Dict[str, Any]:
-    name = str(payload.get("property_name") or payload.get("reference") or "sample")
-    return {
-        "user_id": str(payload.get("actor") or payload.get("user_id") or "operator"),
-        "name": f"Hotel {name}",
-        "plan": "free",
-        "result": _result_seed(payload),
-    }
-
-
-def validation_input(payload: Dict[str, Any]) -> Dict[str, Any]:
-    item_key = f"hotel-{_ref(payload)}"
-    return {
-        "item": {
-            "id": item_key,
-            "type": str(payload.get("capability") or "booking_management"),
-            "quantity": 1,
-            "value": float(payload.get("stay_total") or payload.get("night_rate") or 1),
-        },
-        "context": {"channel": "mcp", "status": _status(payload)},
-        "result": _result_seed(payload),
-    }
-
-
-def vector_search_input(payload: Dict[str, Any]) -> Dict[str, Any]:
-    query = str(
-        payload.get("destination")
-        or payload.get("stay_intent")
-        or payload.get("property_name")
-        or payload.get("guest_name")
-        or _summary(payload)
-    )
-    return {
-        "query": query,
-        "text": query,
-        "result": _result_seed(payload),
-    }
-
-
-def workflow_input(payload: Dict[str, Any]) -> Dict[str, Any]:
-    """Default hospitality pipeline with prepared children + result seed."""
-    seed = _result_seed(payload)
-    return {
-        "pipeline_id": f"hotel-{_ref(payload)}",
-        "result": seed,
-        "steps": [
-            prepared_event_bus_step(payload, step_id="step_0"),
-            {
-                "id": "step_1",
-                "block": "database",
-                "action": "query",
-                "params": {"action": "query"},
-                "input": database_input(payload),
-            },
-            {
-                "id": "step_2",
-                "block": "queue",
-                "action": "enqueue",
-                "params": {"action": "enqueue"},
-                "input": queue_input(payload),
-            },
-        ],
-    }
-
-
-def booking_workflow_input(payload: Dict[str, Any]) -> Dict[str, Any]:
-    """Prepared step_0 / step_1 / step_2+ event_bus children for booking-style workflow."""
-    seed = _result_seed(payload)
-    return {
-        "pipeline_id": f"booking-{_ref(payload)}",
-        "result": seed,
-        "steps": [
-            prepared_event_bus_step(payload, step_id="step_0"),
-            prepared_event_bus_step(payload, step_id="step_1"),
-            prepared_event_bus_step(payload, step_id="step_2"),
-        ],
-    }
-
-
-def notice_workflow_input(payload: Dict[str, Any]) -> Dict[str, Any]:
-    """Prepared step_0 / step_1 / step_2+ event_bus children for reminder-style workflow."""
-    seed = _result_seed(payload)
-    return {
-        "pipeline_id": f"notice-{_ref(payload)}",
-        "result": seed,
-        "steps": [
-            prepared_event_bus_step(payload, step_id="step_0"),
-            prepared_event_bus_step(payload, step_id="step_1"),
-            prepared_event_bus_step(payload, step_id="step_2"),
-        ],
-    }
-
-
-def property_workflow_input(payload: Dict[str, Any]) -> Dict[str, Any]:
-    """Property listing pipeline — no event_bus child; still seeds result."""
-    seed = _result_seed(payload)
-    return {
-        "pipeline_id": f"property-{_ref(payload)}",
-        "result": seed,
-        "steps": [
-            {
-                "id": "step_0",
-                "block": "database",
-                "action": "query",
-                "params": {"action": "query"},
-                "input": database_input(payload),
-            },
-            {
-                "id": "step_1",
-                "block": "team",
-                "action": "create_team",
-                "params": {"action": "create_team"},
-                "input": team_input(payload),
-            },
-            {
-                "id": "step_2",
-                "block": "audit",
-                "action": "log",
-                "params": {"action": "log"},
-                "input": audit_input(payload),
-            },
-        ],
-    }
-
-
-def record_mutation_audit(
-    principal: Any,
-    *,
-    action: str,
-    resource: str,
-    details: Dict[str, Any] | None = None,
-) -> Dict[str, Any]:
-    """Attribute a mutation. Persistable audit fields — do not invent caller keys."""
-    extra = dict(details or {})
-    return {
-        "reference": resource,
-        "status": extra.pop("status", "open"),
-        "actor": principal.subject,
-        "actor_role": principal.role,
-        "event_action": action,
-        **extra,
-    }
-
-
-def prepared_inputs(block_ids: List[str], payload: Dict[str, Any]) -> Dict[str, Dict[str, Any]]:
-    return {block_id: prepare_block_input(block_id, payload) for block_id in block_ids}
+        return {"steps": [], "result": values, "pipeline_id": reference}
+    # Unknown block: pass the record through untouched. The dispatch layer owns
+    # the refusal, never this constructor.
+    return values

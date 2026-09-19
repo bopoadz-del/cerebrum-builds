@@ -1,0 +1,8 @@
+{
+  "id": "bakery_hat_stock_inventory_management",
+  "capability": "stock_inventory_management",
+  "title": "Stock and inventory",
+  "purpose": "Per-shop ingredient and finished-product stock, movements, wastage and reorder points.",
+  "entity": "stock_inventory_management",
+  "runtime": "offline / in-process vendored blocks"
+}

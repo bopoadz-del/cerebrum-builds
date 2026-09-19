@@ -1,28 +1,58 @@
 {
-  "id": "portfolio_rollup",
-  "name": "Portfolio Rollup",
-  "version": "1.0.0",
-  "description": "Multi-property portfolio rollup intelligence",
-  "author": "Cerebrum Factory",
-  "layer": 3,
-  "tags": [
-    "estate",
-    "private_estate_operations",
-    "steward"
-  ],
-  "inputs": [
+  "acceptance": [
     {
-      "name": "input",
-      "type": "json",
-      "required": false,
-      "description": "Capability input payload"
+      "check": "errors when records carry non-numeric values, reporting the invalid records",
+      "id": "invalid_records",
+      "status": "failed"
+    },
+    {
+      "check": "refuses or errors when properties is absent or not a list",
+      "id": "missing_properties",
+      "status": "refused"
+    },
+    {
+      "check": "errors on an unknown or missing action",
+      "id": "unknown_action",
+      "status": "failed"
     }
   ],
+  "author": "Cerebrum Team",
+  "description": "Aggregates property records ({id, value, status}) into total value, count, and per-status groupings; empty input yields honest zeros.",
+  "digests": {
+    "block.json": "463352b05c0f8e7a1b1e76d2b4a873be5491a3fb159956dc729d39e37a038c2a",
+    "block.py": "e22ee7f2209d1ebabd3e4e28a1c1fce3190b48454eeff27625a5a83e48cfec2e"
+  },
+  "execution": {
+    "entrypoint": "block.py",
+    "type": "python"
+  },
+  "id": "portfolio_rollup",
+  "inputs": [
+    {
+      "default": "aggregate",
+      "description": "aggregate",
+      "name": "action",
+      "options": [
+        "aggregate"
+      ],
+      "required": false,
+      "type": "string"
+    },
+    {
+      "description": "[{id, value, status}] property records",
+      "name": "properties",
+      "required": true,
+      "type": "json"
+    }
+  ],
+  "layer": 3,
+  "name": "Portfolio Rollup",
+  "never": [],
   "outputs": [
     {
+      "description": "Capability result",
       "name": "result",
-      "type": "json",
-      "description": "Capability result"
+      "type": "json"
     }
   ],
   "permissions": {
@@ -32,9 +62,44 @@
     "network": false
   },
   "publisher_id": "cerebrum_platform",
+  "reads": [
+    {
+      "kind": "caller",
+      "scope": "input"
+    },
+    {
+      "kind": "config",
+      "scope": "runtime"
+    }
+  ],
   "requires": [],
-  "execution": {
-    "type": "python",
-    "entrypoint": "block.py"
-  }
+  "signature": "QBbg+BcfYLcBObPkS/ro8C4WYqlZb9tfQIg3vUjfeFlu0FXtKbW/tZLcUJV3l4HsveNnFpWgP6LlhNBqE2+DAw==",
+  "tags": [
+    "estate",
+    "private_estate_operations",
+    "steward"
+  ],
+  "trust_tier": "platform",
+  "ui_schema": [
+    {
+      "label": "Action",
+      "name": "action",
+      "options": [
+        "aggregate"
+      ],
+      "widget": "select"
+    },
+    {
+      "label": "Properties",
+      "name": "properties",
+      "widget": "json"
+    }
+  ],
+  "version": "1.0.0",
+  "writes": [
+    {
+      "kind": "caller",
+      "scope": "output"
+    }
+  ]
 }

@@ -1,164 +1,220 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Hotel Booking Platform</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>FinOps Central</title>
   <style>
-    :root { font-family: "IBM Plex Sans", "Segoe UI", sans-serif; background: #10141c; color: #e8eef6; }
-    body { margin: 0; }
-    header { padding: 1.2rem 1.5rem; border-bottom: 1px solid #2a3548; background: #141a24; }
-    h1 { margin: 0; font-size: 1.4rem; }
-    p.sub { margin: 0.35rem 0 0; color: #93a3bd; }
-    nav { display: flex; flex-wrap: wrap; gap: 0.4rem; padding: 0.8rem 1.5rem; }
-    nav button { background: #1c2430; color: #e8eef6; border: 1px solid #3a4c68; padding: 0.35rem 0.7rem; cursor: pointer; }
-    nav button.active { background: #0d4d73; }
-    main { padding: 1rem 1.5rem 3rem; }
-    label { display: block; margin: 0.6rem 0 0.2rem; }
-    input, textarea, select { width: 100%; max-width: 36rem; background: #0d1118; color: #e8eef6; border: 1px solid #3a4c68; padding: 0.4rem; }
-    button.act { margin-top: 0.8rem; background: #0d4d73; color: #fff; border: 0; padding: 0.5rem 1rem; cursor: pointer; }
-    pre { background: #0d1118; padding: 0.8rem; overflow: auto; }
-    .mods { display: grid; gap: 0.6rem; grid-template-columns: repeat(auto-fill, minmax(14rem, 1fr)); }
-    .card { border: 1px solid #2a3548; padding: 0.7rem; }
+    :root { color-scheme: light dark; }
+    body { font-family: system-ui, sans-serif; margin: 0; padding: 1.5rem; }
+    h1 { font-size: 1.4rem; margin: 0 0 .25rem; }
+    section { margin: 1.25rem 0; }
+    table { border-collapse: collapse; width: 100%; font-size: .85rem; }
+    th, td { border-bottom: 1px solid #8884; padding: .3rem .5rem; text-align: left; }
+    input, select, textarea, button { font: inherit; padding: .35rem .5rem; }
+    textarea { width: 100%; min-height: 4rem; }
+    .row { display: flex; gap: .5rem; flex-wrap: wrap; align-items: center; }
+    .muted { opacity: .7; font-size: .85rem; }
+    pre { white-space: pre-wrap; font-size: .8rem; }
   </style>
 </head>
 <body>
-  <header>
-    <h1>Hotel Booking Platform</h1>
-    <p class="sub">Hospitality operators — bookings, properties, pricing, reviews, and guest notices. Operator / admin. Mutations require a bearer operator token. OPERATOR_TOKEN is not stored in git.</p>
-  </header>
-  <nav id="nav"></nav>
   <main>
-    <section id="command_center" class="panel">
-      <h2>Command center</h2>
-      <div class="mods" id="modules"></div>
+    <h1>FinOps Central</h1>
+    <p class="muted">
+      Budget planning, spend capture, approvals, variance, the CFO portfolio rollup,
+      audit evidence, finance document knowledge and the marked integration
+      placeholders. Every panel below reads and writes the platform's own HTTP
+      surface — no sample rows are invented in the browser.
+    </p>
+
+    <section>
+      <div class="row">
+        <label>Platform token <input id="token" placeholder="dev-local-token" autocomplete="off"></label>
+        <button id="connect">Connect</button>
+        <span id="conn" class="muted"></span>
+      </div>
     </section>
-    <section id="live" class="panel">
-      <h2 id="cap-title">booking_management</h2>
-      <label>Operator token <input id="operator-token" type="password" autocomplete="off" placeholder="OPERATOR_TOKEN" /></label>
-      <label>Capability
-        <select id="capability"></select>
-      </label>
-      <label>Reference <input id="reference" value="sample" /></label>
-      <label>Status <input id="status" value="open" /></label>
-      <button class="act" id="post-btn" type="button">POST create</button>
-      <button class="act" id="get-btn" type="button">GET records</button>
-      <pre id="out">Ready.</pre>
+
+    <section>
+      <h2>Capabilities</h2>
+      <div class="row">
+        <select id="capabilities"></select>
+        <button id="load">Load records</button>
+      </div>
+      <p id="capability-status" class="muted"></p>
+      <table>
+        <thead><tr><th>id</th><th>reference</th><th>status</th><th>department</th><th>value</th></tr></thead>
+        <tbody id="records"></tbody>
+      </table>
     </section>
-    <section id="operational_chat" class="panel">
-      <h2>Operational chat — property notes</h2>
-      <label>Title <input id="rag-title" value="Hotel occupancy pack" /></label>
-      <label>Text <textarea id="rag-text" rows="3">Hotel occupancy, peak season night rate, and guest booking notes for the hospitality pilot.</textarea></label>
-      <button class="act" id="ingest-btn" type="button">Ingest pack</button>
-      <label>Query <input id="rag-q" value="hotel occupancy" /></label>
-      <button class="act" id="query-btn" type="button">Query notes</button>
+
+    <section>
+      <h2>Capture a budget line</h2>
+      <div class="row">
+        <input id="f-department" placeholder="department" value="Operations">
+        <input id="f-owner" placeholder="budget owner" value="A. Controller">
+        <input id="f-planned" placeholder="planned amount" value="100000">
+        <input id="f-actual" placeholder="actual amount" value="25000">
+        <button id="create">POST /v1/budget_planning_tracking</button>
+      </div>
+      <pre id="create-result" class="muted"></pre>
     </section>
-    <section id="resident_engineer" class="panel">
-      <h2>Resident engineer</h2>
-      <p class="sub">Same live POST/GET routes. No second API.</p>
+
+    <section>
+      <h2>Ask the finance documents</h2>
+      <form id="ask-form" class="row">
+        <input id="question" placeholder="question" value="What is the software invoice approval threshold?" size="60">
+        <button>POST /v1/rag/query</button>
+      </form>
+      <pre id="answer" class="muted"></pre>
+      <form id="ingest-form">
+        <textarea id="passage" placeholder="paste a passage from an invoice, contract, policy or price list"></textarea>
+        <div class="row">
+          <select id="document-type">
+            <option>invoice</option><option>contract</option>
+            <option>policy</option><option>price_list</option>
+          </select>
+          <button>POST /v1/rag/ingest</button>
+        </div>
+      </form>
+      <pre id="ingest-result" class="muted"></pre>
+    </section>
+
+    <section>
+      <h2>Platform status</h2>
+      <button id="health">GET /health</button>
+      <pre id="health-result" class="muted"></pre>
     </section>
   </main>
+
   <script>
-    const CAPS = [
-      "booking_management",
-      "property_management",
-      "dynamic_pricing",
-      "review_management",
-      "analytics_dashboard",
-      "notification_system",
-      "search_recommendation"
-    ];
-    const UI = ["command_center", "operational_chat", "resident_engineer"];
-    const MAP = {
-      command_center: "booking_management",
-      operational_chat: "property_management",
-      resident_engineer: "analytics_dashboard"
-    };
-    let current = "booking_management";
-    const nav = document.getElementById("nav");
-    const modules = document.getElementById("modules");
-    const capSelect = document.getElementById("capability");
-    UI.forEach((name) => {
-      const b = document.createElement("button");
-      b.textContent = name;
-      b.onclick = () => select(MAP[name] || "booking_management", b);
-      nav.appendChild(b);
-      const card = document.createElement("div");
-      card.className = "card";
-      card.textContent = name;
-      modules.appendChild(card);
-    });
-    CAPS.forEach((name) => {
-      const card = document.createElement("div");
-      card.className = "card";
-      card.textContent = name;
-      modules.appendChild(card);
-      const opt = document.createElement("option");
-      opt.value = name;
-      opt.textContent = name;
-      capSelect.appendChild(opt);
-    });
-    capSelect.onchange = () => select(capSelect.value);
-    function select(id, btn) {
-      current = id;
-      document.getElementById("cap-title").textContent = id;
-      capSelect.value = id;
-      [...nav.children].forEach((el) => el.classList.remove("active"));
-      if (btn) btn.classList.add("active");
-    }
-    function authHeaders() {
-      const headers = {"Content-Type": "application/json"};
-      const token = (document.getElementById("operator-token").value || "").trim();
-      if (token) headers["Authorization"] = "Bearer " + token;
-      return headers;
-    }
-    function extraFields(id) {
-      const extras = {
-        booking_management: {stay_kind: "night", room_label: "sample"},
-        property_management: {property_kind: "hotel", property_name: "sample"},
-        dynamic_pricing: {season: "peak", rate_plan: "sample"},
-        review_management: {rating_band: "excellent", guest_name: "sample"},
-        analytics_dashboard: {view_name: "sample", horizon: "today"},
-        notification_system: {notice_kind: "confirmation", guest_name: "sample"},
-        search_recommendation: {stay_intent: "leisure", destination: "sample"}
-      };
-      return extras[id] || {};
-    }
-    document.getElementById("post-btn").onclick = async () => {
-      const body = {
-        reference: document.getElementById("reference").value || "sample",
-        status: document.getElementById("status").value || "open",
-        ...extraFields(current)
-      };
-      const res = await fetch("/v1/" + current, {
-        method: "POST",
-        headers: authHeaders(),
-        body: JSON.stringify(body)
+    const tokenInput = document.getElementById('token');
+    const key = 'finops.platform.token';
+    tokenInput.value = localStorage.getItem(key) || 'dev-local-token';
+
+    function auth() { return { Authorization: 'Bearer ' + tokenInput.value }; }
+    function json(method, path, body) {
+      return fetch(path, {
+        method,
+        headers: Object.assign({ 'Content-Type': 'application/json' }, auth()),
+        body: body === undefined ? undefined : JSON.stringify(body),
+      }).then(async (response) => {
+        const text = await response.text();
+        const payload = text ? JSON.parse(text) : {};
+        if (!response.ok) throw new Error(method + ' ' + path + ' -> HTTP ' + response.status);
+        if (payload && payload.ok === false) throw new Error(String(payload.error || 'refused'));
+        return payload;
       });
-      document.getElementById("out").textContent = JSON.stringify(await res.json(), null, 2);
-    };
-    document.getElementById("get-btn").onclick = async () => {
-      const res = await fetch("/v1/" + current);
-      document.getElementById("out").textContent = JSON.stringify(await res.json(), null, 2);
-    };
-    document.getElementById("ingest-btn").onclick = async () => {
-      const res = await fetch("/v1/rag/ingest", {
-        method: "POST",
-        headers: authHeaders(),
-        body: JSON.stringify({
-          layer: 1,
-          doc_id: document.getElementById("reference").value || "sample",
-          title: document.getElementById("rag-title").value,
-          text: document.getElementById("rag-text").value
-        })
-      });
-      document.getElementById("out").textContent = JSON.stringify(await res.json(), null, 2);
-    };
-    document.getElementById("query-btn").onclick = async () => {
-      const q = encodeURIComponent(document.getElementById("rag-q").value || "occupancy");
-      const res = await fetch("/v1/rag/query?q=" + q);
-      document.getElementById("out").textContent = JSON.stringify(await res.json(), null, 2);
-    };
+    }
+
+    document.getElementById('connect').addEventListener('click', connect);
+    document.getElementById('load').addEventListener('click', load);
+    document.getElementById('capabilities').addEventListener('change', load);
+    document.getElementById('create').addEventListener('click', create);
+    document.getElementById('ask-form').addEventListener('submit', ask);
+    document.getElementById('ingest-form').addEventListener('submit', ingest);
+    document.getElementById('health').addEventListener('click', health);
+
+    async function connect() {
+      localStorage.setItem(key, tokenInput.value);
+      const payload = await json('GET', '/v1/capabilities');
+      const select = document.getElementById('capabilities');
+      select.innerHTML = '';
+      for (const item of payload.items || []) {
+        const option = document.createElement('option');
+        option.value = item.id;
+        option.textContent = item.id;
+        select.appendChild(option);
+      }
+      document.getElementById('conn').textContent = (payload.items || []).length + ' capability(ies)';
+      await load();
+    }
+
+    async function load() {
+      const capability = document.getElementById('capabilities').value;
+      if (!capability) return;
+      try {
+        const payload = await json('GET', '/v1/' + capability);
+        const rows = payload.items || [];
+        const body = document.getElementById('records');
+        body.innerHTML = '';
+        for (const record of rows) {
+          const tr = document.createElement('tr');
+          for (const field of ['id', 'reference', 'status', 'department']) {
+            const td = document.createElement('td');
+            td.textContent = String(record[field] ?? '');
+            tr.appendChild(td);
+          }
+          const value = document.createElement('td');
+          const figures = Object.keys(record).filter((k) => typeof record[k] === 'number');
+          value.textContent = figures.map((k) => k + '=' + record[k]).join(' ');
+          tr.appendChild(value);
+          body.appendChild(tr);
+        }
+        document.getElementById('capability-status').textContent =
+          rows.length + ' stored record(s) in ' + capability;
+      } catch (exc) {
+        document.getElementById('capability-status').textContent = exc.message;
+      }
+    }
+
+    async function create() {
+      const payload = {
+        reference: 'web-' + Date.now(),
+        status: 'open',
+        department: document.getElementById('f-department').value || 'Operations',
+        budget_owner: document.getElementById('f-owner').value || 'Budget Owner',
+        planned_amount: Number(document.getElementById('f-planned').value || 0),
+        actual_amount: Number(document.getElementById('f-actual').value || 0),
+        currency: 'GBP',
+      };
+      try {
+        const stored = await json('POST', '/v1/budget_planning_tracking', payload);
+        document.getElementById('create-result').textContent = JSON.stringify(stored.stored, null, 2);
+        await load();
+      } catch (exc) {
+        document.getElementById('create-result').textContent = exc.message;
+      }
+    }
+
+    async function ask(event) {
+      event.preventDefault();
+      const question = document.getElementById('question').value;
+      try {
+        const payload = await json('POST', '/v1/rag/query', { q: question });
+        document.getElementById('answer').textContent =
+          String(payload.answer || '') + '\n' + JSON.stringify(payload.citations || [], null, 2);
+      } catch (exc) {
+        document.getElementById('answer').textContent = exc.message;
+      }
+    }
+
+    async function ingest(event) {
+      event.preventDefault();
+      const text = document.getElementById('passage').value;
+      if (!text.trim()) return;
+      try {
+        const payload = await json('POST', '/v1/rag/ingest', {
+          text,
+          document_type: document.getElementById('document-type').value,
+        });
+        document.getElementById('ingest-result').textContent = JSON.stringify(payload.ingested, null, 2);
+      } catch (exc) {
+        document.getElementById('ingest-result').textContent = exc.message;
+      }
+    }
+
+    async function health() {
+      try {
+        document.getElementById('health-result').textContent =
+          JSON.stringify(await json('GET', '/health'), null, 2);
+      } catch (exc) {
+        document.getElementById('health-result').textContent = exc.message;
+      }
+    }
+
+    connect();
   </script>
 </body>
 </html>

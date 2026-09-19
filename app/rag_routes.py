@@ -1,159 +1,141 @@
-"""Hotel property notes ingest/query HTTP. Quoted paths required by PHASE 2."""
+"""Document ingestion and grounded query for the tenant's own finance documents.
+
+Written by the factory WRITER role (codewhale exec)
+
+The finance team asked the platform to answer from the tenant's own uploaded
+documents -- price lists, recipes, ingredient costs, delivery zone rules,
+supplier lists, procedures. This is that surface:
+
+    POST /v1/rag/ingest   index one passage for the caller's tenant
+    POST /v1/rag/query    retrieve, then answer from what was retrieved
+    GET  /v1/rag/query    same retrieval with the query in the query string
+
+Tenancy is resolved from the authenticated principal (app.tenancy), never
+from the request body, and every read is scoped to that tenant. Answers
+carry their citations; when nothing matches, the platform says so rather
+than inventing a figure.
+"""
 
 from __future__ import annotations
 
-import json
-import math
-import re
-from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, Optional
 
-from fastapi import APIRouter, HTTPException, Query, Request
-from pydantic import BaseModel, Field
+from fastapi import APIRouter, HTTPException, Request
 
-from app.auth import require_operator
-from app.block_inputs import record_mutation_audit
-from app.store import storage_root
+from app import llm, retrieval
+from app import tenancy
 
 router = APIRouter()
 
-HOTEL_INDEX = "hotel_property_notes_v1"
+MAX_TEXT_CHARS = 20000
 
 
-class RagIngestBody(BaseModel):
-    text: str = Field(..., min_length=1)
-    doc_id: str = Field("sample", min_length=1)
-    title: str = Field("sample", min_length=1)
-    layer: int = Field(1, ge=1, le=2)
-    property_id: Optional[str] = None
+def _tenant(request: Request) -> str:
+    try:
+        return tenancy.resolve_tenant(request.headers).tenant_id
+    except tenancy.TenantRefused:
+        raise HTTPException(status_code=401, detail="authentication_required")
 
 
-def _rag_dir() -> Path:
-    path = storage_root() / "rag"
-    path.mkdir(parents=True, exist_ok=True)
-    return path
+def _first_string(body: Dict[str, Any], *names: str) -> str:
+    for name in names:
+        value = body.get(name)
+        if isinstance(value, str) and value.strip():
+            return value.strip()
+    return ""
 
 
-def _index_path() -> Path:
-    return _rag_dir() / f"{HOTEL_INDEX}.jsonl"
+def _ingest(tenant_id: str, body: Dict[str, Any]) -> Dict[str, Any]:
+    text = _first_string(body, "text", "content", "paragraph", "document", "body")
+    if not text:
+        raise HTTPException(status_code=422, detail="text is required to ingest a passage")
+    if len(text) > MAX_TEXT_CHARS:
+        raise HTTPException(status_code=422, detail="passage is larger than %d characters" % MAX_TEXT_CHARS)
+    try:
+        row = retrieval.ingest(
+            tenant_id=tenant_id,
+            text=text,
+            document=_first_string(body, "document_name", "filename", "title") or "uploaded-document",
+            document_type=_first_string(body, "document_type", "kind") or "procedure",
+            department=_first_string(body, "department"),
+        )
+    except ValueError as exc:
+        raise HTTPException(status_code=422, detail=str(exc))
+    return {"ok": True, "tenant_id": tenant_id, "ingested": row}
 
 
-def _tokens(text: str) -> List[str]:
-    return [t for t in re.findall(r"[a-z0-9]+", text.lower()) if t]
-
-
-def _score(query: str, text: str) -> float:
-    q = set(_tokens(query))
-    d = _tokens(text)
-    if not q or not d:
-        return 0.0
-    overlap = len(q.intersection(d))
-    return overlap / math.sqrt(len(q) * max(len(d), 1))
-
-
-def _read_index() -> List[Dict[str, Any]]:
-    path = _index_path()
-    if not path.is_file():
-        return []
-    rows: List[Dict[str, Any]] = []
-    for line in path.read_text(encoding="utf-8").splitlines():
-        if not line.strip():
-            continue
-        try:
-            rows.append(json.loads(line))
-        except json.JSONDecodeError:
-            continue
-    return rows
+def _query(tenant_id: str, body: Dict[str, Any]) -> Dict[str, Any]:
+    question = _first_string(body, "q", "query", "question", "text")
+    if not question:
+        raise HTTPException(status_code=422, detail="q or query is required to search")
+    department = _first_string(body, "department")
+    try:
+        limit = int(body.get("limit") or 5)
+    except (TypeError, ValueError):
+        raise HTTPException(status_code=422, detail="limit must be a number")
+    try:
+        hits = retrieval.search(tenant_id=tenant_id, query=question, limit=limit, department=department)
+    except ValueError as exc:
+        raise HTTPException(status_code=422, detail=str(exc))
+    answer = llm.synthesize(question, hits)
+    return {
+        "ok": True,
+        "tenant_id": tenant_id,
+        "query": question,
+        "hits": hits,
+        "results": hits,
+        "total": len(hits),
+        "answer": answer.get("answer"),
+        "citations": answer.get("citations") or [],
+        "confidence": answer.get("confidence"),
+        "provider": answer.get("provider"),
+    }
 
 
 @router.post("/v1/rag/ingest")
-def rag_ingest(body: RagIngestBody, request: Request) -> Dict[str, Any]:
-    principal = require_operator(request)
-    record = {
-        "doc_id": body.doc_id,
-        "title": body.title,
-        "text": body.text,
-        "layer": body.layer,
-        "property_id": body.property_id,
-        "index": HOTEL_INDEX,
-        "retrieval": "lexical_jsonl",
-        "actor": principal.subject,
-        "actor_role": principal.role,
-    }
-    path = _index_path()
-    with path.open("a", encoding="utf-8") as handle:
-        handle.write(json.dumps(record, ensure_ascii=False) + "\n")
-    record_mutation_audit(
-        principal,
-        action="rag_ingest",
-        resource=body.doc_id,
-        details={
-            "status": "open",
-            "capability": "rag_ingest",
-            "category": "hospitality",
-            "layer": body.layer,
-            "retrieval": "lexical_jsonl",
-        },
-    )
-    return {
-        "ok": True,
-        "ingested": True,
-        "doc_id": body.doc_id,
-        "layer": body.layer,
-        "retrieval": "lexical_jsonl",
-        "actor": principal.subject,
-        "actor_role": principal.role,
-    }
-
-
-@router.post("/v1/steward/rag/ingest")
-def steward_rag_ingest(body: RagIngestBody, request: Request) -> Dict[str, Any]:
-    return rag_ingest(body, request)
-
-
-@router.get("/v1/rag/query")
-def rag_query(
-    q: str = Query(..., min_length=1),
-    layer: Optional[int] = Query(None, ge=1, le=2),
-    top_k: int = Query(5, ge=1, le=20),
-) -> Dict[str, Any]:
-    hits = []
-    for row in _read_index():
-        if layer is not None and row.get("layer") != layer:
-            continue
-        score = _score(q, f"{row.get('title', '')} {row.get('text', '')}")
-        if score <= 0:
-            continue
-        hits.append({**row, "score": round(score, 6)})
-    hits.sort(key=lambda item: item["score"], reverse=True)
-    return {
-        "ok": True,
-        "query": q,
-        "hits": hits[:top_k],
-        "hit_count": min(len(hits), top_k),
-        "retrieval": "lexical_jsonl",
-    }
+async def rag_ingest(request: Request) -> Dict[str, Any]:
+    """Index one passage from the tenant's own finance documents for this tenant."""
+    try:
+        body = await request.json()
+    except Exception:  # noqa: BLE001 - malformed JSON is a caller error
+        raise HTTPException(status_code=422, detail="body must be JSON")
+    if not isinstance(body, dict):
+        raise HTTPException(status_code=422, detail="body must be a JSON object")
+    return _ingest(_tenant(request), body)
 
 
 @router.post("/v1/rag/query")
-def rag_query_post(body: Dict[str, Any]) -> Dict[str, Any]:
-    q = str(body.get("q") or body.get("query") or "")
-    if not q:
-        raise HTTPException(status_code=422, detail="q required")
-    layer = body.get("layer")
-    top_k = int(body.get("top_k") or 5)
-    return rag_query(q=q, layer=layer, top_k=top_k)
+async def rag_query_post(request: Request) -> Dict[str, Any]:
+    """Retrieve from this tenant's documents and answer from the passages."""
+    try:
+        body = await request.json()
+    except Exception:  # noqa: BLE001 - malformed JSON is a caller error
+        raise HTTPException(status_code=422, detail="body must be JSON")
+    if not isinstance(body, dict):
+        raise HTTPException(status_code=422, detail="body must be a JSON object")
+    return _query(_tenant(request), body)
 
 
-@router.get("/v1/steward/rag/query")
-def steward_rag_query(
-    q: str = Query(..., min_length=1),
-    layer: Optional[int] = Query(None, ge=1, le=2),
-    top_k: int = Query(5, ge=1, le=20),
-) -> Dict[str, Any]:
-    return rag_query(q=q, layer=layer, top_k=top_k)
+@router.get("/v1/rag/query")
+def rag_query_get(request: Request) -> Dict[str, Any]:
+    """Same retrieval, with the question in the query string."""
+    params: Dict[str, Any] = dict(request.query_params)
+    return _query(_tenant(request), params)
 
 
-@router.post("/v1/steward/rag/query")
-def steward_rag_query_post(body: Dict[str, Any]) -> Dict[str, Any]:
-    return rag_query_post(body)
+@router.get("/v1/rag/documents")
+def rag_documents(request: Request) -> Dict[str, Any]:
+    """How many passages this tenant has indexed, and of which kinds."""
+    tenant_id = _tenant(request)
+    conn = retrieval.connect()
+    try:
+        rows = conn.execute(
+            "SELECT document, document_type, department, COUNT(*) AS passages"
+            " FROM rag_documents WHERE tenant_id = ? GROUP BY document, document_type, department"
+            " ORDER BY document",
+            (tenant_id,),
+        ).fetchall()
+    finally:
+        conn.close()
+    items = [dict(row) for row in rows]
+    return {"ok": True, "tenant_id": tenant_id, "documents": items, "count": len(items)}

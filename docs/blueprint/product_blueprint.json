@@ -4,109 +4,130 @@
       "block_ids": [
         "workflow",
         "database",
-        "validation",
-        "event_bus",
-        "queue",
-        "audit"
-      ],
-      "description": "Handles the full reservation lifecycle including availability checks, real-time booking, modifications, cancellations, and stay records across all channels.",
-      "id": "booking_management",
-      "required": true,
-      "strategy_hint": "REUSE"
-    },
-    {
-      "block_ids": [
-        "estate_registry",
-        "estate_maintenance",
-        "database",
-        "team",
-        "workflow",
-        "audit"
-      ],
-      "description": "Manages rooms, rate plans, seasonal inventory, and property configuration for one or many hotel properties.",
-      "id": "property_management",
-      "required": true,
-      "strategy_hint": "REUSE"
-    },
-    {
-      "block_ids": [
         "formula_executor",
-        "readiness_engine",
-        "recommendation_template",
-        "analytics",
-        "database"
+        "validation",
+        "notification"
       ],
-      "description": "Calculates and adjusts room rates in real time based on demand, occupancy, seasonality, competitor signals, and configurable pricing rules.",
-      "id": "dynamic_pricing",
+      "description": "Plan, allocate and track budgets by department, cost centre and budget owner, with versioned baselines and live utilisation against allocations.",
+      "id": "budget_planning_tracking",
       "required": true,
       "strategy_hint": "REUSE"
     },
     {
       "block_ids": [
         "capture",
-        "knowledge",
-        "vector_search",
-        "analytics",
-        "notification"
+        "database",
+        "file_hasher",
+        "document_engine",
+        "validation",
+        "event_bus"
       ],
-      "description": "Collects, moderates, and responds to guest reviews; analyzes sentiment and surfaces reputation trends for each property.",
-      "id": "review_management",
+      "description": "Capture expenses, invoices and other spend events, categorise them against chart-of-accounts mappings, and link supporting documents.",
+      "id": "spend_capture_categorisation",
+      "required": true,
+      "strategy_hint": "REUSE"
+    },
+    {
+      "block_ids": [
+        "workflow",
+        "queue",
+        "notification",
+        "audit",
+        "team",
+        "event_bus"
+      ],
+      "description": "Route expenses, invoices and budget change requests to the right approvers with thresholds, delegation, escalation and full status tracking.",
+      "id": "approval_workflow",
+      "required": true,
+      "strategy_hint": "REUSE"
+    },
+    {
+      "block_ids": [
+        "analytics",
+        "formula_executor",
+        "formula_executor",
+        "dashboard",
+        "portfolio_rollup",
+        "database"
+      ],
+      "description": "Compute variance and variance-vs-budget analytics across departments, categories, periods and owners, with configurable formulas and rules of thumb.",
+      "id": "variance_analytics",
       "required": true,
       "strategy_hint": "REUSE"
     },
     {
       "block_ids": [
         "dashboard",
-        "analytics",
         "portfolio_rollup",
+        "analytics",
+        "recommendation_template"
+      ],
+      "description": "Provide department-level dashboards and a consolidated portfolio rollup for the CFO and controllers, showing spend, commitments, forecast and risks.",
+      "id": "dashboard_portfolio_rollup",
+      "required": true,
+      "strategy_hint": "REUSE"
+    },
+    {
+      "block_ids": [
+        "audit",
+        "evidence_verifier",
+        "file_hasher",
+        "validation",
+        "storage",
         "database"
       ],
-      "description": "Provides operational dashboards and reports covering occupancy, revenue, booking pace, channel performance, and guest satisfaction.",
-      "id": "analytics_dashboard",
+      "description": "Maintain an immutable audit trail and validate finance records, approvals and document integrity with hashed evidence and verifier checks.",
+      "id": "audit_evidence_validation",
       "required": true,
       "strategy_hint": "REUSE"
     },
     {
       "block_ids": [
-        "notification",
-        "event_bus",
-        "queue",
-        "workflow"
-      ],
-      "description": "Sends timely booking confirmations, reminders, pricing alerts, and internal staff notifications via email, SMS, and in-app channels.",
-      "id": "notification_system",
-      "required": true,
-      "strategy_hint": "REUSE"
-    },
-    {
-      "block_ids": [
-        "vector_search",
+        "document_engine",
         "knowledge",
-        "recommendation_template",
-        "memory",
-        "analytics"
+        "vector_search",
+        "storage",
+        "spec_analyzer",
+        "capture"
       ],
-      "description": "Enables guests to search properties and rooms with filters, and recommends personalized stays, packages, and upsells based on preferences and history.",
-      "id": "search_recommendation",
+      "description": "Store, parse and index uploaded invoices, contracts, policies and price lists, and answer finance questions through knowledge and vector search.",
+      "id": "finance_document_knowledge",
+      "required": true,
+      "strategy_hint": "REUSE"
+    },
+    {
+      "block_ids": [
+        "workflow",
+        "event_bus",
+        "notification",
+        "audit",
+        "storage"
+      ],
+      "description": "Provide marked-placeholder connectors for Google Drive invoice/document sync and Sage accounting, clearly labelled as not production-cleared, alongside the ready email/Slack notification path.",
+      "id": "integrations_placeholders",
       "required": true,
       "strategy_hint": "REUSE"
     }
   ],
-  "connectors": [],
+  "connectors": [
+    "google_drive",
+    "sage"
+  ],
+  "delivery_format": "zip",
   "drafting_mode": "architect_llm",
-  "drafting_note": null,
+  "drafting_note": "inventory: 'finops' is not on the declared-ready list (hotels, insurance, construction, finance, retail); the Store kit for this vertical is unverified \u2014 domain depth not guaranteed",
   "edge_profile": "standard",
   "factory_scenario": "CREATE_PRODUCT",
   "human_authority": true,
-  "n_required": 7,
-  "product_id": "hospitality",
-  "product_name": "StayFlow Hospitality Platform",
+  "n_required": 8,
+  "product_id": "finops",
+  "product_name": "FinOps Central",
   "schema_version": "product_blueprint.v1",
-  "summary": "StayFlow is an all-in-one hotel booking and property management platform for independent hotels, boutique inns, and small hotel groups. It unifies real-time reservation management, room inventory and rate control, dynamic pricing, guest reviews, and operational analytics, while keeping staff and guests informed with automated notifications and AI-assisted search and recommendations.",
+  "summary": "FinOps Central is a finance operations platform for approximately 40 department budget owners, finance controllers, and CFO/approver roles. It unifies budget planning and tracking, spend capture and categorisation, invoice and expense approval workflows, variance and variance-vs-budget analytics, cross-department portfolio rollup, audit-ready evidence and validation, document handling with knowledge lookup over invoices, contracts, policies, and price lists, a configurable formula and rules engi",
   "ui_modules": [
     "command_center",
     "operational_chat",
     "resident_engineer"
   ],
-  "vertical": "hospitality"
+  "vertical": "finops"
 }

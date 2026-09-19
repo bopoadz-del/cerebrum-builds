@@ -1,0 +1,11 @@
+{
+ "agent_id": "dental_clinic.hat.invoicing",
+ "blocks": [
+  "database",
+  "formula_executor",
+  "document_engine",
+  "validation"
+ ],
+ "capability_id": "invoicing",
+ "kind": "hat"
+}

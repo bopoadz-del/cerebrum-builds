@@ -1,0 +1,15 @@
+{
+ "agent_id": "dental_clinic.base",
+ "capabilities": [
+  "patient_records",
+  "appointment_scheduling",
+  "treatment_records",
+  "invoicing",
+  "recall_reminders",
+  "staff_roles_permissions",
+  "clinic_dashboard"
+ ],
+ "kind": "base",
+ "name": "Dental Clinic Manager platform agent",
+ "product_id": "dental-clinic"
+}

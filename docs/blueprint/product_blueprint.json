@@ -2,55 +2,72 @@
   "capabilities": [
     {
       "block_ids": [
-        "workflow",
         "database",
+        "storage",
         "validation",
-        "event_bus",
-        "queue",
         "audit"
       ],
-      "description": "Handles the full reservation lifecycle including availability checks, real-time booking, modifications, cancellations, and stay records across all channels.",
-      "id": "booking_management",
+      "description": "Maintain comprehensive patient profiles including demographics, medical and dental history, contact details, and insurance information, with search and retrieval.",
+      "id": "patient_records",
       "required": true,
       "strategy_hint": "REUSE"
     },
     {
       "block_ids": [
-        "estate_registry",
-        "estate_maintenance",
         "database",
-        "team",
         "workflow",
-        "audit"
-      ],
-      "description": "Manages rooms, rate plans, seasonal inventory, and property configuration for one or many hotel properties.",
-      "id": "property_management",
-      "required": true,
-      "strategy_hint": "REUSE"
-    },
-    {
-      "block_ids": [
-        "formula_executor",
-        "readiness_engine",
-        "recommendation_template",
-        "analytics",
-        "database"
-      ],
-      "description": "Calculates and adjusts room rates in real time based on demand, occupancy, seasonality, competitor signals, and configurable pricing rules.",
-      "id": "dynamic_pricing",
-      "required": true,
-      "strategy_hint": "REUSE"
-    },
-    {
-      "block_ids": [
-        "capture",
-        "knowledge",
-        "vector_search",
-        "analytics",
+        "queue",
         "notification"
       ],
-      "description": "Collects, moderates, and responds to guest reviews; analyzes sentiment and surfaces reputation trends for each property.",
-      "id": "review_management",
+      "description": "Schedule, reschedule, and cancel patient appointments across provider calendars, with conflict detection and status tracking.",
+      "id": "appointment_scheduling",
+      "required": true,
+      "strategy_hint": "REUSE"
+    },
+    {
+      "block_ids": [
+        "database",
+        "document_engine",
+        "storage",
+        "audit"
+      ],
+      "description": "Document treatment plans, procedures performed, clinical notes, and attachments linked to each patient's record.",
+      "id": "treatment_records",
+      "required": true,
+      "strategy_hint": "REUSE"
+    },
+    {
+      "block_ids": [
+        "database",
+        "formula_executor",
+        "document_engine",
+        "validation"
+      ],
+      "description": "Generate invoices for treatments, track payments, apply simple fee schedules, and maintain billing history per patient.",
+      "id": "invoicing",
+      "required": true,
+      "strategy_hint": "REUSE"
+    },
+    {
+      "block_ids": [
+        "workflow",
+        "queue",
+        "notification",
+        "analytics"
+      ],
+      "description": "Identify patients due for recall visits and generate reminders based on configurable intervals, delivered via in-app notifications.",
+      "id": "recall_reminders",
+      "required": true,
+      "strategy_hint": "REUSE"
+    },
+    {
+      "block_ids": [
+        "team",
+        "audit",
+        "validation"
+      ],
+      "description": "Manage staff accounts, assign roles (e.g., dentist, hygienist, admin), and enforce access permissions across modules.",
+      "id": "staff_roles_permissions",
       "required": true,
       "strategy_hint": "REUSE"
     },
@@ -58,55 +75,30 @@
       "block_ids": [
         "dashboard",
         "analytics",
-        "portfolio_rollup",
         "database"
       ],
-      "description": "Provides operational dashboards and reports covering occupancy, revenue, booking pace, channel performance, and guest satisfaction.",
-      "id": "analytics_dashboard",
-      "required": true,
-      "strategy_hint": "REUSE"
-    },
-    {
-      "block_ids": [
-        "notification",
-        "event_bus",
-        "queue",
-        "workflow"
-      ],
-      "description": "Sends timely booking confirmations, reminders, pricing alerts, and internal staff notifications via email, SMS, and in-app channels.",
-      "id": "notification_system",
-      "required": true,
-      "strategy_hint": "REUSE"
-    },
-    {
-      "block_ids": [
-        "vector_search",
-        "knowledge",
-        "recommendation_template",
-        "memory",
-        "analytics"
-      ],
-      "description": "Enables guests to search properties and rooms with filters, and recommends personalized stays, packages, and upsells based on preferences and history.",
-      "id": "search_recommendation",
+      "description": "Provide an at-a-glance dashboard of daily appointments, patient flow, outstanding invoices, and recall status.",
+      "id": "clinic_dashboard",
       "required": true,
       "strategy_hint": "REUSE"
     }
   ],
   "connectors": [],
+  "delivery_format": "zip",
   "drafting_mode": "architect_llm",
-  "drafting_note": null,
+  "drafting_note": "inventory: 'dental_clinic' is not on the declared-ready list (hotels, insurance, construction, finance, retail); the Store kit for this vertical is unverified \u2014 domain depth not guaranteed",
   "edge_profile": "standard",
   "factory_scenario": "CREATE_PRODUCT",
   "human_authority": true,
   "n_required": 7,
-  "product_id": "hospitality",
-  "product_name": "StayFlow Hospitality Platform",
+  "product_id": "dental-clinic",
+  "product_name": "Dental Clinic Manager",
   "schema_version": "product_blueprint.v1",
-  "summary": "StayFlow is an all-in-one hotel booking and property management platform for independent hotels, boutique inns, and small hotel groups. It unifies real-time reservation management, room inventory and rate control, dynamic pricing, guest reviews, and operational analytics, while keeping staff and guests informed with automated notifications and AI-assisted search and recommendations.",
+  "summary": "A staff-only back-office platform for a single dental clinic, covering patient records, appointment scheduling, treatment documentation, invoicing, recall reminders, staff roles and permissions, and an operational dashboard. It serves dentists, hygienists, and front-desk staff who need a simple, self-contained system with sensible defaults and no external integrations.",
   "ui_modules": [
     "command_center",
     "operational_chat",
     "resident_engineer"
   ],
-  "vertical": "hospitality"
+  "vertical": "dental_clinic"
 }

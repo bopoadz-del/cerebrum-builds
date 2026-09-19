@@ -1,0 +1,11 @@
+{
+ "agent_id": "dental_clinic.hat.appointment_scheduling",
+ "blocks": [
+  "database",
+  "workflow",
+  "queue",
+  "notification"
+ ],
+ "capability_id": "appointment_scheduling",
+ "kind": "hat"
+}

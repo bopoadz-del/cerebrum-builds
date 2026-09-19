@@ -1,0 +1,11 @@
+{
+ "agent_id": "dental_clinic.hat.recall_reminders",
+ "blocks": [
+  "workflow",
+  "queue",
+  "notification",
+  "analytics"
+ ],
+ "capability_id": "recall_reminders",
+ "kind": "hat"
+}

@@ -1,0 +1,11 @@
+{
+ "agent_id": "dental_clinic.hat.patient_records",
+ "blocks": [
+  "database",
+  "storage",
+  "validation",
+  "audit"
+ ],
+ "capability_id": "patient_records",
+ "kind": "hat"
+}

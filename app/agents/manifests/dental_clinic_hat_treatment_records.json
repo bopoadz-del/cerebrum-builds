@@ -1,0 +1,11 @@
+{
+ "agent_id": "dental_clinic.hat.treatment_records",
+ "blocks": [
+  "database",
+  "document_engine",
+  "storage",
+  "audit"
+ ],
+ "capability_id": "treatment_records",
+ "kind": "hat"
+}

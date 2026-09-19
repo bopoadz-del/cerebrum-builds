@@ -1,0 +1,10 @@
+{
+ "agent_id": "dental_clinic.hat.staff_roles_permissions",
+ "blocks": [
+  "team",
+  "audit",
+  "validation"
+ ],
+ "capability_id": "staff_roles_permissions",
+ "kind": "hat"
+}

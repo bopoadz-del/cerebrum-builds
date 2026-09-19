@@ -1,0 +1,106 @@
+{
+  "artifact_sources": {
+    "app/actions/appointment_scheduling.py": "coder CLI (codewhale exec)",
+    "app/actions/clinic_dashboard.py": "coder CLI (codewhale exec)",
+    "app/actions/invoicing.py": "coder CLI (codewhale exec)",
+    "app/actions/patient_records.py": "coder CLI (codewhale exec)",
+    "app/actions/recall_reminders.py": "coder CLI (codewhale exec)",
+    "app/actions/staff_roles_permissions.py": "coder CLI (codewhale exec)",
+    "app/actions/treatment_records.py": "coder CLI (codewhale exec)"
+  },
+  "authorship": {
+    "action_py": 7,
+    "agent_artifacts": [
+      "patient_records",
+      "appointment_scheduling",
+      "treatment_records",
+      "invoicing",
+      "recall_reminders",
+      "staff_roles_permissions",
+      "clinic_dashboard"
+    ],
+    "cli_authored_ids": [
+      "patient_records",
+      "appointment_scheduling",
+      "treatment_records",
+      "invoicing",
+      "recall_reminders",
+      "staff_roles_permissions",
+      "clinic_dashboard"
+    ],
+    "role": "WRITER",
+    "stamp": "Written by the factory WRITER role (codewhale exec)"
+  },
+  "capabilities": {
+    "appointment_scheduling": {
+      "blocks": [
+        "database",
+        "workflow",
+        "queue",
+        "notification"
+      ],
+      "entity": "appointment_scheduling"
+    },
+    "clinic_dashboard": {
+      "blocks": [
+        "dashboard",
+        "analytics",
+        "database"
+      ],
+      "entity": "clinic_dashboard"
+    },
+    "invoicing": {
+      "blocks": [
+        "database",
+        "formula_executor",
+        "document_engine",
+        "validation"
+      ],
+      "entity": "invoicing"
+    },
+    "patient_records": {
+      "blocks": [
+        "database",
+        "storage",
+        "validation",
+        "audit"
+      ],
+      "entity": "patient_records"
+    },
+    "recall_reminders": {
+      "blocks": [
+        "workflow",
+        "queue",
+        "notification",
+        "analytics"
+      ],
+      "entity": "recall_reminders"
+    },
+    "staff_roles_permissions": {
+      "blocks": [
+        "team",
+        "audit",
+        "validation"
+      ],
+      "entity": "staff_roles_permissions"
+    },
+    "treatment_records": {
+      "blocks": [
+        "database",
+        "document_engine",
+        "storage",
+        "audit"
+      ],
+      "entity": "treatment_records"
+    }
+  },
+  "engine": "codewhale_worker",
+  "n_required": 7,
+  "product_id": "dental-clinic",
+  "product_name": "Dental Clinic Manager",
+  "schema_version": "build_provenance.v1",
+  "substrate": {
+    "note": "app/migrations.py, app/backup.py, alembic.ini, alembic/env.py, alembic/script.py.mako, alembic/versions/0002_lifecycle_audit.py and scripts/entrypoint.sh are the factory's data-lifecycle substrate where absent"
+  },
+  "written_by": "the WRITER agent (codewhale exec)"
+}

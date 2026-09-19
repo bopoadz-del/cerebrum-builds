@@ -1,0 +1,36 @@
+WORKFLOWS = [
+    {
+        "description": "Default linear workflow over planned capabilities.",
+        "name": "Capability sequence",
+        "steps": [
+            {
+                "capability_id": "patient_records",
+                "role": "execute"
+            },
+            {
+                "capability_id": "appointment_scheduling",
+                "role": "execute"
+            },
+            {
+                "capability_id": "treatment_records",
+                "role": "execute"
+            },
+            {
+                "capability_id": "invoicing",
+                "role": "execute"
+            },
+            {
+                "capability_id": "recall_reminders",
+                "role": "execute"
+            },
+            {
+                "capability_id": "staff_roles_permissions",
+                "role": "execute"
+            },
+            {
+                "capability_id": "clinic_dashboard",
+                "role": "execute"
+            }
+        ]
+    }
+]

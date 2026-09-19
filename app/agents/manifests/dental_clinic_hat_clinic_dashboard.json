@@ -1,0 +1,10 @@
+{
+ "agent_id": "dental_clinic.hat.clinic_dashboard",
+ "blocks": [
+  "dashboard",
+  "analytics",
+  "database"
+ ],
+ "capability_id": "clinic_dashboard",
+ "kind": "hat"
+}

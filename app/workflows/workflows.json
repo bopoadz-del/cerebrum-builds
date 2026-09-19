@@ -1,0 +1,37 @@
+[
+  {
+    "description": "Default linear workflow over planned capabilities.",
+    "name": "Capability sequence",
+    "steps": [
+      {
+        "capability_id": "patient_visit_records",
+        "role": "execute"
+      },
+      {
+        "capability_id": "appointment_scheduling",
+        "role": "execute"
+      },
+      {
+        "capability_id": "todays_appointment_list",
+        "role": "execute"
+      },
+      {
+        "capability_id": "day_before_email_reminders",
+        "role": "execute"
+      },
+      {
+        "capability_id": "patient_directory",
+        "role": "execute"
+      },
+      {
+        "capability_id": "clinical_history_search",
+        "role": "execute"
+      },
+      {
+        "capability_id": "role_based_access",
+        "role": "execute"
+      }
+    ],
+    "workflow_id": "dental_clinic.capability_sequence"
+  }
+]

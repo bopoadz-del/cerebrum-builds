@@ -1,0 +1,11 @@
+{
+  "agent_id": "dental_clinic.hat.day_before_email_reminders",
+  "capability_id": "day_before_email_reminders",
+  "kind": "hat",
+  "blocks": [
+    "notification",
+    "queue",
+    "event_bus",
+    "audit"
+  ]
+}

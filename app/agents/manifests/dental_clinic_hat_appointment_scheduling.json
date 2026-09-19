@@ -1,0 +1,11 @@
+{
+  "agent_id": "dental_clinic.hat.appointment_scheduling",
+  "capability_id": "appointment_scheduling",
+  "kind": "hat",
+  "blocks": [
+    "workflow",
+    "database",
+    "validation",
+    "audit"
+  ]
+}

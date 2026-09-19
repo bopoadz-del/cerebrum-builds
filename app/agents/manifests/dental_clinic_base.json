@@ -1,0 +1,15 @@
+{
+  "agent_id": "dental_clinic.base",
+  "capabilities": [
+    "patient_visit_records",
+    "appointment_scheduling",
+    "todays_appointment_list",
+    "day_before_email_reminders",
+    "patient_directory",
+    "clinical_history_search",
+    "role_based_access"
+  ],
+  "kind": "base",
+  "name": "DentalDesk Clinic Manager platform agent",
+  "product_id": "dental-clinic"
+}

@@ -1,0 +1,10 @@
+{
+  "agent_id": "dental_clinic.hat.patient_directory",
+  "capability_id": "patient_directory",
+  "kind": "hat",
+  "blocks": [
+    "database",
+    "capture",
+    "validation"
+  ]
+}

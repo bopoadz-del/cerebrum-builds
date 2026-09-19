@@ -1,0 +1,9 @@
+{
+  "agent_id": "dental_clinic.hat.clinical_history_search",
+  "capability_id": "clinical_history_search",
+  "kind": "hat",
+  "blocks": [
+    "database",
+    "analytics"
+  ]
+}

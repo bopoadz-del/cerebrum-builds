@@ -1,0 +1,9 @@
+{
+  "agent_id": "dental_clinic.hat.role_based_access",
+  "capability_id": "role_based_access",
+  "kind": "hat",
+  "blocks": [
+    "team",
+    "audit"
+  ]
+}

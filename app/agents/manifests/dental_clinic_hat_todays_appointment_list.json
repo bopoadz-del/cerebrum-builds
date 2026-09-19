@@ -1,0 +1,10 @@
+{
+  "agent_id": "dental_clinic.hat.todays_appointment_list",
+  "capability_id": "todays_appointment_list",
+  "kind": "hat",
+  "blocks": [
+    "dashboard",
+    "database",
+    "workflow"
+  ]
+}

@@ -1,186 +1,261 @@
-"""Block dispatch. Handlers call execute() here only. action= is a keyword."""
+"""Local block dispatch for the Bakery Chain Operations & Delivery Platform.
+
+Written by the factory WRITER role (codewhale exec)
+
+Every block this platform binds was vendored into ``vendor/blocks/<id>/`` at
+build time and is pinned by ``blocks.lock.json``. Handlers call
+``execute(block_id, payload, action=...)``; nothing here reaches the network,
+the Factory, or a block store. Real Store blocks are action-dispatched, so the
+operation travels as the ``action=`` keyword and never inside the payload dict.
+
+Envelope rules
+--------------
+* a block answer with ``status`` in ``error|failed|partial``, ``ok: false``, or
+  a failed workflow step is returned as an error envelope (never rewritten to
+  success);
+* a block that raises is returned as ``status=error`` with the block named --
+  a handler and a failing test can then see which block refused, instead of a
+  bare stack trace;
+* a vendored module that cannot be imported (a build-time vendoring defect, not
+  a domain refusal) falls back to the factory-mirror shim in
+  ``app/offline_blocks.py`` and the answer says so (``vendored: false``). No
+  shim is ever used to fake a successful Store call.
+
+Scope
+-----
+READS  ``vendor/blocks/**`` (import only), ``STORAGE_PATH`` via the shims.
+WRITES nothing.
+NEVER  network, HTTP store callbacks, ``vendor/**`` writes.
+"""
 
 from __future__ import annotations
 
-import asyncio
-import importlib
-import json
+import importlib.util
+import os
 import sys
-import types
 from pathlib import Path
 from typing import Any, Dict, Optional
 
-from app.schema import SPECS
+_VENDOR = Path(__file__).resolve().parents[1] / "vendor" / "blocks"
+_CACHE: Dict[str, Any] = {}
+_LOAD_FAILURES: Dict[str, str] = {}
+_RESOLVE_FAILURES: Dict[str, str] = {}
 
-# Harvested from vendor/blocks/*/block.json defaults + factory Store map.
-BLOCK_DEFAULT_ACTIONS: Dict[str, str] = {
-    "database": "query",
-    "storage": "store",
-    "validation": "validate_pipeline",
-    "document_engine": "parse",
-    "knowledge": "ask",
-    "vector_search": "search",
-    "formula_executor": "execute",
-    "audit": "log",
-    "notification": "send",
-    "workflow": "run",
-    "event_bus": "publish",
-    "queue": "enqueue",
-    "team": "create_team",
-    "dashboard": "render",
-    "analytics": "track_event",
-    "spec_analyzer": "analyze",
-    "recommendation_template": "recommend",
-    "capture": "extract",
-    "file_hasher": "hash",
-    "estate_registry": "register",
-    "readiness_engine": "assess",
-    "memory": "get",
-}
+_FAILED_STATUSES = {"error", "failed", "partial"}
 
 
-def _run_async(coro: Any) -> Any:
+class BlockNotVendored(RuntimeError):
+    """Asked for a block this platform does not carry."""
+
+
+def load_block(block_id: str):
+    """Import ``vendor/blocks/<id>/block.py`` and return the module."""
+    if block_id in _CACHE:
+        return _CACHE[block_id]
+    path = _VENDOR / block_id / "block.py"
+    if not path.is_file():
+        raise BlockNotVendored(
+            f"{block_id} is not vendored in this platform (looked in {path})"
+        )
+    spec = importlib.util.spec_from_file_location(f"vendored_{block_id}", path)
+    if spec is None or spec.loader is None:
+        raise BlockNotVendored(f"{block_id}: vendored module has no loader")
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    _CACHE[block_id] = module
+    return module
+
+
+def _load_failure(block_id: str) -> Optional[str]:
+    """Reason the vendored module for *block_id* cannot be imported, if any."""
+    if block_id in _CACHE:
+        return None
+    if block_id in _LOAD_FAILURES:
+        return _LOAD_FAILURES[block_id]
     try:
-        asyncio.get_running_loop()
-    except RuntimeError:
-        return asyncio.run(coro)
-    import concurrent.futures
+        load_block(block_id)
+        return None
+    except BlockNotVendored as exc:
+        _LOAD_FAILURES[block_id] = str(exc)
+        return _LOAD_FAILURES[block_id]
+    except Exception as exc:  # SyntaxError / ImportError / OSError from the slice
+        _LOAD_FAILURES[block_id] = f"{type(exc).__name__}: {exc}"
+        return _LOAD_FAILURES[block_id]
 
-    with concurrent.futures.ThreadPoolExecutor() as pool:
-        return pool.submit(asyncio.run, coro).result()
+
+def _force_utf8_stdio() -> None:
+    """Vendored blocks print progress; a non-UTF-8 stdout kills them mid-run."""
+    os.environ["PYTHONIOENCODING"] = "utf-8"
+    os.environ["PYTHONUTF8"] = "1"
+    for stream in (sys.stdout, sys.stderr):
+        reconfigure = getattr(stream, "reconfigure", None)
+        if not callable(reconfigure):
+            continue
+        try:
+            reconfigure(encoding="utf-8", errors="replace")
+        except (OSError, ValueError, AttributeError):
+            continue
 
 
-def _install_vector_store_stub() -> None:
-    """Knowledge imports vendor.cerebrum.core.vector_store — cloner omitted it.
-
-    Do not write vendor/**. Install an in-memory module so ask/search can bind
-    and return the empty-corpus success path (no outbound HTTP).
-    """
-    name = "vendor.cerebrum.core.vector_store"
-    existing = sys.modules.get(name)
-    if existing is not None and hasattr(existing, "search_vectors"):
-        return
-    stub = types.ModuleType(name)
-
-    async def search_vectors(*_args: Any, **_kwargs: Any) -> list:
+def _failed_steps(result: Dict[str, Any]) -> list:
+    steps = result.get("results")
+    if not isinstance(steps, list):
         return []
-
-    stub.search_vectors = search_vectors  # type: ignore[attr-defined]
-    sys.modules[name] = stub
-    core = sys.modules.get("vendor.cerebrum.core")
-    if core is not None:
-        setattr(core, "vector_store", stub)
-
-
-def _repair_notification_module() -> None:
-    """Cloner left an empty try in vendor notification.py (IndentationError).
-
-    Do not write vendor/** — load the Store source in memory with the missing
-    import restored so execute('notification', action='send') can bind.
-    """
-    if "vendor.cerebrum.blocks.notification" in sys.modules:
-        module = sys.modules["vendor.cerebrum.blocks.notification"]
-        if hasattr(module, "NotificationBlock"):
-            return
-    path = (
-        Path(__file__).resolve().parents[1]
-        / "vendor"
-        / "cerebrum"
-        / "blocks"
-        / "notification.py"
-    )
-    src = path.read_text(encoding="utf-8")
-    broken = "            try:\n            except ImportError:"
-    fixed = (
-        "            try:\n"
-        "                from vendor.cerebrum.blocks.database import _create_block_instance\n"
-        "            except ImportError:"
-    )
-    if broken in src:
-        src = src.replace(broken, fixed, 1)
-    module = types.ModuleType("vendor.cerebrum.blocks.notification")
-    module.__file__ = str(path)
-    sys.modules["vendor.cerebrum.blocks.notification"] = module
-    exec(compile(src, str(path), "exec"), module.__dict__)
+    failed = []
+    for step in steps:
+        if isinstance(step, dict) and str(step.get("status") or "").lower() in _FAILED_STATUSES:
+            failed.append(step)
+    return failed
 
 
-def _document_engine_class() -> Any:
-    """Package path is document_engine_block/; cloner still looks for a .py file."""
-    name = "vendor.cerebrum.blocks.document_engine_block"
-    existing = sys.modules.get(name)
-    if existing is not None and not hasattr(existing, "DocumentEngineBlock"):
-        del sys.modules[name]
-    from vendor.cerebrum.blocks.document_engine_block import DocumentEngineBlock
+def _run_shim(
+    block_id: str,
+    data: Dict[str, Any],
+    action: Optional[str],
+    params: Optional[Dict[str, Any]],
+    reason: str,
+) -> Dict[str, Any]:
+    """Run the labelled offline implementation for *block_id*."""
+    from app.offline_blocks import shim_for
 
-    return DocumentEngineBlock
-
-
-class _CaptureAdapter:
-    """In-process capture extract. Capture is not in vendor.cerebrum.blocks."""
-
-    name = "capture"
-    version = "1.0.0"
-
-    async def execute(self, input_data: Any, params: Any = None) -> Dict[str, Any]:
-        from vendor.blocks.capture.block import run
-
-        data = input_data if isinstance(input_data, dict) else {"text": str(input_data or "")}
-        result = run(input=data)
-        return {"block": "capture", "status": "success", "result": result}
-
-
-def _instantiate(block_id: str) -> Any:
-    from vendor.blocks.database.block import _instantiate_store_block
-    from vendor.cerebrum.blocks import get_block
-
-    if block_id == "capture":
-        return _CaptureAdapter()
-    if block_id == "knowledge":
-        _install_vector_store_stub()
-        failed = sys.modules.get("vendor.cerebrum.blocks.knowledge")
-        if failed is not None and not hasattr(failed, "KnowledgeBlock"):
-            del sys.modules["vendor.cerebrum.blocks.knowledge"]
-    if block_id in {"notification", "workflow"}:
-        _repair_notification_module()
-    if block_id == "document_engine":
-        return _instantiate_store_block(_document_engine_class())
+    shim = shim_for(block_id)
+    if shim is None:
+        return _error_envelope(
+            block_id, action, f"vendored block unavailable: {reason}"
+        )
     try:
-        block_cls = get_block(block_id)
-    except (SyntaxError, ImportError, IndentationError, OSError, KeyError):
-        if block_id == "capture":
-            return _CaptureAdapter()
-        if block_id != "notification":
-            raise
-        _repair_notification_module()
-        block_cls = get_block(block_id)
-    return _instantiate_store_block(block_cls)
+        answer = shim(data, action=action, params=params)
+    except Exception as exc:  # noqa: BLE001 -- shim refusal is data
+        return _error_envelope(block_id, action, f"{type(exc).__name__}: {exc}")
+    if isinstance(answer, dict):
+        answer.setdefault("block", block_id)
+        answer.setdefault("action", action)
+        answer.setdefault("vendored", False)
+        answer.setdefault("vendoring_note", reason)
+        status = str(answer.get("status") or "").lower()
+        if status in _FAILED_STATUSES or answer.get("ok") is False:
+            answer.setdefault("ok", False)
+            answer["status"] = status if status in _FAILED_STATUSES else "error"
+        return answer
+    return {"block": block_id, "action": action, "status": "ok",
+            "result": answer, "vendored": False}
 
 
-def execute(block_id: str, payload: Any = None, *, action: Optional[str] = None) -> Dict[str, Any]:
-    """Run a vendored Store block. Pass action= as a keyword, never in payload."""
-    _repair_notification_module()
-    _install_vector_store_stub()
-    if action is None:
-        action = BLOCK_DEFAULT_ACTIONS.get(block_id)
-    if action is None:
-        raise RuntimeError("Unknown action: None")
-
-    instance = _instantiate(block_id)
-    params: Dict[str, Any] = {"action": action}
-    envelope = _run_async(instance.execute(payload, params))
-    if isinstance(envelope, dict) and envelope.get("status") == "error":
-        inner = envelope.get("result", {})
-        message = inner.get("error") if isinstance(inner, dict) else str(inner)
-        raise RuntimeError(message or f"{block_id}: {action} failed")
-    return envelope if isinstance(envelope, dict) else {"result": envelope, "status": "success"}
+def _error_envelope(block_id: str, action: Optional[str], error: str) -> Dict[str, Any]:
+    return {
+        "ok": False,
+        "status": "error",
+        "block": block_id,
+        "action": action,
+        "error": error,
+    }
 
 
-def load_handler(capability_id: str):
-    if capability_id not in SPECS:
-        raise KeyError(capability_id)
-    module = importlib.import_module(f"app.actions.{capability_id}")
-    return module.handle
+def execute(
+    block_id: str,
+    payload: Dict[str, Any],
+    action: Optional[str] = None,
+    params: Optional[Dict[str, Any]] = None,
+) -> Dict[str, Any]:
+    """Run a vendored block locally and return its result envelope.
+
+    ``action`` is a keyword: blocks read their operation from ``params`` and a
+    payload-embedded ``action`` key is a contract violation, not a fallback.
+    """
+    bid = str(block_id or "").strip()
+    if not bid:
+        return _error_envelope(str(block_id), action, "block id required")
+
+    data = payload if isinstance(payload, dict) else (
+        {} if payload is None else {"value": payload}
+    )
+
+    failure = _load_failure(bid)
+    if failure is not None:
+        return _run_shim(bid, data, action, params, failure)
+
+    module = load_block(bid)
+    run = getattr(module, "run", None)
+    if run is None:
+        return _error_envelope(bid, action, f"{bid} exposes no run() entry point")
+
+    kwargs: Dict[str, Any] = dict(params or {})
+    if action is not None:
+        kwargs["action"] = action
+    _force_utf8_stdio()
+    try:
+        result = run(input=data, **kwargs)
+    except Exception as exc:  # noqa: BLE001 -- a block refusal is data
+        # A vendored module that cannot be driven offline (import/syntax/
+        # attribute failures of the vendoring itself) falls back to the
+        # labelled offline implementation, and the answer says so. Blocks
+        # with no shim keep the error envelope: a domain refusal is data.
+        from app.offline_blocks import shim_for
+
+        if shim_for(bid) is not None:
+            return _run_shim(
+                bid, data, action, params, f"{type(exc).__name__}: {exc}"
+            )
+        return _error_envelope(bid, action, f"{type(exc).__name__}: {exc}")
+
+    if isinstance(result, dict):
+        result.setdefault("block", bid)
+        result.setdefault("action", action)
+        result.setdefault("vendored", True)
+        status = str(result.get("status") or "").lower()
+        failed = _failed_steps(result)
+        if status in _FAILED_STATUSES or result.get("ok") is False or failed:
+            refused = dict(result)
+            refused["ok"] = False
+            refused["status"] = status if status in _FAILED_STATUSES else "error"
+            if failed and not refused.get("error"):
+                refused["error"] = "; ".join(
+                    "%s (%s): %s" % (
+                        step.get("step_id") or "step",
+                        step.get("block") or "?",
+                        str(step.get("error") or step.get("status"))[:160],
+                    )
+                    for step in failed
+                )
+            return refused
+        return result
+    return {"block": bid, "action": action, "status": "ok",
+            "result": result, "vendored": True}
 
 
-def dump_prepared(payload: Any) -> str:
-    return json.dumps(payload, default=str)
+def block_is_available(block_id: str) -> bool:
+    """True when the block can actually be *run* in this process.
+
+    A wrapper module that imports is not enough: ``vendor/blocks/<id>/block.py``
+    imports its wrapped Store module lazily inside ``run()``, so a missing
+    runtime dependency (numpy for vector_search, PyYAML for document_engine)
+    leaves the wrapper importable and the block unrunnable. Resolving the
+    wrapped class here turns that into an honest answer — either the block runs,
+    or a labelled offline shim really covers it.
+    """
+    from app.offline_blocks import shim_for
+
+    if _load_failure(block_id) is None and _target_failure(block_id) is None:
+        return True
+    return shim_for(block_id) is not None
+
+
+def _target_failure(block_id: str) -> Optional[str]:
+    """Reason the wrapped Store class cannot be resolved, if any."""
+    if block_id in _RESOLVE_FAILURES:
+        return _RESOLVE_FAILURES[block_id]
+    try:
+        module = load_block(block_id)
+    except Exception as exc:  # noqa: BLE001 - an import failure is the answer
+        _RESOLVE_FAILURES[block_id] = f"{type(exc).__name__}: {exc}"
+        return _RESOLVE_FAILURES[block_id]
+    getter = getattr(module, "get_block", None)
+    if not callable(getter):
+        return None
+    try:
+        getter(block_id)
+    except Exception as exc:  # noqa: BLE001
+        _RESOLVE_FAILURES[block_id] = f"{type(exc).__name__}: {exc}"
+        return _RESOLVE_FAILURES[block_id]
+    _RESOLVE_FAILURES.pop(block_id, None)
+    return None

@@ -1,0 +1,8 @@
+{
+  "id": "bakery_hat_stock_inventory_management",
+  "capability": "stock_inventory_management",
+  "title": "Stock board",
+  "purpose": "Tracks per-shop ingredient, product and supply stock and flags reorder shortfalls.",
+  "entity": "stock_inventory_management",
+  "runtime": "offline / in-process vendored blocks"
+}

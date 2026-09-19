@@ -1,0 +1,8 @@
+{
+  "id": "bakery_hat_document_knowledge_qa",
+  "capability": "document_knowledge_qa",
+  "title": "Document Q&A",
+  "purpose": "Ingests uploaded unit price lists and procedures and answers operational questions over them.",
+  "entity": "document_knowledge_qa",
+  "runtime": "offline / in-process vendored blocks"
+}

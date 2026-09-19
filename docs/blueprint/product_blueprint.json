@@ -1,112 +1,122 @@
 {
-  "capabilities": [
-    {
-      "block_ids": [
-        "workflow",
-        "database",
-        "validation",
-        "event_bus",
-        "queue",
-        "audit"
-      ],
-      "description": "Handles the full reservation lifecycle including availability checks, real-time booking, modifications, cancellations, and stay records across all channels.",
-      "id": "booking_management",
-      "required": true,
-      "strategy_hint": "REUSE"
-    },
-    {
-      "block_ids": [
-        "estate_registry",
-        "estate_maintenance",
-        "database",
-        "team",
-        "workflow",
-        "audit"
-      ],
-      "description": "Manages rooms, rate plans, seasonal inventory, and property configuration for one or many hotel properties.",
-      "id": "property_management",
-      "required": true,
-      "strategy_hint": "REUSE"
-    },
-    {
-      "block_ids": [
-        "formula_executor",
-        "readiness_engine",
-        "recommendation_template",
-        "analytics",
-        "database"
-      ],
-      "description": "Calculates and adjusts room rates in real time based on demand, occupancy, seasonality, competitor signals, and configurable pricing rules.",
-      "id": "dynamic_pricing",
-      "required": true,
-      "strategy_hint": "REUSE"
-    },
-    {
-      "block_ids": [
-        "capture",
-        "knowledge",
-        "vector_search",
-        "analytics",
-        "notification"
-      ],
-      "description": "Collects, moderates, and responds to guest reviews; analyzes sentiment and surfaces reputation trends for each property.",
-      "id": "review_management",
-      "required": true,
-      "strategy_hint": "REUSE"
-    },
-    {
-      "block_ids": [
-        "dashboard",
-        "analytics",
-        "portfolio_rollup",
-        "database"
-      ],
-      "description": "Provides operational dashboards and reports covering occupancy, revenue, booking pace, channel performance, and guest satisfaction.",
-      "id": "analytics_dashboard",
-      "required": true,
-      "strategy_hint": "REUSE"
-    },
-    {
-      "block_ids": [
-        "notification",
-        "event_bus",
-        "queue",
-        "workflow"
-      ],
-      "description": "Sends timely booking confirmations, reminders, pricing alerts, and internal staff notifications via email, SMS, and in-app channels.",
-      "id": "notification_system",
-      "required": true,
-      "strategy_hint": "REUSE"
-    },
-    {
-      "block_ids": [
-        "vector_search",
-        "knowledge",
-        "recommendation_template",
-        "memory",
-        "analytics"
-      ],
-      "description": "Enables guests to search properties and rooms with filters, and recommends personalized stays, packages, and upsells based on preferences and history.",
-      "id": "search_recommendation",
-      "required": true,
-      "strategy_hint": "REUSE"
-    }
-  ],
-  "connectors": [],
-  "drafting_mode": "architect_llm",
-  "drafting_note": null,
-  "edge_profile": "standard",
-  "factory_scenario": "CREATE_PRODUCT",
-  "human_authority": true,
-  "n_required": 7,
-  "product_id": "hospitality",
-  "product_name": "StayFlow Hospitality Platform",
   "schema_version": "product_blueprint.v1",
-  "summary": "StayFlow is an all-in-one hotel booking and property management platform for independent hotels, boutique inns, and small hotel groups. It unifies real-time reservation management, room inventory and rate control, dynamic pricing, guest reviews, and operational analytics, while keeping staff and guests informed with automated notifications and AI-assisted search and recommendations.",
+  "product_id": "bakery-management",
+  "product_name": "Bakery Chain Operations & Delivery Platform",
+  "vertical": "bakery_management",
+  "summary": "A management platform for a bakery chain with five retail locations, an in-house delivery fleet (10 drivers, 10 bikes, 2 cars, ~300 deliveries/day), and central management. It centralizes stock and inventory management per shop, order and delivery dispatch, driver and vehicle scheduling, and performance analytics. It also provides a knowledge layer that accepts uploaded documents (later: unit prices and operating procedures) and answers operational questions once those documents are provided.",
   "ui_modules": [
     "command_center",
     "operational_chat",
-    "resident_engineer"
+    "resident_engineer",
+    "stock_inventory_management",
+    "delivery_dispatch_tracking",
+    "document_knowledge_qa",
+    "fleet_cost_and_pricing",
+    "management_reporting_dashboard",
+    "user_roles_workforce",
+    "operational_procedures_readiness",
+    "audit_evidence_trail"
   ],
-  "vertical": "hospitality"
+  "n_required": 8,
+  "roles": [
+    "operator",
+    "admin"
+  ],
+  "capabilities": [
+    {
+      "id": "stock_inventory_management",
+      "blocks": [
+        "database",
+        "workflow",
+        "validation",
+        "notification",
+        "analytics"
+      ],
+      "required": true,
+      "strategy_hint": "REUSE"
+    },
+    {
+      "id": "delivery_dispatch_tracking",
+      "blocks": [
+        "database",
+        "workflow",
+        "event_bus",
+        "queue",
+        "notification",
+        "analytics"
+      ],
+      "required": true,
+      "strategy_hint": "REUSE"
+    },
+    {
+      "id": "document_knowledge_qa",
+      "blocks": [
+        "document_engine",
+        "knowledge",
+        "vector_search",
+        "storage",
+        "memory",
+        "spec_analyzer"
+      ],
+      "required": true,
+      "strategy_hint": "REUSE"
+    },
+    {
+      "id": "fleet_cost_and_pricing",
+      "blocks": [
+        "formula_executor",
+        "database",
+        "portfolio_rollup",
+        "analytics",
+        "validation"
+      ],
+      "required": true,
+      "strategy_hint": "REUSE"
+    },
+    {
+      "id": "management_reporting_dashboard",
+      "blocks": [
+        "dashboard",
+        "analytics",
+        "portfolio_rollup"
+      ],
+      "required": true,
+      "strategy_hint": "REUSE"
+    },
+    {
+      "id": "user_roles_workforce",
+      "blocks": [
+        "team",
+        "database",
+        "workflow",
+        "audit"
+      ],
+      "required": true,
+      "strategy_hint": "REUSE"
+    },
+    {
+      "id": "operational_procedures_readiness",
+      "blocks": [
+        "readiness_engine",
+        "workflow",
+        "knowledge",
+        "notification",
+        "validation"
+      ],
+      "required": true,
+      "strategy_hint": "REUSE"
+    },
+    {
+      "id": "audit_evidence_trail",
+      "blocks": [
+        "audit",
+        "evidence_verifier",
+        "file_hasher",
+        "database",
+        "storage"
+      ],
+      "required": true,
+      "strategy_hint": "REUSE"
+    }
+  ]
 }

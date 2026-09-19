@@ -1,0 +1,8 @@
+{
+  "id": "bakery_hat_management_reporting_dashboard",
+  "capability": "management_reporting_dashboard",
+  "title": "Chain dashboard",
+  "purpose": "Consolidates sales, stock, delivery and fleet KPIs across the five bakeries.",
+  "entity": "management_reporting_dashboard",
+  "runtime": "offline / in-process vendored blocks"
+}

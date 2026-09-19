@@ -1,0 +1,8 @@
+{
+  "id": "bakery_hat_delivery_dispatch_tracking",
+  "capability": "delivery_dispatch_tracking",
+  "title": "Dispatch board",
+  "purpose": "Assigns drivers and vehicles and follows each delivery from pickup to drop-off.",
+  "entity": "delivery_dispatch_tracking",
+  "runtime": "offline / in-process vendored blocks"
+}

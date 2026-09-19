@@ -1,0 +1,8 @@
+{
+  "id": "bakery_hat_fleet_cost_and_pricing",
+  "capability": "fleet_cost_and_pricing",
+  "title": "Fleet costs",
+  "purpose": "Prices delivery runs, vehicle operating cost and products from the unit prices on file.",
+  "entity": "fleet_cost_and_pricing",
+  "runtime": "offline / in-process vendored blocks"
+}

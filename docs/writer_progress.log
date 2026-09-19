@@ -1,0 +1,15 @@
+STEP 1: STEP 0 inventory re-read — 8 REUSE capabilities, every block id verified present in the Store registry, no GENERATE gaps
+STEP 2: resume — the PHASE 1..3 artifacts landed earlier in this session by the WRITER role were restored into the staging checkout by file copy; implemented from scratch only where a gate proved them wrong
+STEP 3: app/models.py, app/store.py and alembic/versions/0001_baseline.py confirmed on 8 entities (one tenant-scoped table per entity, literal create_table calls)
+STEP 4: factory WRITER gates run against this checkout — app/ compiles, writer_behaviour 0 misses, ui_surface 11 modules, 8 agent-written handlers
+STEP 5: reuse/accept miss found by the factory check and fixed — BLOCK_IDS / BLOCK_DEFAULT_ACTIONS on all 8 handlers written as bare literals so the declared defaults parse (memory: set, file_hasher: hash, evidence_verifier: store)
+STEP 6: schema-sample POST re-measured per capability — 8/8 HTTP 200, ok:true, every declared block invoked with no error, POST then GET returns the record
+STEP 7: event_bus accept miss found and fixed — delivery_dispatch_tracking workflow step_1 carries topic / payload dict / message / channel=mcp / tool=event_bus as a literal input dict; workflow input['result'] attached from the first prepared step
+STEP 8: durability hardened — app/store.py connect() retries the journal-mode PRAGMA negotiation on 'database is locked' and save() retries the connection itself; lifecycle suite 7/7 under an 8-way CPU load
+STEP 9: pytest code phase 29 passed, pilot phase 19 passed
+STEP 10: scripts/acceptance.py 14/14 measured locally (docker_health_200 SKIP until the Store image supplies STORE_DOCKER_HEALTH); scripts/release_gate.py ok:true
+STEP 11: failure gates re-run after the fixes — reuse_accept none, event_bus workflow none, factory ROUND_TRIP_PROBE 8 round-tripped / 0 failed / 0 unjudged
+STEP 12: phase acceptance re-checked — backend handlers + POST/GET routes per capability, RAG ingest/query quoted in app/rag_routes.py, render-ready Dockerfile + render.yaml + app/main.py; frontend/src/App.tsx plus 11 UI modules over the live routes
+STEP 13: vendored integrity verified on the real workspace — 36 files across 21 blocks match their published digests (the staging checkout deliberately carries no blocks.lock.json; sealed vendor/** was copied byte-identical and never edited)
+STEP 14: tree cleaned of caches; delivery inventory — 8 stamped handlers, 11 UI modules, app/rag_routes.py ingest/query, tests 48 cases (29 code + 19 pilot), scripts/acceptance.py 15 checks
+STEP 15: the locally measured docs/store_acceptance.json report was NOT shipped — only the Store harness measures acceptance inside its own image, so the workspace carries no pre-existing k/k report; the local run's result (14/14 measured, docker_health_200 SKIP) is recorded here instead

@@ -1,0 +1,8 @@
+{
+  "id": "bakery_hat_audit_evidence_trail",
+  "capability": "audit_evidence_trail",
+  "title": "Audit trail",
+  "purpose": "Keeps an auditable trail of stock, delivery, upload and acknowledgment events with hashes.",
+  "entity": "audit_evidence_trail",
+  "runtime": "offline / in-process vendored blocks"
+}

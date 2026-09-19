@@ -1,0 +1,52 @@
+{
+  "version": "formulas.v1",
+  "unit_system": "metric",
+  "formulas": {
+    "delivery_cost": {
+      "description": "Cost of one delivery run over its distance",
+      "params": [
+        "distance_km",
+        "unit_price"
+      ],
+      "unit": "currency",
+      "expression": "distance_km * unit_price"
+    },
+    "vehicle_operating_cost": {
+      "description": "Operating cost of a vehicle over its distance",
+      "params": [
+        "distance_km",
+        "fuel_price",
+        "maintenance_rate"
+      ],
+      "unit": "currency",
+      "expression": "distance_km * (fuel_price + maintenance_rate)"
+    },
+    "product_price": {
+      "description": "Shelf price from unit cost and margin",
+      "params": [
+        "unit_cost",
+        "margin_percent"
+      ],
+      "unit": "currency",
+      "expression": "unit_cost * (1 + margin_percent / 100)"
+    },
+    "stock_reorder_shortfall": {
+      "description": "Units below the reorder threshold",
+      "params": [
+        "reorder_threshold",
+        "quantity_on_hand"
+      ],
+      "unit": "unit",
+      "expression": "max(0, reorder_threshold - quantity_on_hand)"
+    },
+    "driver_utilisation": {
+      "description": "Share of planned deliveries completed",
+      "params": [
+        "deliveries_done",
+        "deliveries_planned"
+      ],
+      "unit": "%",
+      "expression": "100 * deliveries_done / deliveries_planned"
+    }
+  }
+}

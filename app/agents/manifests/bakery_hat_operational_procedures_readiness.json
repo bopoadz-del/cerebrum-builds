@@ -1,0 +1,8 @@
+{
+  "id": "bakery_hat_operational_procedures_readiness",
+  "capability": "operational_procedures_readiness",
+  "title": "Procedure readiness",
+  "purpose": "Turns operating procedures into daily checklists and tracks acknowledgment.",
+  "entity": "operational_procedures_readiness",
+  "runtime": "offline / in-process vendored blocks"
+}

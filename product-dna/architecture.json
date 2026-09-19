@@ -1,0 +1,84 @@
+{
+  "schema_version": "architecture.v1",
+  "product": "Bakery Chain Operations & Delivery Platform",
+  "vertical": "bakery_management",
+  "ui_modules": [
+    "command_center",
+    "operational_chat",
+    "resident_engineer",
+    "stock_inventory_management",
+    "delivery_dispatch_tracking",
+    "document_knowledge_qa",
+    "fleet_cost_and_pricing",
+    "management_reporting_dashboard",
+    "user_roles_workforce",
+    "operational_procedures_readiness",
+    "audit_evidence_trail"
+  ],
+  "surfaces": {
+    "http": [
+      "/v1/{capability} POST",
+      "/v1/{capability} GET",
+      "/v1/{capability}/{id} GET",
+      "/v1/rag/ingest",
+      "/v1/rag/query",
+      "/health"
+    ],
+    "kernel": [
+      "/v1/jobs",
+      "/v1/catalog",
+      "/v1/capabilities",
+      "/v1/inventory",
+      "/v1/gates",
+      "/v1/provenance"
+    ],
+    "persistence": "single sqlite file at STORAGE_PATH/platform.db, tenant column + predicate"
+  },
+  "capabilities": [
+    {
+      "id": "stock_inventory_management",
+      "purpose": "Tracks per-shop ingredient, product and supply stock and flags reorder shortfalls.",
+      "blocks": []
+    },
+    {
+      "id": "delivery_dispatch_tracking",
+      "purpose": "Assigns drivers and vehicles and follows each delivery from pickup to drop-off.",
+      "blocks": []
+    },
+    {
+      "id": "document_knowledge_qa",
+      "purpose": "Ingests uploaded unit price lists and procedures and answers operational questions over them.",
+      "blocks": []
+    },
+    {
+      "id": "fleet_cost_and_pricing",
+      "purpose": "Prices delivery runs, vehicle operating cost and products from the unit prices on file.",
+      "blocks": []
+    },
+    {
+      "id": "management_reporting_dashboard",
+      "purpose": "Consolidates sales, stock, delivery and fleet KPIs across the five bakeries.",
+      "blocks": []
+    },
+    {
+      "id": "user_roles_workforce",
+      "purpose": "Administers users, roles, shop assignments and driver shifts.",
+      "blocks": []
+    },
+    {
+      "id": "operational_procedures_readiness",
+      "purpose": "Turns operating procedures into daily checklists and tracks acknowledgment.",
+      "blocks": []
+    },
+    {
+      "id": "audit_evidence_trail",
+      "purpose": "Keeps an auditable trail of stock, delivery, upload and acknowledgment events with hashes.",
+      "blocks": []
+    }
+  ],
+  "roles": [
+    "operator",
+    "admin"
+  ],
+  "runtime": "offline / in-process vendored blocks"
+}

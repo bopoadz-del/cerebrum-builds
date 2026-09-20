@@ -1,3 +1,8 @@
+#!/usr/bin/env python3
+"""
+Auto-generated adapter for Cerebrum block: analytics
+Wraps vendor.cerebrum.blocks.analytics into a synchronous run() function.
+"""
 import os as _os
 import sqlite3 as _sqlite3
 from pathlib import Path as _HalPath
@@ -112,11 +117,6 @@ def _create_block_instance(block_or_name, *args, **kwargs):
         return _instantiate_store_block(target)
     return _ensure_store_block_ready(target)
 
-#!/usr/bin/env python3
-"""
-Auto-generated adapter for Cerebrum block: analytics
-Wraps vendor.cerebrum.blocks.analytics into a synchronous run() function.
-"""
 
 import asyncio
 from vendor.cerebrum.blocks import get_block

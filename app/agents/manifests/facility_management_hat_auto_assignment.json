@@ -1,0 +1,49 @@
+{
+  "activation": {
+    "default_enabled": true,
+    "mode": "hybrid",
+    "put_off_by": [
+      "disable:facility_management.hat.auto_assignment"
+    ],
+    "triggers": [
+      {
+        "type": "intent",
+        "value": "auto_assignment"
+      },
+      {
+        "type": "capability",
+        "value": "auto_assignment"
+      }
+    ]
+  },
+  "agent_id": "facility_management.hat.auto_assignment",
+  "allowed_actions": [
+    "facility_management.auto_assignment"
+  ],
+  "block_ids": [
+    "workflow",
+    "queue",
+    "team",
+    "recommendation_template"
+  ],
+  "discipline": "auto_assignment",
+  "display_name": "Facility Management Platform for Schools Auto Assignment Hat",
+  "extends": "facility_management.base",
+  "handoffs": [],
+  "human_authority": true,
+  "kind": "hat",
+  "manifest_version": "1.0.0",
+  "memory": {
+    "pii_policy": "never_store_pii",
+    "save": [],
+    "scope": "tenant_project"
+  },
+  "strategy": "REUSE",
+  "summary": "Specialized hat for capability 'auto_assignment' (strategy=REUSE). Adapted from TEKsystems retail hat pattern; estate/product-neutral.",
+  "tags": [
+    "hat",
+    "factory-generated",
+    "facility_management",
+    "auto_assignment"
+  ]
+}

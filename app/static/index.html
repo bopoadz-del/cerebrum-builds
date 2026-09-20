@@ -1,164 +1,163 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Hotel Booking Platform</title>
-  <style>
-    :root { font-family: "IBM Plex Sans", "Segoe UI", sans-serif; background: #10141c; color: #e8eef6; }
-    body { margin: 0; }
-    header { padding: 1.2rem 1.5rem; border-bottom: 1px solid #2a3548; background: #141a24; }
-    h1 { margin: 0; font-size: 1.4rem; }
-    p.sub { margin: 0.35rem 0 0; color: #93a3bd; }
-    nav { display: flex; flex-wrap: wrap; gap: 0.4rem; padding: 0.8rem 1.5rem; }
-    nav button { background: #1c2430; color: #e8eef6; border: 1px solid #3a4c68; padding: 0.35rem 0.7rem; cursor: pointer; }
-    nav button.active { background: #0d4d73; }
-    main { padding: 1rem 1.5rem 3rem; }
-    label { display: block; margin: 0.6rem 0 0.2rem; }
-    input, textarea, select { width: 100%; max-width: 36rem; background: #0d1118; color: #e8eef6; border: 1px solid #3a4c68; padding: 0.4rem; }
-    button.act { margin-top: 0.8rem; background: #0d4d73; color: #fff; border: 0; padding: 0.5rem 1rem; cursor: pointer; }
-    pre { background: #0d1118; padding: 0.8rem; overflow: auto; }
-    .mods { display: grid; gap: 0.6rem; grid-template-columns: repeat(auto-fill, minmax(14rem, 1fr)); }
-    .card { border: 1px solid #2a3548; padding: 0.7rem; }
-  </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Facility Management Platform for Schools</title>
+<style>
+ :root { color-scheme: light dark; --line:#8883; }
+ body { font: 15px/1.5 system-ui, sans-serif; margin: 0; padding: 24px; max-width: 980px; }
+ h1 { font-size: 20px; margin: 0 0 4px; }
+ .dim { opacity: .7; font-size: 13px; }
+ .row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+ .card { border: 1px solid var(--line); border-radius: 8px; padding: 12px; margin: 12px 0; }
+ button { padding: 6px 12px; border-radius: 6px; border: 1px solid var(--line); cursor: pointer; }
+ input, select, textarea { padding: 6px 8px; border-radius: 6px; border: 1px solid var(--line); font: inherit; }
+ pre { background: #8881; padding: 8px; border-radius: 6px; overflow: auto; max-height: 260px; font-size: 12px; }
+ .label { display: inline-block; font-size: 11px; text-transform: uppercase; letter-spacing: .06em;
+          border: 1px solid var(--line); border-radius: 999px; padding: 1px 8px; margin-left: 6px; }
+ .err { color: #c33; }
+</style>
 </head>
 <body>
-  <header>
-    <h1>Hotel Booking Platform</h1>
-    <p class="sub">Hospitality operators — bookings, properties, pricing, reviews, and guest notices. Operator / admin. Mutations require a bearer operator token. OPERATOR_TOKEN is not stored in git.</p>
-  </header>
-  <nav id="nav"></nav>
-  <main>
-    <section id="command_center" class="panel">
-      <h2>Command center</h2>
-      <div class="mods" id="modules"></div>
-    </section>
-    <section id="live" class="panel">
-      <h2 id="cap-title">booking_management</h2>
-      <label>Operator token <input id="operator-token" type="password" autocomplete="off" placeholder="OPERATOR_TOKEN" /></label>
-      <label>Capability
-        <select id="capability"></select>
-      </label>
-      <label>Reference <input id="reference" value="sample" /></label>
-      <label>Status <input id="status" value="open" /></label>
-      <button class="act" id="post-btn" type="button">POST create</button>
-      <button class="act" id="get-btn" type="button">GET records</button>
-      <pre id="out">Ready.</pre>
-    </section>
-    <section id="operational_chat" class="panel">
-      <h2>Operational chat — property notes</h2>
-      <label>Title <input id="rag-title" value="Hotel occupancy pack" /></label>
-      <label>Text <textarea id="rag-text" rows="3">Hotel occupancy, peak season night rate, and guest booking notes for the hospitality pilot.</textarea></label>
-      <button class="act" id="ingest-btn" type="button">Ingest pack</button>
-      <label>Query <input id="rag-q" value="hotel occupancy" /></label>
-      <button class="act" id="query-btn" type="button">Query notes</button>
-    </section>
-    <section id="resident_engineer" class="panel">
-      <h2>Resident engineer</h2>
-      <p class="sub">Same live POST/GET routes. No second API.</p>
-    </section>
-  </main>
-  <script>
-    const CAPS = [
-      "booking_management",
-      "property_management",
-      "dynamic_pricing",
-      "review_management",
-      "analytics_dashboard",
-      "notification_system",
-      "search_recommendation"
-    ];
-    const UI = ["command_center", "operational_chat", "resident_engineer"];
-    const MAP = {
-      command_center: "booking_management",
-      operational_chat: "property_management",
-      resident_engineer: "analytics_dashboard"
-    };
-    let current = "booking_management";
-    const nav = document.getElementById("nav");
-    const modules = document.getElementById("modules");
-    const capSelect = document.getElementById("capability");
-    UI.forEach((name) => {
-      const b = document.createElement("button");
-      b.textContent = name;
-      b.onclick = () => select(MAP[name] || "booking_management", b);
-      nav.appendChild(b);
-      const card = document.createElement("div");
-      card.className = "card";
-      card.textContent = name;
-      modules.appendChild(card);
-    });
-    CAPS.forEach((name) => {
-      const card = document.createElement("div");
-      card.className = "card";
-      card.textContent = name;
-      modules.appendChild(card);
-      const opt = document.createElement("option");
-      opt.value = name;
-      opt.textContent = name;
-      capSelect.appendChild(opt);
-    });
-    capSelect.onchange = () => select(capSelect.value);
-    function select(id, btn) {
-      current = id;
-      document.getElementById("cap-title").textContent = id;
-      capSelect.value = id;
-      [...nav.children].forEach((el) => el.classList.remove("active"));
-      if (btn) btn.classList.add("active");
-    }
-    function authHeaders() {
-      const headers = {"Content-Type": "application/json"};
-      const token = (document.getElementById("operator-token").value || "").trim();
-      if (token) headers["Authorization"] = "Bearer " + token;
-      return headers;
-    }
-    function extraFields(id) {
-      const extras = {
-        booking_management: {stay_kind: "night", room_label: "sample"},
-        property_management: {property_kind: "hotel", property_name: "sample"},
-        dynamic_pricing: {season: "peak", rate_plan: "sample"},
-        review_management: {rating_band: "excellent", guest_name: "sample"},
-        analytics_dashboard: {view_name: "sample", horizon: "today"},
-        notification_system: {notice_kind: "confirmation", guest_name: "sample"},
-        search_recommendation: {stay_intent: "leisure", destination: "sample"}
-      };
-      return extras[id] || {};
-    }
-    document.getElementById("post-btn").onclick = async () => {
-      const body = {
-        reference: document.getElementById("reference").value || "sample",
-        status: document.getElementById("status").value || "open",
-        ...extraFields(current)
-      };
-      const res = await fetch("/v1/" + current, {
-        method: "POST",
-        headers: authHeaders(),
-        body: JSON.stringify(body)
-      });
-      document.getElementById("out").textContent = JSON.stringify(await res.json(), null, 2);
-    };
-    document.getElementById("get-btn").onclick = async () => {
-      const res = await fetch("/v1/" + current);
-      document.getElementById("out").textContent = JSON.stringify(await res.json(), null, 2);
-    };
-    document.getElementById("ingest-btn").onclick = async () => {
-      const res = await fetch("/v1/rag/ingest", {
-        method: "POST",
-        headers: authHeaders(),
-        body: JSON.stringify({
-          layer: 1,
-          doc_id: document.getElementById("reference").value || "sample",
-          title: document.getElementById("rag-title").value,
-          text: document.getElementById("rag-text").value
-        })
-      });
-      document.getElementById("out").textContent = JSON.stringify(await res.json(), null, 2);
-    };
-    document.getElementById("query-btn").onclick = async () => {
-      const q = encodeURIComponent(document.getElementById("rag-q").value || "occupancy");
-      const res = await fetch("/v1/rag/query?q=" + q);
-      document.getElementById("out").textContent = JSON.stringify(await res.json(), null, 2);
-    };
-  </script>
+<h1>Facility Management Platform for Schools</h1>
+<p class="dim">Operator console. Paste a platform token, then drive the capabilities this build ships.</p>
+
+<div class="card row">
+  <label for="tok">Bearer token</label>
+  <input id="tok" type="password" size="28" placeholder="platform token">
+  <button onclick="boot()">Connect</button>
+  <span id="who" class="dim"></span>
+</div>
+
+<div id="caps"></div>
+
+<div class="card" id="authority">
+  <strong>Answer authority</strong>
+  <p class="dim">Which layer an answer came from (precedence.v1). The model is told the winner; it never chooses.</p>
+  <div class="row"><button onclick="loadAuthority()">Show precedence</button> <span id="authwho" class="dim"></span></div>
+  <pre id="authout">—</pre>
+</div>
+
+
+<div class="card" id="ask" hidden>
+  <strong>Ask the documents</strong>
+  <p class="dim">Answers carry the authority layer they came from.</p>
+  <div class="row">
+    <input id="q" size="52" placeholder="question">
+    <button onclick="ask()">Ask</button>
+  </div>
+  <div id="answer"></div>
+</div>
+
+<script>
+const $ = (id) => document.getElementById(id);
+const token = () => $("tok").value.trim();
+const auth = () => ({ "Authorization": "Bearer " + token(), "Content-Type": "application/json" });
+let SCHEMA = {};
+let RAG = "";
+
+async function call(path, init) {
+  const res = await fetch(path, Object.assign({ headers: auth() }, init || {}));
+  const text = await res.text();
+  let body = null;
+  try { body = text ? JSON.parse(text) : null; } catch (e) { body = text; }
+  return { status: res.status, body };
+}
+
+// Every label an answer may carry its authority under.
+const LABEL_KEYS = ["label", "labels", "authority", "precedence", "basis", "layer"];
+function labelsIn(value, found) {
+  found = found || [];
+  if (!value || typeof value !== "object") return found;
+  for (const [k, v] of Object.entries(value)) {
+    if (LABEL_KEYS.includes(k) && v) found.push(typeof v === "string" ? v : JSON.stringify(v));
+    else if (typeof v === "object") labelsIn(v, found);
+  }
+  return found;
+}
+
+async function boot() {
+  $("caps").innerHTML = "";
+  const caps = await call("/v1/capabilities");
+  if (caps.status !== 200) {
+    $("who").innerHTML = '<span class="err">' + caps.status + " — check the token</span>";
+    return;
+  }
+  const items = (caps.body && (caps.body.items || caps.body.capabilities)) || [];
+  const ids = items.map((c) => (typeof c === "string" ? c : c.id || c.capability_id)).filter(Boolean);
+  $("who").textContent = ids.length + " capability(ies)";
+  try {
+    const doc = await (await fetch("/openapi.json")).json();
+    SCHEMA = doc || {};
+  } catch (e) { SCHEMA = {}; }
+  ids.forEach(renderCapability);
+  // Only offer what this product actually declares.
+  const paths = (SCHEMA && SCHEMA.paths) || {};
+  RAG = Object.keys(paths).find((p) => p.indexOf("/rag/") !== -1 && p.indexOf("query") !== -1) || "";
+  $("ask").hidden = !RAG;
+}
+
+function fieldsFor(cap) {
+  const paths = (SCHEMA && SCHEMA.paths) || {};
+  const post = paths["/v1/" + cap] && paths["/v1/" + cap].post;
+  const schema = post && post.requestBody && post.requestBody.content
+    && post.requestBody.content["application/json"]
+    && post.requestBody.content["application/json"].schema;
+  const props = (schema && schema.properties) || {};
+  const names = Object.keys(props);
+  return names.length ? names.slice(0, 8) : ["reference", "status"];
+}
+
+function renderCapability(cap) {
+  const card = document.createElement("div");
+  card.className = "card";
+  const fields = fieldsFor(cap);
+  card.innerHTML =
+    "<strong>" + cap + "</strong>" +
+    '<div class="row" style="margin:8px 0">' +
+    fields.map((f) => '<input data-f="' + f + '" placeholder="' + f + '" size="14">').join("") +
+    ' <button data-act="create">Create</button> <button data-act="list">List</button></div>' +
+    '<pre data-out>—</pre>';
+  const out = card.querySelector("[data-out]");
+  card.querySelector('[data-act="create"]').onclick = async () => {
+    const record = {};
+    card.querySelectorAll("[data-f]").forEach((i) => { if (i.value) record[i.dataset.f] = i.value; });
+    const res = await call("/v1/" + cap, { method: "POST", body: JSON.stringify(record) });
+    show(out, res);
+  };
+  card.querySelector('[data-act="list"]').onclick = async () => show(out, await call("/v1/" + cap));
+  $("caps").appendChild(card);
+}
+
+function show(node, res) {
+  const labels = labelsIn(res.body);
+  node.textContent = res.status + "  " + JSON.stringify(res.body, null, 2);
+  if (labels.length) {
+    const tag = document.createElement("span");
+    tag.className = "label";
+    tag.textContent = labels[0];
+    node.prepend(tag);
+  }
+}
+
+async function loadAuthority() {
+  const res = await call("/v1/authority");
+  $("authwho").textContent = (res.body && res.body.version) || "";
+  show($("authout"), res);
+}
+
+async function ask() {
+  if (!RAG) return;
+  const res = await call(RAG, {
+    method: "POST",
+    body: JSON.stringify({ question: $("q").value, q: $("q").value }),
+  });
+  const labels = labelsIn(res.body);
+  $("answer").innerHTML =
+    "<pre>" + res.status + "  " + JSON.stringify(res.body, null, 2) + "</pre>" +
+    (labels.length ? '<span class="label">' + labels[0] + "</span>" : "");
+}
+</script>
 </body>
 </html>

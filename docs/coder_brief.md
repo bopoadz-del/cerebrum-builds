@@ -32,7 +32,7 @@ Contracts you must honour on every capability you write:
 - Offline platform: no network, no HTTP store callbacks, channel "mcp" only.
 - WRITER gate writer_behaviour POSTs a payload built from each capability's own FIELDS + CONSTRAINTS (allowed_values[0], status=open, channel=email, generic str='sample'). Every handler must accept that payload. Declaring a stricter contract than the spec produces 'no capability accepted its own schema'.
 - REUSE keep-path handlers must accept a schema-sample POST. Populate BLOCK_DEFAULT_ACTIONS from block.json / the factory Store map (including formula_executor, vector_search, capture, spec_analyzer, storage, and estate_registry) and pass action= as a keyword (action=BLOCK_DEFAULT_ACTIONS.get(block_id)). execute() with action=None is 'Unknown action: None'. Workflow step_0 without step.action is workflow: step_0 (event_bus): error. Store workflow reads input['result'] — a schema-sample POST that omits it fails as "workflow: RuntimeError: 'result'". CLONER must not rewrite assignment targets: name['result'] = becoming a .get() call fails as 'SyntaxError: cannot assign to function call' (queue / formula_executor). fail-closed keep original must still rewrite reads or TESTER refuses appointment_scheduling rejected a payload built from its own schema: "workflow: RuntimeError: 'result'". That miss is reuse/accept miss: HALT before TESTER. Photographed roster: patient_records_management, appointment_scheduling, prescription_management, billing_and_invoicing, client_communication_portal.
-- PRODUCT one-record round-trip POSTs a schema-sample payload then re-reads store.list_all(entity) and GET /v1/{capability_id}. A miss is 'did not remember a record they were given'. Every capability must persist that record to its alembic entity via store.save(ENTITY, payload) (factory-grounded persist). POST POST raised OperationalError: no such table: <entity> is a miss. WRITER isolates STORAGE_PATH; PRODUCT must too — a leftover ./data/platform.db already at 0001_baseline is not a pass. Keyword-fallback veterinary_care_core, audit, dashboard are persistable capabilities.
+- PRODUCT one-record round-trip POSTs a schema-sample payload then re-reads store.list_all(entity) and GET /v1/{capability_id}. A miss is 'did not remember a record they were given'. Every capability must persist that record to its alembic entity via the ROUTE's tenant-scoped save(payload) — handlers must not persist directly (no tenant). POST POST raised OperationalError: no such table: <entity> is a miss. WRITER isolates STORAGE_PATH; PRODUCT must too — a leftover ./data/platform.db already at 0001_baseline is not a pass. Keyword-fallback veterinary_care_core, audit, dashboard are persistable capabilities.
 - PRODUCT test_every_capability_route_accepts_payload POSTs a schema-sample payload then runs bound blocks. A capability that binds workflow + event_bus (appointment_scheduling / appointment_booking / automated_reminders / reminders_notifications style) must prepare EACH event_bus step including Store step_0, step_1 and step_2+ (block=event_bus, action=publish, topic, payload dict, message, channel=mcp, tool=event_bus) — never forward the raw sample as 'input': payload. Unprepared steps fail as 'workflow: step_N (event_bus): error'. An event_bus-first child fails as 'workflow: step_0 (event_bus): error'. An unprepared first factory child also fails as 'workflow: step_1 (event_bus): error'. A prepared step_1 plus an unprepared step_2 still fails as 'workflow: step_2 (event_bus): error' (schema sample refused (event_bus workflow step)). The factory wrap is not keep/done. WRITER emits a factory-grounded prepared event_bus step — do not execute("workflow", payload) with the raw schema sample. Store workflow / kit shim reads input['result'] or out['result'] — a schema-sample POST that omits it fails as "workflow: RuntimeError: 'result'". prepare_block_input and the keep-path emit MUST attach result from the first prepared step. CLONER must not rewrite assignment targets: name['result'] = becoming a .get() call fails as 'SyntaxError: cannot assign to function call'. fail-closed keep original must still rewrite reads or TESTER refuses appointment_scheduling rejected a payload built from its own schema: "workflow: RuntimeError: 'result'". Exact shape: {"block": "event_bus", "action": "publish", "input": {"topic": "<str>", "payload": {}, "message": "<str>", "channel": "mcp", "tool": "event_bus"}}.
 
 This brief is the horizon. The user message is the compiled whole-job brief
@@ -56,20 +56,21 @@ reproduced (same capability roster, same compiled-brief fingerprint).
 TARGET
 ==================================================
 
-Booted hospitality platform: StayFlow Hospitality Platform.
-StayFlow is an all-in-one hotel booking and property management platform for independent hotels, boutique inns, and small hotel groups. It unifies real-time reservation management, room inventory and rate control, dynamic pricing, guest reviews, and operational analytics, while keeping staff and guests informed with automated notifications and AI-assisted search and recommendations.
+Booted facility_management platform: Facility Management Platform for Schools.
+A facility management platform serving a Dubai schools estate of 10 schools. It gives management oversight and control of technician and cleaner teams, lets school staff and parents log complaints (or management enter them on their behalf), auto-assigns those complaints to the right field staff where possible, and tracks every complaint and job through to closure. Management sees per-school and portfolio-level dashboards across all 10 sites, with role-based access separating management, field st
 
-Who it is for: hospitality operators
+Who it is for: facility management operators
 Roles: operator, admin
 
 Capabilities:
-- booking_management [REUSE]: dual-registered  blocks=['workflow', 'database', 'validation', 'event_bus', 'queue', 'audit']
-- property_management [REUSE]: dual-registered (unverified REUSE dropped (Store exact-id present=false): estate_registry, estate_maintenance)  blocks=['database', 'team', 'workflow', 'audit']
-- dynamic_pricing [REUSE]: dual-registered (unverified REUSE dropped (Store exact-id present=false): readiness_engine)  blocks=['formula_executor', 'recommendation_template', 'analytics', 'database']
-- review_management [REUSE]: dual-registered  blocks=['capture', 'knowledge', 'vector_search', 'analytics', 'notification']
-- analytics_dashboard [REUSE]: dual-registered (unverified REUSE dropped (Store exact-id present=false): portfolio_rollup)  blocks=['dashboard', 'analytics', 'database']
-- notification_system [REUSE]: dual-registered  blocks=['notification', 'event_bus', 'queue', 'workflow']
-- search_recommendation [REUSE]: dual-registered  blocks=['vector_search', 'knowledge', 'recommendation_template', 'memory', 'analytics']
+- complaints_management [REUSE]: dual-registered  blocks=['capture', 'workflow', 'queue', 'notification']
+- auto_assignment [REUSE]: dual-registered  blocks=['workflow', 'queue', 'team', 'recommendation_template']
+- workforce_management [REUSE]: dual-registered  blocks=['team', 'workflow', 'queue']
+- management_dashboards [REUSE]: dual-registered  blocks=['dashboard', 'analytics', 'portfolio_rollup']
+- reporting [REUSE]: dual-registered  blocks=['analytics', 'portfolio_rollup', 'formula_executor', 'notification']
+- role_based_access [REUSE]: dual-registered  blocks=['team', 'audit', 'validation']
+- erp_integration [REUSE]: dual-registered  blocks=['workflow', 'event_bus', 'validation']
+- booking_system_integration [REUSE]: dual-registered  blocks=['workflow', 'event_bus', 'validation']
 
 
 ==================================================
@@ -81,25 +82,27 @@ Coder: list what the Store already provides. REUSE by exact block id, verified p
 Store registry (exact ids, verified): analytics, audit, capture, dashboard, database, document_engine, estate_maintenance, estate_registry, event_bus, evidence_verifier, file_hasher, formula_executor, knowledge, memory, notification, portfolio_rollup, queue, readiness_engine, recommendation_template, spec_analyzer, storage, team, validation, vector_search, workflow
 
 REUSE (verified present):
-- booking_management: REUSE ['workflow', 'database', 'validation', 'event_bus', 'queue', 'audit'] (verified present in Store registry; handler source factory-grounded event_bus workflow; emit app/actions/booking_management.py)
-- property_management: REUSE ['database', 'team', 'workflow', 'audit'] (verified present in Store registry; handler source factory-grounded persist; emit app/actions/property_management.py)
-- dynamic_pricing: REUSE ['formula_executor', 'recommendation_template', 'analytics', 'database'] (verified present in Store registry; handler source factory-grounded persist; emit app/actions/dynamic_pricing.py)
-- review_management: REUSE ['capture', 'knowledge', 'vector_search', 'analytics', 'notification'] (verified present in Store registry; handler source factory-grounded persist; emit app/actions/review_management.py)
-- analytics_dashboard: REUSE ['dashboard', 'analytics', 'database'] (verified present in Store registry; handler source factory-grounded persist; emit app/actions/analytics_dashboard.py)
-- notification_system: REUSE ['notification', 'event_bus', 'queue', 'workflow'] (verified present in Store registry; handler source factory-grounded event_bus workflow; emit app/actions/notification_system.py)
-- search_recommendation: REUSE ['vector_search', 'knowledge', 'recommendation_template', 'memory', 'analytics'] (verified present in Store registry; handler source factory-grounded persist; emit app/actions/search_recommendation.py)
+- complaints_management: REUSE ['capture', 'workflow', 'queue', 'notification'] (verified present in Store registry; handler source factory-grounded persist; emit app/actions/complaints_management.py)
+- auto_assignment: REUSE ['workflow', 'queue', 'team', 'recommendation_template'] (verified present in Store registry; handler source factory-grounded persist; emit app/actions/auto_assignment.py)
+- workforce_management: REUSE ['team', 'workflow', 'queue'] (verified present in Store registry; handler source factory-grounded persist; emit app/actions/workforce_management.py)
+- management_dashboards: REUSE ['dashboard', 'analytics', 'portfolio_rollup'] (verified present in Store registry; handler source factory-grounded persist; emit app/actions/management_dashboards.py)
+- reporting: REUSE ['analytics', 'portfolio_rollup', 'formula_executor', 'notification'] (verified present in Store registry; handler source factory-grounded persist; emit app/actions/reporting.py)
+- role_based_access: REUSE ['team', 'audit', 'validation'] (verified present in Store registry; handler source factory-grounded persist; emit app/actions/role_based_access.py)
+- erp_integration: REUSE ['workflow', 'event_bus', 'validation'] (verified present in Store registry; handler source factory-grounded event_bus workflow; emit app/actions/erp_integration.py)
+- booking_system_integration: REUSE ['workflow', 'event_bus', 'validation'] (verified present in Store registry; handler source factory-grounded event_bus workflow; emit app/actions/booking_system_integration.py)
 
 GAPS (you author; do not invent a block id):
 - (none)
 
 WORK ITEMS (C-BRIEF hole-fill; GENERATE gaps plus REUSE that still need handlers):
-- booking_management: REUSE hole-fill — bind persist / event_bus / BLOCK_DEFAULT_ACTIONS; do not skip because inventory_gaps is empty
-- property_management: REUSE hole-fill — bind persist / event_bus / BLOCK_DEFAULT_ACTIONS; do not skip because inventory_gaps is empty
-- dynamic_pricing: REUSE hole-fill — bind persist / event_bus / BLOCK_DEFAULT_ACTIONS; do not skip because inventory_gaps is empty
-- review_management: REUSE hole-fill — bind persist / event_bus / BLOCK_DEFAULT_ACTIONS; do not skip because inventory_gaps is empty
-- analytics_dashboard: REUSE hole-fill — bind persist / event_bus / BLOCK_DEFAULT_ACTIONS; do not skip because inventory_gaps is empty
-- notification_system: REUSE hole-fill — bind persist / event_bus / BLOCK_DEFAULT_ACTIONS; do not skip because inventory_gaps is empty
-- search_recommendation: REUSE hole-fill — bind persist / event_bus / BLOCK_DEFAULT_ACTIONS; do not skip because inventory_gaps is empty
+- complaints_management: REUSE hole-fill — bind persist / event_bus / BLOCK_DEFAULT_ACTIONS; do not skip because inventory_gaps is empty
+- auto_assignment: REUSE hole-fill — bind persist / event_bus / BLOCK_DEFAULT_ACTIONS; do not skip because inventory_gaps is empty
+- workforce_management: REUSE hole-fill — bind persist / event_bus / BLOCK_DEFAULT_ACTIONS; do not skip because inventory_gaps is empty
+- management_dashboards: REUSE hole-fill — bind persist / event_bus / BLOCK_DEFAULT_ACTIONS; do not skip because inventory_gaps is empty
+- reporting: REUSE hole-fill — bind persist / event_bus / BLOCK_DEFAULT_ACTIONS; do not skip because inventory_gaps is empty
+- role_based_access: REUSE hole-fill — bind persist / event_bus / BLOCK_DEFAULT_ACTIONS; do not skip because inventory_gaps is empty
+- erp_integration: REUSE hole-fill — bind persist / event_bus / BLOCK_DEFAULT_ACTIONS; do not skip because inventory_gaps is empty
+- booking_system_integration: REUSE hole-fill — bind persist / event_bus / BLOCK_DEFAULT_ACTIONS; do not skip because inventory_gaps is empty
 
 MISSING claimed REUSE (runner HALTS here if any):
 - (none)
@@ -113,7 +116,7 @@ CUT 2 — RUNNER VALIDATE
 
 CUT 2 — runner validates ids against the registry (not the coder).
 Claimed REUSE that is not present HALTS before WRITER build, not at CLONER.
-Verified present: workflow, database, validation, event_bus, queue, audit, database, team, workflow, audit, formula_executor, recommendation_template, analytics, database, capture, knowledge, vector_search, analytics, notification, dashboard, analytics, database, notification, event_bus, queue, workflow, vector_search, knowledge, recommendation_template, memory, analytics
+Verified present: capture, workflow, queue, notification, workflow, queue, team, recommendation_template, team, workflow, queue, dashboard, analytics, portfolio_rollup, analytics, portfolio_rollup, formula_executor, notification, team, audit, validation, workflow, event_bus, validation, workflow, event_bus, validation
 Missing:
 
 
@@ -232,8 +235,9 @@ factory-grounded persist (not an LLM stub):
 - every capability has an alembic 0001 table named spec.entity
   (capability_id with '-' → '_' when the spec omits entity)
 - store.COLUMNS and store.save use that same entity
-- handle() persists via store.save(ENTITY, payload) after blocks
-  succeed (GENERATE with no blocks still persists)
+- handle() returns ok:true with its result; persistence is the
+  ROUTE's job (tenant-scoped save(payload)) — handlers must not
+  call store.save directly: they have no tenant (Phase 2 §0.2)
 - the route save(payload) writes the request, not handle()'s envelope
 - do not persist to 'records' or a capability id that is not the entity
 - do not rely on a leftover ./data/platform.db; PRODUCT isolates
@@ -246,8 +250,8 @@ must remember one record. Templated execute(block_id, payload)
 or no_block_bound without store.save is not done.
 
 GENERATE-gap factory-LLM fallthrough (after CLI billing/auth miss):
-- write app/actions/{capability}.py through the same persist
-  envelope as REUSE keep-path (_persist_record / store.save)
+- write app/actions/{capability}.py through the same pure-
+  dispatch envelope as REUSE keep-path (the ROUTE persists)
 - alembic 0001 and store.COLUMNS still use spec.entity
 - bind factory-LLM keys onto inventory GENERATE ids (exact,
   normalize, unique leftover) so vetcare_hub_veterinary_core
@@ -271,8 +275,8 @@ These planned capabilities bind workflow and/or event_bus
 use the prepared step on EVERY event_bus child, including
 automated_reminders Store step_0 (first child),
 appointment_scheduling step_1 and appointment_booking step_2+:
-- booking_management
-- notification_system
+- erp_integration
+- booking_system_integration
 
 PRODUCT schema-sample rules (roles_handlers._sample_payload):
 - CONSTRAINTS.allowed_values[0] when declared
@@ -369,22 +373,19 @@ render-ready is not live Render deploy and not Store Docker acceptance — those
 Then existing TESTER / STORE_MANAGER. STOP / checkpoint after PHASE 3 acceptance.
 
 Block scopes (from block.json; report-only until L2.2 flip — do not invent):
-- workflow READS=["{'kind': 'caller', 'scope': 'input'}", "{'kind': 'env', 'scope': 'process'}", "{'kind': 'config', 'scope': 'runtime'}"] WRITES=["{'kind': 'caller', 'scope': 'output'}"] NEVER=['(none)'] ACCEPTANCE=["{'id': 'unknown_action', 'check': 'errors on an unknown or missing action', 'status': 'failed'}"]
-- database READS=["{'kind': 'caller', 'scope': 'input'}", "{'kind': 'env', 'scope': 'process'}", "{'kind': 'config', 'scope': 'runtime'}", "{'kind': 'database', 'scope': 'sql'}"] WRITES=["{'kind': 'caller', 'scope': 'output'}", "{'kind': 'database', 'scope': 'sql'}"] NEVER=['(none)'] ACCEPTANCE=["{'id': 'unknown_action', 'check': 'errors on an unknown or missing action', 'status': 'failed'}"]
-- validation READS=["{'kind': 'caller', 'scope': 'input'}", "{'kind': 'config', 'scope': 'runtime'}"] WRITES=["{'kind': 'caller', 'scope': 'output'}"] NEVER=['(none)'] ACCEPTANCE=["{'id': 'missing_required_input', 'check': 'refuses or errors when a required input is absent', 'status': 'refused'}", "{'id': 'unknown_action', 'check': 'errors on an unknown or missing action', 'status': 'failed'}"]
-- event_bus READS=["{'kind': 'caller', 'scope': 'input'}", "{'kind': 'config', 'scope': 'runtime'}"] WRITES=["{'kind': 'caller', 'scope': 'output'}"] NEVER=['(none)'] ACCEPTANCE=["{'id': 'unknown_action', 'check': 'errors on an unknown or missing action', 'status': 'failed'}"]
-- queue READS=["{'kind': 'caller', 'scope': 'input'}", "{'kind': 'config', 'scope': 'runtime'}", "{'kind': 'memory', 'scope': 'cache'}", "{'kind': 'queue', 'scope': 'jobs'}"] WRITES=["{'kind': 'caller', 'scope': 'output'}", "{'kind': 'queue', 'scope': 'jobs'}"] NEVER=['(none)'] ACCEPTANCE=["{'id': 'unknown_action', 'check': 'errors on an unknown or missing action', 'status': 'failed'}"]
-- audit READS=["{'kind': 'caller', 'scope': 'input'}", "{'kind': 'config', 'scope': 'runtime'}", "{'kind': 'database', 'scope': 'sql'}"] WRITES=["{'kind': 'caller', 'scope': 'output'}", "{'kind': 'database', 'scope': 'sql'}"] NEVER=['(none)'] ACCEPTANCE=["{'id': 'unknown_action', 'check': 'errors on an unknown or missing action', 'status': 'failed'}"]
-- team READS=["{'kind': 'caller', 'scope': 'input'}", "{'kind': 'file', 'scope': 'local.read'}", "{'kind': 'env', 'scope': 'process'}", "{'kind': 'config', 'scope': 'runtime'}", "{'kind': 'team', 'scope': 'state'}"] WRITES=["{'kind': 'caller', 'scope': 'output'}", "{'kind': 'file', 'scope': 'local.write'}"] NEVER=['(none)'] ACCEPTANCE=["{'id': 'unknown_action', 'check': 'errors on an unknown or missing action', 'status': 'failed'}"]
-- formula_executor READS=["{'kind': 'caller', 'scope': 'input'}", "{'kind': 'env', 'scope': 'process'}", "{'kind': 'config', 'scope': 'runtime'}", "{'kind': 'network', 'scope': 'http.outbound'}"] WRITES=["{'kind': 'caller', 'scope': 'output'}"] NEVER=['(none)'] ACCEPTANCE=['(none)']
+- capture READS=["{'kind': 'caller', 'scope': 'input'}", "{'kind': 'file', 'scope': 'local.read'}", "{'kind': 'file', 'scope': 'input_image'}", "{'kind': 'env', 'scope': 'process'}", "{'kind': 'config', 'scope': 'runtime'}", "{'kind': 'network', 'scope': 'http.outbound'}", "{'kind': 'llm', 'scope': 'provider'}", "{'kind': 'credential', 'scope': 'env'}"] WRITES=["{'kind': 'caller', 'scope': 'output'}", "{'kind': 'file', 'scope': 'local.write'}"] NEVER=['(none)'] ACCEPTANCE=["{'check': 'errors on an unknown or missing action', 'id': 'unknown_action', 'status': 'failed'}", "{'check': 'fails loud when a required credential or key is absent', 'id': 'missing_credential', 'status': 'failed'}"]
+- workflow READS=["{'kind': 'caller', 'scope': 'input'}", "{'kind': 'env', 'scope': 'process'}", "{'kind': 'config', 'scope': 'runtime'}"] WRITES=["{'kind': 'caller', 'scope': 'output'}"] NEVER=['(none)'] ACCEPTANCE=["{'check': 'errors on an unknown or missing action', 'id': 'unknown_action', 'status': 'failed'}"]
+- queue READS=["{'kind': 'caller', 'scope': 'input'}", "{'kind': 'config', 'scope': 'runtime'}", "{'kind': 'memory', 'scope': 'cache'}", "{'kind': 'queue', 'scope': 'jobs'}"] WRITES=["{'kind': 'caller', 'scope': 'output'}", "{'kind': 'queue', 'scope': 'jobs'}"] NEVER=['(none)'] ACCEPTANCE=["{'check': 'errors on an unknown or missing action', 'id': 'unknown_action', 'status': 'failed'}"]
+- notification READS=["{'kind': 'caller', 'scope': 'input'}", "{'kind': 'env', 'scope': 'process'}", "{'kind': 'config', 'scope': 'runtime'}", "{'kind': 'network', 'scope': 'http.outbound'}", "{'kind': 'credential', 'scope': 'env'}", "{'kind': 'block', 'scope': 'peer'}"] WRITES=["{'kind': 'caller', 'scope': 'output'}", "{'kind': 'network', 'scope': 'smtp.outbound'}", "{'kind': 'email', 'scope': 'outbound'}", "{'kind': 'notification', 'scope': 'outbound'}"] NEVER=['(none)'] ACCEPTANCE=["{'check': 'errors on an unknown or missing action', 'id': 'unknown_action', 'status': 'failed'}", "{'check': 'fails loud when a required credential or key is absent', 'id': 'missing_credential', 'status': 'failed'}"]
+- team READS=["{'kind': 'caller', 'scope': 'input'}", "{'kind': 'file', 'scope': 'local.read'}", "{'kind': 'env', 'scope': 'process'}", "{'kind': 'config', 'scope': 'runtime'}", "{'kind': 'team', 'scope': 'state'}"] WRITES=["{'kind': 'caller', 'scope': 'output'}", "{'kind': 'file', 'scope': 'local.write'}"] NEVER=['(none)'] ACCEPTANCE=["{'check': 'errors on an unknown or missing action', 'id': 'unknown_action', 'status': 'failed'}"]
 - recommendation_template READS=["{'kind': 'caller', 'scope': 'input'}", "{'kind': 'file', 'scope': 'local.read'}", "{'kind': 'env', 'scope': 'process'}", "{'kind': 'config', 'scope': 'runtime'}"] WRITES=["{'kind': 'caller', 'scope': 'output'}"] NEVER=['(none)'] ACCEPTANCE=['(none)']
-- analytics READS=["{'kind': 'caller', 'scope': 'input'}", "{'kind': 'config', 'scope': 'runtime'}", "{'kind': 'llm', 'scope': 'provider'}"] WRITES=["{'kind': 'caller', 'scope': 'output'}"] NEVER=['(none)'] ACCEPTANCE=["{'id': 'unknown_action', 'check': 'errors on an unknown or missing action', 'status': 'failed'}"]
-- capture READS=["{'kind': 'caller', 'scope': 'input'}", "{'kind': 'file', 'scope': 'local.read'}", "{'kind': 'file', 'scope': 'input_image'}", "{'kind': 'env', 'scope': 'process'}", "{'kind': 'config', 'scope': 'runtime'}", "{'kind': 'network', 'scope': 'http.outbound'}", "{'kind': 'llm', 'scope': 'provider'}", "{'kind': 'credential', 'scope': 'env'}"] WRITES=["{'kind': 'caller', 'scope': 'output'}", "{'kind': 'file', 'scope': 'local.write'}"] NEVER=['(none)'] ACCEPTANCE=["{'id': 'unknown_action', 'check': 'errors on an unknown or missing action', 'status': 'failed'}", "{'id': 'missing_credential', 'check': 'fails loud when a required credential or key is absent', 'status': 'failed'}"]
-- knowledge READS=["{'kind': 'caller', 'scope': 'input'}", "{'kind': 'env', 'scope': 'process'}", "{'kind': 'config', 'scope': 'runtime'}", "{'kind': 'network', 'scope': 'http.outbound'}", "{'kind': 'database', 'scope': 'vector'}", "{'kind': 'llm', 'scope': 'provider'}", "{'kind': 'credential', 'scope': 'env'}"] WRITES=["{'kind': 'caller', 'scope': 'output'}"] NEVER=['(none)'] ACCEPTANCE=["{'id': 'unknown_action', 'check': 'errors on an unknown or missing action', 'status': 'failed'}", "{'id': 'missing_credential', 'check': 'fails loud when a required credential or key is absent', 'status': 'failed'}"]
-- vector_search READS=["{'kind': 'caller', 'scope': 'input'}", "{'kind': 'database', 'scope': 'vector'}"] WRITES=["{'kind': 'caller', 'scope': 'output'}", "{'kind': 'database', 'scope': 'vector'}"] NEVER=['(none)'] ACCEPTANCE=["{'id': 'missing_required_input', 'check': 'refuses or errors when a required input is absent', 'status': 'refused'}", "{'id': 'unknown_action', 'check': 'errors on an unknown or missing action', 'status': 'failed'}"]
-- notification READS=["{'kind': 'caller', 'scope': 'input'}", "{'kind': 'env', 'scope': 'process'}", "{'kind': 'config', 'scope': 'runtime'}", "{'kind': 'network', 'scope': 'http.outbound'}", "{'kind': 'credential', 'scope': 'env'}", "{'kind': 'block', 'scope': 'peer'}"] WRITES=["{'kind': 'caller', 'scope': 'output'}", "{'kind': 'network', 'scope': 'smtp.outbound'}", "{'kind': 'email', 'scope': 'outbound'}", "{'kind': 'notification', 'scope': 'outbound'}"] NEVER=['(none)'] ACCEPTANCE=["{'id': 'unknown_action', 'check': 'errors on an unknown or missing action', 'status': 'failed'}", "{'id': 'missing_credential', 'check': 'fails loud when a required credential or key is absent', 'status': 'failed'}"]
-- dashboard READS=["{'kind': 'caller', 'scope': 'input'}", "{'kind': 'config', 'scope': 'runtime'}"] WRITES=["{'kind': 'caller', 'scope': 'output'}"] NEVER=['(none)'] ACCEPTANCE=["{'id': 'unknown_action', 'check': 'errors on an unknown or missing action', 'status': 'failed'}"]
-- memory READS=["{'kind': 'caller', 'scope': 'input'}", "{'kind': 'config', 'scope': 'runtime'}", "{'kind': 'memory', 'scope': 'cache'}"] WRITES=["{'kind': 'caller', 'scope': 'output'}", "{'kind': 'memory', 'scope': 'cache'}"] NEVER=['(none)'] ACCEPTANCE=["{'id': 'unknown_action', 'check': 'errors on an unknown or missing action', 'status': 'failed'}"]
+- dashboard READS=["{'kind': 'caller', 'scope': 'input'}", "{'kind': 'config', 'scope': 'runtime'}"] WRITES=["{'kind': 'caller', 'scope': 'output'}"] NEVER=['(none)'] ACCEPTANCE=["{'check': 'errors on an unknown or missing action', 'id': 'unknown_action', 'status': 'failed'}"]
+- analytics READS=["{'kind': 'caller', 'scope': 'input'}", "{'kind': 'config', 'scope': 'runtime'}", "{'kind': 'llm', 'scope': 'provider'}"] WRITES=["{'kind': 'caller', 'scope': 'output'}"] NEVER=['(none)'] ACCEPTANCE=["{'check': 'errors on an unknown or missing action', 'id': 'unknown_action', 'status': 'failed'}"]
+- portfolio_rollup READS=["{'kind': 'caller', 'scope': 'input'}", "{'kind': 'config', 'scope': 'runtime'}"] WRITES=["{'kind': 'caller', 'scope': 'output'}"] NEVER=['(none)'] ACCEPTANCE=["{'check': 'errors when records carry non-numeric values, reporting the invalid records', 'id': 'invalid_records', 'status': 'failed'}", "{'check': 'refuses or errors when properties is absent or not a list', 'id': 'missing_properties', 'status': 'refused'}", "{'check': 'errors on an unknown or missing action', 'id': 'unknown_action', 'status': 'failed'}"]
+- formula_executor READS=["{'kind': 'caller', 'scope': 'input'}", "{'kind': 'env', 'scope': 'process'}", "{'kind': 'config', 'scope': 'runtime'}", "{'kind': 'network', 'scope': 'http.outbound'}"] WRITES=["{'kind': 'caller', 'scope': 'output'}"] NEVER=['(none)'] ACCEPTANCE=['(none)']
+- audit READS=["{'kind': 'caller', 'scope': 'input'}", "{'kind': 'config', 'scope': 'runtime'}", "{'kind': 'database', 'scope': 'sql'}"] WRITES=["{'kind': 'caller', 'scope': 'output'}", "{'kind': 'database', 'scope': 'sql'}"] NEVER=['(none)'] ACCEPTANCE=["{'check': 'errors on an unknown or missing action', 'id': 'unknown_action', 'status': 'failed'}"]
+- validation READS=["{'kind': 'caller', 'scope': 'input'}", "{'kind': 'config', 'scope': 'runtime'}"] WRITES=["{'kind': 'caller', 'scope': 'output'}"] NEVER=['(none)'] ACCEPTANCE=["{'check': 'refuses or errors when a required input is absent', 'id': 'missing_required_input', 'status': 'refused'}", "{'check': 'errors on an unknown or missing action', 'id': 'unknown_action', 'status': 'failed'}"]
+- event_bus READS=["{'kind': 'caller', 'scope': 'input'}", "{'kind': 'config', 'scope': 'runtime'}"] WRITES=["{'kind': 'caller', 'scope': 'output'}"] NEVER=['(none)'] ACCEPTANCE=["{'check': 'errors on an unknown or missing action', 'id': 'unknown_action', 'status': 'failed'}"]
 
 Kit manifests (Factory shelf + on-disk packs):
 {
@@ -394,17 +395,13 @@ Kit manifests (Factory shelf + on-disk packs):
       "audit",
       "capture",
       "dashboard",
-      "database",
       "event_bus",
       "formula_executor",
-      "knowledge",
-      "memory",
       "notification",
       "queue",
       "recommendation_template",
       "team",
       "validation",
-      "vector_search",
       "workflow"
     ],
     "id": "platform",
@@ -414,17 +411,13 @@ Kit manifests (Factory shelf + on-disk packs):
       "audit",
       "capture",
       "dashboard",
-      "database",
       "event_bus",
       "formula_executor",
-      "knowledge",
-      "memory",
       "notification",
       "queue",
       "recommendation_template",
       "team",
       "validation",
-      "vector_search",
       "workflow"
     ],
     "source": "brief-compiler",
@@ -433,17 +426,13 @@ Kit manifests (Factory shelf + on-disk packs):
       "audit": "vendor/blocks/audit",
       "capture": "vendor/blocks/capture",
       "dashboard": "vendor/blocks/dashboard",
-      "database": "vendor/blocks/database",
       "event_bus": "vendor/blocks/event_bus",
       "formula_executor": "vendor/blocks/formula_executor",
-      "knowledge": "vendor/blocks/knowledge",
-      "memory": "vendor/blocks/memory",
       "notification": "vendor/blocks/notification",
       "queue": "vendor/blocks/queue",
       "recommendation_template": "vendor/blocks/recommendation_template",
       "team": "vendor/blocks/team",
       "validation": "vendor/blocks/validation",
-      "vector_search": "vendor/blocks/vector_search",
       "workflow": "vendor/blocks/workflow"
     },
     "version": "1.0.0"
@@ -536,10 +525,7 @@ Kit manifests (Factory shelf + on-disk packs):
     "name": "Private Estate Operations",
     "price_cents": 0,
     "product_blocks": [
-      "estate_maintenance",
-      "estate_registry",
-      "portfolio_rollup",
-      "readiness_engine"
+      "portfolio_rollup"
     ],
     "prompts": [],
     "source": "brief-compiler",
@@ -551,10 +537,7 @@ Kit manifests (Factory shelf + on-disk packs):
       "certification"
     ],
     "vendored_blocks": {
-      "estate_maintenance": "vendor/blocks/estate_maintenance",
-      "estate_registry": "vendor/blocks/estate_registry",
-      "portfolio_rollup": "vendor/blocks/portfolio_rollup",
-      "readiness_engine": "vendor/blocks/readiness_engine"
+      "portfolio_rollup": "vendor/blocks/portfolio_rollup"
     },
     "version": "1.3.0"
   }
@@ -564,7 +547,7 @@ REUSE records (present/reuse + reads/writes/never/acceptance):
 {
   "analytics": {
     "acceptance": [
-      "{'id': 'unknown_action', 'check': 'errors on an unknown or missing action', 'status': 'failed'}"
+      "{'check': 'errors on an unknown or missing action', 'id': 'unknown_action', 'status': 'failed'}"
     ],
     "block_id": "analytics",
     "never": [],
@@ -582,7 +565,7 @@ REUSE records (present/reuse + reads/writes/never/acceptance):
   },
   "audit": {
     "acceptance": [
-      "{'id': 'unknown_action', 'check': 'errors on an unknown or missing action', 'status': 'failed'}"
+      "{'check': 'errors on an unknown or missing action', 'id': 'unknown_action', 'status': 'failed'}"
     ],
     "block_id": "audit",
     "never": [],
@@ -601,8 +584,8 @@ REUSE records (present/reuse + reads/writes/never/acceptance):
   },
   "capture": {
     "acceptance": [
-      "{'id': 'unknown_action', 'check': 'errors on an unknown or missing action', 'status': 'failed'}",
-      "{'id': 'missing_credential', 'check': 'fails loud when a required credential or key is absent', 'status': 'failed'}"
+      "{'check': 'errors on an unknown or missing action', 'id': 'unknown_action', 'status': 'failed'}",
+      "{'check': 'fails loud when a required credential or key is absent', 'id': 'missing_credential', 'status': 'failed'}"
     ],
     "block_id": "capture",
     "never": [],
@@ -626,7 +609,7 @@ REUSE records (present/reuse + reads/writes/never/acceptance):
   },
   "dashboard": {
     "acceptance": [
-      "{'id': 'unknown_action', 'check': 'errors on an unknown or missing action', 'status': 'failed'}"
+      "{'check': 'errors on an unknown or missing action', 'id': 'unknown_action', 'status': 'failed'}"
     ],
     "block_id": "dashboard",
     "never": [],
@@ -641,49 +624,9 @@ REUSE records (present/reuse + reads/writes/never/acceptance):
       "{'kind': 'caller', 'scope': 'output'}"
     ]
   },
-  "database": {
-    "acceptance": [
-      "{'id': 'unknown_action', 'check': 'errors on an unknown or missing action', 'status': 'failed'}"
-    ],
-    "block_id": "database",
-    "never": [],
-    "present": true,
-    "reads": [
-      "{'kind': 'caller', 'scope': 'input'}",
-      "{'kind': 'env', 'scope': 'process'}",
-      "{'kind': 'config', 'scope': 'runtime'}",
-      "{'kind': 'database', 'scope': 'sql'}"
-    ],
-    "scope_declared": true,
-    "source": "registry/blocks",
-    "writes": [
-      "{'kind': 'caller', 'scope': 'output'}",
-      "{'kind': 'database', 'scope': 'sql'}"
-    ]
-  },
-  "estate_maintenance": {
-    "acceptance": [],
-    "block_id": "estate_maintenance",
-    "never": [],
-    "present": false,
-    "reads": [],
-    "scope_declared": false,
-    "source": "registry/blocks",
-    "writes": []
-  },
-  "estate_registry": {
-    "acceptance": [],
-    "block_id": "estate_registry",
-    "never": [],
-    "present": false,
-    "reads": [],
-    "scope_declared": false,
-    "source": "registry/blocks",
-    "writes": []
-  },
   "event_bus": {
     "acceptance": [
-      "{'id': 'unknown_action', 'check': 'errors on an unknown or missing action', 'status': 'failed'}"
+      "{'check': 'errors on an unknown or missing action', 'id': 'unknown_action', 'status': 'failed'}"
     ],
     "block_id": "event_bus",
     "never": [],
@@ -715,52 +658,10 @@ REUSE records (present/reuse + reads/writes/never/acceptance):
       "{'kind': 'caller', 'scope': 'output'}"
     ]
   },
-  "knowledge": {
-    "acceptance": [
-      "{'id': 'unknown_action', 'check': 'errors on an unknown or missing action', 'status': 'failed'}",
-      "{'id': 'missing_credential', 'check': 'fails loud when a required credential or key is absent', 'status': 'failed'}"
-    ],
-    "block_id": "knowledge",
-    "never": [],
-    "present": true,
-    "reads": [
-      "{'kind': 'caller', 'scope': 'input'}",
-      "{'kind': 'env', 'scope': 'process'}",
-      "{'kind': 'config', 'scope': 'runtime'}",
-      "{'kind': 'network', 'scope': 'http.outbound'}",
-      "{'kind': 'database', 'scope': 'vector'}",
-      "{'kind': 'llm', 'scope': 'provider'}",
-      "{'kind': 'credential', 'scope': 'env'}"
-    ],
-    "scope_declared": true,
-    "source": "registry/blocks",
-    "writes": [
-      "{'kind': 'caller', 'scope': 'output'}"
-    ]
-  },
-  "memory": {
-    "acceptance": [
-      "{'id': 'unknown_action', 'check': 'errors on an unknown or missing action', 'status': 'failed'}"
-    ],
-    "block_id": "memory",
-    "never": [],
-    "present": true,
-    "reads": [
-      "{'kind': 'caller', 'scope': 'input'}",
-      "{'kind': 'config', 'scope': 'runtime'}",
-      "{'kind': 'memory', 'scope': 'cache'}"
-    ],
-    "scope_declared": true,
-    "source": "registry/blocks",
-    "writes": [
-      "{'kind': 'caller', 'scope': 'output'}",
-      "{'kind': 'memory', 'scope': 'cache'}"
-    ]
-  },
   "notification": {
     "acceptance": [
-      "{'id': 'unknown_action', 'check': 'errors on an unknown or missing action', 'status': 'failed'}",
-      "{'id': 'missing_credential', 'check': 'fails loud when a required credential or key is absent', 'status': 'failed'}"
+      "{'check': 'errors on an unknown or missing action', 'id': 'unknown_action', 'status': 'failed'}",
+      "{'check': 'fails loud when a required credential or key is absent', 'id': 'missing_credential', 'status': 'failed'}"
     ],
     "block_id": "notification",
     "never": [],
@@ -783,18 +684,27 @@ REUSE records (present/reuse + reads/writes/never/acceptance):
     ]
   },
   "portfolio_rollup": {
-    "acceptance": [],
+    "acceptance": [
+      "{'check': 'errors when records carry non-numeric values, reporting the invalid records', 'id': 'invalid_records', 'status': 'failed'}",
+      "{'check': 'refuses or errors when properties is absent or not a list', 'id': 'missing_properties', 'status': 'refused'}",
+      "{'check': 'errors on an unknown or missing action', 'id': 'unknown_action', 'status': 'failed'}"
+    ],
     "block_id": "portfolio_rollup",
     "never": [],
-    "present": false,
-    "reads": [],
-    "scope_declared": false,
+    "present": true,
+    "reads": [
+      "{'kind': 'caller', 'scope': 'input'}",
+      "{'kind': 'config', 'scope': 'runtime'}"
+    ],
+    "scope_declared": true,
     "source": "registry/blocks",
-    "writes": []
+    "writes": [
+      "{'kind': 'caller', 'scope': 'output'}"
+    ]
   },
   "queue": {
     "acceptance": [
-      "{'id': 'unknown_action', 'check': 'errors on an unknown or missing action', 'status': 'failed'}"
+      "{'check': 'errors on an unknown or missing action', 'id': 'unknown_action', 'status': 'failed'}"
     ],
     "block_id": "queue",
     "never": [],
@@ -811,16 +721,6 @@ REUSE records (present/reuse + reads/writes/never/acceptance):
       "{'kind': 'caller', 'scope': 'output'}",
       "{'kind': 'queue', 'scope': 'jobs'}"
     ]
-  },
-  "readiness_engine": {
-    "acceptance": [],
-    "block_id": "readiness_engine",
-    "never": [],
-    "present": false,
-    "reads": [],
-    "scope_declared": false,
-    "source": "registry/blocks",
-    "writes": []
   },
   "recommendation_template": {
     "acceptance": [],
@@ -841,7 +741,7 @@ REUSE records (present/reuse + reads/writes/never/acceptance):
   },
   "team": {
     "acceptance": [
-      "{'id': 'unknown_action', 'check': 'errors on an unknown or missing action', 'status': 'failed'}"
+      "{'check': 'errors on an unknown or missing action', 'id': 'unknown_action', 'status': 'failed'}"
     ],
     "block_id": "team",
     "never": [],
@@ -862,8 +762,8 @@ REUSE records (present/reuse + reads/writes/never/acceptance):
   },
   "validation": {
     "acceptance": [
-      "{'id': 'missing_required_input', 'check': 'refuses or errors when a required input is absent', 'status': 'refused'}",
-      "{'id': 'unknown_action', 'check': 'errors on an unknown or missing action', 'status': 'failed'}"
+      "{'check': 'refuses or errors when a required input is absent', 'id': 'missing_required_input', 'status': 'refused'}",
+      "{'check': 'errors on an unknown or missing action', 'id': 'unknown_action', 'status': 'failed'}"
     ],
     "block_id": "validation",
     "never": [],
@@ -878,28 +778,9 @@ REUSE records (present/reuse + reads/writes/never/acceptance):
       "{'kind': 'caller', 'scope': 'output'}"
     ]
   },
-  "vector_search": {
-    "acceptance": [
-      "{'id': 'missing_required_input', 'check': 'refuses or errors when a required input is absent', 'status': 'refused'}",
-      "{'id': 'unknown_action', 'check': 'errors on an unknown or missing action', 'status': 'failed'}"
-    ],
-    "block_id": "vector_search",
-    "never": [],
-    "present": true,
-    "reads": [
-      "{'kind': 'caller', 'scope': 'input'}",
-      "{'kind': 'database', 'scope': 'vector'}"
-    ],
-    "scope_declared": true,
-    "source": "registry/blocks",
-    "writes": [
-      "{'kind': 'caller', 'scope': 'output'}",
-      "{'kind': 'database', 'scope': 'vector'}"
-    ]
-  },
   "workflow": {
     "acceptance": [
-      "{'id': 'unknown_action', 'check': 'errors on an unknown or missing action', 'status': 'failed'}"
+      "{'check': 'errors on an unknown or missing action', 'id': 'unknown_action', 'status': 'failed'}"
     ],
     "block_id": "workflow",
     "never": [],
@@ -923,13 +804,14 @@ Domain pack (binding fields):
     "none claimed beyond persisted fields"
   ],
   "core_business_workflows": [
-    "one-record round-trip for booking_management",
-    "one-record round-trip for property_management",
-    "one-record round-trip for dynamic_pricing",
-    "one-record round-trip for review_management",
-    "one-record round-trip for analytics_dashboard",
-    "one-record round-trip for notification_system",
-    "one-record round-trip for search_recommendation"
+    "one-record round-trip for complaints_management",
+    "one-record round-trip for auto_assignment",
+    "one-record round-trip for workforce_management",
+    "one-record round-trip for management_dashboards",
+    "one-record round-trip for reporting",
+    "one-record round-trip for role_based_access",
+    "one-record round-trip for erp_integration",
+    "one-record round-trip for booking_system_integration"
   ],
   "data_sources": [
     "vendored Store blocks",
@@ -944,7 +826,7 @@ Domain pack (binding fields):
     "one-record round-trip per capability",
     "envelope vocab open|in_progress|closed enforced by schema, not prose"
   ],
-  "domain_purpose": "StayFlow is an all-in-one hotel booking and property management platform for independent hotels, boutique inns, and small hotel groups. It unifies real-time reservation management, room inventory and rate control, dynamic pricing, guest reviews, and operational analytics, while keeping staff and guests informed with automated notifications and AI-assisted search and recommendations.",
+  "domain_purpose": "A facility management platform serving a Dubai schools estate of 10 schools. It gives management oversight and control of technician and cleaner teams, lets school staff and parents log complaints (or management enter them on their behalf), auto-assigns those complaints to the right field staff where possible, and tracks every complaint and job through to closure. Management sees per-school and portfolio-level dashboards across all 10 sites, with role-based access separating management, field st",
   "domain_rules": [
     "status vocabulary is schema-enforced: open, in_progress, closed",
     "reserved-keyword fields are refused"
@@ -954,9 +836,9 @@ Domain pack (binding fields):
     "update",
     "delete"
   ],
-  "mission": "StayFlow is an all-in-one hotel booking and property management platform for independent hotels, boutique inns, and small hotel groups. It unifies real-time reservation management, room inventory and rate control, dynamic pricing, guest reviews, and operational analytics, while keeping staff and guests informed with automated notifications and AI-assisted search and recommendations.",
+  "mission": "A facility management platform serving a Dubai schools estate of 10 schools. It gives management oversight and control of technician and cleaner teams, lets school staff and parents log complaints (or management enter them on their behalf), auto-assigns those complaints to the right field staff where possible, and tracks every complaint and job through to closure. Management sees per-school and portfolio-level dashboards across all 10 sites, with role-based access separating management, field st",
   "primary_users": [
-    "hospitality operators"
+    "facility management operators"
   ],
   "prohibited_autonomous_actions": [
     "deploy",
@@ -967,13 +849,14 @@ Domain pack (binding fields):
     "pilot_candidate zip after PRODUCT+STORE green"
   ],
   "required_product_modules": [
-    "booking_management",
-    "property_management",
-    "dynamic_pricing",
-    "review_management",
-    "analytics_dashboard",
-    "notification_system",
-    "search_recommendation"
+    "complaints_management",
+    "auto_assignment",
+    "workforce_management",
+    "management_dashboards",
+    "reporting",
+    "role_based_access",
+    "erp_integration",
+    "booking_system_integration"
   ],
   "required_roles": [
     "operator",
@@ -1002,7 +885,7 @@ Fails loud. The run is not done until ALL of these are true. ACCEPTANCE is run b
 - every emitted capability persists one record to its alembic entity and GET returns it (post-boot: the pilot-marked tests against the booted product, and a one-record round-trip per capability (POST creates, GET returns it))  [check:round_trip]
 - every capability accepts a POST built from its own FIELDS/CONSTRAINTS (writer_behaviour baseline)  [check:writer_behaviour]
 - every REUSE keep-path handler accepts a schema-sample POST without Unknown action / Unknown action: None (post-boot: the pilot-marked tests against the booted product, and a one-record round-trip per capability (POST creates, GET returns it))  [check:reuse_accept]
-- PRODUCT accept-payload (booking_management, notification_system): every event_bus step including step_0 (automated_reminders class), step_1 (appointment_scheduling class) and step_2+ (appointment_booking class) accepts the prepared contract (topic, payload dict, message, channel=mcp, action=publish) — never the raw schema sample (test_every_capability_route_accepts_payload; workflow: step_N (event_bus): error; workflow: step_0 (event_bus): error; workflow: step_1 (event_bus): error; workflow: step_2 (event_bus): error)  [check:event_bus_workflow]
+- PRODUCT accept-payload (erp_integration, booking_system_integration): every event_bus step including step_0 (automated_reminders class), step_1 (appointment_scheduling class) and step_2+ (appointment_booking class) accepts the prepared contract (topic, payload dict, message, channel=mcp, action=publish) — never the raw schema sample (test_every_capability_route_accepts_payload; workflow: step_N (event_bus): error; workflow: step_0 (event_bus): error; workflow: step_1 (event_bus): error; workflow: step_2 (event_bus): error)  [check:event_bus_workflow]
 - the domain pack's domain_acceptance_conditions hold  [check:domain_acceptance]
 - envelope vocab open, in_progress, closed enforced by schema, not prose  [check:envelope_schema]
 - PRODUCT gate: post-boot: the pilot-marked tests against the booted product, and a one-record round-trip per capability (POST creates, GET returns it)  [check:product_gate]
@@ -1019,22 +902,19 @@ Fails loud. The run is not done until ALL of these are true. ACCEPTANCE is run b
 The harness's acceptance IS the tester. Do not write decorative tests. Do not treat thin SUCCESS / templates-only / stubbed capabilities / authorship below the launching-ready full-pilot floor as done.
 
 Block-level acceptance (from block.json, report-only until flip):
+- workflow: {'check': 'errors on an unknown or missing action', 'id': 'unknown_action', 'status': 'failed'}  [check:block_acceptance]
+- audit: {'check': 'errors on an unknown or missing action', 'id': 'unknown_action', 'status': 'failed'}  [check:block_acceptance]
+- event_bus: {'check': 'errors on an unknown or missing action', 'id': 'unknown_action', 'status': 'failed'}  [check:block_acceptance]
+- queue: {'check': 'errors on an unknown or missing action', 'id': 'unknown_action', 'status': 'failed'}  [check:block_acceptance]
+- team: {'check': 'errors on an unknown or missing action', 'id': 'unknown_action', 'status': 'failed'}  [check:block_acceptance]
+- portfolio_rollup: {'check': 'errors when records carry non-numeric values, reporting the invalid records', 'id': 'invalid_records', 'status': 'failed'}, {'check': 'refuses or errors when properties is absent or not a list', 'id': 'missing_properties', 'status': 'refused'}, {'check': 'errors on an unknown or missing action', 'id': 'unknown_action', 'status': 'failed'}  [check:block_acceptance]
+- validation: {'check': 'refuses or errors when a required input is absent', 'id': 'missing_required_input', 'status': 'refused'}, {'check': 'errors on an unknown or missing action', 'id': 'unknown_action', 'status': 'failed'}  [check:block_acceptance]
+- notification: {'check': 'errors on an unknown or missing action', 'id': 'unknown_action', 'status': 'failed'}, {'check': 'fails loud when a required credential or key is absent', 'id': 'missing_credential', 'status': 'failed'}  [check:block_acceptance]
+- dashboard: {'check': 'errors on an unknown or missing action', 'id': 'unknown_action', 'status': 'failed'}  [check:block_acceptance]
 - formula_executor: (none declared)  [check:block_acceptance]
-- database: {'id': 'unknown_action', 'check': 'errors on an unknown or missing action', 'status': 'failed'}  [check:block_acceptance]
-- vector_search: {'id': 'missing_required_input', 'check': 'refuses or errors when a required input is absent', 'status': 'refused'}, {'id': 'unknown_action', 'check': 'errors on an unknown or missing action', 'status': 'failed'}  [check:block_acceptance]
-- capture: {'id': 'unknown_action', 'check': 'errors on an unknown or missing action', 'status': 'failed'}, {'id': 'missing_credential', 'check': 'fails loud when a required credential or key is absent', 'status': 'failed'}  [check:block_acceptance]
-- queue: {'id': 'unknown_action', 'check': 'errors on an unknown or missing action', 'status': 'failed'}  [check:block_acceptance]
-- workflow: {'id': 'unknown_action', 'check': 'errors on an unknown or missing action', 'status': 'failed'}  [check:block_acceptance]
+- analytics: {'check': 'errors on an unknown or missing action', 'id': 'unknown_action', 'status': 'failed'}  [check:block_acceptance]
 - recommendation_template: (none declared)  [check:block_acceptance]
-- analytics: {'id': 'unknown_action', 'check': 'errors on an unknown or missing action', 'status': 'failed'}  [check:block_acceptance]
-- memory: {'id': 'unknown_action', 'check': 'errors on an unknown or missing action', 'status': 'failed'}  [check:block_acceptance]
-- team: {'id': 'unknown_action', 'check': 'errors on an unknown or missing action', 'status': 'failed'}  [check:block_acceptance]
-- validation: {'id': 'missing_required_input', 'check': 'refuses or errors when a required input is absent', 'status': 'refused'}, {'id': 'unknown_action', 'check': 'errors on an unknown or missing action', 'status': 'failed'}  [check:block_acceptance]
-- audit: {'id': 'unknown_action', 'check': 'errors on an unknown or missing action', 'status': 'failed'}  [check:block_acceptance]
-- notification: {'id': 'unknown_action', 'check': 'errors on an unknown or missing action', 'status': 'failed'}, {'id': 'missing_credential', 'check': 'fails loud when a required credential or key is absent', 'status': 'failed'}  [check:block_acceptance]
-- dashboard: {'id': 'unknown_action', 'check': 'errors on an unknown or missing action', 'status': 'failed'}  [check:block_acceptance]
-- event_bus: {'id': 'unknown_action', 'check': 'errors on an unknown or missing action', 'status': 'failed'}  [check:block_acceptance]
-- knowledge: {'id': 'unknown_action', 'check': 'errors on an unknown or missing action', 'status': 'failed'}, {'id': 'missing_credential', 'check': 'fails loud when a required credential or key is absent', 'status': 'failed'}  [check:block_acceptance]
+- capture: {'check': 'errors on an unknown or missing action', 'id': 'unknown_action', 'status': 'failed'}, {'check': 'fails loud when a required credential or key is absent', 'id': 'missing_credential', 'status': 'failed'}  [check:block_acceptance]
 
 
 ==================================================
@@ -1055,7 +935,7 @@ FORBIDDEN
 - importing app.actions / app.routes / app.main from a capability handler (writer_behaviour workspace does not import)
 - persist to a table alembic 0001 did not create (no such table: <entity>)
 - leaving PRODUCT on a leftover ./data/platform.db stamped at 0001_baseline after the factory rewrote 0001 (upgrade_head no-op)
-- execute(block_id, payload) or no_block_bound stubs that never store.save(ENTITY, payload) (keyword-fallback audit / dashboard / {vertical}_core class)
+- execute(block_id, payload) or no_block_bound stubs that never reach the route's tenant-scoped save(payload) (keyword-fallback {vertical}_core class)
 - persist to table=records or to the capability id when spec.entity is a different name
 - treating WRITER writer_behaviour green on a tempfile DB as done while PRODUCT still did not remember a record they were given
 - execute(block_id, payload) or action=None (Unknown action: None)

@@ -1,0 +1,92 @@
+{
+  "capabilities": [
+    {
+      "block_ids": [
+        "capture",
+        "workflow",
+        "queue",
+        "notification"
+      ],
+      "capability_id": "complaints_management",
+      "strategy": "REUSE"
+    },
+    {
+      "block_ids": [
+        "workflow",
+        "queue",
+        "team",
+        "recommendation_template"
+      ],
+      "capability_id": "auto_assignment",
+      "strategy": "REUSE"
+    },
+    {
+      "block_ids": [
+        "team",
+        "workflow",
+        "queue"
+      ],
+      "capability_id": "workforce_management",
+      "strategy": "REUSE"
+    },
+    {
+      "block_ids": [
+        "dashboard",
+        "analytics",
+        "portfolio_rollup"
+      ],
+      "capability_id": "management_dashboards",
+      "strategy": "REUSE"
+    },
+    {
+      "block_ids": [
+        "analytics",
+        "portfolio_rollup",
+        "formula_executor",
+        "notification"
+      ],
+      "capability_id": "reporting",
+      "strategy": "REUSE"
+    },
+    {
+      "block_ids": [
+        "team",
+        "audit",
+        "validation"
+      ],
+      "capability_id": "role_based_access",
+      "strategy": "REUSE"
+    },
+    {
+      "block_ids": [
+        "workflow",
+        "event_bus",
+        "validation"
+      ],
+      "capability_id": "erp_integration",
+      "strategy": "REUSE"
+    },
+    {
+      "block_ids": [
+        "workflow",
+        "event_bus",
+        "validation"
+      ],
+      "capability_id": "booking_system_integration",
+      "strategy": "REUSE"
+    }
+  ],
+  "connectors": [
+    "erp",
+    "booking_system"
+  ],
+  "layers": [],
+  "product_id": "facility-management",
+  "schema_version": "1.0.0",
+  "ui_modules": [
+    "command_center",
+    "operational_chat",
+    "resident_engineer"
+  ],
+  "vertical": "facility_management"
+}

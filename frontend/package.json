@@ -1,0 +1,22 @@
+{
+  "name": "facility-management-console",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Management console for the Dubai schools estate: complaints, teams, dashboards, reports and access.",
+  "type": "module",
+  "scripts": {
+    "build": "tsc --noEmit && vite build",
+    "dev": "vite",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.3",
+    "@types/react-dom": "^18.3.0",
+    "typescript": "^5.5.4",
+    "vite": "^5.4.0"
+  }
+}

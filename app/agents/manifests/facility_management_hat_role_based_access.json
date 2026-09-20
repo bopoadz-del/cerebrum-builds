@@ -1,0 +1,48 @@
+{
+  "activation": {
+    "default_enabled": true,
+    "mode": "hybrid",
+    "put_off_by": [
+      "disable:facility_management.hat.role_based_access"
+    ],
+    "triggers": [
+      {
+        "type": "intent",
+        "value": "role_based_access"
+      },
+      {
+        "type": "capability",
+        "value": "role_based_access"
+      }
+    ]
+  },
+  "agent_id": "facility_management.hat.role_based_access",
+  "allowed_actions": [
+    "facility_management.role_based_access"
+  ],
+  "block_ids": [
+    "team",
+    "audit",
+    "validation"
+  ],
+  "discipline": "role_based_access",
+  "display_name": "Facility Management Platform for Schools Role Based Access Hat",
+  "extends": "facility_management.base",
+  "handoffs": [],
+  "human_authority": true,
+  "kind": "hat",
+  "manifest_version": "1.0.0",
+  "memory": {
+    "pii_policy": "never_store_pii",
+    "save": [],
+    "scope": "tenant_project"
+  },
+  "strategy": "REUSE",
+  "summary": "Specialized hat for capability 'role_based_access' (strategy=REUSE). Adapted from TEKsystems retail hat pattern; estate/product-neutral.",
+  "tags": [
+    "hat",
+    "factory-generated",
+    "facility_management",
+    "role_based_access"
+  ]
+}

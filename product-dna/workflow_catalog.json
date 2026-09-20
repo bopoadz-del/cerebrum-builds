@@ -1,0 +1,44 @@
+{
+  "schema_version": "1.0.0",
+  "workflows": [
+    {
+      "description": "Default linear workflow over planned capabilities.",
+      "name": "Capability sequence",
+      "steps": [
+        {
+          "capability_id": "complaints_management",
+          "role": "execute"
+        },
+        {
+          "capability_id": "auto_assignment",
+          "role": "execute"
+        },
+        {
+          "capability_id": "workforce_management",
+          "role": "execute"
+        },
+        {
+          "capability_id": "management_dashboards",
+          "role": "execute"
+        },
+        {
+          "capability_id": "reporting",
+          "role": "execute"
+        },
+        {
+          "capability_id": "role_based_access",
+          "role": "execute"
+        },
+        {
+          "capability_id": "erp_integration",
+          "role": "execute"
+        },
+        {
+          "capability_id": "booking_system_integration",
+          "role": "execute"
+        }
+      ],
+      "workflow_id": "facility_management.capability_sequence"
+    }
+  ]
+}

@@ -1,0 +1,106 @@
+schema_version: product_blueprint.v1
+product_id: facility-management
+product_name: Facility Management Platform for Schools
+vertical: facility_management
+summary: A facility management platform serving a Dubai schools estate of 10 schools.
+  It gives management oversight and control of technician and cleaner teams, lets
+  school staff and parents log complaints (or management enter them on their behalf),
+  auto-assigns those complaints to the right field staff where possible, and tracks
+  every complaint and job through to closure. Management sees per-school and portfolio-level
+  dashboards across all 10 sites, with role-based access separating management, field
+  st
+capabilities:
+- id: complaints_management
+  description: Capture complaints raised by school staff or parents, or entered by
+    management on their behalf, and track each one through its full lifecycle to closure
+    with status visible to management.
+  block_ids:
+  - capture
+  - workflow
+  - queue
+  - notification
+  strategy_hint: REUSE
+  required: true
+- id: auto_assignment
+  description: Automatically route each complaint to the appropriate technician or
+    cleaner based on school site, trade/skill and workload, with manual override by
+    management when needed.
+  block_ids:
+  - workflow
+  - queue
+  - team
+  - recommendation_template
+  strategy_hint: REUSE
+  required: true
+- id: workforce_management
+  description: Organise technician and cleaner teams per school, assign and track
+    their work, and manage roles and access levels for management, field staff and
+    complainants.
+  block_ids:
+  - team
+  - workflow
+  - queue
+  strategy_hint: REUSE
+  required: true
+- id: management_dashboards
+  description: Per-site and portfolio-level dashboards across all 10 schools showing
+    complaints, jobs, status and performance, for management oversight and control.
+  block_ids:
+  - dashboard
+  - analytics
+  - portfolio_rollup
+  strategy_hint: REUSE
+  required: true
+- id: reporting
+  description: Scheduled and on-demand reporting on complaint volumes, closure times,
+    team workload and per-school performance, including rollups across the estate.
+  block_ids:
+  - analytics
+  - portfolio_rollup
+  - formula_executor
+  - notification
+  strategy_hint: REUSE
+  required: true
+- id: role_based_access
+  description: Distinct access and permissions for management, technicians/cleaners
+    and complainants, so each group sees and acts only on what they should.
+  block_ids:
+  - team
+  - audit
+  - validation
+  strategy_hint: REUSE
+  required: true
+- id: erp_integration
+  description: Connection to the customer's existing ERP for the schools estate (currency
+    AED). Ships as a marked placeholder until an ERP connector is available.
+  block_ids:
+  - workflow
+  - event_bus
+  - validation
+  strategy_hint: REUSE
+  required: true
+- id: booking_system_integration
+  description: Connection to the customer's existing booking system so facility jobs
+    and bookings stay aligned. Ships as a marked placeholder until a booking connector
+    is available.
+  block_ids:
+  - workflow
+  - event_bus
+  - validation
+  strategy_hint: REUSE
+  required: true
+ui_modules:
+- command_center
+- operational_chat
+- resident_engineer
+connectors:
+- erp
+- booking_system
+edge_profile: standard
+human_authority: true
+factory_scenario: CREATE_PRODUCT
+drafting_mode: architect_llm
+drafting_note: 'inventory: ''facility_management'' is not on the declared-ready list
+  (hotels, insurance, construction, finance, retail); the Store kit for this vertical
+  is unverified — domain depth not guaranteed'
+delivery_format: zip

@@ -1,0 +1,17 @@
+{
+  "blocks_commit": "unknown",
+  "connectors": [
+    "erp",
+    "booking_system"
+  ],
+  "factory_commit": "unknown",
+  "factory_scenario": "CREATE_PRODUCT",
+  "product_dna_version": "1.0.0",
+  "product_id": "facility-management",
+  "schema_version": "1.0.0",
+  "ui_modules": [
+    "command_center",
+    "operational_chat",
+    "resident_engineer"
+  ]
+}

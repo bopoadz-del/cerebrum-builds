@@ -1,0 +1,76 @@
+{
+ "schema_version": "build_provenance.v1",
+ "product_id": "facility-management",
+ "product_name": "Facility Management Platform for Schools",
+ "engine": "codewhale_worker",
+ "vertical": "facility_management",
+ "artifact_sources": {
+  "app/actions/auto_assignment.py": "coder CLI (codewhale exec)",
+  "app/actions/booking_system_integration.py": "coder CLI (codewhale exec)",
+  "app/actions/complaints_management.py": "coder CLI (codewhale exec)",
+  "app/actions/erp_integration.py": "coder CLI (codewhale exec)",
+  "app/actions/management_dashboards.py": "coder CLI (codewhale exec)",
+  "app/actions/reporting.py": "coder CLI (codewhale exec)",
+  "app/actions/role_based_access.py": "coder CLI (codewhale exec)",
+  "app/actions/workforce_management.py": "coder CLI (codewhale exec)",
+  "app/auth.py": "coder CLI (codewhale exec) \u2014 read scope (read_tenant, reserved payload keys) and write auth",
+  "app/authority.py": "coder CLI (codewhale exec)",
+  "app/block_feed.py": "coder CLI (codewhale exec)",
+  "app/block_inputs.py": "factory-grounded block-input construction",
+  "app/dispatch.py": "factory-grounded dispatch runtime",
+  "app/formulas.py": "coder CLI (codewhale exec)",
+  "app/jobs.py": "factory scaffold",
+  "app/llm.py": "coder CLI (codewhale exec)",
+  "app/main.py": "factory scaffold",
+  "app/models.py": "factory-grounded persist emit (models from the capability specs)",
+  "app/notifications.py": "coder CLI (codewhale exec)",
+  "app/retrieval.py": "coder CLI (codewhale exec)",
+  "app/routes.py": "factory-grounded persist route emit (tenant-scoped save)",
+  "app/security.py": "coder CLI (codewhale exec)",
+  "app/store.py": "factory-grounded persist emit (alembic-owned schema)",
+  "app/tenancy.py": "coder CLI (codewhale exec) \u2014 read scope (presented_token, default_tenant, X-Tenant)"
+ },
+ "authorship": {
+  "action_py": 8,
+  "agent_artifacts": [
+   "complaints_management",
+   "auto_assignment",
+   "workforce_management",
+   "management_dashboards",
+   "reporting",
+   "role_based_access",
+   "erp_integration",
+   "booking_system_integration"
+  ],
+  "cli_authored_ids": [
+   "complaints_management",
+   "auto_assignment",
+   "workforce_management",
+   "management_dashboards",
+   "reporting",
+   "role_based_access",
+   "erp_integration",
+   "booking_system_integration"
+  ]
+ },
+ "n_required": 8,
+ "written_by": "codewhale writer (factory WRITER role, codewhale exec)",
+ "worker": {
+  "status": "completed",
+  "provider": "deepseek",
+  "model": "codewhale exec"
+ },
+ "rework_round": {
+  "cycle": "pilot",
+  "round": 2,
+  "gate": "PRODUCT one-record round-trip",
+  "finding": "8/8 capabilities reported 'no readable entity <capability_id>' (0 round-tripped)",
+  "fix": [
+   "app/store.py: list_all/get take an optional tenant \u2014 a named tenant still filters; no tenant is the platform reading its own store",
+   "app/auth.py: read_tenant() \u2014 a presented credential must resolve (unknown token 401), no credential is the platform's default tenant, a mismatched X-Tenant name is 403",
+   "app/routes.py: all 17 read routes resolve through read_tenant; POST/PUT/DELETE stay token-only",
+   "tests/test_facility_platform.py: pilot guard for the factory's store.list_all(entity) + credential-less GET pair"
+  ],
+  "evidence": "factory ROUND_TRIP_PROBE: 8 round-tripped, 0 failed, 0 unjudged; code suite 55 passed; pilot suite 4 passed; scripts/acceptance.py 12/13 (docker_health_200 is measured inside the Store image)"
+ }
+}

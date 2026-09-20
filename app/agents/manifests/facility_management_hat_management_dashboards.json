@@ -1,0 +1,48 @@
+{
+  "activation": {
+    "default_enabled": true,
+    "mode": "hybrid",
+    "put_off_by": [
+      "disable:facility_management.hat.management_dashboards"
+    ],
+    "triggers": [
+      {
+        "type": "intent",
+        "value": "management_dashboards"
+      },
+      {
+        "type": "capability",
+        "value": "management_dashboards"
+      }
+    ]
+  },
+  "agent_id": "facility_management.hat.management_dashboards",
+  "allowed_actions": [
+    "facility_management.management_dashboards"
+  ],
+  "block_ids": [
+    "dashboard",
+    "analytics",
+    "portfolio_rollup"
+  ],
+  "discipline": "management_dashboards",
+  "display_name": "Facility Management Platform for Schools Management Dashboards Hat",
+  "extends": "facility_management.base",
+  "handoffs": [],
+  "human_authority": true,
+  "kind": "hat",
+  "manifest_version": "1.0.0",
+  "memory": {
+    "pii_policy": "never_store_pii",
+    "save": [],
+    "scope": "tenant_project"
+  },
+  "strategy": "REUSE",
+  "summary": "Specialized hat for capability 'management_dashboards' (strategy=REUSE). Adapted from TEKsystems retail hat pattern; estate/product-neutral.",
+  "tags": [
+    "hat",
+    "factory-generated",
+    "facility_management",
+    "management_dashboards"
+  ]
+}

@@ -1,0 +1,443 @@
+{
+  "agents": [
+    {
+      "activation": {
+        "default_enabled": true,
+        "mode": "auto",
+        "put_off_by": [
+          "disable:facility_management.base"
+        ],
+        "triggers": [
+          {
+            "type": "intent",
+            "value": "unknown"
+          }
+        ]
+      },
+      "agent_id": "facility_management.base",
+      "allowed_actions": [
+        "facility_management.complaints_management",
+        "facility_management.auto_assignment",
+        "facility_management.workforce_management",
+        "facility_management.management_dashboards",
+        "facility_management.reporting",
+        "facility_management.role_based_access",
+        "facility_management.erp_integration",
+        "facility_management.booking_system_integration"
+      ],
+      "context_sources": [
+        {
+          "description": "Tenant/project documents via hybrid retrieval",
+          "kind": "project_documents",
+          "source_id": "project_docs"
+        }
+      ],
+      "discipline": "base",
+      "display_name": "Facility Management Platform for Schools Base Agent",
+      "extends": null,
+      "handoffs": [],
+      "human_authority": true,
+      "kind": "base",
+      "manifest_version": "1.0.0",
+      "memory": {
+        "pii_policy": "never_store_pii",
+        "save": [],
+        "scope": "tenant_project"
+      },
+      "summary": "Shared product cortex adapted from TEKsystems hat patterns: trusted context, ActionRegistry awareness, honesty policies. Discipline hats specialize this base \u2014 they never replace it.",
+      "tags": [
+        "base",
+        "factory-generated",
+        "facility_management"
+      ]
+    },
+    {
+      "activation": {
+        "default_enabled": true,
+        "mode": "hybrid",
+        "put_off_by": [
+          "disable:facility_management.hat.complaints_management"
+        ],
+        "triggers": [
+          {
+            "type": "intent",
+            "value": "complaints_management"
+          },
+          {
+            "type": "capability",
+            "value": "complaints_management"
+          }
+        ]
+      },
+      "agent_id": "facility_management.hat.complaints_management",
+      "allowed_actions": [
+        "facility_management.complaints_management"
+      ],
+      "block_ids": [
+        "capture",
+        "workflow",
+        "queue",
+        "notification"
+      ],
+      "discipline": "complaints_management",
+      "display_name": "Facility Management Platform for Schools Complaints Management Hat",
+      "extends": "facility_management.base",
+      "handoffs": [],
+      "human_authority": true,
+      "kind": "hat",
+      "manifest_version": "1.0.0",
+      "memory": {
+        "pii_policy": "never_store_pii",
+        "save": [],
+        "scope": "tenant_project"
+      },
+      "strategy": "REUSE",
+      "summary": "Specialized hat for capability 'complaints_management' (strategy=REUSE). Adapted from TEKsystems retail hat pattern; estate/product-neutral.",
+      "tags": [
+        "hat",
+        "factory-generated",
+        "facility_management",
+        "complaints_management"
+      ]
+    },
+    {
+      "activation": {
+        "default_enabled": true,
+        "mode": "hybrid",
+        "put_off_by": [
+          "disable:facility_management.hat.auto_assignment"
+        ],
+        "triggers": [
+          {
+            "type": "intent",
+            "value": "auto_assignment"
+          },
+          {
+            "type": "capability",
+            "value": "auto_assignment"
+          }
+        ]
+      },
+      "agent_id": "facility_management.hat.auto_assignment",
+      "allowed_actions": [
+        "facility_management.auto_assignment"
+      ],
+      "block_ids": [
+        "workflow",
+        "queue",
+        "team",
+        "recommendation_template"
+      ],
+      "discipline": "auto_assignment",
+      "display_name": "Facility Management Platform for Schools Auto Assignment Hat",
+      "extends": "facility_management.base",
+      "handoffs": [],
+      "human_authority": true,
+      "kind": "hat",
+      "manifest_version": "1.0.0",
+      "memory": {
+        "pii_policy": "never_store_pii",
+        "save": [],
+        "scope": "tenant_project"
+      },
+      "strategy": "REUSE",
+      "summary": "Specialized hat for capability 'auto_assignment' (strategy=REUSE). Adapted from TEKsystems retail hat pattern; estate/product-neutral.",
+      "tags": [
+        "hat",
+        "factory-generated",
+        "facility_management",
+        "auto_assignment"
+      ]
+    },
+    {
+      "activation": {
+        "default_enabled": true,
+        "mode": "hybrid",
+        "put_off_by": [
+          "disable:facility_management.hat.workforce_management"
+        ],
+        "triggers": [
+          {
+            "type": "intent",
+            "value": "workforce_management"
+          },
+          {
+            "type": "capability",
+            "value": "workforce_management"
+          }
+        ]
+      },
+      "agent_id": "facility_management.hat.workforce_management",
+      "allowed_actions": [
+        "facility_management.workforce_management"
+      ],
+      "block_ids": [
+        "team",
+        "workflow",
+        "queue"
+      ],
+      "discipline": "workforce_management",
+      "display_name": "Facility Management Platform for Schools Workforce Management Hat",
+      "extends": "facility_management.base",
+      "handoffs": [],
+      "human_authority": true,
+      "kind": "hat",
+      "manifest_version": "1.0.0",
+      "memory": {
+        "pii_policy": "never_store_pii",
+        "save": [],
+        "scope": "tenant_project"
+      },
+      "strategy": "REUSE",
+      "summary": "Specialized hat for capability 'workforce_management' (strategy=REUSE). Adapted from TEKsystems retail hat pattern; estate/product-neutral.",
+      "tags": [
+        "hat",
+        "factory-generated",
+        "facility_management",
+        "workforce_management"
+      ]
+    },
+    {
+      "activation": {
+        "default_enabled": true,
+        "mode": "hybrid",
+        "put_off_by": [
+          "disable:facility_management.hat.management_dashboards"
+        ],
+        "triggers": [
+          {
+            "type": "intent",
+            "value": "management_dashboards"
+          },
+          {
+            "type": "capability",
+            "value": "management_dashboards"
+          }
+        ]
+      },
+      "agent_id": "facility_management.hat.management_dashboards",
+      "allowed_actions": [
+        "facility_management.management_dashboards"
+      ],
+      "block_ids": [
+        "dashboard",
+        "analytics",
+        "portfolio_rollup"
+      ],
+      "discipline": "management_dashboards",
+      "display_name": "Facility Management Platform for Schools Management Dashboards Hat",
+      "extends": "facility_management.base",
+      "handoffs": [],
+      "human_authority": true,
+      "kind": "hat",
+      "manifest_version": "1.0.0",
+      "memory": {
+        "pii_policy": "never_store_pii",
+        "save": [],
+        "scope": "tenant_project"
+      },
+      "strategy": "REUSE",
+      "summary": "Specialized hat for capability 'management_dashboards' (strategy=REUSE). Adapted from TEKsystems retail hat pattern; estate/product-neutral.",
+      "tags": [
+        "hat",
+        "factory-generated",
+        "facility_management",
+        "management_dashboards"
+      ]
+    },
+    {
+      "activation": {
+        "default_enabled": true,
+        "mode": "hybrid",
+        "put_off_by": [
+          "disable:facility_management.hat.reporting"
+        ],
+        "triggers": [
+          {
+            "type": "intent",
+            "value": "reporting"
+          },
+          {
+            "type": "capability",
+            "value": "reporting"
+          }
+        ]
+      },
+      "agent_id": "facility_management.hat.reporting",
+      "allowed_actions": [
+        "facility_management.reporting"
+      ],
+      "block_ids": [
+        "analytics",
+        "portfolio_rollup",
+        "formula_executor",
+        "notification"
+      ],
+      "discipline": "reporting",
+      "display_name": "Facility Management Platform for Schools Reporting Hat",
+      "extends": "facility_management.base",
+      "handoffs": [],
+      "human_authority": true,
+      "kind": "hat",
+      "manifest_version": "1.0.0",
+      "memory": {
+        "pii_policy": "never_store_pii",
+        "save": [],
+        "scope": "tenant_project"
+      },
+      "strategy": "REUSE",
+      "summary": "Specialized hat for capability 'reporting' (strategy=REUSE). Adapted from TEKsystems retail hat pattern; estate/product-neutral.",
+      "tags": [
+        "hat",
+        "factory-generated",
+        "facility_management",
+        "reporting"
+      ]
+    },
+    {
+      "activation": {
+        "default_enabled": true,
+        "mode": "hybrid",
+        "put_off_by": [
+          "disable:facility_management.hat.role_based_access"
+        ],
+        "triggers": [
+          {
+            "type": "intent",
+            "value": "role_based_access"
+          },
+          {
+            "type": "capability",
+            "value": "role_based_access"
+          }
+        ]
+      },
+      "agent_id": "facility_management.hat.role_based_access",
+      "allowed_actions": [
+        "facility_management.role_based_access"
+      ],
+      "block_ids": [
+        "team",
+        "audit",
+        "validation"
+      ],
+      "discipline": "role_based_access",
+      "display_name": "Facility Management Platform for Schools Role Based Access Hat",
+      "extends": "facility_management.base",
+      "handoffs": [],
+      "human_authority": true,
+      "kind": "hat",
+      "manifest_version": "1.0.0",
+      "memory": {
+        "pii_policy": "never_store_pii",
+        "save": [],
+        "scope": "tenant_project"
+      },
+      "strategy": "REUSE",
+      "summary": "Specialized hat for capability 'role_based_access' (strategy=REUSE). Adapted from TEKsystems retail hat pattern; estate/product-neutral.",
+      "tags": [
+        "hat",
+        "factory-generated",
+        "facility_management",
+        "role_based_access"
+      ]
+    },
+    {
+      "activation": {
+        "default_enabled": true,
+        "mode": "hybrid",
+        "put_off_by": [
+          "disable:facility_management.hat.erp_integration"
+        ],
+        "triggers": [
+          {
+            "type": "intent",
+            "value": "erp_integration"
+          },
+          {
+            "type": "capability",
+            "value": "erp_integration"
+          }
+        ]
+      },
+      "agent_id": "facility_management.hat.erp_integration",
+      "allowed_actions": [
+        "facility_management.erp_integration"
+      ],
+      "block_ids": [
+        "workflow",
+        "event_bus",
+        "validation"
+      ],
+      "discipline": "erp_integration",
+      "display_name": "Facility Management Platform for Schools Erp Integration Hat",
+      "extends": "facility_management.base",
+      "handoffs": [],
+      "human_authority": true,
+      "kind": "hat",
+      "manifest_version": "1.0.0",
+      "memory": {
+        "pii_policy": "never_store_pii",
+        "save": [],
+        "scope": "tenant_project"
+      },
+      "strategy": "REUSE",
+      "summary": "Specialized hat for capability 'erp_integration' (strategy=REUSE). Adapted from TEKsystems retail hat pattern; estate/product-neutral.",
+      "tags": [
+        "hat",
+        "factory-generated",
+        "facility_management",
+        "erp_integration"
+      ]
+    },
+    {
+      "activation": {
+        "default_enabled": true,
+        "mode": "hybrid",
+        "put_off_by": [
+          "disable:facility_management.hat.booking_system_integration"
+        ],
+        "triggers": [
+          {
+            "type": "intent",
+            "value": "booking_system_integration"
+          },
+          {
+            "type": "capability",
+            "value": "booking_system_integration"
+          }
+        ]
+      },
+      "agent_id": "facility_management.hat.booking_system_integration",
+      "allowed_actions": [
+        "facility_management.booking_system_integration"
+      ],
+      "block_ids": [
+        "workflow",
+        "event_bus",
+        "validation"
+      ],
+      "discipline": "booking_system_integration",
+      "display_name": "Facility Management Platform for Schools Booking System Integration Hat",
+      "extends": "facility_management.base",
+      "handoffs": [],
+      "human_authority": true,
+      "kind": "hat",
+      "manifest_version": "1.0.0",
+      "memory": {
+        "pii_policy": "never_store_pii",
+        "save": [],
+        "scope": "tenant_project"
+      },
+      "strategy": "REUSE",
+      "summary": "Specialized hat for capability 'booking_system_integration' (strategy=REUSE). Adapted from TEKsystems retail hat pattern; estate/product-neutral.",
+      "tags": [
+        "hat",
+        "factory-generated",
+        "facility_management",
+        "booking_system_integration"
+      ]
+    }
+  ],
+  "schema_version": "1.0.0"
+}

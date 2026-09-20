@@ -1,0 +1,22 @@
+{
+  "algorithm": "sha256",
+  "files": {
+    "action_catalog.json": "84118c5dab31cfa6fd2d824c94f3b0183d1755483d1c8c4fc7640ce2902c19e2",
+    "agent_catalog.json": "46d9aaabe93bb790dbc1eea0b4b65c9f996eea50a3be7fd03d2d78b002c65a81",
+    "architecture.json": "030de5ee499e3d84e6f1a464b7fe6d6be29f2509a0a196115edd2216d16269cd",
+    "block_lockfile.json": "a4678d331f2e1d323581d667ed74ceb1a53a832e7616e838b88213765389c780",
+    "capability_resolution.json": "5b68bc7dabee487c1d7ee6110b1c24b47e66c402661d73dcf2e9e3d0b7b78fd9",
+    "change_history.json": "cd1fe9040e4a7aca231bab819e03e0614890ae5b29c5f489a24e28805dfc3704",
+    "deployment_topology.json": "c865b0b3a24e8c461e9a7c4897aefa8be8ea0171da4cd711ab99b3793d3bd571",
+    "entity_model.json": "0a7682c1e9419a5e367f728fc8b15d0df2c268754d35305c1ec85a45083fb78d",
+    "generation_manifest.json": "23d2bfb8cc5280714b33ed73ea93b4a82ca079752f464a217b0514365b3f62b0",
+    "known_limitations.json": "60ba6d56c14b7e6776fa84f1618fc0617c905e25f18f3b5184724e27cd2361b4",
+    "product_blueprint.yaml": "23da100871d8f366639f013a4f8b7a2bd8def4a38f33c90f102da4c68c818e19",
+    "security_policy.json": "afc1b928801429063c1fff4979931091aaed7fa377877c34fdbd4825ddfc2cdc",
+    "source_provenance.json": "a5bca2e2e45144f317b635c637869d748755f5d8c931eda982325d00eb8d207f",
+    "test_catalog.json": "8d6cdf6d0e6d3ee813f1d7a747c87a837d2c4f3bd98ec81f783d85e3a5c4a4a7",
+    "workflow_catalog.json": "ced7c458ce19b0adce05b3d338502c396fcc4c8b6e192d910de38ecb3894b9e2"
+  },
+  "read_only": true,
+  "schema_version": "1.0.0"
+}

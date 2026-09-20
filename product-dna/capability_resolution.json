@@ -1,0 +1,105 @@
+{
+  "capabilities": [
+    {
+      "block_ids": [
+        "capture",
+        "workflow",
+        "queue",
+        "notification"
+      ],
+      "capability_id": "complaints_management",
+      "notes": "dual-registered",
+      "strategy": "REUSE"
+    },
+    {
+      "block_ids": [
+        "workflow",
+        "queue",
+        "team",
+        "recommendation_template"
+      ],
+      "capability_id": "auto_assignment",
+      "notes": "dual-registered",
+      "strategy": "REUSE"
+    },
+    {
+      "block_ids": [
+        "team",
+        "workflow",
+        "queue"
+      ],
+      "capability_id": "workforce_management",
+      "notes": "dual-registered",
+      "strategy": "REUSE"
+    },
+    {
+      "block_ids": [
+        "dashboard",
+        "analytics",
+        "portfolio_rollup"
+      ],
+      "capability_id": "management_dashboards",
+      "notes": "dual-registered",
+      "strategy": "REUSE"
+    },
+    {
+      "block_ids": [
+        "analytics",
+        "portfolio_rollup",
+        "formula_executor",
+        "notification"
+      ],
+      "capability_id": "reporting",
+      "notes": "dual-registered",
+      "strategy": "REUSE"
+    },
+    {
+      "block_ids": [
+        "team",
+        "audit",
+        "validation"
+      ],
+      "capability_id": "role_based_access",
+      "notes": "dual-registered",
+      "strategy": "REUSE"
+    },
+    {
+      "block_ids": [
+        "workflow",
+        "event_bus",
+        "validation"
+      ],
+      "capability_id": "erp_integration",
+      "notes": "dual-registered",
+      "strategy": "REUSE"
+    },
+    {
+      "block_ids": [
+        "workflow",
+        "event_bus",
+        "validation"
+      ],
+      "capability_id": "booking_system_integration",
+      "notes": "dual-registered",
+      "strategy": "REUSE"
+    }
+  ],
+  "dual_registered_blocks": [
+    "analytics",
+    "audit",
+    "capture",
+    "dashboard",
+    "event_bus",
+    "formula_executor",
+    "notification",
+    "portfolio_rollup",
+    "queue",
+    "recommendation_template",
+    "team",
+    "validation",
+    "workflow"
+  ],
+  "notes": [],
+  "schema_version": "1.0.0",
+  "unsupported": []
+}

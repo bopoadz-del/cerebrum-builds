@@ -1,0 +1,49 @@
+{
+  "activation": {
+    "default_enabled": true,
+    "mode": "hybrid",
+    "put_off_by": [
+      "disable:facility_management.hat.complaints_management"
+    ],
+    "triggers": [
+      {
+        "type": "intent",
+        "value": "complaints_management"
+      },
+      {
+        "type": "capability",
+        "value": "complaints_management"
+      }
+    ]
+  },
+  "agent_id": "facility_management.hat.complaints_management",
+  "allowed_actions": [
+    "facility_management.complaints_management"
+  ],
+  "block_ids": [
+    "capture",
+    "workflow",
+    "queue",
+    "notification"
+  ],
+  "discipline": "complaints_management",
+  "display_name": "Facility Management Platform for Schools Complaints Management Hat",
+  "extends": "facility_management.base",
+  "handoffs": [],
+  "human_authority": true,
+  "kind": "hat",
+  "manifest_version": "1.0.0",
+  "memory": {
+    "pii_policy": "never_store_pii",
+    "save": [],
+    "scope": "tenant_project"
+  },
+  "strategy": "REUSE",
+  "summary": "Specialized hat for capability 'complaints_management' (strategy=REUSE). Adapted from TEKsystems retail hat pattern; estate/product-neutral.",
+  "tags": [
+    "hat",
+    "factory-generated",
+    "facility_management",
+    "complaints_management"
+  ]
+}

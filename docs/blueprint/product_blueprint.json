@@ -2,55 +2,36 @@
   "capabilities": [
     {
       "block_ids": [
-        "workflow",
-        "database",
-        "validation",
-        "event_bus",
-        "queue",
-        "audit"
-      ],
-      "description": "Handles the full reservation lifecycle including availability checks, real-time booking, modifications, cancellations, and stay records across all channels.",
-      "id": "booking_management",
-      "required": true,
-      "strategy_hint": "REUSE"
-    },
-    {
-      "block_ids": [
-        "estate_registry",
-        "estate_maintenance",
-        "database",
-        "team",
-        "workflow",
-        "audit"
-      ],
-      "description": "Manages rooms, rate plans, seasonal inventory, and property configuration for one or many hotel properties.",
-      "id": "property_management",
-      "required": true,
-      "strategy_hint": "REUSE"
-    },
-    {
-      "block_ids": [
-        "formula_executor",
-        "readiness_engine",
-        "recommendation_template",
-        "analytics",
-        "database"
-      ],
-      "description": "Calculates and adjusts room rates in real time based on demand, occupancy, seasonality, competitor signals, and configurable pricing rules.",
-      "id": "dynamic_pricing",
-      "required": true,
-      "strategy_hint": "REUSE"
-    },
-    {
-      "block_ids": [
         "capture",
-        "knowledge",
-        "vector_search",
-        "analytics",
+        "workflow",
+        "queue",
         "notification"
       ],
-      "description": "Collects, moderates, and responds to guest reviews; analyzes sentiment and surfaces reputation trends for each property.",
-      "id": "review_management",
+      "description": "Capture complaints raised by school staff or parents, or entered by management on their behalf, and track each one through its full lifecycle to closure with status visible to management.",
+      "id": "complaints_management",
+      "required": true,
+      "strategy_hint": "REUSE"
+    },
+    {
+      "block_ids": [
+        "workflow",
+        "queue",
+        "team",
+        "recommendation_template"
+      ],
+      "description": "Automatically route each complaint to the appropriate technician or cleaner based on school site, trade/skill and workload, with manual override by management when needed.",
+      "id": "auto_assignment",
+      "required": true,
+      "strategy_hint": "REUSE"
+    },
+    {
+      "block_ids": [
+        "team",
+        "workflow",
+        "queue"
+      ],
+      "description": "Organise technician and cleaner teams per school, assign and track their work, and manage roles and access levels for management, field staff and complainants.",
+      "id": "workforce_management",
       "required": true,
       "strategy_hint": "REUSE"
     },
@@ -58,55 +39,78 @@
       "block_ids": [
         "dashboard",
         "analytics",
+        "portfolio_rollup"
+      ],
+      "description": "Per-site and portfolio-level dashboards across all 10 schools showing complaints, jobs, status and performance, for management oversight and control.",
+      "id": "management_dashboards",
+      "required": true,
+      "strategy_hint": "REUSE"
+    },
+    {
+      "block_ids": [
+        "analytics",
         "portfolio_rollup",
-        "database"
+        "formula_executor",
+        "notification"
       ],
-      "description": "Provides operational dashboards and reports covering occupancy, revenue, booking pace, channel performance, and guest satisfaction.",
-      "id": "analytics_dashboard",
+      "description": "Scheduled and on-demand reporting on complaint volumes, closure times, team workload and per-school performance, including rollups across the estate.",
+      "id": "reporting",
       "required": true,
       "strategy_hint": "REUSE"
     },
     {
       "block_ids": [
-        "notification",
+        "team",
+        "audit",
+        "validation"
+      ],
+      "description": "Distinct access and permissions for management, technicians/cleaners and complainants, so each group sees and acts only on what they should.",
+      "id": "role_based_access",
+      "required": true,
+      "strategy_hint": "REUSE"
+    },
+    {
+      "block_ids": [
+        "workflow",
         "event_bus",
-        "queue",
-        "workflow"
+        "validation"
       ],
-      "description": "Sends timely booking confirmations, reminders, pricing alerts, and internal staff notifications via email, SMS, and in-app channels.",
-      "id": "notification_system",
+      "description": "Connection to the customer's existing ERP for the schools estate (currency AED). Ships as a marked placeholder until an ERP connector is available.",
+      "id": "erp_integration",
       "required": true,
       "strategy_hint": "REUSE"
     },
     {
       "block_ids": [
-        "vector_search",
-        "knowledge",
-        "recommendation_template",
-        "memory",
-        "analytics"
+        "workflow",
+        "event_bus",
+        "validation"
       ],
-      "description": "Enables guests to search properties and rooms with filters, and recommends personalized stays, packages, and upsells based on preferences and history.",
-      "id": "search_recommendation",
+      "description": "Connection to the customer's existing booking system so facility jobs and bookings stay aligned. Ships as a marked placeholder until a booking connector is available.",
+      "id": "booking_system_integration",
       "required": true,
       "strategy_hint": "REUSE"
     }
   ],
-  "connectors": [],
+  "connectors": [
+    "erp",
+    "booking_system"
+  ],
+  "delivery_format": "zip",
   "drafting_mode": "architect_llm",
-  "drafting_note": null,
+  "drafting_note": "inventory: 'facility_management' is not on the declared-ready list (hotels, insurance, construction, finance, retail); the Store kit for this vertical is unverified \u2014 domain depth not guaranteed",
   "edge_profile": "standard",
   "factory_scenario": "CREATE_PRODUCT",
   "human_authority": true,
-  "n_required": 7,
-  "product_id": "hospitality",
-  "product_name": "StayFlow Hospitality Platform",
+  "n_required": 8,
+  "product_id": "facility-management",
+  "product_name": "Facility Management Platform for Schools",
   "schema_version": "product_blueprint.v1",
-  "summary": "StayFlow is an all-in-one hotel booking and property management platform for independent hotels, boutique inns, and small hotel groups. It unifies real-time reservation management, room inventory and rate control, dynamic pricing, guest reviews, and operational analytics, while keeping staff and guests informed with automated notifications and AI-assisted search and recommendations.",
+  "summary": "A facility management platform serving a Dubai schools estate of 10 schools. It gives management oversight and control of technician and cleaner teams, lets school staff and parents log complaints (or management enter them on their behalf), auto-assigns those complaints to the right field staff where possible, and tracks every complaint and job through to closure. Management sees per-school and portfolio-level dashboards across all 10 sites, with role-based access separating management, field st",
   "ui_modules": [
     "command_center",
     "operational_chat",
     "resident_engineer"
   ],
-  "vertical": "hospitality"
+  "vertical": "facility_management"
 }

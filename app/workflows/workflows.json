@@ -1,0 +1,41 @@
+[
+  {
+    "description": "Default linear workflow over planned capabilities.",
+    "name": "Capability sequence",
+    "steps": [
+      {
+        "capability_id": "fleet_registry",
+        "role": "execute"
+      },
+      {
+        "capability_id": "rental_contract_management",
+        "role": "execute"
+      },
+      {
+        "capability_id": "maintenance_scheduling",
+        "role": "execute"
+      },
+      {
+        "capability_id": "pricing_and_rate_cards",
+        "role": "execute"
+      },
+      {
+        "capability_id": "invoicing_and_deposits",
+        "role": "execute"
+      },
+      {
+        "capability_id": "multi_branch_rollup",
+        "role": "execute"
+      },
+      {
+        "capability_id": "reporting_analytics",
+        "role": "execute"
+      },
+      {
+        "capability_id": "audit_trail",
+        "role": "execute"
+      }
+    ],
+    "workflow_id": "car_rental.capability_sequence"
+  }
+]

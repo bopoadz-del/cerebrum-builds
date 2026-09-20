@@ -1,0 +1,51 @@
+{
+  "activation": {
+    "default_enabled": true,
+    "mode": "hybrid",
+    "put_off_by": [
+      "disable:car_rental.hat.rental_contract_management"
+    ],
+    "triggers": [
+      {
+        "type": "intent",
+        "value": "rental_contract_management"
+      },
+      {
+        "type": "capability",
+        "value": "rental_contract_management"
+      }
+    ]
+  },
+  "agent_id": "car_rental.hat.rental_contract_management",
+  "allowed_actions": [
+    "car_rental.rental_contract_management"
+  ],
+  "block_ids": [
+    "workflow",
+    "validation",
+    "event_bus",
+    "queue",
+    "audit",
+    "notification"
+  ],
+  "discipline": "rental_contract_management",
+  "display_name": "FleetOps Back-Office Platform Rental Contract Management Hat",
+  "extends": "car_rental.base",
+  "handoffs": [],
+  "human_authority": true,
+  "kind": "hat",
+  "manifest_version": "1.0.0",
+  "memory": {
+    "pii_policy": "never_store_pii",
+    "save": [],
+    "scope": "tenant_project"
+  },
+  "strategy": "REUSE",
+  "summary": "Specialized hat for capability 'rental_contract_management' (strategy=REUSE). Adapted from TEKsystems retail hat pattern; estate/product-neutral.",
+  "tags": [
+    "hat",
+    "factory-generated",
+    "car_rental",
+    "rental_contract_management"
+  ]
+}

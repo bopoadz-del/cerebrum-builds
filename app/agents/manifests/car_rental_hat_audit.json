@@ -1,0 +1,49 @@
+{
+  "activation": {
+    "default_enabled": true,
+    "mode": "hybrid",
+    "put_off_by": [
+      "disable:car_rental.hat.audit"
+    ],
+    "triggers": [
+      {
+        "type": "intent",
+        "value": "audit"
+      },
+      {
+        "type": "capability",
+        "value": "audit_trail"
+      }
+    ]
+  },
+  "agent_id": "car_rental.hat.audit",
+  "allowed_actions": [
+    "car_rental.audit_trail"
+  ],
+  "block_ids": [
+    "audit",
+    "evidence_verifier",
+    "file_hasher",
+    "capture"
+  ],
+  "discipline": "audit",
+  "display_name": "FleetOps Back-Office Platform Audit Hat",
+  "extends": "car_rental.base",
+  "handoffs": [],
+  "human_authority": true,
+  "kind": "hat",
+  "manifest_version": "1.0.0",
+  "memory": {
+    "pii_policy": "never_store_pii",
+    "save": [],
+    "scope": "tenant_project"
+  },
+  "strategy": "REUSE",
+  "summary": "Specialized hat for capability 'audit_trail' (strategy=REUSE). Adapted from TEKsystems retail hat pattern; estate/product-neutral.",
+  "tags": [
+    "hat",
+    "factory-generated",
+    "car_rental",
+    "audit"
+  ]
+}

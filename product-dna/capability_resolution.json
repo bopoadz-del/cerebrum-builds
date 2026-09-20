@@ -1,0 +1,124 @@
+{
+  "capabilities": [
+    {
+      "block_ids": [
+        "database",
+        "knowledge",
+        "document_engine",
+        "storage",
+        "audit"
+      ],
+      "capability_id": "fleet_registry",
+      "notes": "dual-registered",
+      "strategy": "REUSE"
+    },
+    {
+      "block_ids": [
+        "workflow",
+        "validation",
+        "event_bus",
+        "queue",
+        "audit",
+        "notification"
+      ],
+      "capability_id": "rental_contract_management",
+      "notes": "dual-registered",
+      "strategy": "REUSE"
+    },
+    {
+      "block_ids": [
+        "estate_maintenance",
+        "readiness_engine",
+        "notification",
+        "analytics",
+        "audit"
+      ],
+      "capability_id": "maintenance_scheduling",
+      "notes": "dual-registered",
+      "strategy": "REUSE"
+    },
+    {
+      "block_ids": [
+        "formula_executor",
+        "validation",
+        "audit",
+        "analytics"
+      ],
+      "capability_id": "pricing_and_rate_cards",
+      "notes": "dual-registered",
+      "strategy": "REUSE"
+    },
+    {
+      "block_ids": [
+        "database",
+        "workflow",
+        "analytics",
+        "audit",
+        "notification"
+      ],
+      "capability_id": "invoicing_and_deposits",
+      "notes": "dual-registered",
+      "strategy": "REUSE"
+    },
+    {
+      "block_ids": [
+        "portfolio_rollup",
+        "dashboard",
+        "analytics",
+        "estate_registry"
+      ],
+      "capability_id": "multi_branch_rollup",
+      "notes": "dual-registered",
+      "strategy": "REUSE"
+    },
+    {
+      "block_ids": [
+        "analytics",
+        "dashboard",
+        "memory",
+        "vector_search"
+      ],
+      "capability_id": "reporting_analytics",
+      "notes": "dual-registered",
+      "strategy": "REUSE"
+    },
+    {
+      "block_ids": [
+        "audit",
+        "evidence_verifier",
+        "file_hasher",
+        "capture"
+      ],
+      "capability_id": "audit_trail",
+      "notes": "dual-registered",
+      "strategy": "REUSE"
+    }
+  ],
+  "dual_registered_blocks": [
+    "analytics",
+    "audit",
+    "capture",
+    "dashboard",
+    "database",
+    "document_engine",
+    "estate_maintenance",
+    "estate_registry",
+    "event_bus",
+    "evidence_verifier",
+    "file_hasher",
+    "formula_executor",
+    "knowledge",
+    "memory",
+    "notification",
+    "portfolio_rollup",
+    "queue",
+    "readiness_engine",
+    "storage",
+    "validation",
+    "vector_search",
+    "workflow"
+  ],
+  "notes": [],
+  "schema_version": "1.0.0",
+  "unsupported": []
+}

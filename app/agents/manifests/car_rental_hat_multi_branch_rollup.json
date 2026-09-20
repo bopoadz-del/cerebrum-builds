@@ -1,0 +1,49 @@
+{
+  "activation": {
+    "default_enabled": true,
+    "mode": "hybrid",
+    "put_off_by": [
+      "disable:car_rental.hat.multi_branch_rollup"
+    ],
+    "triggers": [
+      {
+        "type": "intent",
+        "value": "multi_branch_rollup"
+      },
+      {
+        "type": "capability",
+        "value": "multi_branch_rollup"
+      }
+    ]
+  },
+  "agent_id": "car_rental.hat.multi_branch_rollup",
+  "allowed_actions": [
+    "car_rental.multi_branch_rollup"
+  ],
+  "block_ids": [
+    "portfolio_rollup",
+    "dashboard",
+    "analytics",
+    "estate_registry"
+  ],
+  "discipline": "multi_branch_rollup",
+  "display_name": "FleetOps Back-Office Platform Multi Branch Rollup Hat",
+  "extends": "car_rental.base",
+  "handoffs": [],
+  "human_authority": true,
+  "kind": "hat",
+  "manifest_version": "1.0.0",
+  "memory": {
+    "pii_policy": "never_store_pii",
+    "save": [],
+    "scope": "tenant_project"
+  },
+  "strategy": "REUSE",
+  "summary": "Specialized hat for capability 'multi_branch_rollup' (strategy=REUSE). Adapted from TEKsystems retail hat pattern; estate/product-neutral.",
+  "tags": [
+    "hat",
+    "factory-generated",
+    "car_rental",
+    "multi_branch_rollup"
+  ]
+}

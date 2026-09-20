@@ -1,0 +1,50 @@
+{
+  "activation": {
+    "default_enabled": true,
+    "mode": "hybrid",
+    "put_off_by": [
+      "disable:car_rental.hat.invoicing_and_deposits"
+    ],
+    "triggers": [
+      {
+        "type": "intent",
+        "value": "invoicing_and_deposits"
+      },
+      {
+        "type": "capability",
+        "value": "invoicing_and_deposits"
+      }
+    ]
+  },
+  "agent_id": "car_rental.hat.invoicing_and_deposits",
+  "allowed_actions": [
+    "car_rental.invoicing_and_deposits"
+  ],
+  "block_ids": [
+    "database",
+    "workflow",
+    "analytics",
+    "audit",
+    "notification"
+  ],
+  "discipline": "invoicing_and_deposits",
+  "display_name": "FleetOps Back-Office Platform Invoicing And Deposits Hat",
+  "extends": "car_rental.base",
+  "handoffs": [],
+  "human_authority": true,
+  "kind": "hat",
+  "manifest_version": "1.0.0",
+  "memory": {
+    "pii_policy": "never_store_pii",
+    "save": [],
+    "scope": "tenant_project"
+  },
+  "strategy": "REUSE",
+  "summary": "Specialized hat for capability 'invoicing_and_deposits' (strategy=REUSE). Adapted from TEKsystems retail hat pattern; estate/product-neutral.",
+  "tags": [
+    "hat",
+    "factory-generated",
+    "car_rental",
+    "invoicing_and_deposits"
+  ]
+}

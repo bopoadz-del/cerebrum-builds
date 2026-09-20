@@ -1,0 +1,73 @@
+{
+  "defects": [
+    {
+      "block_id": "notification",
+      "detail": "IndentationError: expected an indented block after 'try' statement on line 230. The factory's emit_store_host_di transform removes 'from app.dependencies import _create_block_instance' from the offline MCP branch that emit_notification_mcp had just inserted, leaving an empty 'try:'. Reproduced by: python3 -c \"import ast;ast.parse(open('vendor/cerebrum/blocks/notification.py').read())\".",
+      "impact": "Every execute('notification', ...) call raises. The plan binds notification at rental_contract_management, maintenance_scheduling and invoicing_and_deposits.",
+      "kind": "SyntaxError",
+      "lines": [
+        230,
+        231
+      ],
+      "mitigation": "Notification-block bindings are not declared in BLOCK_IDS (declared means invoked). The email requirement is implemented for real in app/notifications.py: each capability renders its maintenance-due / rental-overdue / deposit-release / invoice-overdue notice and appends it to the outbox at <STORAGE_PATH>/notifications/outbox.jsonl for the mail relay. Nothing is claimed as sent.",
+      "remedy": "Repair the vendored source (emit_store_host_di must not strip the import when emit_notification_mcp has already inserted the offline fallback), then re-add 'notification' to the three capabilities' BLOCK_IDS and to BLOCK_DEFAULT_ACTIONS.",
+      "vendored_path": "vendor/cerebrum/blocks/notification.py"
+    },
+    {
+      "block_id": "knowledge",
+      "detail": "from vendor.cerebrum.core import vector_store fails: vendor/cerebrum/core/vector_store.py is not in the vendored runtime slice. Reproduced by: python3 -c \"import vendor.cerebrum.blocks.knowledge\". The plan binds knowledge at fleet_registry.",
+      "impact": "The block cannot be imported, so no action can be dispatched to it.",
+      "kind": "ImportError",
+      "lines": [
+        13
+      ],
+      "mitigation": "fleet_registry declares database, storage and audit; knowledge is not declared (declared means invoked). Document retrieval is served by app/rag_routes.py over app/retrieval.py, which needs no Store block.",
+      "remedy": "Ship vendor/cerebrum/core/vector_store.py in the runtime slice, then re-declare knowledge on fleet_registry.",
+      "vendored_path": "vendor/cerebrum/blocks/knowledge.py"
+    },
+    {
+      "block_id": "document_engine",
+      "detail": "The wrapper loads '../document_engine_block.py' with importlib.util.spec_from_file_location; only the package directory vendor/cerebrum/blocks/document_engine_block/ exists, so the load raises FileNotFoundError: .../vendor/cerebrum/blocks/document_engine_block.py. Reproduced by: python3 -c \"import app.dispatch as d;d.load_block('document_engine')\". The plan binds document_engine at fleet_registry (as a service-history attachment parser).",
+      "impact": "The block cannot be imported, so no action can be dispatched to it.",
+      "kind": "FileNotFoundError",
+      "lines": [
+        56
+      ],
+      "mitigation": "fleet_registry keeps the attachment_path column (the document obligation's field) and declares database, storage and audit. Nothing parses documents at launch \u2014 the operator has nothing to upload yet, which the brief allows.",
+      "remedy": "Vendor document_engine_block.py beside the package, then re-declare document_engine on fleet_registry.",
+      "vendored_path": "vendor/cerebrum/blocks/document_engine/__init__.py"
+    },
+    {
+      "block_id": "storage",
+      "defect": "file-backend data_dir defaults to './data/storage' relative to the process cwd, so a run that does not chdir drops block file-store artifacts beside the checkout instead of under STORAGE_PATH",
+      "evidence": "vendor/cerebrum/blocks/storage.py line 46/59: \"data_dir\": \"./data/storage\"; vendor/blocks/storage/block.py builds the instance with config={}, so no caller-supplied path reaches it",
+      "impact": "generated file-store artifacts under <cwd>/data/storage; not a second database (app/db.py remains the only database root, and the shim's own store_blocks.sqlite lives under STORAGE_PATH)",
+      "mitigation": "the artifacts are runtime output, not source, and are removed from the delivered tree; re-pointing data_dir needs a caller-supplied config the vendored shim does not forward, and vendor/** is sealed"
+    }
+  ],
+  "product_id": "car-rental",
+  "recorded_by": "WRITER (codewhale exec)",
+  "schema": "vendor_block_defects.v1",
+  "verified_working": [
+    "database",
+    "storage",
+    "audit",
+    "workflow",
+    "validation",
+    "event_bus",
+    "queue",
+    "estate_maintenance",
+    "readiness_engine",
+    "analytics",
+    "formula_executor",
+    "portfolio_rollup",
+    "dashboard",
+    "estate_registry",
+    "memory",
+    "vector_search",
+    "evidence_verifier",
+    "file_hasher",
+    "capture"
+  ],
+  "why": "These vendored Store blocks are declared by the plan's REUSE roster but cannot be imported or executed in this checkout. A capability that declares a block it cannot invoke is F11 ('declares block(s) it never invokes') and a capability whose mandatory block cannot load would return ok:false on a payload built from its own schema. Neither is acceptable, so the defect is named here instead of being papered over with a stub or a silent omission."
+}

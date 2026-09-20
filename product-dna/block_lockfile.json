@@ -1,0 +1,95 @@
+{
+  "blocks_commit": "08c2724b85be1d8b07968818d35221775d15b6dd",
+  "factory_commit": "7c56a9329b1615eb85ba6978511d812ee5ac8763",
+  "pins": [
+    {
+      "block_id": "analytics",
+      "source": "dual_registry"
+    },
+    {
+      "block_id": "audit",
+      "source": "dual_registry"
+    },
+    {
+      "block_id": "capture",
+      "source": "dual_registry"
+    },
+    {
+      "block_id": "dashboard",
+      "source": "dual_registry"
+    },
+    {
+      "block_id": "database",
+      "source": "dual_registry"
+    },
+    {
+      "block_id": "document_engine",
+      "source": "dual_registry"
+    },
+    {
+      "block_id": "estate_maintenance",
+      "source": "dual_registry"
+    },
+    {
+      "block_id": "estate_registry",
+      "source": "dual_registry"
+    },
+    {
+      "block_id": "event_bus",
+      "source": "dual_registry"
+    },
+    {
+      "block_id": "evidence_verifier",
+      "source": "dual_registry"
+    },
+    {
+      "block_id": "file_hasher",
+      "source": "dual_registry"
+    },
+    {
+      "block_id": "formula_executor",
+      "source": "dual_registry"
+    },
+    {
+      "block_id": "knowledge",
+      "source": "dual_registry"
+    },
+    {
+      "block_id": "memory",
+      "source": "dual_registry"
+    },
+    {
+      "block_id": "notification",
+      "source": "dual_registry"
+    },
+    {
+      "block_id": "portfolio_rollup",
+      "source": "dual_registry"
+    },
+    {
+      "block_id": "queue",
+      "source": "dual_registry"
+    },
+    {
+      "block_id": "readiness_engine",
+      "source": "dual_registry"
+    },
+    {
+      "block_id": "storage",
+      "source": "dual_registry"
+    },
+    {
+      "block_id": "validation",
+      "source": "dual_registry"
+    },
+    {
+      "block_id": "vector_search",
+      "source": "dual_registry"
+    },
+    {
+      "block_id": "workflow",
+      "source": "dual_registry"
+    }
+  ],
+  "schema_version": "1.0.0"
+}

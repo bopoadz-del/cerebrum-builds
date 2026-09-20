@@ -1,0 +1,50 @@
+{
+  "activation": {
+    "default_enabled": true,
+    "mode": "hybrid",
+    "put_off_by": [
+      "disable:car_rental.hat.maintenance_scheduling"
+    ],
+    "triggers": [
+      {
+        "type": "intent",
+        "value": "maintenance_scheduling"
+      },
+      {
+        "type": "capability",
+        "value": "maintenance_scheduling"
+      }
+    ]
+  },
+  "agent_id": "car_rental.hat.maintenance_scheduling",
+  "allowed_actions": [
+    "car_rental.maintenance_scheduling"
+  ],
+  "block_ids": [
+    "estate_maintenance",
+    "readiness_engine",
+    "notification",
+    "analytics",
+    "audit"
+  ],
+  "discipline": "maintenance_scheduling",
+  "display_name": "FleetOps Back-Office Platform Maintenance Scheduling Hat",
+  "extends": "car_rental.base",
+  "handoffs": [],
+  "human_authority": true,
+  "kind": "hat",
+  "manifest_version": "1.0.0",
+  "memory": {
+    "pii_policy": "never_store_pii",
+    "save": [],
+    "scope": "tenant_project"
+  },
+  "strategy": "REUSE",
+  "summary": "Specialized hat for capability 'maintenance_scheduling' (strategy=REUSE). Adapted from TEKsystems retail hat pattern; estate/product-neutral.",
+  "tags": [
+    "hat",
+    "factory-generated",
+    "car_rental",
+    "maintenance_scheduling"
+  ]
+}

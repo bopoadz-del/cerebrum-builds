@@ -1,0 +1,6 @@
+{
+  "network_posture": "offline",
+  "runtime_outbound": "none",
+  "store_callbacks": false,
+  "channel": "mcp"
+}

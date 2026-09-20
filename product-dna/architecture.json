@@ -1,0 +1,99 @@
+{
+  "capabilities": [
+    {
+      "block_ids": [
+        "database",
+        "knowledge",
+        "document_engine",
+        "storage",
+        "audit"
+      ],
+      "capability_id": "fleet_registry",
+      "strategy": "REUSE"
+    },
+    {
+      "block_ids": [
+        "workflow",
+        "validation",
+        "event_bus",
+        "queue",
+        "audit",
+        "notification"
+      ],
+      "capability_id": "rental_contract_management",
+      "strategy": "REUSE"
+    },
+    {
+      "block_ids": [
+        "estate_maintenance",
+        "readiness_engine",
+        "notification",
+        "analytics",
+        "audit"
+      ],
+      "capability_id": "maintenance_scheduling",
+      "strategy": "REUSE"
+    },
+    {
+      "block_ids": [
+        "formula_executor",
+        "validation",
+        "audit",
+        "analytics"
+      ],
+      "capability_id": "pricing_and_rate_cards",
+      "strategy": "REUSE"
+    },
+    {
+      "block_ids": [
+        "database",
+        "workflow",
+        "analytics",
+        "audit",
+        "notification"
+      ],
+      "capability_id": "invoicing_and_deposits",
+      "strategy": "REUSE"
+    },
+    {
+      "block_ids": [
+        "portfolio_rollup",
+        "dashboard",
+        "analytics",
+        "estate_registry"
+      ],
+      "capability_id": "multi_branch_rollup",
+      "strategy": "REUSE"
+    },
+    {
+      "block_ids": [
+        "analytics",
+        "dashboard",
+        "memory",
+        "vector_search"
+      ],
+      "capability_id": "reporting_analytics",
+      "strategy": "REUSE"
+    },
+    {
+      "block_ids": [
+        "audit",
+        "evidence_verifier",
+        "file_hasher",
+        "capture"
+      ],
+      "capability_id": "audit_trail",
+      "strategy": "REUSE"
+    }
+  ],
+  "connectors": [],
+  "layers": [],
+  "product_id": "car-rental",
+  "schema_version": "1.0.0",
+  "ui_modules": [
+    "command_center",
+    "operational_chat",
+    "resident_engineer"
+  ],
+  "vertical": "car_rental"
+}

@@ -1,0 +1,50 @@
+{
+  "activation": {
+    "default_enabled": true,
+    "mode": "hybrid",
+    "put_off_by": [
+      "disable:car_rental.hat.fleet_registry"
+    ],
+    "triggers": [
+      {
+        "type": "intent",
+        "value": "fleet_registry"
+      },
+      {
+        "type": "capability",
+        "value": "fleet_registry"
+      }
+    ]
+  },
+  "agent_id": "car_rental.hat.fleet_registry",
+  "allowed_actions": [
+    "car_rental.fleet_registry"
+  ],
+  "block_ids": [
+    "database",
+    "knowledge",
+    "document_engine",
+    "storage",
+    "audit"
+  ],
+  "discipline": "fleet_registry",
+  "display_name": "FleetOps Back-Office Platform Fleet Registry Hat",
+  "extends": "car_rental.base",
+  "handoffs": [],
+  "human_authority": true,
+  "kind": "hat",
+  "manifest_version": "1.0.0",
+  "memory": {
+    "pii_policy": "never_store_pii",
+    "save": [],
+    "scope": "tenant_project"
+  },
+  "strategy": "REUSE",
+  "summary": "Specialized hat for capability 'fleet_registry' (strategy=REUSE). Adapted from TEKsystems retail hat pattern; estate/product-neutral.",
+  "tags": [
+    "hat",
+    "factory-generated",
+    "car_rental",
+    "fleet_registry"
+  ]
+}

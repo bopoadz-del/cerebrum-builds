@@ -1,0 +1,49 @@
+{
+  "activation": {
+    "default_enabled": true,
+    "mode": "hybrid",
+    "put_off_by": [
+      "disable:car_rental.hat.reporting_analytics"
+    ],
+    "triggers": [
+      {
+        "type": "intent",
+        "value": "reporting_analytics"
+      },
+      {
+        "type": "capability",
+        "value": "reporting_analytics"
+      }
+    ]
+  },
+  "agent_id": "car_rental.hat.reporting_analytics",
+  "allowed_actions": [
+    "car_rental.reporting_analytics"
+  ],
+  "block_ids": [
+    "analytics",
+    "dashboard",
+    "memory",
+    "vector_search"
+  ],
+  "discipline": "reporting_analytics",
+  "display_name": "FleetOps Back-Office Platform Reporting Analytics Hat",
+  "extends": "car_rental.base",
+  "handoffs": [],
+  "human_authority": true,
+  "kind": "hat",
+  "manifest_version": "1.0.0",
+  "memory": {
+    "pii_policy": "never_store_pii",
+    "save": [],
+    "scope": "tenant_project"
+  },
+  "strategy": "REUSE",
+  "summary": "Specialized hat for capability 'reporting_analytics' (strategy=REUSE). Adapted from TEKsystems retail hat pattern; estate/product-neutral.",
+  "tags": [
+    "hat",
+    "factory-generated",
+    "car_rental",
+    "reporting_analytics"
+  ]
+}

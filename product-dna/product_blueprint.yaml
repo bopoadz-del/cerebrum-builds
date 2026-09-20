@@ -1,0 +1,114 @@
+schema_version: product_blueprint.v1
+product_id: car-rental
+product_name: FleetOps Back-Office Platform
+vertical: car_rental
+summary: A back-office management platform for a car rental company with 4 branches
+  and 20 staff (sales agents, accountants, branch managers). It provides role-based
+  access to a central vehicle registry, end-to-end rental contracts with cross-branch
+  availability, preventive maintenance scheduling, multi-branch pricing, invoicing
+  with deposit tracking, analytics dashboards, audit trails, and email-only notifications.
+  Manager-level users get branch-specific and company-wide visibility, while sales
+  and acco
+capabilities:
+- id: fleet_registry
+  description: Central registry of every vehicle with plate/VIN, branch assignment,
+    category, status (available, rented, in maintenance, off-road), mileage, and service
+    history. Supports per-vehicle lifecycle tracking and cross-branch visibility.
+  block_ids:
+  - database
+  - knowledge
+  - document_engine
+  - storage
+  - audit
+  strategy_hint: REUSE
+  required: true
+- id: rental_contract_management
+  description: 'End-to-end rental lifecycle: reservations, rental agreements, pickup/return
+    handling, extensions, deposits, damage/incident notes, and per-vehicle availability
+    to prevent double-booking across branches.'
+  block_ids:
+  - workflow
+  - validation
+  - event_bus
+  - queue
+  - audit
+  - notification
+  strategy_hint: REUSE
+  required: true
+- id: maintenance_scheduling
+  description: Preventive maintenance schedules per vehicle by date or mileage, workshop/service
+    job tracking, costs, downtime, and automated reminders before a vehicle goes off-road.
+  block_ids:
+  - estate_maintenance
+  - readiness_engine
+  - notification
+  - analytics
+  - audit
+  strategy_hint: REUSE
+  required: true
+- id: pricing_and_rate_cards
+  description: Rate cards by vehicle category, branch, season, and duration; extra
+    charges for mileage, fuel, late return, and extras; deposits held and released.
+    Includes price override tracking for audit.
+  block_ids:
+  - formula_executor
+  - validation
+  - audit
+  - analytics
+  strategy_hint: REUSE
+  required: true
+- id: invoicing_and_deposits
+  description: Invoices, credit notes, deposit tracking and release, outstanding balances,
+    and per-branch revenue reporting.
+  block_ids:
+  - database
+  - workflow
+  - analytics
+  - audit
+  - notification
+  strategy_hint: REUSE
+  required: true
+- id: multi_branch_rollup
+  description: Per-branch dashboards plus a company-wide rollup showing fleet utilisation,
+    revenue, and profitability across all locations.
+  block_ids:
+  - portfolio_rollup
+  - dashboard
+  - analytics
+  - estate_registry
+  strategy_hint: REUSE
+  required: true
+- id: reporting_analytics
+  description: Analytics dashboard for fleet utilisation, revenue per branch and per
+    vehicle, maintenance cost, overdue returns, and unpaid invoices.
+  block_ids:
+  - analytics
+  - dashboard
+  - memory
+  - vector_search
+  strategy_hint: REUSE
+  required: true
+- id: audit_trail
+  description: Immutable audit log of key actions such as contract changes, deposit
+    releases, and price overrides, with evidence verification and file hashing for
+    integrity.
+  block_ids:
+  - audit
+  - evidence_verifier
+  - file_hasher
+  - capture
+  strategy_hint: REUSE
+  required: true
+ui_modules:
+- command_center
+- operational_chat
+- resident_engineer
+connectors: []
+edge_profile: standard
+human_authority: true
+factory_scenario: CREATE_PRODUCT
+drafting_mode: architect_llm
+drafting_note: 'inventory: ''car_rental'' is not on the declared-ready list (hotels,
+  insurance, construction, finance, retail); the Store kit for this vertical is unverified
+  — domain depth not guaranteed'
+delivery_format: zip

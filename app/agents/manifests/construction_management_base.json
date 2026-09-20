@@ -1,0 +1,16 @@
+{
+  "agent_id": "construction_management.base",
+  "capabilities": [
+    "job_and_site_tracking",
+    "commercials_and_valuations",
+    "document_qa_and_indexing",
+    "safety_and_compliance",
+    "progress_cost_dashboard",
+    "automation_reminders_escalation",
+    "audit_and_access_control",
+    "team_notifications"
+  ],
+  "kind": "base",
+  "name": "Construction Platform agent",
+  "product_id": "construction-management"
+}

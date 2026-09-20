@@ -1,40 +1,137 @@
 {
+  "acceptance": [
+    {
+      "check": "refuses or errors when the record id is absent",
+      "id": "missing_record_id",
+      "status": "refused"
+    },
+    {
+      "check": "rejects a duplicate registry record id",
+      "id": "duplicate_id",
+      "status": "failed"
+    },
+    {
+      "check": "errors on an unknown record id on read",
+      "id": "unknown_record",
+      "status": "failed"
+    },
+    {
+      "check": "errors on an unknown or missing action",
+      "id": "unknown_action",
+      "status": "failed"
+    }
+  ],
+  "author": "Cerebrum Team",
+  "description": "JSON-file-backed registry of property and asset records: create with duplicate-id rejection and read-back of stored records.",
+  "digests": {
+    "block.json": "70a0164c0184ace199121cb1f2178e63023e0d5d7618ffd091c4437a29e4de8d",
+    "block.py": "2302b6d98d27e076d8ccd9b053e6ef3387330941caf9e6ed7048f4e82415e038"
+  },
+  "execution": {
+    "entrypoint": "block.py",
+    "type": "python"
+  },
   "id": "estate_registry",
-  "name": "Estate Registry",
-  "version": "1.0.0",
-  "description": "Property and asset registry for private estates",
-  "author": "Cerebrum Factory",
+  "inputs": [
+    {
+      "default": "create",
+      "description": "create | read | list",
+      "name": "action",
+      "options": [
+        "create",
+        "read",
+        "list"
+      ],
+      "required": false,
+      "type": "string"
+    },
+    {
+      "description": "Registry record id (unique)",
+      "name": "id",
+      "required": true,
+      "type": "string"
+    },
+    {
+      "description": "Record payload",
+      "name": "data",
+      "required": false,
+      "type": "json"
+    }
+  ],
   "layer": 3,
+  "name": "Estate Registry",
+  "never": [],
+  "outputs": [
+    {
+      "description": "Capability result",
+      "name": "result",
+      "type": "json"
+    }
+  ],
+  "permissions": {
+    "blocks": [],
+    "filesystem": true,
+    "imports": [],
+    "network": false
+  },
+  "publisher_id": "cerebrum_platform",
+  "reads": [
+    {
+      "kind": "caller",
+      "scope": "input"
+    },
+    {
+      "kind": "config",
+      "scope": "runtime"
+    },
+    {
+      "kind": "env",
+      "scope": "process"
+    },
+    {
+      "kind": "file",
+      "scope": "local.read"
+    }
+  ],
+  "requires": [],
+  "signature": "LRypyPfeIHB4zcig4TYFqHHClvATLqwkXRf4rc89NWjLbKDxMy9fdFScwhT8z9wH9hTvVAU/SROFm4aXkg97Dg==",
   "tags": [
     "estate",
     "private_estate_operations",
     "steward"
   ],
-  "inputs": [
+  "trust_tier": "platform",
+  "ui_schema": [
     {
-      "name": "input",
-      "type": "json",
-      "required": false,
-      "description": "Capability input payload"
+      "label": "Action",
+      "name": "action",
+      "options": [
+        "create",
+        "read",
+        "list"
+      ],
+      "widget": "select"
+    },
+    {
+      "label": "Id",
+      "name": "id",
+      "widget": "text"
+    },
+    {
+      "label": "Data",
+      "name": "data",
+      "widget": "json"
     }
   ],
-  "outputs": [
+  "version": "1.0.0",
+  "writes": [
     {
-      "name": "result",
-      "type": "json",
-      "description": "Capability result"
+      "kind": "caller",
+      "scope": "output"
+    },
+    {
+      "kind": "file",
+      "scope": "local.write"
     }
-  ],
-  "permissions": {
-    "blocks": [],
-    "filesystem": false,
-    "imports": [],
-    "network": false
-  },
-  "publisher_id": "cerebrum_platform",
-  "requires": [],
-  "execution": {
-    "type": "python",
-    "entrypoint": "block.py"
-  }
+  ]
 }

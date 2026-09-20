@@ -1,0 +1,6 @@
+{
+  "deployment": "single container, sqlite on a mounted disk, no outbound network",
+  "health": "GET /health is fail-closed on process, disk, database and alembic head",
+  "schema": "factory.edge_profile.v1",
+  "ui": "one console served at / (app/static/index.html, built from frontend/src/App.tsx)"
+}

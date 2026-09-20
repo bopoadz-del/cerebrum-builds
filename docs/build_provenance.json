@@ -1,0 +1,47 @@
+{
+  "artifact_sources": {
+    "app/actions/audit_and_access_control.py": "coder CLI (codewhale exec)",
+    "app/actions/automation_reminders_escalation.py": "coder CLI (codewhale exec)",
+    "app/actions/commercials_and_valuations.py": "coder CLI (codewhale exec)",
+    "app/actions/document_qa_and_indexing.py": "coder CLI (codewhale exec)",
+    "app/actions/job_and_site_tracking.py": "coder CLI (codewhale exec)",
+    "app/actions/progress_cost_dashboard.py": "coder CLI (codewhale exec)",
+    "app/actions/safety_and_compliance.py": "coder CLI (codewhale exec)",
+    "app/actions/team_notifications.py": "coder CLI (codewhale exec)"
+  },
+  "authorship": {
+    "action_py": 8,
+    "agent_artifacts": [
+      "audit_and_access_control",
+      "automation_reminders_escalation",
+      "commercials_and_valuations",
+      "document_qa_and_indexing",
+      "job_and_site_tracking",
+      "progress_cost_dashboard",
+      "safety_and_compliance",
+      "team_notifications"
+    ],
+    "cli_authored_ids": [
+      "audit_and_access_control",
+      "automation_reminders_escalation",
+      "commercials_and_valuations",
+      "document_qa_and_indexing",
+      "job_and_site_tracking",
+      "progress_cost_dashboard",
+      "safety_and_compliance",
+      "team_notifications"
+    ]
+  },
+  "engine": "codewhale_worker",
+  "n_required": 8,
+  "product_id": "construction-management",
+  "product_name": "Construction Platform",
+  "schema_version": "build_provenance.v1",
+  "worker": {
+    "model": "deepseek-flash",
+    "provider": "deepseek",
+    "status": "completed",
+    "tools": 187
+  },
+  "written_by": "factory (the agent did not emit a manifest)"
+}

@@ -1,0 +1,15 @@
+{
+  "high_impact_actions": [
+    "create",
+    "update",
+    "delete"
+  ],
+  "offline": "no outbound network, no store callbacks, no cloud LLM at runtime",
+  "prohibited_autonomous_actions": [
+    "deploy",
+    "store publish",
+    "export when the pilot suite is red"
+  ],
+  "schema": "product_dna.security_policy.v1",
+  "tenancy": "one tenant per request, resolved from the bearer token \u2014 never from the payload; reserved tenant keys refused"
+}

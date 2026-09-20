@@ -1,0 +1,16 @@
+{
+  "action_handlers_authored": [
+    "app/actions/job_and_site_tracking.py",
+    "app/actions/commercials_and_valuations.py",
+    "app/actions/document_qa_and_indexing.py",
+    "app/actions/safety_and_compliance.py",
+    "app/actions/progress_cost_dashboard.py",
+    "app/actions/automation_reminders_escalation.py",
+    "app/actions/audit_and_access_control.py",
+    "app/actions/team_notifications.py"
+  ],
+  "agent": "codewhale exec",
+  "block_source": "sealed Store blocks vendored by CLONER; called in-process through app/dispatch.py",
+  "role": "WRITER",
+  "schema": "factory.provenance.authorship.v1"
+}

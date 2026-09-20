@@ -1,0 +1,6 @@
+{
+  "authored_in_workspace": "app/**, tests/**, frontend/**, scripts/**, README.md, alembic/versions/0001_baseline.py",
+  "money": "country/currency from the brief (AE, AED); rates from named environment settings with no default",
+  "schema": "product_dna.source_provenance.v1",
+  "vendored_read_only": "vendor/blocks/** (sealed after CLONER; called through app/dispatch.py execute(action=))"
+}

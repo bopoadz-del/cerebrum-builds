@@ -1,0 +1,130 @@
+{
+  "blocks_commit": "unknown",
+  "blueprint_id": "construction-management:product_blueprint.v1",
+  "factory": "CerebrumDev.ai",
+  "factory_commit": "unknown",
+  "generated_at": "blueprint:ff63b1eb59d6f6000ea7f7805fd48d3713804cd19078ef47bbffa49d65385f20",
+  "inputs_hash": "ff63b1eb59d6f6000ea7f7805fd48d3713804cd19078ef47bbffa49d65385f20",
+  "kernel_version": "1.0.0",
+  "plan": {
+    "capabilities": [
+      {
+        "block_ids": [
+          "workflow",
+          "database",
+          "estate_registry",
+          "validation"
+        ],
+        "capability_id": "job_and_site_tracking",
+        "notes": "dual-registered",
+        "strategy": "REUSE"
+      },
+      {
+        "block_ids": [
+          "formula_executor",
+          "document_engine",
+          "database",
+          "validation"
+        ],
+        "capability_id": "commercials_and_valuations",
+        "notes": "dual-registered",
+        "strategy": "REUSE"
+      },
+      {
+        "block_ids": [
+          "capture",
+          "storage",
+          "vector_search",
+          "knowledge",
+          "file_hasher"
+        ],
+        "capability_id": "document_qa_and_indexing",
+        "notes": "dual-registered",
+        "strategy": "REUSE"
+      },
+      {
+        "block_ids": [
+          "estate_maintenance",
+          "readiness_engine",
+          "workflow",
+          "validation"
+        ],
+        "capability_id": "safety_and_compliance",
+        "notes": "dual-registered",
+        "strategy": "REUSE"
+      },
+      {
+        "block_ids": [
+          "portfolio_rollup",
+          "dashboard",
+          "analytics"
+        ],
+        "capability_id": "progress_cost_dashboard",
+        "notes": "dual-registered",
+        "strategy": "REUSE"
+      },
+      {
+        "block_ids": [
+          "queue",
+          "event_bus",
+          "notification",
+          "workflow",
+          "recommendation_template"
+        ],
+        "capability_id": "automation_reminders_escalation",
+        "notes": "dual-registered",
+        "strategy": "REUSE"
+      },
+      {
+        "block_ids": [
+          "audit",
+          "team",
+          "validation",
+          "database"
+        ],
+        "capability_id": "audit_and_access_control",
+        "notes": "dual-registered",
+        "strategy": "REUSE"
+      },
+      {
+        "block_ids": [
+          "notification",
+          "event_bus"
+        ],
+        "capability_id": "team_notifications",
+        "notes": "dual-registered",
+        "strategy": "REUSE"
+      }
+    ],
+    "dual_registered_blocks": [
+      "analytics",
+      "audit",
+      "capture",
+      "dashboard",
+      "database",
+      "document_engine",
+      "estate_maintenance",
+      "estate_registry",
+      "event_bus",
+      "file_hasher",
+      "formula_executor",
+      "knowledge",
+      "notification",
+      "portfolio_rollup",
+      "queue",
+      "readiness_engine",
+      "recommendation_template",
+      "storage",
+      "team",
+      "validation",
+      "vector_search",
+      "workflow"
+    ],
+    "fail_closed": true,
+    "inventory_domain_gaps": [],
+    "product_id": "construction-management",
+    "unsupported": []
+  },
+  "product_id": "construction-management",
+  "schema": "factory_provenance.v1"
+}

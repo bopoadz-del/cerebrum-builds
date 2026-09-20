@@ -1,0 +1,14 @@
+{
+  "agent_id": "construction_management.automation_reminders_escalation",
+  "blocks": [
+    "queue",
+    "event_bus",
+    "notification",
+    "workflow",
+    "recommendation_template"
+  ],
+  "capability": "automation_reminders_escalation",
+  "kind": "capability",
+  "name": "automation_reminders_escalation handler",
+  "product_id": "construction-management"
+}

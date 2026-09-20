@@ -1,4 +1,4 @@
-"""Queue Block - Async job queue with Redis/memory backend"""
+"""Queue Block - in-process job deque. Redis is not implemented. State is lost on restart."""
 
 from vendor.cerebrum.core.universal_base import UniversalBlock
 from typing import Dict, Any, List, Optional, Callable
@@ -19,8 +19,8 @@ class JobStatus(Enum):
 
 class QueueBlock(UniversalBlock):
     """
-    Queue Block - Background job processing
-    Supports Redis (production) or memory (edge/local)
+    In-process job deque only.
+    Redis is not implemented. Jobs are lost on restart.
     """
     
     name = "queue"
@@ -45,7 +45,8 @@ class QueueBlock(UniversalBlock):
         super().__init__(hal_block, config)
         self.memory_block = None
         self.redis_url = (config or {}).get("redis_url")
-        self.use_redis = bool(self.redis_url)
+        # A redis_url does not enable Redis. That backend is not implemented.
+        self.use_redis = False
         
         # In-memory queue
         self._queues = {}  # queue_name -> deque
@@ -57,7 +58,7 @@ class QueueBlock(UniversalBlock):
     async def _legacy_initialize(self):
         """Initialize queue"""
         print(f"📬 Queue Block initialized")
-        print(f"   Backend: {'Redis' if self.use_redis else 'Memory'}")
+        print("   Backend: in-process memory (redis not implemented)")
         
         # Start worker
         self._running = True
@@ -100,40 +101,34 @@ class QueueBlock(UniversalBlock):
             "max_retries": data.get("max_retries", 3),
         }
         
-        if self.use_redis and self.memory_block:
-            # Store in Redis via memory block
-            await self.memory_block.execute({
-                "action": "set",
-                "key": f"queue:job:{job['id']}",
-                "value": job,
-                "ttl": 86400  # 24 hours
-            })
+        queue_name = job["queue"]
+        if queue_name not in self._queues:
+            self._queues[queue_name] = deque()
+
+        if job["priority"] > 0:
+            self._queues[queue_name].appendleft(job)
         else:
-            # In-memory
-            queue_name = job["queue"]
-            if queue_name not in self._queues:
-                self._queues[queue_name] = deque()
-            
-            if job["priority"] > 0:
-                self._queues[queue_name].appendleft(job)
-            else:
-                self._queues[queue_name].append(job)
-            
-            self._jobs[job["id"]] = job
-        
-        return {"enqueued": True, "job_id": job["id"]}
+            self._queues[queue_name].append(job)
+
+        self._jobs[job["id"]] = job
+
+        result = {
+            "enqueued": True,
+            "job_id": job["id"],
+            "backend": "memory",
+            "persistence": "in_process",
+        }
+        if self.redis_url:
+            result["redis"] = "not_implemented"
+        return result
     
     async def _dequeue(self, queue_name: str) -> Optional[Dict]:
         """Get next job from queue"""
-        if self.use_redis:
-            # Would use Redis BRPOP
-            pass
-        else:
-            if queue_name in self._queues and self._queues[queue_name]:
-                job = self._queues[queue_name].popleft()
-                job["status"] = JobStatus.RUNNING.value
-                job["started_at"] = time.time()
-                return job
+        if queue_name in self._queues and self._queues[queue_name]:
+            job = self._queues[queue_name].popleft()
+            job["status"] = JobStatus.RUNNING.value
+            job["started_at"] = time.time()
+            return job
         
         return None
     
@@ -205,7 +200,9 @@ class QueueBlock(UniversalBlock):
     def health(self) -> Dict[str, Any]:
         """Health check"""
         h = {"name": self.name, "version": self.version}
-        h["backend"] = "redis" if self.use_redis else "memory"
+        h["backend"] = "memory"
+        h["persistence"] = "in_process"
+        h["redis_implemented"] = False
         h["queues"] = list(self._queues.keys())
         h["handlers"] = list(self._handlers.keys())
         h["total_jobs"] = len(self._jobs)

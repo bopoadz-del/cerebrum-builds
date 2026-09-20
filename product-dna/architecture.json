@@ -1,0 +1,93 @@
+{
+  "capabilities": [
+    {
+      "block_ids": [
+        "workflow",
+        "database",
+        "estate_registry",
+        "validation"
+      ],
+      "capability_id": "job_and_site_tracking",
+      "strategy": "REUSE"
+    },
+    {
+      "block_ids": [
+        "formula_executor",
+        "document_engine",
+        "database",
+        "validation"
+      ],
+      "capability_id": "commercials_and_valuations",
+      "strategy": "REUSE"
+    },
+    {
+      "block_ids": [
+        "capture",
+        "storage",
+        "vector_search",
+        "knowledge",
+        "file_hasher"
+      ],
+      "capability_id": "document_qa_and_indexing",
+      "strategy": "REUSE"
+    },
+    {
+      "block_ids": [
+        "estate_maintenance",
+        "readiness_engine",
+        "workflow",
+        "validation"
+      ],
+      "capability_id": "safety_and_compliance",
+      "strategy": "REUSE"
+    },
+    {
+      "block_ids": [
+        "portfolio_rollup",
+        "dashboard",
+        "analytics"
+      ],
+      "capability_id": "progress_cost_dashboard",
+      "strategy": "REUSE"
+    },
+    {
+      "block_ids": [
+        "queue",
+        "event_bus",
+        "notification",
+        "workflow",
+        "recommendation_template"
+      ],
+      "capability_id": "automation_reminders_escalation",
+      "strategy": "REUSE"
+    },
+    {
+      "block_ids": [
+        "audit",
+        "team",
+        "validation",
+        "database"
+      ],
+      "capability_id": "audit_and_access_control",
+      "strategy": "REUSE"
+    },
+    {
+      "block_ids": [
+        "notification",
+        "event_bus"
+      ],
+      "capability_id": "team_notifications",
+      "strategy": "REUSE"
+    }
+  ],
+  "connectors": [],
+  "layers": [],
+  "product_id": "construction-management",
+  "schema_version": "1.0.0",
+  "ui_modules": [
+    "command_center",
+    "operational_chat",
+    "resident_engineer"
+  ],
+  "vertical": "construction_management"
+}

@@ -1,0 +1,108 @@
+schema_version: product_blueprint.v1
+product_id: construction-management
+product_name: Construction Platform
+vertical: construction_management
+summary: 'A construction management platform for a small civil-works contractor in
+  the UAE, working in AED. It covers day-to-day running of one to five concurrent
+  civil jobs — site records, progress, snags, variations — plus document-backed Q&A
+  over BOQs, drawings, method statements and price lists, and full commercial control:
+  BOQ measurement, interim payment applications and valuations, retention, UAE VAT,
+  purchase orders and payment tracking. It serves a team of three to ten (owner, site
+  engineers/fore'
+capabilities:
+- id: job_and_site_tracking
+  description: Track active jobs, sites and work fronts with milestones, progress
+    percentage, snag/punch lists, and variations with their approval status.
+  block_ids:
+  - workflow
+  - database
+  - estate_registry
+  - validation
+  strategy_hint: REUSE
+  required: true
+- id: commercials_and_valuations
+  description: BOQ line items and measured quantities, interim payment applications/valuations,
+    retention, variation orders, invoices, and supplier/subcontractor purchase orders
+    and payment tracking — all in AED, with UAE VAT rules applied and unspecified
+    tax/regulatory handling kept configurable.
+  block_ids:
+  - formula_executor
+  - document_engine
+  - database
+  - validation
+  strategy_hint: REUSE
+  required: true
+- id: document_qa_and_indexing
+  description: Upload and index BOQs, drawings, method statements, safety procedures,
+    and subcontractor/supplier price lists, and let the team ask questions against
+    them with source references.
+  block_ids:
+  - capture
+  - storage
+  - vector_search
+  - knowledge
+  - file_hasher
+  strategy_hint: REUSE
+  required: true
+- id: safety_and_compliance
+  description: Per-job method statement and safety procedure records, incident/near-miss
+    logging, and readiness checks before a work front opens.
+  block_ids:
+  - estate_maintenance
+  - readiness_engine
+  - workflow
+  - validation
+  strategy_hint: REUSE
+  required: true
+- id: progress_cost_dashboard
+  description: Cross-job roll-up showing progress, certified value, cost to date,
+    variations pending, snags open, and payments due.
+  block_ids:
+  - portfolio_rollup
+  - dashboard
+  - analytics
+  strategy_hint: REUSE
+  required: true
+- id: automation_reminders_escalation
+  description: Scheduled reminder to prepare the monthly interim payment application/valuation,
+    and escalation/flagging when variations or snags accumulate beyond a threshold
+    on a job.
+  block_ids:
+  - queue
+  - event_bus
+  - notification
+  - workflow
+  - recommendation_template
+  strategy_hint: REUSE
+  required: true
+- id: audit_and_access_control
+  description: Full audit trail of approvals, document versions and financial changes,
+    with role-based access for owner, site engineer/foreman and accounts.
+  block_ids:
+  - audit
+  - team
+  - validation
+  - database
+  strategy_hint: REUSE
+  required: true
+- id: team_notifications
+  description: Notify the team by email and/or messaging channel on approvals, due
+    valuations, and overdue items.
+  block_ids:
+  - notification
+  - event_bus
+  strategy_hint: REUSE
+  required: true
+ui_modules:
+- command_center
+- operational_chat
+- resident_engineer
+connectors: []
+edge_profile: standard
+human_authority: true
+factory_scenario: CREATE_PRODUCT
+drafting_mode: architect_llm
+drafting_note: 'inventory: ''construction_management'' is not on the declared-ready
+  list (hotels, insurance, construction, finance, retail); the Store kit for this
+  vertical is unverified — domain depth not guaranteed'
+delivery_format: zip

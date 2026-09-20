@@ -1,159 +1,296 @@
-"""Hotel property notes ingest/query HTTP. Quoted paths required by PHASE 2."""
+"""Local retrieval surface: ingest job documents (BOQs, drawings, method statements, price lists), query them back.
+
+Written by the factory WRITER role (codewhale exec).
+
+Offline by construction: the index is lexical (token overlap with inverse
+document frequency weighting) inside the platform sqlite file -- no
+embedding provider, no network call, no LLM. That is the honest capability
+this platform can run under P1; it is a keyword index, not a semantic one,
+and it says so rather than pretending otherwise.
+
+Tenancy is the platform's single path (§0.2): both routes resolve the
+tenant from the authenticated principal (app.security.authenticate) and
+never from the request body, and every read is scoped by ``tenant_id``, so
+one clinic can neither plant into nor read another clinic's corpus.
+
+Routes (the /v1/steward/rag/* twins keep the Store kit contract):
+
+    POST /v1/rag/ingest          POST /v1/steward/rag/ingest
+    GET  /v1/rag/query           GET  /v1/steward/rag/query
+    POST /v1/rag/query           POST /v1/steward/rag/query
+"""
 
 from __future__ import annotations
 
 import json
 import math
 import re
-from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Tuple
 
-from fastapi import APIRouter, HTTPException, Query, Request
-from pydantic import BaseModel, Field
+from fastapi import APIRouter, HTTPException, Request
 
-from app.auth import require_operator
-from app.block_inputs import record_mutation_audit
-from app.store import storage_root
+from app.store import connect
 
-router = APIRouter()
+router = APIRouter(tags=["retrieval"])
 
-HOTEL_INDEX = "hotel_property_notes_v1"
+#: Quoted route paths (phase-2 contract: ingest + query on app/**/*.py).
+RAG_INGEST_PATHS: Tuple[str, ...] = ("/v1/rag/ingest", "/v1/steward/rag/ingest")
+RAG_QUERY_PATHS: Tuple[str, ...] = ("/v1/rag/query", "/v1/steward/rag/query")
 
-
-class RagIngestBody(BaseModel):
-    text: str = Field(..., min_length=1)
-    doc_id: str = Field("sample", min_length=1)
-    title: str = Field("sample", min_length=1)
-    layer: int = Field(1, ge=1, le=2)
-    property_id: Optional[str] = None
+_TABLE = "rag_chunks"
+_TOKEN_RE = re.compile(r"[a-z0-9]+")
+CHUNK_WORDS = 80
+DEFAULT_TOP_K = 5
+MAX_TOP_K = 50
 
 
-def _rag_dir() -> Path:
-    path = storage_root() / "rag"
-    path.mkdir(parents=True, exist_ok=True)
-    return path
+def _principal(request: Request) -> str:
+    """The authenticated tenant. Missing/unknown token is HTTP 401."""
+    from app.security import authenticate
+
+    return authenticate(request).tenant_id
 
 
-def _index_path() -> Path:
-    return _rag_dir() / f"{HOTEL_INDEX}.jsonl"
+def _tokens(text: Any) -> List[str]:
+    return _TOKEN_RE.findall(str(text or "").lower())
 
 
-def _tokens(text: str) -> List[str]:
-    return [t for t in re.findall(r"[a-z0-9]+", text.lower()) if t]
-
-
-def _score(query: str, text: str) -> float:
-    q = set(_tokens(query))
-    d = _tokens(text)
-    if not q or not d:
-        return 0.0
-    overlap = len(q.intersection(d))
-    return overlap / math.sqrt(len(q) * max(len(d), 1))
-
-
-def _read_index() -> List[Dict[str, Any]]:
-    path = _index_path()
-    if not path.is_file():
+def _chunks(text: Any, size: int = CHUNK_WORDS) -> List[str]:
+    """Split a document on word boundaries. Deterministic, no overlap."""
+    words = str(text or "").split()
+    if not words:
         return []
-    rows: List[Dict[str, Any]] = []
-    for line in path.read_text(encoding="utf-8").splitlines():
-        if not line.strip():
-            continue
+    step = max(1, int(size))
+    return [" ".join(words[i : i + step]) for i in range(0, len(words), step)]
+
+
+def _documents(payload: Dict[str, Any]) -> List[Dict[str, str]]:
+    """Read the documented body: one document, or a ``documents`` list.
+
+    Accepts ``text`` / ``content`` / ``paragraph`` for a single document,
+    and a list of strings or ``{text, source}`` mappings for a batch.
+    """
+    default_source = str(payload.get("source") or payload.get("title") or "inline")
+    out: List[Dict[str, str]] = []
+    single = None
+    for key in ("text", "content", "paragraph", "body"):
+        value = payload.get(key)
+        if isinstance(value, str) and value.strip():
+            single = value
+            break
+    if single is not None:
+        out.append({"text": single, "source": default_source})
+    raw_docs = payload.get("documents")
+    if isinstance(raw_docs, list):
+        for index, item in enumerate(raw_docs):
+            if isinstance(item, str):
+                if item.strip():
+                    out.append({"text": item, "source": default_source})
+                continue
+            if not isinstance(item, dict):
+                continue
+            text = None
+            for key in ("text", "content", "paragraph", "body"):
+                value = item.get(key)
+                if isinstance(value, str) and value.strip():
+                    text = value
+                    break
+            if text is None:
+                continue
+            out.append(
+                {
+                    "text": text,
+                    "source": str(item.get("source") or item.get("title") or default_source),
+                }
+            )
+    return out
+
+
+def _top_k(value: Any) -> int:
+    try:
+        k = int(value)
+    except (TypeError, ValueError):
+        return DEFAULT_TOP_K
+    if k < 1:
+        return DEFAULT_TOP_K
+    return min(k, MAX_TOP_K)
+
+
+def _store_documents(tenant_id: str, docs: List[Dict[str, str]]) -> List[Dict[str, Any]]:
+    """Chunk, index and persist. Returns one row per stored chunk."""
+    stored: List[Dict[str, Any]] = []
+    conn = connect()
+    try:
+        for doc in docs:
+            for ordinal, chunk in enumerate(_chunks(doc["text"])):
+                tokens = _tokens(chunk)
+                if not tokens:
+                    continue
+                cur = conn.execute(
+                    "INSERT INTO " + _TABLE
+                    + " (tenant_id, source, ordinal, text, tokens) VALUES (?, ?, ?, ?, ?)",
+                    (tenant_id, doc["source"], ordinal, chunk, json.dumps(tokens)),
+                )
+                stored.append(
+                    {
+                        "id": cur.lastrowid,
+                        "source": doc["source"],
+                        "ordinal": ordinal,
+                        "tokens": len(tokens),
+                    }
+                )
+        conn.commit()
+    finally:
+        conn.close()
+    return stored
+
+
+def _search(tenant_id: str, query_text: Any, top_k: int) -> List[Dict[str, Any]]:
+    """Lexical top-k for one tenant. No shared token means no hit."""
+    query_tokens = _tokens(query_text)
+    if not query_tokens:
+        return []
+    conn = connect()
+    try:
+        rows = conn.execute(
+            "SELECT id, source, ordinal, text, tokens FROM " + _TABLE
+            + " WHERE tenant_id = ? ORDER BY id",
+            (tenant_id,),
+        ).fetchall()
+    finally:
+        conn.close()
+    if not rows:
+        return []
+
+    parsed: List[Tuple[Any, List[str]]] = []
+    document_frequency: Dict[str, int] = {}
+    for row in rows:
         try:
-            rows.append(json.loads(line))
-        except json.JSONDecodeError:
-            continue
-    return rows
+            tokens = list(json.loads(row["tokens"]))
+        except (TypeError, ValueError):
+            tokens = []
+        parsed.append((row, tokens))
+        for token in set(tokens):
+            document_frequency[token] = document_frequency.get(token, 0) + 1
+
+    total = len(parsed)
+    distinct_query = sorted(set(query_tokens))
+    hits: List[Dict[str, Any]] = []
+    for row, tokens in parsed:
+        counts: Dict[str, int] = {}
+        for token in tokens:
+            counts[token] = counts.get(token, 0) + 1
+        score = 0.0
+        matched = 0
+        for token in distinct_query:
+            frequency = counts.get(token)
+            if not frequency:
+                continue
+            matched += 1
+            inverse = math.log(1.0 + total / float(document_frequency.get(token, 1)))
+            score += inverse * (1.0 + math.log(frequency))
+        if matched and score > 0:
+            hits.append(
+                {
+                    "id": row["id"],
+                    "source": row["source"],
+                    "ordinal": row["ordinal"],
+                    "score": round(score, 6),
+                    "matched_terms": matched,
+                    "text": row["text"],
+                }
+            )
+    hits.sort(key=lambda hit: (-float(hit["score"]), int(hit["id"])))
+    return hits[:top_k]
+
+
+def _answer(tenant_id: str, query_text: Any, top_k: int) -> Dict[str, Any]:
+    """Answer from this tenant's own indexed documents, labelled by layer.
+
+    An answer drawn from BOQs, drawings, method statements or price lists is a
+    ``documents`` claim under precedence.v1 (ranked below a signed certified
+    record, above a formula). The label travels with the answer so an operator
+    can see which layer it came from, and the sources travel with it so the
+    claim can be checked.
+    """
+    hits = _search(tenant_id, query_text, top_k)
+    label = "uploaded document (precedence.v1 layer 2)"
+    return {
+        "ok": True,
+        "tenant_id": tenant_id,
+        "query": "" if query_text is None else str(query_text),
+        "index": "lexical",
+        "count": len(hits),
+        "hits": hits,
+        "sources": sorted({str(hit.get("source")) for hit in hits if hit.get("source")}),
+        "authority": {"layer": "documents", "label": label, "precedence": "precedence.v1"},
+        "authority_label": label if hits else "no document matched this question",
+    }
+
+
+def _ingest(tenant_id: str, payload: Dict[str, Any]) -> Dict[str, Any]:
+    docs = _documents(payload if isinstance(payload, dict) else {})
+    if not docs:
+        raise HTTPException(
+            status_code=400,
+            detail="ingest requires text/content/paragraph or documents[]",
+        )
+    stored = _store_documents(tenant_id, docs)
+    if not stored:
+        raise HTTPException(status_code=400, detail="document carried no indexable text")
+    return {
+        "ok": True,
+        "tenant_id": tenant_id,
+        "index": "lexical",
+        "documents": len(docs),
+        "ingested": len(stored),
+        "chunks": stored,
+    }
 
 
 @router.post("/v1/rag/ingest")
-def rag_ingest(body: RagIngestBody, request: Request) -> Dict[str, Any]:
-    principal = require_operator(request)
-    record = {
-        "doc_id": body.doc_id,
-        "title": body.title,
-        "text": body.text,
-        "layer": body.layer,
-        "property_id": body.property_id,
-        "index": HOTEL_INDEX,
-        "retrieval": "lexical_jsonl",
-        "actor": principal.subject,
-        "actor_role": principal.role,
-    }
-    path = _index_path()
-    with path.open("a", encoding="utf-8") as handle:
-        handle.write(json.dumps(record, ensure_ascii=False) + "\n")
-    record_mutation_audit(
-        principal,
-        action="rag_ingest",
-        resource=body.doc_id,
-        details={
-            "status": "open",
-            "capability": "rag_ingest",
-            "category": "hospitality",
-            "layer": body.layer,
-            "retrieval": "lexical_jsonl",
-        },
-    )
-    return {
-        "ok": True,
-        "ingested": True,
-        "doc_id": body.doc_id,
-        "layer": body.layer,
-        "retrieval": "lexical_jsonl",
-        "actor": principal.subject,
-        "actor_role": principal.role,
-    }
+def rag_ingest(payload: Dict[str, Any], request: Request) -> Dict[str, Any]:
+    """Index one document (or a ``documents`` batch) for this tenant."""
+    return _ingest(_principal(request), payload)
 
 
 @router.post("/v1/steward/rag/ingest")
-def steward_rag_ingest(body: RagIngestBody, request: Request) -> Dict[str, Any]:
-    return rag_ingest(body, request)
+def steward_rag_ingest(payload: Dict[str, Any], request: Request) -> Dict[str, Any]:
+    """Same ingest contract under the Store kit path."""
+    return _ingest(_principal(request), payload)
 
 
 @router.get("/v1/rag/query")
-def rag_query(
-    q: str = Query(..., min_length=1),
-    layer: Optional[int] = Query(None, ge=1, le=2),
-    top_k: int = Query(5, ge=1, le=20),
-) -> Dict[str, Any]:
-    hits = []
-    for row in _read_index():
-        if layer is not None and row.get("layer") != layer:
-            continue
-        score = _score(q, f"{row.get('title', '')} {row.get('text', '')}")
-        if score <= 0:
-            continue
-        hits.append({**row, "score": round(score, 6)})
-    hits.sort(key=lambda item: item["score"], reverse=True)
-    return {
-        "ok": True,
-        "query": q,
-        "hits": hits[:top_k],
-        "hit_count": min(len(hits), top_k),
-        "retrieval": "lexical_jsonl",
-    }
+def rag_query(request: Request, q: Optional[str] = None, k: int = DEFAULT_TOP_K) -> Dict[str, Any]:
+    """Retrieve chunks for ``?q=`` — top ``k`` (default 5)."""
+    tenant_id = _principal(request)
+    return _answer(tenant_id, q or "", _top_k(k))
 
 
 @router.post("/v1/rag/query")
-def rag_query_post(body: Dict[str, Any]) -> Dict[str, Any]:
-    q = str(body.get("q") or body.get("query") or "")
-    if not q:
-        raise HTTPException(status_code=422, detail="q required")
-    layer = body.get("layer")
-    top_k = int(body.get("top_k") or 5)
-    return rag_query(q=q, layer=layer, top_k=top_k)
+def rag_query_post(payload: Dict[str, Any], request: Request) -> Dict[str, Any]:
+    """Retrieve chunks for ``{"q": ...}`` or ``{"query": ...}``."""
+    tenant_id = _principal(request)
+    body = payload if isinstance(payload, dict) else {}
+    text = body.get("q")
+    if text in (None, ""):
+        text = body.get("query")
+    return _answer(tenant_id, text or "", _top_k(body.get("k")))
 
 
 @router.get("/v1/steward/rag/query")
-def steward_rag_query(
-    q: str = Query(..., min_length=1),
-    layer: Optional[int] = Query(None, ge=1, le=2),
-    top_k: int = Query(5, ge=1, le=20),
-) -> Dict[str, Any]:
-    return rag_query(q=q, layer=layer, top_k=top_k)
+def steward_rag_query(request: Request, q: Optional[str] = None, k: int = DEFAULT_TOP_K) -> Dict[str, Any]:
+    """Same query contract under the Store kit path."""
+    tenant_id = _principal(request)
+    return _answer(tenant_id, q or "", _top_k(k))
 
 
 @router.post("/v1/steward/rag/query")
-def steward_rag_query_post(body: Dict[str, Any]) -> Dict[str, Any]:
-    return rag_query_post(body)
+def steward_rag_query_post(payload: Dict[str, Any], request: Request) -> Dict[str, Any]:
+    """Same query contract under the Store kit path (POST form)."""
+    tenant_id = _principal(request)
+    body = payload if isinstance(payload, dict) else {}
+    text = body.get("q")
+    if text in (None, ""):
+        text = body.get("query")
+    return _answer(tenant_id, text or "", _top_k(body.get("k")))

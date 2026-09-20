@@ -1,0 +1,287 @@
+{
+  "actions": [
+    {
+      "capability": "job_and_site_tracking",
+      "http": "POST /v1/job_and_site_tracking",
+      "kind": "capability_write",
+      "verb": "POST"
+    },
+    {
+      "capability": "job_and_site_tracking",
+      "http": "GET /v1/job_and_site_tracking",
+      "kind": "capability_read",
+      "verb": "GET"
+    },
+    {
+      "capability": "job_and_site_tracking",
+      "http": "GET /v1/job_and_site_tracking/{id}",
+      "kind": "capability_read",
+      "verb": "GET"
+    },
+    {
+      "capability": "job_and_site_tracking",
+      "http": "PUT /v1/job_and_site_tracking/{id}",
+      "kind": "capability_write",
+      "verb": "PUT"
+    },
+    {
+      "capability": "job_and_site_tracking",
+      "http": "DELETE /v1/job_and_site_tracking/{id}",
+      "kind": "capability_write",
+      "verb": "DELETE"
+    },
+    {
+      "capability": "commercials_and_valuations",
+      "http": "POST /v1/commercials_and_valuations",
+      "kind": "capability_write",
+      "verb": "POST"
+    },
+    {
+      "capability": "commercials_and_valuations",
+      "http": "GET /v1/commercials_and_valuations",
+      "kind": "capability_read",
+      "verb": "GET"
+    },
+    {
+      "capability": "commercials_and_valuations",
+      "http": "GET /v1/commercials_and_valuations/{id}",
+      "kind": "capability_read",
+      "verb": "GET"
+    },
+    {
+      "capability": "commercials_and_valuations",
+      "http": "PUT /v1/commercials_and_valuations/{id}",
+      "kind": "capability_write",
+      "verb": "PUT"
+    },
+    {
+      "capability": "commercials_and_valuations",
+      "http": "DELETE /v1/commercials_and_valuations/{id}",
+      "kind": "capability_write",
+      "verb": "DELETE"
+    },
+    {
+      "capability": "document_qa_and_indexing",
+      "http": "POST /v1/document_qa_and_indexing",
+      "kind": "capability_write",
+      "verb": "POST"
+    },
+    {
+      "capability": "document_qa_and_indexing",
+      "http": "GET /v1/document_qa_and_indexing",
+      "kind": "capability_read",
+      "verb": "GET"
+    },
+    {
+      "capability": "document_qa_and_indexing",
+      "http": "GET /v1/document_qa_and_indexing/{id}",
+      "kind": "capability_read",
+      "verb": "GET"
+    },
+    {
+      "capability": "document_qa_and_indexing",
+      "http": "PUT /v1/document_qa_and_indexing/{id}",
+      "kind": "capability_write",
+      "verb": "PUT"
+    },
+    {
+      "capability": "document_qa_and_indexing",
+      "http": "DELETE /v1/document_qa_and_indexing/{id}",
+      "kind": "capability_write",
+      "verb": "DELETE"
+    },
+    {
+      "capability": "safety_and_compliance",
+      "http": "POST /v1/safety_and_compliance",
+      "kind": "capability_write",
+      "verb": "POST"
+    },
+    {
+      "capability": "safety_and_compliance",
+      "http": "GET /v1/safety_and_compliance",
+      "kind": "capability_read",
+      "verb": "GET"
+    },
+    {
+      "capability": "safety_and_compliance",
+      "http": "GET /v1/safety_and_compliance/{id}",
+      "kind": "capability_read",
+      "verb": "GET"
+    },
+    {
+      "capability": "safety_and_compliance",
+      "http": "PUT /v1/safety_and_compliance/{id}",
+      "kind": "capability_write",
+      "verb": "PUT"
+    },
+    {
+      "capability": "safety_and_compliance",
+      "http": "DELETE /v1/safety_and_compliance/{id}",
+      "kind": "capability_write",
+      "verb": "DELETE"
+    },
+    {
+      "capability": "progress_cost_dashboard",
+      "http": "POST /v1/progress_cost_dashboard",
+      "kind": "capability_write",
+      "verb": "POST"
+    },
+    {
+      "capability": "progress_cost_dashboard",
+      "http": "GET /v1/progress_cost_dashboard",
+      "kind": "capability_read",
+      "verb": "GET"
+    },
+    {
+      "capability": "progress_cost_dashboard",
+      "http": "GET /v1/progress_cost_dashboard/{id}",
+      "kind": "capability_read",
+      "verb": "GET"
+    },
+    {
+      "capability": "progress_cost_dashboard",
+      "http": "PUT /v1/progress_cost_dashboard/{id}",
+      "kind": "capability_write",
+      "verb": "PUT"
+    },
+    {
+      "capability": "progress_cost_dashboard",
+      "http": "DELETE /v1/progress_cost_dashboard/{id}",
+      "kind": "capability_write",
+      "verb": "DELETE"
+    },
+    {
+      "capability": "automation_reminders_escalation",
+      "http": "POST /v1/automation_reminders_escalation",
+      "kind": "capability_write",
+      "verb": "POST"
+    },
+    {
+      "capability": "automation_reminders_escalation",
+      "http": "GET /v1/automation_reminders_escalation",
+      "kind": "capability_read",
+      "verb": "GET"
+    },
+    {
+      "capability": "automation_reminders_escalation",
+      "http": "GET /v1/automation_reminders_escalation/{id}",
+      "kind": "capability_read",
+      "verb": "GET"
+    },
+    {
+      "capability": "automation_reminders_escalation",
+      "http": "PUT /v1/automation_reminders_escalation/{id}",
+      "kind": "capability_write",
+      "verb": "PUT"
+    },
+    {
+      "capability": "automation_reminders_escalation",
+      "http": "DELETE /v1/automation_reminders_escalation/{id}",
+      "kind": "capability_write",
+      "verb": "DELETE"
+    },
+    {
+      "capability": "audit_and_access_control",
+      "http": "POST /v1/audit_and_access_control",
+      "kind": "capability_write",
+      "verb": "POST"
+    },
+    {
+      "capability": "audit_and_access_control",
+      "http": "GET /v1/audit_and_access_control",
+      "kind": "capability_read",
+      "verb": "GET"
+    },
+    {
+      "capability": "audit_and_access_control",
+      "http": "GET /v1/audit_and_access_control/{id}",
+      "kind": "capability_read",
+      "verb": "GET"
+    },
+    {
+      "capability": "audit_and_access_control",
+      "http": "PUT /v1/audit_and_access_control/{id}",
+      "kind": "capability_write",
+      "verb": "PUT"
+    },
+    {
+      "capability": "audit_and_access_control",
+      "http": "DELETE /v1/audit_and_access_control/{id}",
+      "kind": "capability_write",
+      "verb": "DELETE"
+    },
+    {
+      "capability": "team_notifications",
+      "http": "POST /v1/team_notifications",
+      "kind": "capability_write",
+      "verb": "POST"
+    },
+    {
+      "capability": "team_notifications",
+      "http": "GET /v1/team_notifications",
+      "kind": "capability_read",
+      "verb": "GET"
+    },
+    {
+      "capability": "team_notifications",
+      "http": "GET /v1/team_notifications/{id}",
+      "kind": "capability_read",
+      "verb": "GET"
+    },
+    {
+      "capability": "team_notifications",
+      "http": "PUT /v1/team_notifications/{id}",
+      "kind": "capability_write",
+      "verb": "PUT"
+    },
+    {
+      "capability": "team_notifications",
+      "http": "DELETE /v1/team_notifications/{id}",
+      "kind": "capability_write",
+      "verb": "DELETE"
+    },
+    {
+      "capability": "*",
+      "http": "GET /v1/settings/money",
+      "kind": "settings_read",
+      "verb": "GET"
+    },
+    {
+      "capability": "*",
+      "http": "POST /v1/formulas/valuation",
+      "kind": "formula",
+      "verb": "POST"
+    },
+    {
+      "capability": "*",
+      "http": "POST /v1/formulas/evaluate",
+      "kind": "formula",
+      "verb": "POST"
+    },
+    {
+      "capability": "*",
+      "http": "GET /v1/retrieval",
+      "kind": "retrieval",
+      "verb": "GET"
+    },
+    {
+      "capability": "*",
+      "http": "POST /v1/authority/resolve",
+      "kind": "authority",
+      "verb": "POST"
+    },
+    {
+      "capability": "*",
+      "http": "POST /v1/rag/ingest",
+      "kind": "retrieval",
+      "verb": "POST"
+    },
+    {
+      "capability": "*",
+      "http": "GET /v1/rag/query",
+      "kind": "retrieval",
+      "verb": "GET"
+    }
+  ],
+  "schema": "product_dna.action_catalog.v1"
+}

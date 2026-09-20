@@ -1,0 +1,800 @@
+{
+  "entities": [
+    {
+      "capability": "job_and_site_tracking",
+      "entity": "job_and_site_tracking",
+      "fields": [
+        {
+          "name": "reference",
+          "required": true,
+          "type": "str"
+        },
+        {
+          "allowed_values": [
+            "open",
+            "in_progress",
+            "closed"
+          ],
+          "name": "status",
+          "required": true,
+          "type": "str"
+        },
+        {
+          "name": "job_code",
+          "required": true,
+          "type": "str"
+        },
+        {
+          "name": "job_name",
+          "required": true,
+          "type": "str"
+        },
+        {
+          "name": "site_name",
+          "required": true,
+          "type": "str"
+        },
+        {
+          "name": "client_name",
+          "required": false,
+          "type": "str"
+        },
+        {
+          "name": "work_front",
+          "required": false,
+          "type": "str"
+        },
+        {
+          "max": 1000000000,
+          "min": 0,
+          "name": "contract_value_aed",
+          "required": false,
+          "type": "float"
+        },
+        {
+          "max": 100,
+          "min": 0,
+          "name": "progress_percent",
+          "required": false,
+          "type": "float"
+        },
+        {
+          "name": "milestone",
+          "required": false,
+          "type": "str"
+        },
+        {
+          "format": "date",
+          "name": "milestone_due_date",
+          "required": false,
+          "type": "str"
+        },
+        {
+          "max": 10000,
+          "min": 0,
+          "name": "snag_open_count",
+          "required": false,
+          "type": "int"
+        },
+        {
+          "name": "variation_reference",
+          "required": false,
+          "type": "str"
+        },
+        {
+          "allowed_values": [
+            "draft",
+            "submitted",
+            "approved",
+            "rejected"
+          ],
+          "name": "variation_status",
+          "required": false,
+          "type": "str"
+        },
+        {
+          "name": "notes",
+          "required": false,
+          "type": "str"
+        }
+      ],
+      "table": "job_and_site_tracking"
+    },
+    {
+      "capability": "commercials_and_valuations",
+      "entity": "commercials_and_valuations",
+      "fields": [
+        {
+          "name": "reference",
+          "required": true,
+          "type": "str"
+        },
+        {
+          "allowed_values": [
+            "open",
+            "in_progress",
+            "closed"
+          ],
+          "name": "status",
+          "required": true,
+          "type": "str"
+        },
+        {
+          "name": "valuation_number",
+          "required": true,
+          "type": "str"
+        },
+        {
+          "name": "job_code",
+          "required": true,
+          "type": "str"
+        },
+        {
+          "name": "boq_item",
+          "required": false,
+          "type": "str"
+        },
+        {
+          "max": 10000000,
+          "min": 0,
+          "name": "measured_quantity",
+          "required": false,
+          "type": "float"
+        },
+        {
+          "max": 10000000,
+          "min": 0,
+          "name": "unit_rate_aed",
+          "required": false,
+          "type": "float"
+        },
+        {
+          "max": 1000000000,
+          "min": 0,
+          "name": "gross_value_aed",
+          "required": false,
+          "type": "float"
+        },
+        {
+          "max": 100,
+          "min": 0,
+          "name": "retention_percent",
+          "required": false,
+          "type": "float"
+        },
+        {
+          "max": 1000000000,
+          "min": 0,
+          "name": "retention_aed",
+          "required": false,
+          "type": "float"
+        },
+        {
+          "max": 100,
+          "min": 0,
+          "name": "vat_rate_percent",
+          "required": false,
+          "type": "float"
+        },
+        {
+          "max": 1000000000,
+          "min": 0,
+          "name": "vat_amount_aed",
+          "required": false,
+          "type": "float"
+        },
+        {
+          "max": 1000000000,
+          "min": 0,
+          "name": "certified_value_aed",
+          "required": false,
+          "type": "float"
+        },
+        {
+          "allowed_values": [
+            "unpaid",
+            "partial",
+            "paid"
+          ],
+          "name": "payment_status",
+          "required": false,
+          "type": "str"
+        },
+        {
+          "name": "purchase_order",
+          "required": false,
+          "type": "str"
+        },
+        {
+          "allowed_values": [
+            "supplier",
+            "subcontractor"
+          ],
+          "name": "po_party_type",
+          "required": false,
+          "type": "str"
+        },
+        {
+          "max": 1000000000,
+          "min": 0,
+          "name": "amount_due_aed",
+          "required": false,
+          "type": "float"
+        },
+        {
+          "format": "date",
+          "name": "due_on",
+          "required": false,
+          "type": "str"
+        },
+        {
+          "name": "notes",
+          "required": false,
+          "type": "str"
+        }
+      ],
+      "table": "commercials_and_valuations"
+    },
+    {
+      "capability": "document_qa_and_indexing",
+      "entity": "document_qa_and_indexing",
+      "fields": [
+        {
+          "name": "reference",
+          "required": true,
+          "type": "str"
+        },
+        {
+          "allowed_values": [
+            "open",
+            "in_progress",
+            "closed"
+          ],
+          "name": "status",
+          "required": true,
+          "type": "str"
+        },
+        {
+          "name": "document_title",
+          "required": true,
+          "type": "str"
+        },
+        {
+          "allowed_values": [
+            "boq",
+            "drawing",
+            "method_statement",
+            "safety_procedure",
+            "price_list",
+            "subcontract",
+            "other"
+          ],
+          "name": "document_type",
+          "required": true,
+          "type": "str"
+        },
+        {
+          "name": "job_code",
+          "required": false,
+          "type": "str"
+        },
+        {
+          "name": "revision",
+          "required": false,
+          "type": "str"
+        },
+        {
+          "name": "file_name",
+          "required": false,
+          "type": "str"
+        },
+        {
+          "name": "file_path",
+          "required": false,
+          "type": "str"
+        },
+        {
+          "name": "file_sha256",
+          "required": false,
+          "type": "str"
+        },
+        {
+          "name": "question",
+          "required": false,
+          "type": "str"
+        },
+        {
+          "name": "answer",
+          "required": false,
+          "type": "str"
+        },
+        {
+          "name": "source_reference",
+          "required": false,
+          "type": "str"
+        },
+        {
+          "format": "datetime",
+          "name": "indexed_at",
+          "required": false,
+          "type": "str"
+        },
+        {
+          "name": "notes",
+          "required": false,
+          "type": "str"
+        }
+      ],
+      "table": "document_qa_and_indexing"
+    },
+    {
+      "capability": "safety_and_compliance",
+      "entity": "safety_and_compliance",
+      "fields": [
+        {
+          "name": "reference",
+          "required": true,
+          "type": "str"
+        },
+        {
+          "allowed_values": [
+            "open",
+            "in_progress",
+            "closed"
+          ],
+          "name": "status",
+          "required": true,
+          "type": "str"
+        },
+        {
+          "name": "job_code",
+          "required": true,
+          "type": "str"
+        },
+        {
+          "name": "document_title",
+          "required": true,
+          "type": "str"
+        },
+        {
+          "name": "method_statement_ref",
+          "required": false,
+          "type": "str"
+        },
+        {
+          "name": "work_front",
+          "required": false,
+          "type": "str"
+        },
+        {
+          "name": "checklist_item",
+          "required": false,
+          "type": "str"
+        },
+        {
+          "allowed_values": [
+            "met",
+            "unmet"
+          ],
+          "name": "checklist_state",
+          "required": false,
+          "type": "str"
+        },
+        {
+          "allowed_values": [
+            "ready",
+            "blocked",
+            "not_assessed"
+          ],
+          "name": "readiness_gate",
+          "required": false,
+          "type": "str"
+        },
+        {
+          "allowed_values": [
+            "near_miss",
+            "incident",
+            "hazard"
+          ],
+          "name": "incident_type",
+          "required": false,
+          "type": "str"
+        },
+        {
+          "format": "date",
+          "name": "incident_date",
+          "required": false,
+          "type": "str"
+        },
+        {
+          "allowed_values": [
+            "low",
+            "medium",
+            "high"
+          ],
+          "name": "severity",
+          "required": false,
+          "type": "str"
+        },
+        {
+          "name": "action_taken",
+          "required": false,
+          "type": "str"
+        },
+        {
+          "name": "notes",
+          "required": false,
+          "type": "str"
+        }
+      ],
+      "table": "safety_and_compliance"
+    },
+    {
+      "capability": "progress_cost_dashboard",
+      "entity": "progress_cost_dashboard",
+      "fields": [
+        {
+          "name": "reference",
+          "required": true,
+          "type": "str"
+        },
+        {
+          "allowed_values": [
+            "open",
+            "in_progress",
+            "closed"
+          ],
+          "name": "status",
+          "required": true,
+          "type": "str"
+        },
+        {
+          "format": "date",
+          "name": "report_date",
+          "required": true,
+          "type": "str"
+        },
+        {
+          "name": "job_code",
+          "required": true,
+          "type": "str"
+        },
+        {
+          "max": 100,
+          "min": 0,
+          "name": "progress_percent",
+          "required": false,
+          "type": "float"
+        },
+        {
+          "max": 1000000000,
+          "min": 0,
+          "name": "certified_value_aed",
+          "required": false,
+          "type": "float"
+        },
+        {
+          "max": 1000000000,
+          "min": 0,
+          "name": "cost_to_date_aed",
+          "required": false,
+          "type": "float"
+        },
+        {
+          "max": 10000,
+          "min": 0,
+          "name": "variations_pending",
+          "required": false,
+          "type": "int"
+        },
+        {
+          "max": 10000,
+          "min": 0,
+          "name": "snags_open",
+          "required": false,
+          "type": "int"
+        },
+        {
+          "max": 1000000000,
+          "min": 0,
+          "name": "payments_due_aed",
+          "required": false,
+          "type": "float"
+        },
+        {
+          "max": 100,
+          "min": -100,
+          "name": "margin_percent",
+          "required": false,
+          "type": "float"
+        },
+        {
+          "name": "summary",
+          "required": false,
+          "type": "str"
+        }
+      ],
+      "table": "progress_cost_dashboard"
+    },
+    {
+      "capability": "automation_reminders_escalation",
+      "entity": "automation_reminders_escalation",
+      "fields": [
+        {
+          "name": "reference",
+          "required": true,
+          "type": "str"
+        },
+        {
+          "allowed_values": [
+            "open",
+            "in_progress",
+            "closed"
+          ],
+          "name": "status",
+          "required": true,
+          "type": "str"
+        },
+        {
+          "name": "job_code",
+          "required": true,
+          "type": "str"
+        },
+        {
+          "allowed_values": [
+            "valuation_due",
+            "variation_escalation",
+            "snag_escalation",
+            "overdue_payment"
+          ],
+          "name": "reminder_type",
+          "required": true,
+          "type": "str"
+        },
+        {
+          "format": "date",
+          "name": "due_date",
+          "required": false,
+          "type": "str"
+        },
+        {
+          "max": 10000,
+          "min": 0,
+          "name": "threshold_count",
+          "required": false,
+          "type": "int"
+        },
+        {
+          "max": 10000,
+          "min": 0,
+          "name": "actual_count",
+          "required": false,
+          "type": "int"
+        },
+        {
+          "allowed_values": [
+            "none",
+            "flagged",
+            "escalated"
+          ],
+          "name": "escalation_state",
+          "required": false,
+          "type": "str"
+        },
+        {
+          "allowed_values": [
+            "email",
+            "webhook",
+            "slack"
+          ],
+          "name": "channel",
+          "required": false,
+          "type": "str"
+        },
+        {
+          "name": "recipient_email",
+          "required": false,
+          "type": "str"
+        },
+        {
+          "name": "message_body",
+          "required": false,
+          "type": "str"
+        },
+        {
+          "allowed_values": [
+            "monthly",
+            "weekly",
+            "daily"
+          ],
+          "name": "schedule",
+          "required": false,
+          "type": "str"
+        },
+        {
+          "name": "summary",
+          "required": false,
+          "type": "str"
+        }
+      ],
+      "table": "automation_reminders_escalation"
+    },
+    {
+      "capability": "audit_and_access_control",
+      "entity": "audit_and_access_control",
+      "fields": [
+        {
+          "name": "reference",
+          "required": true,
+          "type": "str"
+        },
+        {
+          "allowed_values": [
+            "open",
+            "in_progress",
+            "closed"
+          ],
+          "name": "status",
+          "required": true,
+          "type": "str"
+        },
+        {
+          "name": "actor_name",
+          "required": true,
+          "type": "str"
+        },
+        {
+          "allowed_values": [
+            "owner",
+            "site_engineer",
+            "accounts",
+            "admin"
+          ],
+          "name": "actor_role",
+          "required": true,
+          "type": "str"
+        },
+        {
+          "allowed_values": [
+            "approval",
+            "document_version",
+            "financial_change",
+            "access_grant",
+            "access_revoke"
+          ],
+          "name": "action_type",
+          "required": true,
+          "type": "str"
+        },
+        {
+          "name": "entity_name",
+          "required": false,
+          "type": "str"
+        },
+        {
+          "name": "entity_reference",
+          "required": false,
+          "type": "str"
+        },
+        {
+          "name": "change_summary",
+          "required": false,
+          "type": "str"
+        },
+        {
+          "allowed_values": [
+            "pending",
+            "approved",
+            "rejected"
+          ],
+          "name": "approval_state",
+          "required": false,
+          "type": "str"
+        },
+        {
+          "format": "datetime",
+          "name": "occurred_at",
+          "required": false,
+          "type": "str"
+        },
+        {
+          "name": "notes",
+          "required": false,
+          "type": "str"
+        }
+      ],
+      "table": "audit_and_access_control"
+    },
+    {
+      "capability": "team_notifications",
+      "entity": "team_notifications",
+      "fields": [
+        {
+          "name": "reference",
+          "required": true,
+          "type": "str"
+        },
+        {
+          "allowed_values": [
+            "open",
+            "in_progress",
+            "closed"
+          ],
+          "name": "status",
+          "required": true,
+          "type": "str"
+        },
+        {
+          "name": "recipient_email",
+          "required": false,
+          "type": "str"
+        },
+        {
+          "allowed_values": [
+            "owner",
+            "site_engineer",
+            "accounts"
+          ],
+          "name": "recipient_role",
+          "required": false,
+          "type": "str"
+        },
+        {
+          "allowed_values": [
+            "email",
+            "slack",
+            "webhook"
+          ],
+          "name": "channel",
+          "required": false,
+          "type": "str"
+        },
+        {
+          "name": "subject",
+          "required": true,
+          "type": "str"
+        },
+        {
+          "name": "message_body",
+          "required": true,
+          "type": "str"
+        },
+        {
+          "allowed_values": [
+            "approval",
+            "valuation_due",
+            "overdue_item",
+            "snag"
+          ],
+          "name": "notification_type",
+          "required": false,
+          "type": "str"
+        },
+        {
+          "name": "related_reference",
+          "required": false,
+          "type": "str"
+        },
+        {
+          "format": "datetime",
+          "name": "send_at",
+          "required": false,
+          "type": "str"
+        },
+        {
+          "allowed_values": [
+            "queued",
+            "sent",
+            "skipped"
+          ],
+          "name": "delivery_state",
+          "required": false,
+          "type": "str"
+        }
+      ],
+      "table": "team_notifications"
+    }
+  ],
+  "product_id": "construction-management",
+  "schema": "product_dna.entity_model.v1"
+}

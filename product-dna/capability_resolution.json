@@ -1,0 +1,93 @@
+{
+  "gaps": [],
+  "resolved": [
+    {
+      "blocks": [
+        "workflow",
+        "database",
+        "estate_registry",
+        "validation"
+      ],
+      "capability": "job_and_site_tracking",
+      "gap": false,
+      "strategy": "REUSE"
+    },
+    {
+      "blocks": [
+        "formula_executor",
+        "document_engine",
+        "database",
+        "validation"
+      ],
+      "capability": "commercials_and_valuations",
+      "gap": false,
+      "strategy": "REUSE"
+    },
+    {
+      "blocks": [
+        "capture",
+        "storage",
+        "vector_search",
+        "knowledge",
+        "file_hasher"
+      ],
+      "capability": "document_qa_and_indexing",
+      "gap": false,
+      "strategy": "REUSE"
+    },
+    {
+      "blocks": [
+        "estate_maintenance",
+        "readiness_engine",
+        "workflow",
+        "validation"
+      ],
+      "capability": "safety_and_compliance",
+      "gap": false,
+      "strategy": "REUSE"
+    },
+    {
+      "blocks": [
+        "portfolio_rollup",
+        "dashboard",
+        "analytics"
+      ],
+      "capability": "progress_cost_dashboard",
+      "gap": false,
+      "strategy": "REUSE"
+    },
+    {
+      "blocks": [
+        "queue",
+        "event_bus",
+        "notification",
+        "workflow",
+        "recommendation_template"
+      ],
+      "capability": "automation_reminders_escalation",
+      "gap": false,
+      "strategy": "REUSE"
+    },
+    {
+      "blocks": [
+        "audit",
+        "team",
+        "validation",
+        "database"
+      ],
+      "capability": "audit_and_access_control",
+      "gap": false,
+      "strategy": "REUSE"
+    },
+    {
+      "blocks": [
+        "notification",
+        "event_bus"
+      ],
+      "capability": "team_notifications",
+      "gap": false,
+      "strategy": "REUSE"
+    }
+  ],
+  "schema": "product_dna.capability_resolution.v1"
+}

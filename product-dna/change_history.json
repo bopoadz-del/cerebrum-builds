@@ -1,0 +1,17 @@
+{
+  "changes": [
+    {
+      "detail": "one table per capability, tenant-scoped, typed money columns",
+      "revision": "0001_baseline"
+    },
+    {
+      "detail": "lifecycle audit table",
+      "revision": "0002_lifecycle_audit"
+    },
+    {
+      "detail": "side table so a key the entity does not declare still round-trips",
+      "revision": "0003_record_extras"
+    }
+  ],
+  "schema": "product_dna.change_history.v1"
+}

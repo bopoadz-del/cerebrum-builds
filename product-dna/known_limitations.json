@@ -1,0 +1,30 @@
+{
+  "limitations": [
+    {
+      "detail": "app/llm.py is a deterministic template composer; is_available() is False. Anything needing real inference is refused, not faked.",
+      "id": "no_model_provider",
+      "severity": "medium"
+    },
+    {
+      "detail": "Document Q&A is a keyword index (token overlap with inverse-document-frequency weighting) inside the platform sqlite file \u2014 not an embedding model.",
+      "id": "lexical_retrieval",
+      "severity": "medium"
+    },
+    {
+      "detail": "No accounting/ERP, cloud drive or messaging connector was named by the team. None is implemented; a named one ships as a marked placeholder until built.",
+      "id": "no_external_systems",
+      "severity": "low"
+    },
+    {
+      "detail": "Email/webhook delivery needs operator-supplied credentials; without them the notification block records delivery in-process (channel mcp).",
+      "id": "notification_credentials",
+      "severity": "low"
+    },
+    {
+      "detail": "UAE VAT rate, retention and payment terms have no defaults. An unset setting is refused by name rather than guessed.",
+      "id": "rates_unset_by_default",
+      "severity": "low"
+    }
+  ],
+  "schema": "product_dna.known_limitations.v1"
+}

@@ -1,0 +1,14 @@
+{
+  "agent_id": "construction_management.document_qa_and_indexing",
+  "blocks": [
+    "capture",
+    "storage",
+    "vector_search",
+    "knowledge",
+    "file_hasher"
+  ],
+  "capability": "document_qa_and_indexing",
+  "kind": "capability",
+  "name": "document_qa_and_indexing handler",
+  "product_id": "construction-management"
+}

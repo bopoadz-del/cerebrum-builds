@@ -1,0 +1,13 @@
+{
+  "agent_id": "construction_management.job_and_site_tracking",
+  "blocks": [
+    "workflow",
+    "database",
+    "estate_registry",
+    "validation"
+  ],
+  "capability": "job_and_site_tracking",
+  "kind": "capability",
+  "name": "job_and_site_tracking handler",
+  "product_id": "construction-management"
+}

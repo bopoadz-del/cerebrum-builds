@@ -1,0 +1,11 @@
+{
+  "agent_id": "construction_management.team_notifications",
+  "blocks": [
+    "notification",
+    "event_bus"
+  ],
+  "capability": "team_notifications",
+  "kind": "capability",
+  "name": "team_notifications handler",
+  "product_id": "construction-management"
+}

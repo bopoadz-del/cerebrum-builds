@@ -1,0 +1,12 @@
+{
+  "agent_id": "construction_management.progress_cost_dashboard",
+  "blocks": [
+    "portfolio_rollup",
+    "dashboard",
+    "analytics"
+  ],
+  "capability": "progress_cost_dashboard",
+  "kind": "capability",
+  "name": "progress_cost_dashboard handler",
+  "product_id": "construction-management"
+}

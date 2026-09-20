@@ -1,3 +1,4 @@
+"""Database Block - SQLite/PostgreSQL persistence"""
 import os as _os
 import sqlite3 as _sqlite3
 from pathlib import Path as _HalPath
@@ -112,7 +113,6 @@ def _create_block_instance(block_or_name, *args, **kwargs):
         return _instantiate_store_block(target)
     return _ensure_store_block_ready(target)
 
-"""Database Block - SQLite/PostgreSQL persistence"""
 import logging
 import os
 

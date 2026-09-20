@@ -1,0 +1,21 @@
+{
+  "authored_by": "factory WRITER role (codewhale exec)",
+  "handlers": [
+    "app/actions/job_and_site_tracking.py",
+    "app/actions/commercials_and_valuations.py",
+    "app/actions/document_qa_and_indexing.py",
+    "app/actions/safety_and_compliance.py",
+    "app/actions/progress_cost_dashboard.py",
+    "app/actions/automation_reminders_escalation.py",
+    "app/actions/audit_and_access_control.py",
+    "app/actions/team_notifications.py"
+  ],
+  "migration": "alembic/versions/0001_baseline.py",
+  "models": "app/models.py",
+  "product_id": "construction-management",
+  "routes": "app/routes.py",
+  "schema": "product_dna.generation_manifest.v1",
+  "store": "app/store.py",
+  "ui": "app/static/index.html",
+  "ui_source": "frontend/src/App.tsx"
+}

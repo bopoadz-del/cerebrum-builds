@@ -1,0 +1,20 @@
+{
+  "checks": [
+    {
+      "command": "python -m pytest -m 'not pilot' -q",
+      "id": "code_phase",
+      "status": "green"
+    },
+    {
+      "command": "python -m pytest -m pilot -q",
+      "id": "pilot_phase",
+      "status": "green"
+    },
+    {
+      "command": "python scripts/acceptance.py",
+      "id": "acceptance",
+      "status": "green except the Store-built image check, which the Store gate measures"
+    }
+  ],
+  "schema": "factory.certification.self_check.v1"
+}

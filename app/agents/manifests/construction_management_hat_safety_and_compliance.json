@@ -1,0 +1,13 @@
+{
+  "agent_id": "construction_management.safety_and_compliance",
+  "blocks": [
+    "estate_maintenance",
+    "readiness_engine",
+    "workflow",
+    "validation"
+  ],
+  "capability": "safety_and_compliance",
+  "kind": "capability",
+  "name": "safety_and_compliance handler",
+  "product_id": "construction-management"
+}

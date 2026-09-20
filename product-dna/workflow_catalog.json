@@ -1,0 +1,44 @@
+{
+  "schema_version": "1.0.0",
+  "workflows": [
+    {
+      "description": "Default linear workflow over planned capabilities.",
+      "name": "Capability sequence",
+      "steps": [
+        {
+          "capability_id": "job_and_site_tracking",
+          "role": "execute"
+        },
+        {
+          "capability_id": "commercials_and_valuations",
+          "role": "execute"
+        },
+        {
+          "capability_id": "document_qa_and_indexing",
+          "role": "execute"
+        },
+        {
+          "capability_id": "safety_and_compliance",
+          "role": "execute"
+        },
+        {
+          "capability_id": "progress_cost_dashboard",
+          "role": "execute"
+        },
+        {
+          "capability_id": "automation_reminders_escalation",
+          "role": "execute"
+        },
+        {
+          "capability_id": "audit_and_access_control",
+          "role": "execute"
+        },
+        {
+          "capability_id": "team_notifications",
+          "role": "execute"
+        }
+      ],
+      "workflow_id": "construction_management.capability_sequence"
+    }
+  ]
+}

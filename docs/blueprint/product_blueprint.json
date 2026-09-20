@@ -4,109 +4,112 @@
       "block_ids": [
         "workflow",
         "database",
-        "validation",
-        "event_bus",
-        "queue",
-        "audit"
-      ],
-      "description": "Handles the full reservation lifecycle including availability checks, real-time booking, modifications, cancellations, and stay records across all channels.",
-      "id": "booking_management",
-      "required": true,
-      "strategy_hint": "REUSE"
-    },
-    {
-      "block_ids": [
         "estate_registry",
-        "estate_maintenance",
-        "database",
-        "team",
-        "workflow",
-        "audit"
+        "validation"
       ],
-      "description": "Manages rooms, rate plans, seasonal inventory, and property configuration for one or many hotel properties.",
-      "id": "property_management",
+      "description": "Track active jobs, sites and work fronts with milestones, progress percentage, snag/punch lists, and variations with their approval status.",
+      "id": "job_and_site_tracking",
       "required": true,
       "strategy_hint": "REUSE"
     },
     {
       "block_ids": [
         "formula_executor",
-        "readiness_engine",
-        "recommendation_template",
-        "analytics",
-        "database"
+        "document_engine",
+        "database",
+        "validation"
       ],
-      "description": "Calculates and adjusts room rates in real time based on demand, occupancy, seasonality, competitor signals, and configurable pricing rules.",
-      "id": "dynamic_pricing",
+      "description": "BOQ line items and measured quantities, interim payment applications and valuations, retention, variation orders, invoices and supplier/subcontractor purchase orders and payment tracking \u2014 in AED, with UAE VAT applied and unspecified tax/regulatory handling kept configurable.",
+      "id": "commercials_and_valuations",
       "required": true,
       "strategy_hint": "REUSE"
     },
     {
       "block_ids": [
         "capture",
-        "knowledge",
+        "storage",
         "vector_search",
-        "analytics",
-        "notification"
+        "knowledge",
+        "file_hasher"
       ],
-      "description": "Collects, moderates, and responds to guest reviews; analyzes sentiment and surfaces reputation trends for each property.",
-      "id": "review_management",
+      "description": "Upload and index BOQs, drawings, method statements, safety procedures and subcontractor/supplier price lists, and answer questions against them with source references.",
+      "id": "document_qa_and_indexing",
       "required": true,
       "strategy_hint": "REUSE"
     },
     {
       "block_ids": [
-        "dashboard",
-        "analytics",
+        "estate_maintenance",
+        "readiness_engine",
+        "workflow",
+        "validation"
+      ],
+      "description": "Per-job method statement and safety procedure records, incident/near-miss logging, and readiness checks before a work front opens.",
+      "id": "safety_and_compliance",
+      "required": true,
+      "strategy_hint": "REUSE"
+    },
+    {
+      "block_ids": [
         "portfolio_rollup",
+        "dashboard",
+        "analytics"
+      ],
+      "description": "Cross-job roll-up showing progress, certified value, cost to date, variations pending, snags open and payments due.",
+      "id": "progress_cost_dashboard",
+      "required": true,
+      "strategy_hint": "REUSE"
+    },
+    {
+      "block_ids": [
+        "queue",
+        "event_bus",
+        "notification",
+        "workflow",
+        "recommendation_template"
+      ],
+      "description": "Scheduled reminder to prepare the monthly interim payment application/valuation, and escalation when variations or snags accumulate beyond a threshold on a job.",
+      "id": "automation_reminders_escalation",
+      "required": true,
+      "strategy_hint": "REUSE"
+    },
+    {
+      "block_ids": [
+        "audit",
+        "team",
+        "validation",
         "database"
       ],
-      "description": "Provides operational dashboards and reports covering occupancy, revenue, booking pace, channel performance, and guest satisfaction.",
-      "id": "analytics_dashboard",
+      "description": "Full audit trail of approvals, document versions and financial changes, with role-based access for owner, site engineer/foreman and accounts.",
+      "id": "audit_and_access_control",
       "required": true,
       "strategy_hint": "REUSE"
     },
     {
       "block_ids": [
         "notification",
-        "event_bus",
-        "queue",
-        "workflow"
+        "event_bus"
       ],
-      "description": "Sends timely booking confirmations, reminders, pricing alerts, and internal staff notifications via email, SMS, and in-app channels.",
-      "id": "notification_system",
-      "required": true,
-      "strategy_hint": "REUSE"
-    },
-    {
-      "block_ids": [
-        "vector_search",
-        "knowledge",
-        "recommendation_template",
-        "memory",
-        "analytics"
-      ],
-      "description": "Enables guests to search properties and rooms with filters, and recommends personalized stays, packages, and upsells based on preferences and history.",
-      "id": "search_recommendation",
+      "description": "Notify the team by email and/or messaging channel on approvals, due valuations and overdue items.",
+      "id": "team_notifications",
       "required": true,
       "strategy_hint": "REUSE"
     }
   ],
-  "connectors": [],
-  "drafting_mode": "architect_llm",
-  "drafting_note": null,
-  "edge_profile": "standard",
-  "factory_scenario": "CREATE_PRODUCT",
-  "human_authority": true,
-  "n_required": 7,
-  "product_id": "hospitality",
-  "product_name": "StayFlow Hospitality Platform",
-  "schema_version": "product_blueprint.v1",
-  "summary": "StayFlow is an all-in-one hotel booking and property management platform for independent hotels, boutique inns, and small hotel groups. It unifies real-time reservation management, room inventory and rate control, dynamic pricing, guest reviews, and operational analytics, while keeping staff and guests informed with automated notifications and AI-assisted search and recommendations.",
-  "ui_modules": [
-    "command_center",
-    "operational_chat",
-    "resident_engineer"
+  "country": "AE",
+  "currency": "AED",
+  "product_id": "construction-management",
+  "product_name": "Construction Platform",
+  "roles": [
+    "owner",
+    "site_engineer",
+    "accounts",
+    "admin"
   ],
-  "vertical": "hospitality"
+  "settings": {
+    "DEFAULT_RETENTION_PERCENT": "required, no default",
+    "PAYMENT_TERM_DAYS": "required, no default",
+    "UAE_VAT_RATE_PERCENT": "required, no default \u2014 the contractor's own VAT position decides the rate"
+  },
+  "vertical": "construction_management"
 }

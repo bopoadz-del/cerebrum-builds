@@ -1,0 +1,35 @@
+{
+  "agent_id": "callops.hat.lead_intake_and_dial_queue",
+  "kind": "hat",
+  "product_id": "real-estate",
+  "capability_id": "lead_intake_and_dial_queue",
+  "activation": {
+    "default_enabled": false,
+    "mode": "manual",
+    "put_off_by": [
+      "disable:callops.hat.lead_intake_and_dial_queue"
+    ],
+    "triggers": [
+      {
+        "type": "capability",
+        "value": "lead_intake_and_dial_queue"
+      }
+    ]
+  },
+  "allowed_actions": [
+    "callops.lead_intake_and_dial_queue"
+  ],
+  "scope": {
+    "reads": [
+      "this capability's own columns"
+    ],
+    "writes": [
+      "one row in this capability's table, via the route"
+    ],
+    "never": [
+      "another capability's table",
+      "vendor/**",
+      "tests/**"
+    ]
+  }
+}

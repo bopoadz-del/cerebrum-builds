@@ -1,0 +1,26 @@
+{
+  "_fixture": "recorded Twilio Programmable Voice status callbacks; CI never dials",
+  "callbacks": [
+    {"CallSid": "CA00000000000000000000000000000001", "CallStatus": "initiated", "CallDuration": "0", "From": "+971400000000", "To": "+971500000000", "Direction": "outbound-api"},
+    {"CallSid": "CA00000000000000000000000000000001", "CallStatus": "ringing", "CallDuration": "0", "From": "+971400000000", "To": "+971500000000", "Direction": "outbound-api"},
+    {"CallSid": "CA00000000000000000000000000000001", "CallStatus": "answered", "CallDuration": "0", "From": "+971400000000", "To": "+971500000000", "Direction": "outbound-api"},
+    {"CallSid": "CA00000000000000000000000000000001", "CallStatus": "completed", "CallDuration": "184", "From": "+971400000000", "To": "+971500000000", "Direction": "outbound-api"},
+    {"CallSid": "CA00000000000000000000000000000002", "CallStatus": "failed", "CallDuration": "0", "From": "+971400000000", "To": "+971500000001", "Direction": "outbound-api"},
+    {"CallSid": "CA00000000000000000000000000000003", "CallStatus": "busy", "CallDuration": "0", "From": "+971400000000", "To": "+971500000002", "Direction": "outbound-api"},
+    {"CallSid": "CA00000000000000000000000000000004", "CallStatus": "no-answer", "CallDuration": "0", "From": "+971400000000", "To": "+971500000003", "Direction": "outbound-api"}
+  ],
+  "gather": {
+    "CallSid": "CA00000000000000000000000000000001",
+    "SpeechResult": "yes I am interested in the Marina Tower one bedroom",
+    "Confidence": "0.91",
+    "From": "+971500000000",
+    "To": "+971400000000"
+  },
+  "gather_ar": {
+    "CallSid": "CA00000000000000000000000000000005",
+    "SpeechResult": "\u0646\u0639\u0645 \u0623\u0646\u0627 \u0645\u0647\u062a\u0645",
+    "Confidence": "0.88",
+    "From": "+971500000004",
+    "To": "+971400000000"
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "agent_id": "callops.hat.crm_destination_placeholder",
+  "kind": "hat",
+  "product_id": "real-estate",
+  "capability_id": "crm_destination_placeholder",
+  "activation": {
+    "default_enabled": false,
+    "mode": "manual",
+    "put_off_by": [
+      "disable:callops.hat.crm_destination_placeholder"
+    ],
+    "triggers": [
+      {
+        "type": "capability",
+        "value": "crm_destination_placeholder"
+      }
+    ]
+  },
+  "allowed_actions": [
+    "callops.crm_destination_placeholder"
+  ],
+  "scope": {
+    "reads": [
+      "this capability's own columns"
+    ],
+    "writes": [
+      "one row in this capability's table, via the route"
+    ],
+    "never": [
+      "another capability's table",
+      "vendor/**",
+      "tests/**"
+    ]
+  }
+}

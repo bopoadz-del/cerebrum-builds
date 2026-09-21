@@ -1,0 +1,35 @@
+{
+  "agent_id": "callops.hat.warm_transfer",
+  "kind": "hat",
+  "product_id": "real-estate",
+  "capability_id": "warm_transfer",
+  "activation": {
+    "default_enabled": false,
+    "mode": "manual",
+    "put_off_by": [
+      "disable:callops.hat.warm_transfer"
+    ],
+    "triggers": [
+      {
+        "type": "capability",
+        "value": "warm_transfer"
+      }
+    ]
+  },
+  "allowed_actions": [
+    "callops.warm_transfer"
+  ],
+  "scope": {
+    "reads": [
+      "this capability's own columns"
+    ],
+    "writes": [
+      "one row in this capability's table, via the route"
+    ],
+    "never": [
+      "another capability's table",
+      "vendor/**",
+      "tests/**"
+    ]
+  }
+}

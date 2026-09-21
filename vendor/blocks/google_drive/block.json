@@ -1,0 +1,83 @@
+{
+  "acceptance": [
+    {
+      "check": "errors on an unknown or missing action",
+      "id": "unknown_action",
+      "status": "failed"
+    }
+  ],
+  "author": "Cerebrum Team",
+  "description": "Google Drive file operations \u2014 set GOOGLE_CLIENT_ID + GOOGLE_CLIENT_SECRET or GOOGLE_ACCESS_TOKEN",
+  "digests": {
+    "Dockerfile": "905bd5e509638c2df98d8f1039fba18adde147d0d7ffbf70778ca87888cd0da1",
+    "block.json": "26ecbff783d442fc5de8c29cccc487cc097a70ed9f801b4b5fc0f394dac60e61",
+    "block.py": "e58ee30a064a6ce4ad7acd2172f889fd9702bbac357d31f5f2905abcf7c0d278"
+  },
+  "execution": {
+    "image_pin": "refused_unverified",
+    "type": "docker"
+  },
+  "id": "google_drive",
+  "inputs": [
+    {
+      "description": "File ID, folder name, or search query...",
+      "name": "input",
+      "required": false,
+      "type": "string"
+    }
+  ],
+  "layer": 4,
+  "name": "Google Drive",
+  "never": [],
+  "outputs": [
+    {
+      "description": "Files",
+      "name": "files",
+      "type": "array"
+    }
+  ],
+  "permissions": {
+    "blocks": [],
+    "filesystem": false,
+    "imports": [],
+    "network": false
+  },
+  "publisher_id": "cerebrum_platform",
+  "reads": [
+    {
+      "kind": "caller",
+      "scope": "input"
+    },
+    {
+      "kind": "env",
+      "scope": "process"
+    },
+    {
+      "kind": "network",
+      "scope": "http.outbound"
+    }
+  ],
+  "requires": [],
+  "signature": "IwopQlXvVLTKb8Cz60SszWN0snKKgpDJrh7qhrAOTdaIOU3VWSCAIjejrB8gd0N+RFQ+zg8mPtikqWWwbmbfDA==",
+  "tags": [
+    "integration",
+    "storage",
+    "cloud",
+    "google"
+  ],
+  "trust_tier": "platform",
+  "ui_schema": [
+    {
+      "label": "File ID, folder name, or search query...",
+      "name": "input",
+      "widget": "text"
+    }
+  ],
+  "version": "2.0",
+  "writes": [
+    {
+      "kind": "caller",
+      "scope": "output"
+    }
+  ]
+}

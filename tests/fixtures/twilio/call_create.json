@@ -1,0 +1,13 @@
+{
+  "sid": "CA00000000000000000000000000000001",
+  "date_created": "2026-09-03T10:00:00Z",
+  "date_updated": "2026-09-03T10:00:00Z",
+  "account_sid": "AC00000000000000000000000000000001",
+  "to": "+971500000000",
+  "from": "+971400000000",
+  "status": "queued",
+  "direction": "outbound-api",
+  "api_version": "2010-04-01",
+  "uri": "/2010-04-01/Accounts/AC00000000000000000000000000000001/Calls/CA00000000000000000000000000000001.json",
+  "_fixture": "recorded fake-Twilio call create response; no live account"
+}

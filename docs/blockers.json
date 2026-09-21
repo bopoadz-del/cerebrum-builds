@@ -1,0 +1,89 @@
+{
+ "operator_settings": [
+  {
+   "name": "CURRENCY",
+   "reason": "the brief named no country and no currency for pricing",
+   "required": true
+  },
+  {
+   "name": "BROKER_COMMISSION_PERCENT",
+   "reason": "the brief named no broker commission",
+   "required": true
+  },
+  {
+   "name": "TAX_RATE_PERCENT",
+   "reason": "no tax regime was named",
+   "required": false
+  },
+  {
+   "name": "DAILY_CALL_CAP",
+   "reason": "the operator's own pacing cap (default stated, not assumed)",
+   "required": false
+  },
+  {
+   "name": "CONCURRENCY",
+   "reason": "the operator's own dial concurrency (default stated, not assumed)",
+   "required": false
+  },
+  {
+   "name": "BROKER_TRANSFER_NUMBER",
+   "reason": "the human broker's line for a warm transfer; no default, and with neither it nor a record broker_number the transfer is recorded as declined",
+   "required": true
+  }
+ ],
+ "product_id": "real-estate",
+ "product_name": "CallOps",
+ "schema": "blockers.v1",
+ "stubbed_integrations": [
+  {
+   "behaviour": "with any of them unset the gateway originates against the recorded fake-Twilio fixtures in tests/fixtures/twilio/ and refuses to open a socket; CI never dials",
+   "capabilities": [
+    "voice_gateway",
+    "warm_transfer"
+   ],
+   "name": "twilio_programmable_voice",
+   "settings": [
+    "TWILIO_ACCOUNT_SID",
+    "TWILIO_AUTH_TOKEN",
+    "TWILIO_CALLER_NUMBER",
+    "BROKER_TRANSFER_NUMBER"
+   ],
+   "state": "stubbed until all three are set"
+  },
+  {
+   "behaviour": "records the intent and the payload shape, registers the destination offline, and declares delivery_state 'stubbed'; nothing is pushed",
+   "capabilities": [
+    "crm_destination_placeholder"
+   ],
+   "name": "crm_destination",
+   "state": "placeholder: no CRM destination was named in the brief"
+  }
+ ],
+ "unavailable": [
+  {
+   "block_id": "knowledge",
+   "capabilities": [
+    "project_knowledge_grounding",
+    "qualification_and_broker_summary"
+   ],
+   "mitigation": "retrieval is carried by app.retrieval (tenant corpus, precedence.v1) plus the vendored vector_search block; the handler records blocks_unavailable['knowledge'] and never reports the block as answered",
+   "reason": "the vendored knowledge block imports vendor.cerebrum.core.vector_store, which this delivery's runtime slice does not ship; the block answers a named ImportError rather than a result"
+  },
+  {
+   "block_id": "google_drive",
+   "capabilities": [
+    "google_drive"
+   ],
+   "mitigation": "drive_mode stays 'stubbed' and the capability declares the block unavailable; project sheets arrive through local_drive and the rag ingest route in the meantime",
+   "reason": "no Google credentials were supplied; the block refuses with 'Not authenticated' by name"
+  },
+  {
+   "block_id": "mcp_adapter",
+   "capabilities": [
+    "mcp_adapter"
+   ],
+   "mitigation": "the capability falls back to docs/block_contracts.json, generated from the same block metadata, and names the block unavailable",
+   "reason": "the delivered registry is a lazy loader the adapter cannot enumerate ('_LazyRegistry' object has no attribute 'items')"
+  }
+ ]
+}

@@ -1,0 +1,59 @@
+[
+  {
+    "name": "Call lifecycle",
+    "description": "One lead's call, from queued to transferred or closed.",
+    "guard": "the configured call window; a transition outside it is refused",
+    "steps": [
+      {
+        "state": "queued",
+        "role": "queue holds the dial job"
+      },
+      {
+        "state": "dialing",
+        "role": "voice_gateway originates, keyed by Call SID"
+      },
+      {
+        "state": "answered",
+        "role": "ASR gather in en/ar"
+      },
+      {
+        "state": "pitched",
+        "role": "project_knowledge_grounding answers, cite or refuse"
+      },
+      {
+        "state": "qualified",
+        "role": "qualification_and_broker_summary fixes the outcome"
+      },
+      {
+        "state": "transferred",
+        "role": "warm_transfer whispers to the broker and bridges"
+      },
+      {
+        "state": "callback",
+        "role": "busy / no-answer / failed while attempts remain"
+      },
+      {
+        "state": "closed",
+        "role": "terminal: the lifecycle is over"
+      }
+    ]
+  },
+  {
+    "name": "Qualification handoff",
+    "description": "The three-outcome vocabulary decides what happens next.",
+    "steps": [
+      {
+        "outcome": "project_interested",
+        "role": "warm_transfer"
+      },
+      {
+        "outcome": "other_re_interested",
+        "role": "send_alternative_projects"
+      },
+      {
+        "outcome": "not_interested",
+        "role": "close_and_suppress"
+      }
+    ]
+  }
+]

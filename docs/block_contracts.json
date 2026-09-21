@@ -1,0 +1,1626 @@
+{
+  "blocks": {
+    "agent_state_sync": {
+      "acceptance": [
+        {
+          "check": "a delta without a vector clock is refused, not applied",
+          "id": "clock_required",
+          "status": "refused"
+        }
+      ],
+      "actions": [
+        "apply",
+        "get",
+        "conflicts"
+      ],
+      "block_id": "agent_state_sync",
+      "default_action": null,
+      "description": "Agent state sync ported from Me-Agent agent/memory.py: deltas carry (key, origin, vector_clock, operation); a delta applies when its clock dominates the stored one; incomparable clocks on the same key are archived as conflicts, never silently dropped. Store is in-process.",
+      "inputs": [
+        {
+          "name": "action",
+          "options": [
+            "apply",
+            "get",
+            "conflicts"
+          ],
+          "required": false,
+          "type": "string"
+        }
+      ],
+      "name": "agent_state_sync",
+      "never": [],
+      "reads": [
+        {
+          "kind": "caller",
+          "scope": "input"
+        }
+      ],
+      "writes": [
+        {
+          "kind": "caller",
+          "scope": "output"
+        }
+      ]
+    },
+    "audit_chain": {
+      "acceptance": [],
+      "actions": [],
+      "block_id": "audit_chain",
+      "default_action": null,
+      "description": "Tamper-evident evidence chain (FinanceOps port): every record links to its predecessor and verify_chain full-walks the chain naming each violation.",
+      "inputs": [],
+      "name": "Audit Chain",
+      "never": [],
+      "reads": [],
+      "writes": []
+    },
+    "capture": {
+      "acceptance": [
+        {
+          "check": "errors on an unknown or missing action",
+          "id": "unknown_action",
+          "status": "failed"
+        },
+        {
+          "check": "fails loud when a required credential or key is absent",
+          "id": "missing_credential",
+          "status": "failed"
+        }
+      ],
+      "actions": [],
+      "block_id": "capture",
+      "default_action": null,
+      "description": "P1: local/scripted OCR and scripted structure. Cloud LLM keys and Ollama are unused. Receive images from any client, OCR extract, AI structure, vector store",
+      "inputs": [
+        {
+          "name": "input",
+          "options": [],
+          "required": false,
+          "type": "file"
+        },
+        {
+          "name": "ocr_languages",
+          "options": [],
+          "required": false,
+          "type": "string"
+        },
+        {
+          "name": "ocr_engine",
+          "options": [],
+          "required": false,
+          "type": "string"
+        },
+        {
+          "name": "llm_provider",
+          "options": [],
+          "required": false,
+          "type": "string"
+        },
+        {
+          "name": "ollama_base_url",
+          "options": [],
+          "required": false,
+          "type": "string"
+        },
+        {
+          "name": "ollama_model",
+          "options": [],
+          "required": false,
+          "type": "string"
+        },
+        {
+          "name": "deepseek_api_key",
+          "options": [],
+          "required": false,
+          "type": "string"
+        },
+        {
+          "name": "openrouter_api_key",
+          "options": [],
+          "required": false,
+          "type": "string"
+        },
+        {
+          "name": "deepseek_model",
+          "options": [],
+          "required": false,
+          "type": "string"
+        },
+        {
+          "name": "openrouter_model",
+          "options": [],
+          "required": false,
+          "type": "string"
+        },
+        {
+          "name": "anthropic_api_key",
+          "options": [],
+          "required": false,
+          "type": "string"
+        },
+        {
+          "name": "anthropic_model",
+          "options": [],
+          "required": false,
+          "type": "string"
+        },
+        {
+          "name": "vector_db_url",
+          "options": [],
+          "required": false,
+          "type": "string"
+        },
+        {
+          "name": "store_captures",
+          "options": [],
+          "required": false,
+          "type": "boolean"
+        },
+        {
+          "name": "capture_collection",
+          "options": [],
+          "required": false,
+          "type": "string"
+        }
+      ],
+      "name": "Capture",
+      "never": [],
+      "reads": [
+        {
+          "kind": "caller",
+          "scope": "input"
+        },
+        {
+          "kind": "file",
+          "scope": "local.read"
+        },
+        {
+          "kind": "file",
+          "scope": "input_image"
+        },
+        {
+          "kind": "env",
+          "scope": "process"
+        },
+        {
+          "kind": "config",
+          "scope": "runtime"
+        },
+        {
+          "kind": "network",
+          "scope": "http.outbound"
+        },
+        {
+          "kind": "llm",
+          "scope": "provider"
+        },
+        {
+          "kind": "credential",
+          "scope": "env"
+        }
+      ],
+      "writes": [
+        {
+          "kind": "caller",
+          "scope": "output"
+        },
+        {
+          "kind": "file",
+          "scope": "local.write"
+        }
+      ]
+    },
+    "database": {
+      "acceptance": [
+        {
+          "check": "errors on an unknown or missing action",
+          "id": "unknown_action",
+          "status": "failed"
+        }
+      ],
+      "actions": [
+        "query",
+        "insert",
+        "update",
+        "delete",
+        "create_table",
+        "list_tables"
+      ],
+      "block_id": "database",
+      "default_action": "query",
+      "description": "",
+      "inputs": [
+        {
+          "name": "input",
+          "options": [],
+          "required": false,
+          "type": "json"
+        },
+        {
+          "name": "action",
+          "options": [
+            "query",
+            "insert",
+            "update",
+            "delete",
+            "create_table",
+            "list_tables"
+          ],
+          "required": false,
+          "type": "string"
+        },
+        {
+          "name": "backend",
+          "options": [],
+          "required": false,
+          "type": "string"
+        },
+        {
+          "name": "connection_string",
+          "options": [],
+          "required": false,
+          "type": "string"
+        }
+      ],
+      "name": "Database",
+      "never": [],
+      "reads": [
+        {
+          "kind": "caller",
+          "scope": "input"
+        },
+        {
+          "kind": "env",
+          "scope": "process"
+        },
+        {
+          "kind": "config",
+          "scope": "runtime"
+        },
+        {
+          "kind": "database",
+          "scope": "sql"
+        }
+      ],
+      "writes": [
+        {
+          "kind": "caller",
+          "scope": "output"
+        },
+        {
+          "kind": "database",
+          "scope": "sql"
+        }
+      ]
+    },
+    "event_bus": {
+      "acceptance": [
+        {
+          "check": "errors on an unknown or missing action",
+          "id": "unknown_action",
+          "status": "failed"
+        }
+      ],
+      "actions": [
+        "publish",
+        "subscribe",
+        "request",
+        "respond",
+        "get_topology"
+      ],
+      "block_id": "event_bus",
+      "default_action": "publish",
+      "description": "Event bus for synchronous and asynchronous block communication",
+      "inputs": [
+        {
+          "name": "input",
+          "options": [],
+          "required": false,
+          "type": "json"
+        },
+        {
+          "name": "action",
+          "options": [
+            "publish",
+            "subscribe",
+            "request",
+            "respond",
+            "get_topology"
+          ],
+          "required": false,
+          "type": "string"
+        },
+        {
+          "name": "default_timeout",
+          "options": [],
+          "required": false,
+          "type": "number"
+        },
+        {
+          "name": "max_pending",
+          "options": [],
+          "required": false,
+          "type": "number"
+        }
+      ],
+      "name": "Event Bus",
+      "never": [],
+      "reads": [
+        {
+          "kind": "caller",
+          "scope": "input"
+        },
+        {
+          "kind": "config",
+          "scope": "runtime"
+        }
+      ],
+      "writes": [
+        {
+          "kind": "caller",
+          "scope": "output"
+        }
+      ]
+    },
+    "evidence_or_refuse": {
+      "acceptance": [
+        {
+          "check": "a claim without evidence is refused, never answered",
+          "id": "unevidenced_refused",
+          "status": "refused"
+        }
+      ],
+      "actions": [
+        "judge"
+      ],
+      "block_id": "evidence_or_refuse",
+      "default_action": null,
+      "description": "Evidence-or-refuse gate ported from Me-Agent's refusal pattern: every claim in an answer must carry evidence; a claim with no evidence is refused, and the answer is allowed only when all claims are evidenced.",
+      "inputs": [
+        {
+          "name": "action",
+          "options": [
+            "judge"
+          ],
+          "required": false,
+          "type": "string"
+        }
+      ],
+      "name": "evidence_or_refuse",
+      "never": [],
+      "reads": [
+        {
+          "kind": "caller",
+          "scope": "input"
+        }
+      ],
+      "writes": [
+        {
+          "kind": "caller",
+          "scope": "output"
+        }
+      ]
+    },
+    "formula_executor": {
+      "acceptance": [],
+      "actions": [],
+      "block_id": "formula_executor",
+      "default_action": null,
+      "description": "Execute construction formulas in sandbox with unit validation",
+      "inputs": [
+        {
+          "name": "input",
+          "options": [],
+          "required": false,
+          "type": "json"
+        },
+        {
+          "name": "max_code_lines",
+          "options": [],
+          "required": false,
+          "type": "number"
+        },
+        {
+          "name": "timeout_seconds",
+          "options": [],
+          "required": false,
+          "type": "number"
+        },
+        {
+          "name": "allow_sympy",
+          "options": [],
+          "required": false,
+          "type": "boolean"
+        },
+        {
+          "name": "allow_numpy",
+          "options": [],
+          "required": false,
+          "type": "boolean"
+        }
+      ],
+      "name": "Formula Executor",
+      "never": [],
+      "reads": [
+        {
+          "kind": "caller",
+          "scope": "input"
+        },
+        {
+          "kind": "env",
+          "scope": "process"
+        },
+        {
+          "kind": "config",
+          "scope": "runtime"
+        },
+        {
+          "kind": "network",
+          "scope": "http.outbound"
+        }
+      ],
+      "writes": [
+        {
+          "kind": "caller",
+          "scope": "output"
+        }
+      ]
+    },
+    "google_drive": {
+      "acceptance": [
+        {
+          "check": "errors on an unknown or missing action",
+          "id": "unknown_action",
+          "status": "failed"
+        }
+      ],
+      "actions": [],
+      "block_id": "google_drive",
+      "default_action": null,
+      "description": "Google Drive file operations \u2014 set GOOGLE_CLIENT_ID + GOOGLE_CLIENT_SECRET or GOOGLE_ACCESS_TOKEN",
+      "inputs": [
+        {
+          "name": "input",
+          "options": [],
+          "required": false,
+          "type": "string"
+        }
+      ],
+      "name": "Google Drive",
+      "never": [],
+      "reads": [
+        {
+          "kind": "caller",
+          "scope": "input"
+        },
+        {
+          "kind": "env",
+          "scope": "process"
+        },
+        {
+          "kind": "network",
+          "scope": "http.outbound"
+        }
+      ],
+      "writes": [
+        {
+          "kind": "caller",
+          "scope": "output"
+        }
+      ]
+    },
+    "ingestion_provenance": {
+      "acceptance": [
+        {
+          "check": "a source label without a source name is refused, not fabricated",
+          "id": "missing_source",
+          "status": "refused"
+        }
+      ],
+      "actions": [
+        "build",
+        "hash_tree",
+        "record_source",
+        "list_labels"
+      ],
+      "block_id": "ingestion_provenance",
+      "default_action": null,
+      "description": "Ingestion provenance ported from Cerebrum-Steward cerebrum_product_kernel/provenance.py: factory provenance payloads, SHA-256 content hash trees, and page/sheet/row source labels for ingested documents.",
+      "inputs": [
+        {
+          "name": "action",
+          "options": [
+            "build",
+            "hash_tree",
+            "record_source",
+            "list_labels"
+          ],
+          "required": false,
+          "type": "string"
+        }
+      ],
+      "name": "ingestion_provenance",
+      "never": [],
+      "reads": [
+        {
+          "kind": "caller",
+          "scope": "input"
+        }
+      ],
+      "writes": [
+        {
+          "kind": "caller",
+          "scope": "output"
+        }
+      ]
+    },
+    "knowledge": {
+      "acceptance": [
+        {
+          "check": "errors on an unknown or missing action",
+          "id": "unknown_action",
+          "status": "failed"
+        },
+        {
+          "check": "fails loud when a required credential or key is absent",
+          "id": "missing_credential",
+          "status": "failed"
+        }
+      ],
+      "actions": [
+        "ask",
+        "search",
+        "summarize"
+      ],
+      "block_id": "knowledge",
+      "default_action": "ask",
+      "description": "Ask questions across stored captures and swarm runs using RAG",
+      "inputs": [
+        {
+          "name": "input",
+          "options": [],
+          "required": false,
+          "type": "string"
+        },
+        {
+          "name": "action",
+          "options": [
+            "ask",
+            "search",
+            "summarize"
+          ],
+          "required": false,
+          "type": "string"
+        },
+        {
+          "name": "top_k",
+          "options": [],
+          "required": false,
+          "type": "number"
+        },
+        {
+          "name": "llm_provider",
+          "options": [],
+          "required": false,
+          "type": "string"
+        },
+        {
+          "name": "ollama_base_url",
+          "options": [],
+          "required": false,
+          "type": "string"
+        },
+        {
+          "name": "ollama_model",
+          "options": [],
+          "required": false,
+          "type": "string"
+        },
+        {
+          "name": "deepseek_api_key",
+          "options": [],
+          "required": false,
+          "type": "string"
+        },
+        {
+          "name": "deepseek_model",
+          "options": [],
+          "required": false,
+          "type": "string"
+        },
+        {
+          "name": "openrouter_api_key",
+          "options": [],
+          "required": false,
+          "type": "string"
+        },
+        {
+          "name": "openrouter_model",
+          "options": [],
+          "required": false,
+          "type": "string"
+        },
+        {
+          "name": "vector_db_url",
+          "options": [],
+          "required": false,
+          "type": "string"
+        },
+        {
+          "name": "default_top_k",
+          "options": [],
+          "required": false,
+          "type": "number"
+        },
+        {
+          "name": "default_collections",
+          "options": [],
+          "required": false,
+          "type": "array"
+        }
+      ],
+      "name": "Knowledge",
+      "never": [],
+      "reads": [
+        {
+          "kind": "caller",
+          "scope": "input"
+        },
+        {
+          "kind": "env",
+          "scope": "process"
+        },
+        {
+          "kind": "config",
+          "scope": "runtime"
+        },
+        {
+          "kind": "network",
+          "scope": "http.outbound"
+        },
+        {
+          "kind": "database",
+          "scope": "vector"
+        },
+        {
+          "kind": "llm",
+          "scope": "provider"
+        },
+        {
+          "kind": "credential",
+          "scope": "env"
+        }
+      ],
+      "writes": [
+        {
+          "kind": "caller",
+          "scope": "output"
+        }
+      ]
+    },
+    "llm_enhancer": {
+      "acceptance": [
+        {
+          "check": "errors on an unknown or missing action",
+          "id": "unknown_action",
+          "status": "failed"
+        }
+      ],
+      "actions": [],
+      "block_id": "llm_enhancer",
+      "default_action": null,
+      "description": "LLM-augmented enhancement of construction quantities/risks/RFIs",
+      "inputs": [
+        {
+          "name": "input",
+          "options": [],
+          "required": false,
+          "type": "json"
+        },
+        {
+          "name": "model",
+          "options": [],
+          "required": false,
+          "type": "string"
+        },
+        {
+          "name": "max_output_tokens",
+          "options": [],
+          "required": false,
+          "type": "number"
+        },
+        {
+          "name": "timeout_seconds",
+          "options": [],
+          "required": false,
+          "type": "number"
+        }
+      ],
+      "name": "Llm Enhancer",
+      "never": [],
+      "reads": [
+        {
+          "kind": "caller",
+          "scope": "input"
+        },
+        {
+          "kind": "env",
+          "scope": "process"
+        },
+        {
+          "kind": "config",
+          "scope": "runtime"
+        },
+        {
+          "kind": "network",
+          "scope": "http.outbound"
+        },
+        {
+          "kind": "llm",
+          "scope": "provider"
+        },
+        {
+          "kind": "credential",
+          "scope": "env"
+        }
+      ],
+      "writes": [
+        {
+          "kind": "caller",
+          "scope": "output"
+        }
+      ]
+    },
+    "local_drive": {
+      "acceptance": [
+        {
+          "check": "rejects paths that escape the configured root",
+          "id": "path_escape_rejected",
+          "status": "refused"
+        }
+      ],
+      "actions": [],
+      "block_id": "local_drive",
+      "default_action": null,
+      "description": "Sandboxed local filesystem access: list, read, write files",
+      "inputs": [
+        {
+          "name": "input",
+          "options": [],
+          "required": false,
+          "type": "file"
+        }
+      ],
+      "name": "Local Drive",
+      "never": [
+        {
+          "kind": "file",
+          "scope": "escape_root"
+        }
+      ],
+      "reads": [
+        {
+          "kind": "caller",
+          "scope": "input"
+        },
+        {
+          "kind": "file",
+          "scope": "local.read"
+        },
+        {
+          "kind": "env",
+          "scope": "process"
+        }
+      ],
+      "writes": [
+        {
+          "kind": "caller",
+          "scope": "output"
+        },
+        {
+          "kind": "file",
+          "scope": "local.write"
+        }
+      ]
+    },
+    "mcp_adapter": {
+      "acceptance": [],
+      "actions": [
+        "list_tools",
+        "describe"
+      ],
+      "block_id": "mcp_adapter",
+      "default_action": "list_tools",
+      "description": "Exposes every registered Cerebrum block as MCP-style tool descriptions to MCP-aware agents. Read-only catalog: list_tools and describe only \u2014 it never executes a block on behalf of a client.",
+      "inputs": [
+        {
+          "name": "input",
+          "options": [],
+          "required": false,
+          "type": "json"
+        },
+        {
+          "name": "action",
+          "options": [
+            "list_tools",
+            "describe"
+          ],
+          "required": false,
+          "type": "string"
+        },
+        {
+          "name": "tool",
+          "options": [],
+          "required": false,
+          "type": "string"
+        }
+      ],
+      "name": "MCP Adapter",
+      "never": [
+        {
+          "kind": "block",
+          "scope": "tool_invocation"
+        }
+      ],
+      "reads": [
+        {
+          "kind": "block",
+          "scope": "block_catalog"
+        }
+      ],
+      "writes": []
+    },
+    "mock_connector_bus": {
+      "acceptance": [
+        {
+          "check": "a mock_unavailable system fetch fails closed and never fabricates data",
+          "id": "mock_unavailable",
+          "status": "refused"
+        }
+      ],
+      "actions": [
+        "fetch",
+        "normalise",
+        "publish",
+        "topics",
+        "systems"
+      ],
+      "block_id": "mock_connector_bus",
+      "default_action": null,
+      "description": "Fail-closed connector taxonomy ported from cerebrum-hotelops-v2 connectors/base.py + event_bus.py: six enterprise systems (opera, micros, grms, gaming_cms, loyalty_lms, maximo) in mock_unavailable level \u2014 fetch fails closed with a structured refusal and NEVER fabricates operational data; events normalise onto a canonical CRM taxonomy and publish per system topic. In-process bus.",
+      "inputs": [
+        {
+          "name": "action",
+          "options": [
+            "fetch",
+            "normalise",
+            "publish",
+            "topics",
+            "systems"
+          ],
+          "required": false,
+          "type": "string"
+        }
+      ],
+      "name": "mock_connector_bus",
+      "never": [],
+      "reads": [
+        {
+          "kind": "caller",
+          "scope": "input"
+        }
+      ],
+      "writes": [
+        {
+          "kind": "caller",
+          "scope": "output"
+        }
+      ]
+    },
+    "notification": {
+      "acceptance": [
+        {
+          "check": "errors on an unknown or missing action",
+          "id": "unknown_action",
+          "status": "failed"
+        },
+        {
+          "check": "fails loud when a required credential or key is absent",
+          "id": "missing_credential",
+          "status": "failed"
+        }
+      ],
+      "actions": [
+        "send",
+        "broadcast",
+        "health"
+      ],
+      "block_id": "notification",
+      "default_action": "send",
+      "description": "Send notifications via Email, Webhook, Slack, or MCP",
+      "inputs": [
+        {
+          "name": "input",
+          "options": [],
+          "required": false,
+          "type": "json"
+        },
+        {
+          "name": "action",
+          "options": [
+            "send",
+            "broadcast",
+            "health"
+          ],
+          "required": false,
+          "type": "string"
+        },
+        {
+          "name": "sendgrid_api_key",
+          "options": [],
+          "required": false,
+          "type": "string"
+        },
+        {
+          "name": "smtp_host",
+          "options": [],
+          "required": false,
+          "type": "string"
+        },
+        {
+          "name": "smtp_port",
+          "options": [],
+          "required": false,
+          "type": "number"
+        },
+        {
+          "name": "smtp_user",
+          "options": [],
+          "required": false,
+          "type": "string"
+        },
+        {
+          "name": "smtp_pass",
+          "options": [],
+          "required": false,
+          "type": "string"
+        },
+        {
+          "name": "slack_webhook_url",
+          "options": [],
+          "required": false,
+          "type": "string"
+        },
+        {
+          "name": "default_from_email",
+          "options": [],
+          "required": false,
+          "type": "string"
+        }
+      ],
+      "name": "Notification",
+      "never": [],
+      "reads": [
+        {
+          "kind": "caller",
+          "scope": "input"
+        },
+        {
+          "kind": "env",
+          "scope": "process"
+        },
+        {
+          "kind": "config",
+          "scope": "runtime"
+        },
+        {
+          "kind": "network",
+          "scope": "http.outbound"
+        },
+        {
+          "kind": "credential",
+          "scope": "env"
+        },
+        {
+          "kind": "block",
+          "scope": "peer"
+        }
+      ],
+      "writes": [
+        {
+          "kind": "caller",
+          "scope": "output"
+        },
+        {
+          "kind": "network",
+          "scope": "smtp.outbound"
+        },
+        {
+          "kind": "email",
+          "scope": "outbound"
+        },
+        {
+          "kind": "notification",
+          "scope": "outbound"
+        }
+      ]
+    },
+    "orchestrator": {
+      "acceptance": [],
+      "actions": [],
+      "block_id": "orchestrator",
+      "default_action": null,
+      "description": "Chain execution engine with type validation",
+      "inputs": [
+        {
+          "name": "input",
+          "options": [],
+          "required": false,
+          "type": "json"
+        },
+        {
+          "name": "max_steps",
+          "options": [],
+          "required": false,
+          "type": "number"
+        },
+        {
+          "name": "persist_steps",
+          "options": [],
+          "required": false,
+          "type": "boolean"
+        },
+        {
+          "name": "fail_fast",
+          "options": [],
+          "required": false,
+          "type": "boolean"
+        },
+        {
+          "name": "auto_convert",
+          "options": [],
+          "required": false,
+          "type": "boolean"
+        }
+      ],
+      "name": "Orchestrator",
+      "never": [],
+      "reads": [
+        {
+          "kind": "caller",
+          "scope": "input"
+        },
+        {
+          "kind": "config",
+          "scope": "runtime"
+        }
+      ],
+      "writes": [
+        {
+          "kind": "caller",
+          "scope": "output"
+        },
+        {
+          "kind": "memory",
+          "scope": "cache"
+        }
+      ]
+    },
+    "queue": {
+      "acceptance": [
+        {
+          "check": "errors on an unknown or missing action",
+          "id": "unknown_action",
+          "status": "failed"
+        }
+      ],
+      "actions": [
+        "enqueue",
+        "dequeue",
+        "status",
+        "list"
+      ],
+      "block_id": "queue",
+      "default_action": "enqueue",
+      "description": "",
+      "inputs": [
+        {
+          "name": "input",
+          "options": [],
+          "required": false,
+          "type": "json"
+        },
+        {
+          "name": "action",
+          "options": [
+            "enqueue",
+            "dequeue",
+            "status",
+            "list"
+          ],
+          "required": false,
+          "type": "string"
+        },
+        {
+          "name": "backend",
+          "options": [],
+          "required": false,
+          "type": "string"
+        },
+        {
+          "name": "redis_url",
+          "options": [],
+          "required": false,
+          "type": "string"
+        },
+        {
+          "name": "max_workers",
+          "options": [],
+          "required": false,
+          "type": "number"
+        }
+      ],
+      "name": "Queue",
+      "never": [],
+      "reads": [
+        {
+          "kind": "caller",
+          "scope": "input"
+        },
+        {
+          "kind": "config",
+          "scope": "runtime"
+        },
+        {
+          "kind": "memory",
+          "scope": "cache"
+        },
+        {
+          "kind": "queue",
+          "scope": "jobs"
+        }
+      ],
+      "writes": [
+        {
+          "kind": "caller",
+          "scope": "output"
+        },
+        {
+          "kind": "queue",
+          "scope": "jobs"
+        }
+      ]
+    },
+    "recommendation_template": {
+      "acceptance": [],
+      "actions": [],
+      "block_id": "recommendation_template",
+      "default_action": null,
+      "description": "Data-driven construction recommendation engine: variance data \u2192 severity-ranked recommendations + action items",
+      "inputs": [
+        {
+          "name": "input",
+          "options": [],
+          "required": false,
+          "type": "json"
+        },
+        {
+          "name": "max_recommendations",
+          "options": [],
+          "required": false,
+          "type": "number"
+        },
+        {
+          "name": "include_action_items",
+          "options": [],
+          "required": false,
+          "type": "boolean"
+        },
+        {
+          "name": "custom_rules_env",
+          "options": [],
+          "required": false,
+          "type": "string"
+        }
+      ],
+      "name": "Recommendation Template",
+      "never": [],
+      "reads": [
+        {
+          "kind": "caller",
+          "scope": "input"
+        },
+        {
+          "kind": "file",
+          "scope": "local.read"
+        },
+        {
+          "kind": "env",
+          "scope": "process"
+        },
+        {
+          "kind": "config",
+          "scope": "runtime"
+        }
+      ],
+      "writes": [
+        {
+          "kind": "caller",
+          "scope": "output"
+        }
+      ]
+    },
+    "storage": {
+      "acceptance": [],
+      "actions": [
+        "store",
+        "retrieve",
+        "delete",
+        "exists",
+        "list"
+      ],
+      "block_id": "storage",
+      "default_action": "store",
+      "description": "",
+      "inputs": [
+        {
+          "name": "input",
+          "options": [],
+          "required": false,
+          "type": "json"
+        },
+        {
+          "name": "action",
+          "options": [
+            "store",
+            "retrieve",
+            "delete",
+            "exists",
+            "list"
+          ],
+          "required": false,
+          "type": "string"
+        },
+        {
+          "name": "backend",
+          "options": [],
+          "required": false,
+          "type": "string"
+        },
+        {
+          "name": "data_dir",
+          "options": [],
+          "required": false,
+          "type": "string"
+        }
+      ],
+      "name": "Storage",
+      "never": [],
+      "reads": [
+        {
+          "kind": "caller",
+          "scope": "input"
+        },
+        {
+          "kind": "file",
+          "scope": "local.read"
+        },
+        {
+          "kind": "config",
+          "scope": "runtime"
+        }
+      ],
+      "writes": [
+        {
+          "kind": "caller",
+          "scope": "output"
+        },
+        {
+          "kind": "file",
+          "scope": "local.write"
+        }
+      ]
+    },
+    "validation": {
+      "acceptance": [
+        {
+          "check": "refuses or errors when a required input is absent",
+          "id": "missing_required_input",
+          "status": "refused"
+        },
+        {
+          "check": "errors on an unknown or missing action",
+          "id": "unknown_action",
+          "status": "failed"
+        }
+      ],
+      "actions": [
+        "validate_pipeline"
+      ],
+      "block_id": "validation",
+      "default_action": "validate_pipeline",
+      "description": "Block store certification and 5-stage item validation pipeline. Virgin boot alias: validation_pipeline (see docs/validation_block_mapping.md).",
+      "inputs": [
+        {
+          "name": "input",
+          "options": [],
+          "required": false,
+          "type": "json"
+        },
+        {
+          "name": "action",
+          "options": [
+            "validate_pipeline"
+          ],
+          "required": false,
+          "type": "string"
+        },
+        {
+          "name": "security_checks",
+          "options": [],
+          "required": false,
+          "type": "array"
+        },
+        {
+          "name": "performance_threshold_ms",
+          "options": [],
+          "required": false,
+          "type": "number"
+        },
+        {
+          "name": "required_tests",
+          "options": [],
+          "required": false,
+          "type": "array"
+        },
+        {
+          "name": "min_test_coverage",
+          "options": [],
+          "required": false,
+          "type": "number"
+        },
+        {
+          "name": "max_complexity",
+          "options": [],
+          "required": false,
+          "type": "number"
+        },
+        {
+          "name": "forbidden_imports",
+          "options": [],
+          "required": false,
+          "type": "array"
+        },
+        {
+          "name": "auto_certify_threshold",
+          "options": [],
+          "required": false,
+          "type": "number"
+        }
+      ],
+      "name": "Validation",
+      "never": [],
+      "reads": [
+        {
+          "kind": "caller",
+          "scope": "input"
+        },
+        {
+          "kind": "config",
+          "scope": "runtime"
+        }
+      ],
+      "writes": [
+        {
+          "kind": "caller",
+          "scope": "output"
+        }
+      ]
+    },
+    "vector_search": {
+      "acceptance": [
+        {
+          "check": "refuses or errors when a required input is absent",
+          "id": "missing_required_input",
+          "status": "refused"
+        },
+        {
+          "check": "errors on an unknown or missing action",
+          "id": "unknown_action",
+          "status": "failed"
+        }
+      ],
+      "actions": [],
+      "block_id": "vector_search",
+      "default_action": null,
+      "description": "Semantic search over in-memory document collections \u2014 no external DB needed",
+      "inputs": [
+        {
+          "name": "input",
+          "options": [],
+          "required": false,
+          "type": "string"
+        }
+      ],
+      "name": "Vector Search",
+      "never": [],
+      "reads": [
+        {
+          "kind": "caller",
+          "scope": "input"
+        },
+        {
+          "kind": "database",
+          "scope": "vector"
+        }
+      ],
+      "writes": [
+        {
+          "kind": "caller",
+          "scope": "output"
+        },
+        {
+          "kind": "database",
+          "scope": "vector"
+        }
+      ]
+    },
+    "webhook": {
+      "acceptance": [
+        {
+          "check": "errors on an unknown or missing action",
+          "id": "unknown_action",
+          "status": "failed"
+        }
+      ],
+      "actions": [],
+      "block_id": "webhook",
+      "default_action": null,
+      "description": "",
+      "inputs": [
+        {
+          "name": "input",
+          "options": [],
+          "required": false,
+          "type": "string"
+        },
+        {
+          "name": "timeout",
+          "options": [],
+          "required": false,
+          "type": "number"
+        },
+        {
+          "name": "retries",
+          "options": [],
+          "required": false,
+          "type": "number"
+        },
+        {
+          "name": "verify_ssl",
+          "options": [],
+          "required": false,
+          "type": "boolean"
+        }
+      ],
+      "name": "Webhook",
+      "never": [],
+      "reads": [
+        {
+          "kind": "caller",
+          "scope": "input"
+        },
+        {
+          "kind": "config",
+          "scope": "runtime"
+        },
+        {
+          "kind": "network",
+          "scope": "http.outbound"
+        },
+        {
+          "kind": "queue",
+          "scope": "jobs"
+        }
+      ],
+      "writes": [
+        {
+          "kind": "caller",
+          "scope": "output"
+        },
+        {
+          "kind": "network",
+          "scope": "http.outbound"
+        }
+      ]
+    },
+    "workflow": {
+      "acceptance": [
+        {
+          "check": "errors on an unknown or missing action",
+          "id": "unknown_action",
+          "status": "failed"
+        }
+      ],
+      "actions": [
+        "run",
+        "schedule",
+        "unschedule",
+        "list",
+        "get",
+        "history",
+        "status",
+        "health"
+      ],
+      "block_id": "workflow",
+      "default_action": "run",
+      "description": "Chain blocks into pipelines with variable interpolation and scheduling",
+      "inputs": [
+        {
+          "name": "input",
+          "options": [],
+          "required": false,
+          "type": "json"
+        },
+        {
+          "name": "action",
+          "options": [
+            "run",
+            "schedule",
+            "unschedule",
+            "list",
+            "get",
+            "history",
+            "status",
+            "health"
+          ],
+          "required": false,
+          "type": "string"
+        },
+        {
+          "name": "max_pipeline_steps",
+          "options": [],
+          "required": false,
+          "type": "number"
+        },
+        {
+          "name": "enable_scheduler",
+          "options": [],
+          "required": false,
+          "type": "boolean"
+        },
+        {
+          "name": "default_timeout",
+          "options": [],
+          "required": false,
+          "type": "number"
+        }
+      ],
+      "name": "Workflow",
+      "never": [],
+      "reads": [
+        {
+          "kind": "caller",
+          "scope": "input"
+        },
+        {
+          "kind": "env",
+          "scope": "process"
+        },
+        {
+          "kind": "config",
+          "scope": "runtime"
+        }
+      ],
+      "writes": [
+        {
+          "kind": "caller",
+          "scope": "output"
+        }
+      ]
+    }
+  },
+  "product_id": "real-estate",
+  "schema": "block_contracts.v1"
+}

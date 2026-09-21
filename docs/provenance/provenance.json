@@ -1,0 +1,153 @@
+{
+  "blocks_commit": "930519e090281cfe859aafb830c725eece24f98b",
+  "blueprint_id": "real-estate:product_blueprint.v1",
+  "factory": "CerebrumDev.ai",
+  "factory_commit": "0d4f6ff28287452a377374f11fc00afa1d980889",
+  "generated_at": "blueprint:0d5ca82f6e119b3940e8de78e8e7b3f7620face88b1381db04db78c52e84ed05",
+  "inputs_hash": "0d5ca82f6e119b3940e8de78e8e7b3f7620face88b1381db04db78c52e84ed05",
+  "kernel_version": "1.0.0",
+  "plan": {
+    "capabilities": [
+      {
+        "block_ids": [
+          "capture",
+          "queue",
+          "formula_executor",
+          "validation"
+        ],
+        "capability_id": "lead_intake_and_dial_queue",
+        "notes": "dual-registered",
+        "strategy": "REUSE"
+      },
+      {
+        "block_ids": [
+          "workflow",
+          "orchestrator",
+          "event_bus"
+        ],
+        "capability_id": "call_state_machine",
+        "notes": "dual-registered",
+        "strategy": "REUSE"
+      },
+      {
+        "block_ids": [
+          "knowledge",
+          "vector_search",
+          "ingestion_provenance",
+          "evidence_or_refuse",
+          "llm_enhancer"
+        ],
+        "capability_id": "project_knowledge_grounding",
+        "notes": "dual-registered",
+        "strategy": "REUSE"
+      },
+      {
+        "block_ids": [],
+        "capability_id": "voice_gateway",
+        "notes": "kernel/template generation (no block ids)",
+        "strategy": "GENERATE"
+      },
+      {
+        "block_ids": [],
+        "capability_id": "warm_transfer",
+        "notes": "kernel/template generation (no block ids)",
+        "strategy": "GENERATE"
+      },
+      {
+        "block_ids": [
+          "validation",
+          "recommendation_template",
+          "knowledge"
+        ],
+        "capability_id": "qualification_and_broker_summary",
+        "notes": "dual-registered",
+        "strategy": "REUSE"
+      },
+      {
+        "block_ids": [
+          "audit_chain",
+          "database",
+          "storage",
+          "agent_state_sync"
+        ],
+        "capability_id": "outcome_capture_and_ledger",
+        "notes": "dual-registered",
+        "strategy": "REUSE"
+      },
+      {
+        "block_ids": [
+          "mock_connector_bus",
+          "webhook"
+        ],
+        "capability_id": "crm_destination_placeholder",
+        "notes": "dual-registered",
+        "strategy": "REUSE"
+      },
+      {
+        "block_ids": [
+          "notification"
+        ],
+        "capability_id": "notification",
+        "notes": "dual-registered",
+        "strategy": "REUSE"
+      },
+      {
+        "block_ids": [
+          "local_drive"
+        ],
+        "capability_id": "local_drive",
+        "notes": "dual-registered",
+        "strategy": "REUSE"
+      },
+      {
+        "block_ids": [
+          "google_drive"
+        ],
+        "capability_id": "google_drive",
+        "notes": "dual-registered",
+        "strategy": "REUSE"
+      },
+      {
+        "block_ids": [
+          "mcp_adapter"
+        ],
+        "capability_id": "mcp_adapter",
+        "notes": "dual-registered",
+        "strategy": "REUSE"
+      }
+    ],
+    "dual_registered_blocks": [
+      "agent_state_sync",
+      "audit_chain",
+      "capture",
+      "database",
+      "event_bus",
+      "evidence_or_refuse",
+      "formula_executor",
+      "google_drive",
+      "ingestion_provenance",
+      "knowledge",
+      "llm_enhancer",
+      "local_drive",
+      "mcp_adapter",
+      "mock_connector_bus",
+      "notification",
+      "orchestrator",
+      "queue",
+      "recommendation_template",
+      "storage",
+      "validation",
+      "vector_search",
+      "webhook",
+      "workflow"
+    ],
+    "fail_closed": true,
+    "inventory_domain_gaps": [],
+    "product_id": "real-estate",
+    "unsupported": [],
+    "vertical_scoped_out": []
+  },
+  "product_id": "real-estate",
+  "schema": "factory_provenance.v1",
+  "writer_receipt": "sha256:14bcaa4e8b1a9760f86e80eb3f09406c75288b3ac8cd8ac2a6f4d6df19b59e50"
+}

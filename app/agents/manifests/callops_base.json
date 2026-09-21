@@ -1,0 +1,47 @@
+{
+  "agent_id": "callops.base",
+  "kind": "base",
+  "product_id": "real-estate",
+  "product_name": "CallOps",
+  "activation": {
+    "default_enabled": true,
+    "mode": "auto",
+    "put_off_by": [
+      "disable:callops.base"
+    ],
+    "triggers": [
+      {
+        "type": "intent",
+        "value": "unknown"
+      }
+    ]
+  },
+  "allowed_actions": [
+    "callops.lead_intake_and_dial_queue",
+    "callops.call_state_machine",
+    "callops.project_knowledge_grounding",
+    "callops.voice_gateway",
+    "callops.warm_transfer",
+    "callops.qualification_and_broker_summary",
+    "callops.outcome_capture_and_ledger",
+    "callops.crm_destination_placeholder",
+    "callops.notification",
+    "callops.local_drive",
+    "callops.google_drive",
+    "callops.mcp_adapter"
+  ],
+  "scope": {
+    "reads": [
+      "the tenant's own capability records",
+      "the vendored block catalogue"
+    ],
+    "writes": [
+      "one record per capability, through the route's tenant-scoped save"
+    ],
+    "never": [
+      "another tenant's records",
+      "vendor/**",
+      "a dial with the Twilio edge stubbed"
+    ]
+  }
+}

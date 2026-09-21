@@ -1,0 +1,63 @@
+{
+  "blocks_commit": "930519e090281cfe859aafb830c725eece24f98b",
+  "factory_commit": "0d4f6ff28287452a377374f11fc00afa1d980889",
+  "pins": [
+    {
+      "block_id": "billing",
+      "source": "dual_registry"
+    },
+    {
+      "block_id": "channel_router",
+      "source": "dual_registry"
+    },
+    {
+      "block_id": "dashboard",
+      "source": "dual_registry"
+    },
+    {
+      "block_id": "document_engine",
+      "source": "dual_registry"
+    },
+    {
+      "block_id": "estate_maintenance",
+      "source": "dual_registry"
+    },
+    {
+      "block_id": "estate_registry",
+      "source": "dual_registry"
+    },
+    {
+      "block_id": "guest_rfm_segmentation",
+      "source": "dual_registry"
+    },
+    {
+      "block_id": "hospitality_connectors",
+      "source": "dual_registry"
+    },
+    {
+      "block_id": "hotel_v2",
+      "source": "dual_registry"
+    },
+    {
+      "block_id": "knowledge",
+      "source": "dual_registry"
+    },
+    {
+      "block_id": "mcp_adapter",
+      "source": "dual_registry"
+    },
+    {
+      "block_id": "multi_tenant_rbac",
+      "source": "dual_registry"
+    },
+    {
+      "block_id": "notification",
+      "source": "dual_registry"
+    },
+    {
+      "block_id": "workflow",
+      "source": "dual_registry"
+    }
+  ],
+  "schema_version": "1.0.0"
+}

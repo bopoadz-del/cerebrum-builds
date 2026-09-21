@@ -1,0 +1,47 @@
+{
+  "activation": {
+    "default_enabled": true,
+    "mode": "hybrid",
+    "put_off_by": [
+      "disable:hotel_operations.hat.property_and_room_registry"
+    ],
+    "triggers": [
+      {
+        "type": "intent",
+        "value": "property_and_room_registry"
+      },
+      {
+        "type": "capability",
+        "value": "property_and_room_registry"
+      }
+    ]
+  },
+  "agent_id": "hotel_operations.hat.property_and_room_registry",
+  "allowed_actions": [
+    "hotel_operations.property_and_room_registry"
+  ],
+  "block_ids": [
+    "estate_registry",
+    "hotel_v2"
+  ],
+  "discipline": "property_and_room_registry",
+  "display_name": "hotel operations Property And Room Registry Hat",
+  "extends": "hotel_operations.base",
+  "handoffs": [],
+  "human_authority": true,
+  "kind": "hat",
+  "manifest_version": "1.0.0",
+  "memory": {
+    "pii_policy": "never_store_pii",
+    "save": [],
+    "scope": "tenant_project"
+  },
+  "strategy": "REUSE",
+  "summary": "Specialized hat for capability 'property_and_room_registry' (strategy=REUSE). Adapted from TEKsystems retail hat pattern; estate/product-neutral.",
+  "tags": [
+    "hat",
+    "factory-generated",
+    "hotel_operations",
+    "property_and_room_registry"
+  ]
+}

@@ -1,0 +1,93 @@
+schema_version: product_blueprint.v1
+product_id: hotel-operations
+product_name: hotel operations
+vertical: hotel_operations
+summary: 'A hotel operations platform that runs the day-to-day work of one or more
+  properties: rooms and front-desk operations, housekeeping and maintenance, guest
+  engagement, and the operational records behind them. It serves hotel staff and management
+  (front desk, housekeeping, maintenance, and management), and optionally guests where
+  guest-facing workflows are switched on. It answers questions from the property''s
+  own uploaded documents -- manuals, SOPs, and rate sheets -- through the knowledge
+  and docu'
+capabilities:
+- id: property_and_room_registry
+  description: Maintain the registry of properties, buildings, floors, room types
+    and individual rooms, with their status and attributes, as the shared reference
+    for every other capability.
+  block_ids:
+  - estate_registry
+  - hotel_v2
+  strategy_hint: REUSE
+  required: true
+- id: front_desk_and_guest_stay
+  description: 'Handle the guest stay lifecycle operationally: reservations and arrivals,
+    check-in and check-out, room assignment and moves, and the guest record for the
+    duration of the stay.'
+  block_ids:
+  - hotel_v2
+  - workflow
+  strategy_hint: REUSE
+  required: true
+- id: housekeeping_and_maintenance
+  description: Schedule and track cleaning, room turnover, and repair work against
+    rooms and property assets, with work orders, assignment, and completion state.
+  block_ids:
+  - estate_maintenance
+  - workflow
+  strategy_hint: REUSE
+  required: true
+- id: guest_engagement_and_segmentation
+  description: Segment guests by stay behaviour and value, and drive guest messaging
+    and offers through the channels the property has configured.
+  block_ids:
+  - guest_rfm_segmentation
+  - channel_router
+  - notification
+  strategy_hint: REUSE
+  required: true
+- id: document_and_knowledge_answers
+  description: Ingest the property's own documents (manuals, SOPs, rate sheets) and
+    answer staff questions from them, with retrieval grounded in the uploaded sources.
+  block_ids:
+  - knowledge
+  - document_engine
+  strategy_hint: REUSE
+  required: true
+- id: operations_billing
+  description: Record operational charges and folio-level billing, with currency and
+    tax/VAT regime left as explicit configuration that must be set before any financial
+    rule is generated.
+  block_ids:
+  - billing
+  - hotel_v2
+  strategy_hint: REUSE
+  required: true
+- id: operations_oversight_dashboard
+  description: Give management a live view of occupancy, room status, open work orders,
+    and guest activity, in a tenant-scoped dashboard.
+  block_ids:
+  - dashboard
+  - multi_tenant_rbac
+  strategy_hint: REUSE
+  required: true
+- id: external_integration_adapter
+  description: Provide the single attach point for external property systems, to be
+    named later; no integration is assumed until the user specifies one.
+  block_ids:
+  - mcp_adapter
+  - hospitality_connectors
+  strategy_hint: REUSE
+  required: true
+ui_modules:
+- command_center
+- operational_chat
+- resident_engineer
+connectors: []
+edge_profile: standard
+human_authority: true
+factory_scenario: CREATE_PRODUCT
+drafting_mode: architect_llm
+drafting_note: 'inventory: ''hotel_operations'' is not on the declared-ready list
+  (hotels, insurance, construction, finance, retail); the Store kit for this vertical
+  is unverified — domain depth not guaranteed'
+delivery_format: zip

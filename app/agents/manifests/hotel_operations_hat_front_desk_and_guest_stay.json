@@ -1,0 +1,47 @@
+{
+  "activation": {
+    "default_enabled": true,
+    "mode": "hybrid",
+    "put_off_by": [
+      "disable:hotel_operations.hat.front_desk_and_guest_stay"
+    ],
+    "triggers": [
+      {
+        "type": "intent",
+        "value": "front_desk_and_guest_stay"
+      },
+      {
+        "type": "capability",
+        "value": "front_desk_and_guest_stay"
+      }
+    ]
+  },
+  "agent_id": "hotel_operations.hat.front_desk_and_guest_stay",
+  "allowed_actions": [
+    "hotel_operations.front_desk_and_guest_stay"
+  ],
+  "block_ids": [
+    "hotel_v2",
+    "workflow"
+  ],
+  "discipline": "front_desk_and_guest_stay",
+  "display_name": "hotel operations Front Desk And Guest Stay Hat",
+  "extends": "hotel_operations.base",
+  "handoffs": [],
+  "human_authority": true,
+  "kind": "hat",
+  "manifest_version": "1.0.0",
+  "memory": {
+    "pii_policy": "never_store_pii",
+    "save": [],
+    "scope": "tenant_project"
+  },
+  "strategy": "REUSE",
+  "summary": "Specialized hat for capability 'front_desk_and_guest_stay' (strategy=REUSE). Adapted from TEKsystems retail hat pattern; estate/product-neutral.",
+  "tags": [
+    "hat",
+    "factory-generated",
+    "hotel_operations",
+    "front_desk_and_guest_stay"
+  ]
+}

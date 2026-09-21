@@ -1,0 +1,75 @@
+{
+  "acceptance": [
+    {
+      "check": "missing monetary input is refused, never a fabricated segment",
+      "id": "missing_monetary",
+      "status": "refused"
+    },
+    {
+      "check": "non-numeric recency_days is refused, never a guessed bucket",
+      "id": "non_numeric_recency",
+      "status": "refused"
+    }
+  ],
+  "author": "Cerebrum Team",
+  "description": "RFM guest segmentation ported from cerebrum-hotelops-v2 guest_intelligence/segmentation.py (real): rfm_score() recency/frequency/monetary bucket ladder (<=30/90 days, >=5/2 stays, >=5000/1500 spend) with champions/loyal/promising/at_risk labels and advisory:true on every result. Deterministic analytics, no trained model; missing or non-numeric inputs are refused, never guessed.",
+  "digests": {
+    "Dockerfile": "f726e1716e53cfca226f3034515f400b072823aa06e7899efea7bc46c3b571a6",
+    "block.json": "083d8df4693ae9f96e14637d289441802bf01c2f7c47d89b8a9077bef023abdf",
+    "block.py": "718afc70dbc1abdd62194dc553cbe0a2428c72036a80ae89036578f781f4a570"
+  },
+  "id": "guest_rfm_segmentation",
+  "inputs": [
+    {
+      "description": "score | batch",
+      "name": "action",
+      "options": [
+        "score",
+        "batch"
+      ],
+      "required": false,
+      "type": "string"
+    }
+  ],
+  "layer": 3,
+  "name": "guest_rfm_segmentation",
+  "never": [],
+  "outputs": [
+    {
+      "description": "Capability result",
+      "name": "result",
+      "type": "json"
+    }
+  ],
+  "permissions": {
+    "blocks": [],
+    "filesystem": false,
+    "imports": [],
+    "network": false
+  },
+  "publisher_id": "cerebrum_platform",
+  "reads": [
+    {
+      "kind": "caller",
+      "scope": "input"
+    }
+  ],
+  "requires": [],
+  "signature": "BkJlctQ7nDJ//m07XY56AuGKNC5NwwvtSXDYli5SNVPCeHuDl0ghknl9z+omKmZ56TAv6fwls8Gk+cAGEwhrDw==",
+  "tags": [
+    "hotel",
+    "crm",
+    "segmentation",
+    "rfm",
+    "guest",
+    "hotelops-v2"
+  ],
+  "trust_tier": "platform",
+  "version": "1.0.0",
+  "writes": [
+    {
+      "kind": "caller",
+      "scope": "output"
+    }
+  ]
+}

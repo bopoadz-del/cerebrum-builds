@@ -1,0 +1,41 @@
+WORKFLOWS = [
+  {
+    "description": "Default linear workflow over planned capabilities.",
+    "name": "Capability sequence",
+    "steps": [
+      {
+        "capability_id": "property_and_room_registry",
+        "role": "execute"
+      },
+      {
+        "capability_id": "front_desk_and_guest_stay",
+        "role": "execute"
+      },
+      {
+        "capability_id": "housekeeping_and_maintenance",
+        "role": "execute"
+      },
+      {
+        "capability_id": "guest_engagement_and_segmentation",
+        "role": "execute"
+      },
+      {
+        "capability_id": "document_and_knowledge_answers",
+        "role": "execute"
+      },
+      {
+        "capability_id": "operations_billing",
+        "role": "execute"
+      },
+      {
+        "capability_id": "operations_oversight_dashboard",
+        "role": "execute"
+      },
+      {
+        "capability_id": "external_integration_adapter",
+        "role": "execute"
+      }
+    ],
+    "workflow_id": "hotel_operations.capability_sequence"
+  }
+]

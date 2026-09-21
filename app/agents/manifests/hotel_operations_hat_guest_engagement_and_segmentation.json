@@ -1,0 +1,48 @@
+{
+  "activation": {
+    "default_enabled": true,
+    "mode": "hybrid",
+    "put_off_by": [
+      "disable:hotel_operations.hat.guest_engagement_and_segmentation"
+    ],
+    "triggers": [
+      {
+        "type": "intent",
+        "value": "guest_engagement_and_segmentation"
+      },
+      {
+        "type": "capability",
+        "value": "guest_engagement_and_segmentation"
+      }
+    ]
+  },
+  "agent_id": "hotel_operations.hat.guest_engagement_and_segmentation",
+  "allowed_actions": [
+    "hotel_operations.guest_engagement_and_segmentation"
+  ],
+  "block_ids": [
+    "guest_rfm_segmentation",
+    "channel_router",
+    "notification"
+  ],
+  "discipline": "guest_engagement_and_segmentation",
+  "display_name": "hotel operations Guest Engagement And Segmentation Hat",
+  "extends": "hotel_operations.base",
+  "handoffs": [],
+  "human_authority": true,
+  "kind": "hat",
+  "manifest_version": "1.0.0",
+  "memory": {
+    "pii_policy": "never_store_pii",
+    "save": [],
+    "scope": "tenant_project"
+  },
+  "strategy": "REUSE",
+  "summary": "Specialized hat for capability 'guest_engagement_and_segmentation' (strategy=REUSE). Adapted from TEKsystems retail hat pattern; estate/product-neutral.",
+  "tags": [
+    "hat",
+    "factory-generated",
+    "hotel_operations",
+    "guest_engagement_and_segmentation"
+  ]
+}

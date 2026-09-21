@@ -1,0 +1,47 @@
+{
+  "activation": {
+    "default_enabled": true,
+    "mode": "hybrid",
+    "put_off_by": [
+      "disable:hotel_operations.hat.document_and_knowledge_answers"
+    ],
+    "triggers": [
+      {
+        "type": "intent",
+        "value": "document_and_knowledge_answers"
+      },
+      {
+        "type": "capability",
+        "value": "document_and_knowledge_answers"
+      }
+    ]
+  },
+  "agent_id": "hotel_operations.hat.document_and_knowledge_answers",
+  "allowed_actions": [
+    "hotel_operations.document_and_knowledge_answers"
+  ],
+  "block_ids": [
+    "knowledge",
+    "document_engine"
+  ],
+  "discipline": "document_and_knowledge_answers",
+  "display_name": "hotel operations Document And Knowledge Answers Hat",
+  "extends": "hotel_operations.base",
+  "handoffs": [],
+  "human_authority": true,
+  "kind": "hat",
+  "manifest_version": "1.0.0",
+  "memory": {
+    "pii_policy": "never_store_pii",
+    "save": [],
+    "scope": "tenant_project"
+  },
+  "strategy": "REUSE",
+  "summary": "Specialized hat for capability 'document_and_knowledge_answers' (strategy=REUSE). Adapted from TEKsystems retail hat pattern; estate/product-neutral.",
+  "tags": [
+    "hat",
+    "factory-generated",
+    "hotel_operations",
+    "document_and_knowledge_answers"
+  ]
+}

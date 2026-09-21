@@ -1,0 +1,96 @@
+{
+  "capabilities": [
+    {
+      "block_ids": [
+        "estate_registry",
+        "hotel_v2"
+      ],
+      "capability_id": "property_and_room_registry",
+      "notes": "dual-registered",
+      "strategy": "REUSE"
+    },
+    {
+      "block_ids": [
+        "hotel_v2",
+        "workflow"
+      ],
+      "capability_id": "front_desk_and_guest_stay",
+      "notes": "dual-registered",
+      "strategy": "REUSE"
+    },
+    {
+      "block_ids": [
+        "estate_maintenance",
+        "workflow"
+      ],
+      "capability_id": "housekeeping_and_maintenance",
+      "notes": "dual-registered",
+      "strategy": "REUSE"
+    },
+    {
+      "block_ids": [
+        "guest_rfm_segmentation",
+        "channel_router",
+        "notification"
+      ],
+      "capability_id": "guest_engagement_and_segmentation",
+      "notes": "dual-registered",
+      "strategy": "REUSE"
+    },
+    {
+      "block_ids": [
+        "knowledge",
+        "document_engine"
+      ],
+      "capability_id": "document_and_knowledge_answers",
+      "notes": "dual-registered",
+      "strategy": "REUSE"
+    },
+    {
+      "block_ids": [
+        "billing",
+        "hotel_v2"
+      ],
+      "capability_id": "operations_billing",
+      "notes": "dual-registered",
+      "strategy": "REUSE"
+    },
+    {
+      "block_ids": [
+        "dashboard",
+        "multi_tenant_rbac"
+      ],
+      "capability_id": "operations_oversight_dashboard",
+      "notes": "dual-registered",
+      "strategy": "REUSE"
+    },
+    {
+      "block_ids": [
+        "mcp_adapter",
+        "hospitality_connectors"
+      ],
+      "capability_id": "external_integration_adapter",
+      "notes": "dual-registered",
+      "strategy": "REUSE"
+    }
+  ],
+  "dual_registered_blocks": [
+    "billing",
+    "channel_router",
+    "dashboard",
+    "document_engine",
+    "estate_maintenance",
+    "estate_registry",
+    "guest_rfm_segmentation",
+    "hospitality_connectors",
+    "hotel_v2",
+    "knowledge",
+    "mcp_adapter",
+    "multi_tenant_rbac",
+    "notification",
+    "workflow"
+  ],
+  "notes": [],
+  "schema_version": "1.0.0",
+  "unsupported": []
+}

@@ -8,20 +8,19 @@ latent ModuleNotFoundError in the customer's environment.
 import importlib
 
 _BLOCK_DEFS = {
-    "analytics": ("vendor.cerebrum.blocks.analytics", "AnalyticsBlock"),
-    "audit": ("vendor.cerebrum.blocks.audit", "AuditBlock"),
+    "billing": ("vendor.cerebrum.blocks.billing", "BillingBlock"),
+    "channel_router": ("vendor.cerebrum.blocks.channel_router", "ChannelRouterBlock"),
     "dashboard": ("vendor.cerebrum.blocks.dashboard", "DashboardBlock"),
-    "database": ("vendor.cerebrum.blocks.database", "DatabaseBlock"),
-    "event_bus": ("vendor.cerebrum.blocks.event_bus", "EventBusBlock"),
-    "formula_executor": ("vendor.cerebrum.blocks.formula_executor", "FormulaExecutorBlock"),
+    "document_engine": ("vendor.cerebrum.blocks.document_engine", "DocumentEngineBlock"),
+    "estate_maintenance": ("vendor.cerebrum.blocks.estate_maintenance", "EstateMaintenanceBlock"),
+    "estate_registry": ("vendor.cerebrum.blocks.estate_registry", "EstateRegistryBlock"),
+    "guest_rfm_segmentation": ("vendor.cerebrum.blocks.guest_rfm_segmentation", "GuestRfmSegmentationBlock"),
+    "hospitality_connectors": ("vendor.cerebrum.blocks.hospitality_connectors", "HospitalityConnectorsBlock"),
+    "hotel_v2": ("vendor.cerebrum.blocks.hotel_v2", "HotelBlockV2"),
     "knowledge": ("vendor.cerebrum.blocks.knowledge", "KnowledgeBlock"),
-    "memory": ("vendor.cerebrum.blocks.memory", "MemoryBlock"),
+    "mcp_adapter": ("vendor.cerebrum.blocks.mcp_adapter", "MCPAdapterBlock"),
+    "multi_tenant_rbac": ("vendor.cerebrum.blocks.multi_tenant_rbac", "MultiTenantRbacBlock"),
     "notification": ("vendor.cerebrum.blocks.notification", "NotificationBlock"),
-    "queue": ("vendor.cerebrum.blocks.queue", "QueueBlock"),
-    "recommendation_template": ("vendor.cerebrum.blocks.recommendation_template", "RecommendationTemplateBlock"),
-    "team": ("vendor.cerebrum.blocks.team", "TeamBlock"),
-    "validation": ("vendor.cerebrum.blocks.validation", "ValidationBlock"),
-    "vector_search": ("vendor.cerebrum.blocks.vector_search", "VectorSearchBlock"),
     "workflow": ("vendor.cerebrum.blocks.workflow", "WorkflowBlock"),
 }
 

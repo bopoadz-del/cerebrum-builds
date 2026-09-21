@@ -1,0 +1,110 @@
+{
+  "blocks_commit": "930519e090281cfe859aafb830c725eece24f98b",
+  "blueprint_id": "hotel-operations:product_blueprint.v1",
+  "factory": "CerebrumDev.ai",
+  "factory_commit": "0d4f6ff28287452a377374f11fc00afa1d980889",
+  "generated_at": "blueprint:d63943a9555acce7ef2d5215a1d3982e79ff1673dc34ee9cf105e397a449ef5c",
+  "inputs_hash": "d63943a9555acce7ef2d5215a1d3982e79ff1673dc34ee9cf105e397a449ef5c",
+  "kernel_version": "1.0.0",
+  "plan": {
+    "capabilities": [
+      {
+        "block_ids": [
+          "estate_registry",
+          "hotel_v2"
+        ],
+        "capability_id": "property_and_room_registry",
+        "notes": "dual-registered",
+        "strategy": "REUSE"
+      },
+      {
+        "block_ids": [
+          "hotel_v2",
+          "workflow"
+        ],
+        "capability_id": "front_desk_and_guest_stay",
+        "notes": "dual-registered",
+        "strategy": "REUSE"
+      },
+      {
+        "block_ids": [
+          "estate_maintenance",
+          "workflow"
+        ],
+        "capability_id": "housekeeping_and_maintenance",
+        "notes": "dual-registered",
+        "strategy": "REUSE"
+      },
+      {
+        "block_ids": [
+          "guest_rfm_segmentation",
+          "channel_router",
+          "notification"
+        ],
+        "capability_id": "guest_engagement_and_segmentation",
+        "notes": "dual-registered",
+        "strategy": "REUSE"
+      },
+      {
+        "block_ids": [
+          "knowledge",
+          "document_engine"
+        ],
+        "capability_id": "document_and_knowledge_answers",
+        "notes": "dual-registered",
+        "strategy": "REUSE"
+      },
+      {
+        "block_ids": [
+          "billing",
+          "hotel_v2"
+        ],
+        "capability_id": "operations_billing",
+        "notes": "dual-registered",
+        "strategy": "REUSE"
+      },
+      {
+        "block_ids": [
+          "dashboard",
+          "multi_tenant_rbac"
+        ],
+        "capability_id": "operations_oversight_dashboard",
+        "notes": "dual-registered",
+        "strategy": "REUSE"
+      },
+      {
+        "block_ids": [
+          "mcp_adapter",
+          "hospitality_connectors"
+        ],
+        "capability_id": "external_integration_adapter",
+        "notes": "dual-registered",
+        "strategy": "REUSE"
+      }
+    ],
+    "dual_registered_blocks": [
+      "billing",
+      "channel_router",
+      "dashboard",
+      "document_engine",
+      "estate_maintenance",
+      "estate_registry",
+      "guest_rfm_segmentation",
+      "hospitality_connectors",
+      "hotel_v2",
+      "knowledge",
+      "mcp_adapter",
+      "multi_tenant_rbac",
+      "notification",
+      "workflow"
+    ],
+    "fail_closed": true,
+    "inventory_domain_gaps": [],
+    "product_id": "hotel-operations",
+    "unsupported": [],
+    "vertical_scoped_out": []
+  },
+  "product_id": "hotel-operations",
+  "schema": "factory_provenance.v1",
+  "writer_receipt": "sha256:8b4b154afdf2ccf8ed136b339abf6a2d14de6577b22bf534213e6f3493f933a2"
+}

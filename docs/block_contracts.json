@@ -1,0 +1,740 @@
+{
+  "billing": {
+    "action_options": [
+      "record_usage",
+      "check_quota",
+      "check_purchase",
+      "record_purchase",
+      "create_customer",
+      "create_subscription",
+      "get_invoice",
+      "upgrade",
+      "webhook"
+    ],
+    "block_id": "billing",
+    "declared_inputs": [
+      {
+        "name": "input",
+        "required": false,
+        "type": "json"
+      },
+      {
+        "name": "stripe_key",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "name": "free_tier_requests",
+        "required": false,
+        "type": "number"
+      },
+      {
+        "name": "pro_tier_requests",
+        "required": false,
+        "type": "number"
+      }
+    ],
+    "default_action": "record_usage",
+    "input_keys_read_by_block": [
+      "action",
+      "api_key",
+      "block",
+      "block_id",
+      "customer_id",
+      "email",
+      "hit",
+      "name",
+      "payload",
+      "plan",
+      "purchased",
+      "requests",
+      "role",
+      "signature",
+      "stripe_price_id",
+      "stripe_secret_key",
+      "stripe_subscription_item",
+      "stripe_webhook_secret",
+      "tokens",
+      "user_id",
+      "valid",
+      "value"
+    ],
+    "payload_action": false,
+    "runtime_error_contracts": [
+      "Stripe not configured",
+      "Unknown action",
+      "Webhook handling not configured",
+      "api_key/user_id and block_id required"
+    ]
+  },
+  "channel_router": {
+    "block_id": "channel_router",
+    "input_keys_read_by_block": [
+      "account",
+      "action",
+      "advice_needed",
+      "affinity_referral",
+      "agency_relationship",
+      "annual_premium",
+      "channel_constraints",
+      "complexity",
+      "customer",
+      "digital_preference",
+      "fast_quote_needed",
+      "hard_to_place",
+      "line_of_business",
+      "lob",
+      "needs_advice",
+      "operation",
+      "partner_referral",
+      "premium",
+      "product",
+      "relationship_strength",
+      "risk_complexity",
+      "self_service_preference",
+      "specialty_risk",
+      "speed_priority",
+      "submission"
+    ],
+    "payload_action": true
+  },
+  "dashboard": {
+    "action_options": [
+      "render",
+      "add_widget",
+      "remove_widget",
+      "update_widget",
+      "get_metrics",
+      "list_widgets",
+      "save_layout",
+      "get_layout",
+      "subscribe_stream",
+      "get_snapshot"
+    ],
+    "block_id": "dashboard",
+    "declared_inputs": [
+      {
+        "name": "input",
+        "required": false,
+        "type": "json"
+      },
+      {
+        "name": "default_layout",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "name": "refresh_interval",
+        "required": false,
+        "type": "number"
+      },
+      {
+        "name": "max_widgets",
+        "required": false,
+        "type": "number"
+      },
+      {
+        "name": "theme",
+        "required": false,
+        "type": "string"
+      }
+    ],
+    "default_action": "render",
+    "input_keys_read_by_block": [
+      "action",
+      "callback",
+      "config",
+      "data_source",
+      "default_layout",
+      "hit",
+      "layout",
+      "max_widgets",
+      "position",
+      "refresh_interval",
+      "theme",
+      "title",
+      "type",
+      "updates",
+      "user_id",
+      "value",
+      "widget_id",
+      "widgets"
+    ],
+    "payload_action": false,
+    "runtime_error_contracts": [
+      "Maximum widgets reached",
+      "Widget not found"
+    ]
+  },
+  "document_engine": {
+    "block_id": "document_engine",
+    "declared_inputs": [
+      {
+        "name": "input",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "name": "extract_tables",
+        "required": false,
+        "type": "boolean"
+      },
+      {
+        "name": "extract_glossary",
+        "required": false,
+        "type": "boolean"
+      },
+      {
+        "name": "output_format",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "name": "use_platform_pdf",
+        "required": false,
+        "type": "boolean"
+      },
+      {
+        "name": "use_platform_ocr",
+        "required": false,
+        "type": "boolean"
+      }
+    ],
+    "input_keys_read_by_block": [
+      "brief",
+      "bytes",
+      "document_engine",
+      "docx",
+      "docx_path",
+      "file_path",
+      "input",
+      "path",
+      "pdf",
+      "pdf_path",
+      "status",
+      "text",
+      "use_platform_ocr",
+      "use_platform_pdf",
+      "xlsx",
+      "xlsx_path"
+    ],
+    "payload_action": false
+  },
+  "estate_maintenance": {
+    "action_options": [
+      "create",
+      "list",
+      "complete"
+    ],
+    "block_id": "estate_maintenance",
+    "declared_inputs": [
+      {
+        "name": "title",
+        "required": true,
+        "type": "string"
+      },
+      {
+        "name": "due",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "name": "id",
+        "required": false,
+        "type": "string"
+      }
+    ],
+    "default_action": "create",
+    "input_keys_read_by_block": [
+      "action",
+      "created_at",
+      "due",
+      "id",
+      "status",
+      "title"
+    ],
+    "payload_action": true
+  },
+  "estate_registry": {
+    "action_options": [
+      "create",
+      "read",
+      "list"
+    ],
+    "block_id": "estate_registry",
+    "declared_inputs": [
+      {
+        "name": "id",
+        "required": true,
+        "type": "string"
+      },
+      {
+        "name": "data",
+        "required": false,
+        "type": "json"
+      }
+    ],
+    "default_action": "create",
+    "input_keys_read_by_block": [
+      "action",
+      "id",
+      "record",
+      "records",
+      "store_dir"
+    ],
+    "payload_action": true
+  },
+  "guest_rfm_segmentation": {
+    "action_options": [
+      "score",
+      "batch"
+    ],
+    "block_id": "guest_rfm_segmentation",
+    "input_keys_read_by_block": [
+      "action",
+      "f_thresholds",
+      "frequency",
+      "guest_id",
+      "guests",
+      "id",
+      "m_thresholds",
+      "monetary",
+      "r_thresholds",
+      "recency_days"
+    ],
+    "payload_action": true
+  },
+  "hospitality_connectors": {
+    "action_options": [
+      "ingest",
+      "fetch",
+      "connect",
+      "normalise",
+      "bus",
+      "systems"
+    ],
+    "block_id": "hospitality_connectors",
+    "input_keys_read_by_block": [
+      "action",
+      "amount",
+      "arrival",
+      "asset_id",
+      "asset_type",
+      "check_id",
+      "closed",
+      "comp_balance",
+      "confirmation_id",
+      "controller_id",
+      "covers",
+      "departure",
+      "dnd",
+      "evidence_class",
+      "grms_cert_matches_config",
+      "guest_id",
+      "hk_status",
+      "host",
+      "id",
+      "limit",
+      "linked_reservation",
+      "location",
+      "market",
+      "nights",
+      "occupied",
+      "outlet",
+      "player_id",
+      "points",
+      "profile_id",
+      "rate_code",
+      "raw",
+      "records",
+      "resource",
+      "room",
+      "room_map_complete",
+      "room_type",
+      "rooms",
+      "serial_number",
+      "source_system",
+      "status",
+      "statutory_flag",
+      "surface",
+      "system",
+      "tier",
+      "topic_prefix",
+      "vip",
+      "wo"
+    ],
+    "payload_action": true
+  },
+  "hotel_v2": {
+    "block_id": "hotel_v2",
+    "declared_inputs": [
+      {
+        "name": "text",
+        "required": false,
+        "type": "string"
+      }
+    ],
+    "input_keys_read_by_block": [
+      "analysis_type",
+      "cancellations",
+      "custom_rules",
+      "document_type",
+      "gross_profit",
+      "include_raw",
+      "no_shows",
+      "room_revenue",
+      "rooms_sold",
+      "rules",
+      "total_arrivals",
+      "total_bookings",
+      "total_revenue",
+      "total_rooms",
+      "value",
+      "walk_ins"
+    ],
+    "payload_action": false,
+    "runtime_error_contracts": [
+      "Missing arrival or departure date",
+      "Missing cancellations or total bookings",
+      "Missing gross profit or total rooms",
+      "Missing no-shows or total bookings",
+      "Missing revenue or rooms sold",
+      "Missing revenue or total rooms",
+      "Missing rooms sold or total rooms",
+      "Missing walk-ins or total arrivals"
+    ]
+  },
+  "knowledge": {
+    "action_options": [
+      "ask",
+      "search",
+      "summarize"
+    ],
+    "block_id": "knowledge",
+    "declared_inputs": [
+      {
+        "name": "input",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "name": "top_k",
+        "required": false,
+        "type": "number"
+      },
+      {
+        "name": "llm_provider",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "name": "ollama_base_url",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "name": "ollama_model",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "name": "deepseek_api_key",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "name": "deepseek_model",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "name": "openrouter_api_key",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "name": "openrouter_model",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "name": "vector_db_url",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "name": "default_top_k",
+        "required": false,
+        "type": "number"
+      },
+      {
+        "name": "default_collections",
+        "required": false,
+        "type": "array"
+      }
+    ],
+    "default_action": "ask",
+    "input_keys_read_by_block": [
+      "action",
+      "chunk_id",
+      "collection",
+      "collections",
+      "content",
+      "corpus_total",
+      "default_collections",
+      "default_top_k",
+      "document",
+      "document_id",
+      "documents_indexed",
+      "error",
+      "id",
+      "input",
+      "llm_provider",
+      "metadata",
+      "n_docs",
+      "project_id",
+      "query",
+      "question",
+      "result",
+      "results",
+      "score",
+      "status",
+      "text",
+      "top_k",
+      "vector_db_url"
+    ],
+    "payload_action": false,
+    "runtime_error_contracts": [
+      "Kimi API key not configured (set KIMI_API_KEY)"
+    ]
+  },
+  "mcp_adapter": {
+    "action_options": [
+      "list_tools",
+      "describe"
+    ],
+    "block_id": "mcp_adapter",
+    "declared_inputs": [
+      {
+        "name": "input",
+        "required": false,
+        "type": "json"
+      },
+      {
+        "name": "tool",
+        "required": false,
+        "type": "string"
+      }
+    ],
+    "default_action": "list_tools",
+    "input_keys_read_by_block": [
+      "action",
+      "tool"
+    ],
+    "payload_action": false
+  },
+  "multi_tenant_rbac": {
+    "block_id": "multi_tenant_rbac",
+    "input_keys_read_by_block": [
+      "action",
+      "mode",
+      "name",
+      "needed",
+      "owner_id",
+      "permissions",
+      "project_id",
+      "role",
+      "tenant_id",
+      "user_id"
+    ],
+    "payload_action": true,
+    "runtime_error_contracts": [
+      "Unknown action: %s",
+      "permission denied",
+      "project_id required",
+      "tenant exists",
+      "tenant_access_denied",
+      "tenant_id and owner_id required",
+      "unknown tenant or user"
+    ]
+  },
+  "notification": {
+    "action_options": [
+      "send",
+      "broadcast",
+      "health"
+    ],
+    "block_id": "notification",
+    "declared_inputs": [
+      {
+        "name": "input",
+        "required": false,
+        "type": "json"
+      },
+      {
+        "name": "sendgrid_api_key",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "name": "smtp_host",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "name": "smtp_port",
+        "required": false,
+        "type": "number"
+      },
+      {
+        "name": "smtp_user",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "name": "smtp_pass",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "name": "slack_webhook_url",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "name": "default_from_email",
+        "required": false,
+        "type": "string"
+      }
+    ],
+    "default_action": "send",
+    "input_keys_read_by_block": [
+      "action",
+      "block",
+      "blocks",
+      "body",
+      "channel",
+      "channels",
+      "default_from_email",
+      "email",
+      "event",
+      "from",
+      "headers",
+      "html",
+      "input",
+      "limit",
+      "message",
+      "method",
+      "params",
+      "payload",
+      "sendgrid_api_key",
+      "slack_webhook_url",
+      "smtp_host",
+      "smtp_pass",
+      "smtp_port",
+      "smtp_retry_backoff",
+      "smtp_timeout",
+      "smtp_user",
+      "source",
+      "status",
+      "subject",
+      "text",
+      "to",
+      "tool",
+      "url",
+      "webhook_retry_backoff",
+      "webhook_timeout",
+      "webhook_url"
+    ],
+    "input_required_fields": [
+      "channel",
+      "message"
+    ],
+    "payload_action": false,
+    "runtime_error_contracts": [
+      "Block ",
+      "SMTP not configured (set SMTP_HOST or SENDGRID_API_KEY)",
+      "SMTP_URL must be smtp://, smtps:// or smtp+starttls:// with a host",
+      "Slack webhook URL not configured",
+      "aiosmtplib not installed. Run: pip install aiosmtplib",
+      "block or tool name required for MCP channel",
+      "channel required: one of mcp | email | webhook | smtp | slack",
+      "channels required: any of mcp | email | webhook | smtp | slack",
+      "to (email) required",
+      "to (email) required, or set NOTIFY_SMTP_TO"
+    ]
+  },
+  "workflow": {
+    "action_options": [
+      "run",
+      "schedule",
+      "unschedule",
+      "list",
+      "get",
+      "history",
+      "status",
+      "health"
+    ],
+    "block_id": "workflow",
+    "declared_inputs": [
+      {
+        "name": "input",
+        "required": false,
+        "type": "json"
+      },
+      {
+        "name": "max_pipeline_steps",
+        "required": false,
+        "type": "number"
+      },
+      {
+        "name": "enable_scheduler",
+        "required": false,
+        "type": "boolean"
+      },
+      {
+        "name": "default_timeout",
+        "required": false,
+        "type": "number"
+      }
+    ],
+    "default_action": "run",
+    "input_keys_read_by_block": [
+      "STORAGE_PATH",
+      "action",
+      "block",
+      "block_id",
+      "break_on_error",
+      "cron",
+      "default_timeout",
+      "enable_scheduler",
+      "id",
+      "input",
+      "interval_seconds",
+      "max_pipeline_steps",
+      "params",
+      "pipeline_id",
+      "properties",
+      "result",
+      "status",
+      "steps",
+      "stop_on_error",
+      "timeout",
+      "trigger"
+    ],
+    "input_required_fields": [
+      "steps"
+    ],
+    "payload_action": false,
+    "runtime_error_contracts": [
+      "Block ",
+      "Chain validation failed \u2014 incompatible blocks",
+      "No block specified",
+      "No steps defined",
+      "Pipeline ",
+      "Schedule requires cron or interval_seconds",
+      "Scheduler disabled",
+      "pipeline_id required for scheduling"
+    ]
+  }
+}

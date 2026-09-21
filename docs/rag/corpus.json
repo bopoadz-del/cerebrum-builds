@@ -1,0 +1,9 @@
+{
+  "schema": "rag.surface.v1",
+  "product": "hotel operations",
+  "ingest": "POST /v1/rag/ingest",
+  "query": ["POST /v1/rag/query", "GET /v1/rag/query"],
+  "authority": "precedence.v1",
+  "layers": ["certified", "documents", "formulas", "procedures"],
+  "tenant_scoped": true
+}

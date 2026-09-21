@@ -1,0 +1,47 @@
+{
+  "activation": {
+    "default_enabled": true,
+    "mode": "hybrid",
+    "put_off_by": [
+      "disable:hotel_operations.hat.operations_oversight_dashboard"
+    ],
+    "triggers": [
+      {
+        "type": "intent",
+        "value": "operations_oversight_dashboard"
+      },
+      {
+        "type": "capability",
+        "value": "operations_oversight_dashboard"
+      }
+    ]
+  },
+  "agent_id": "hotel_operations.hat.operations_oversight_dashboard",
+  "allowed_actions": [
+    "hotel_operations.operations_oversight_dashboard"
+  ],
+  "block_ids": [
+    "dashboard",
+    "multi_tenant_rbac"
+  ],
+  "discipline": "operations_oversight_dashboard",
+  "display_name": "hotel operations Operations Oversight Dashboard Hat",
+  "extends": "hotel_operations.base",
+  "handoffs": [],
+  "human_authority": true,
+  "kind": "hat",
+  "manifest_version": "1.0.0",
+  "memory": {
+    "pii_policy": "never_store_pii",
+    "save": [],
+    "scope": "tenant_project"
+  },
+  "strategy": "REUSE",
+  "summary": "Specialized hat for capability 'operations_oversight_dashboard' (strategy=REUSE). Adapted from TEKsystems retail hat pattern; estate/product-neutral.",
+  "tags": [
+    "hat",
+    "factory-generated",
+    "hotel_operations",
+    "operations_oversight_dashboard"
+  ]
+}

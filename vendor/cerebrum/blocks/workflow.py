@@ -1,3 +1,8 @@
+"""Workflow / Pipeline Block — Chain Cerebrum blocks declaratively.
+
+YAML/JSON pipeline definitions. Variable interpolation between steps.
+Supports manual, webhook, and cron triggers.
+"""
 import os as _os
 import sqlite3 as _sqlite3
 from pathlib import Path as _HalPath
@@ -112,11 +117,6 @@ def _create_block_instance(block_or_name, *args, **kwargs):
         return _instantiate_store_block(target)
     return _ensure_store_block_ready(target)
 
-"""Workflow / Pipeline Block — Chain Cerebrum blocks declaratively.
-
-YAML/JSON pipeline definitions. Variable interpolation between steps.
-Supports manual, webhook, and cron triggers.
-"""
 
 import os
 import time

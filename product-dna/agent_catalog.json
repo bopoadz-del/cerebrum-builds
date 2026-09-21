@@ -1,0 +1,433 @@
+{
+  "agents": [
+    {
+      "activation": {
+        "default_enabled": true,
+        "mode": "auto",
+        "put_off_by": [
+          "disable:hotel_operations.base"
+        ],
+        "triggers": [
+          {
+            "type": "intent",
+            "value": "unknown"
+          }
+        ]
+      },
+      "agent_id": "hotel_operations.base",
+      "allowed_actions": [
+        "hotel_operations.property_and_room_registry",
+        "hotel_operations.front_desk_and_guest_stay",
+        "hotel_operations.housekeeping_and_maintenance",
+        "hotel_operations.guest_engagement_and_segmentation",
+        "hotel_operations.document_and_knowledge_answers",
+        "hotel_operations.operations_billing",
+        "hotel_operations.operations_oversight_dashboard",
+        "hotel_operations.external_integration_adapter"
+      ],
+      "context_sources": [
+        {
+          "description": "Tenant/project documents via hybrid retrieval",
+          "kind": "project_documents",
+          "source_id": "project_docs"
+        }
+      ],
+      "discipline": "base",
+      "display_name": "hotel operations Base Agent",
+      "extends": null,
+      "handoffs": [],
+      "human_authority": true,
+      "kind": "base",
+      "manifest_version": "1.0.0",
+      "memory": {
+        "pii_policy": "never_store_pii",
+        "save": [],
+        "scope": "tenant_project"
+      },
+      "summary": "Shared product cortex adapted from TEKsystems hat patterns: trusted context, ActionRegistry awareness, honesty policies. Discipline hats specialize this base \u2014 they never replace it.",
+      "tags": [
+        "base",
+        "factory-generated",
+        "hotel_operations"
+      ]
+    },
+    {
+      "activation": {
+        "default_enabled": true,
+        "mode": "hybrid",
+        "put_off_by": [
+          "disable:hotel_operations.hat.property_and_room_registry"
+        ],
+        "triggers": [
+          {
+            "type": "intent",
+            "value": "property_and_room_registry"
+          },
+          {
+            "type": "capability",
+            "value": "property_and_room_registry"
+          }
+        ]
+      },
+      "agent_id": "hotel_operations.hat.property_and_room_registry",
+      "allowed_actions": [
+        "hotel_operations.property_and_room_registry"
+      ],
+      "block_ids": [
+        "estate_registry",
+        "hotel_v2"
+      ],
+      "discipline": "property_and_room_registry",
+      "display_name": "hotel operations Property And Room Registry Hat",
+      "extends": "hotel_operations.base",
+      "handoffs": [],
+      "human_authority": true,
+      "kind": "hat",
+      "manifest_version": "1.0.0",
+      "memory": {
+        "pii_policy": "never_store_pii",
+        "save": [],
+        "scope": "tenant_project"
+      },
+      "strategy": "REUSE",
+      "summary": "Specialized hat for capability 'property_and_room_registry' (strategy=REUSE). Adapted from TEKsystems retail hat pattern; estate/product-neutral.",
+      "tags": [
+        "hat",
+        "factory-generated",
+        "hotel_operations",
+        "property_and_room_registry"
+      ]
+    },
+    {
+      "activation": {
+        "default_enabled": true,
+        "mode": "hybrid",
+        "put_off_by": [
+          "disable:hotel_operations.hat.front_desk_and_guest_stay"
+        ],
+        "triggers": [
+          {
+            "type": "intent",
+            "value": "front_desk_and_guest_stay"
+          },
+          {
+            "type": "capability",
+            "value": "front_desk_and_guest_stay"
+          }
+        ]
+      },
+      "agent_id": "hotel_operations.hat.front_desk_and_guest_stay",
+      "allowed_actions": [
+        "hotel_operations.front_desk_and_guest_stay"
+      ],
+      "block_ids": [
+        "hotel_v2",
+        "workflow"
+      ],
+      "discipline": "front_desk_and_guest_stay",
+      "display_name": "hotel operations Front Desk And Guest Stay Hat",
+      "extends": "hotel_operations.base",
+      "handoffs": [],
+      "human_authority": true,
+      "kind": "hat",
+      "manifest_version": "1.0.0",
+      "memory": {
+        "pii_policy": "never_store_pii",
+        "save": [],
+        "scope": "tenant_project"
+      },
+      "strategy": "REUSE",
+      "summary": "Specialized hat for capability 'front_desk_and_guest_stay' (strategy=REUSE). Adapted from TEKsystems retail hat pattern; estate/product-neutral.",
+      "tags": [
+        "hat",
+        "factory-generated",
+        "hotel_operations",
+        "front_desk_and_guest_stay"
+      ]
+    },
+    {
+      "activation": {
+        "default_enabled": true,
+        "mode": "hybrid",
+        "put_off_by": [
+          "disable:hotel_operations.hat.housekeeping_and_maintenance"
+        ],
+        "triggers": [
+          {
+            "type": "intent",
+            "value": "housekeeping_and_maintenance"
+          },
+          {
+            "type": "capability",
+            "value": "housekeeping_and_maintenance"
+          }
+        ]
+      },
+      "agent_id": "hotel_operations.hat.housekeeping_and_maintenance",
+      "allowed_actions": [
+        "hotel_operations.housekeeping_and_maintenance"
+      ],
+      "block_ids": [
+        "estate_maintenance",
+        "workflow"
+      ],
+      "discipline": "housekeeping_and_maintenance",
+      "display_name": "hotel operations Housekeeping And Maintenance Hat",
+      "extends": "hotel_operations.base",
+      "handoffs": [],
+      "human_authority": true,
+      "kind": "hat",
+      "manifest_version": "1.0.0",
+      "memory": {
+        "pii_policy": "never_store_pii",
+        "save": [],
+        "scope": "tenant_project"
+      },
+      "strategy": "REUSE",
+      "summary": "Specialized hat for capability 'housekeeping_and_maintenance' (strategy=REUSE). Adapted from TEKsystems retail hat pattern; estate/product-neutral.",
+      "tags": [
+        "hat",
+        "factory-generated",
+        "hotel_operations",
+        "housekeeping_and_maintenance"
+      ]
+    },
+    {
+      "activation": {
+        "default_enabled": true,
+        "mode": "hybrid",
+        "put_off_by": [
+          "disable:hotel_operations.hat.guest_engagement_and_segmentation"
+        ],
+        "triggers": [
+          {
+            "type": "intent",
+            "value": "guest_engagement_and_segmentation"
+          },
+          {
+            "type": "capability",
+            "value": "guest_engagement_and_segmentation"
+          }
+        ]
+      },
+      "agent_id": "hotel_operations.hat.guest_engagement_and_segmentation",
+      "allowed_actions": [
+        "hotel_operations.guest_engagement_and_segmentation"
+      ],
+      "block_ids": [
+        "guest_rfm_segmentation",
+        "channel_router",
+        "notification"
+      ],
+      "discipline": "guest_engagement_and_segmentation",
+      "display_name": "hotel operations Guest Engagement And Segmentation Hat",
+      "extends": "hotel_operations.base",
+      "handoffs": [],
+      "human_authority": true,
+      "kind": "hat",
+      "manifest_version": "1.0.0",
+      "memory": {
+        "pii_policy": "never_store_pii",
+        "save": [],
+        "scope": "tenant_project"
+      },
+      "strategy": "REUSE",
+      "summary": "Specialized hat for capability 'guest_engagement_and_segmentation' (strategy=REUSE). Adapted from TEKsystems retail hat pattern; estate/product-neutral.",
+      "tags": [
+        "hat",
+        "factory-generated",
+        "hotel_operations",
+        "guest_engagement_and_segmentation"
+      ]
+    },
+    {
+      "activation": {
+        "default_enabled": true,
+        "mode": "hybrid",
+        "put_off_by": [
+          "disable:hotel_operations.hat.document_and_knowledge_answers"
+        ],
+        "triggers": [
+          {
+            "type": "intent",
+            "value": "document_and_knowledge_answers"
+          },
+          {
+            "type": "capability",
+            "value": "document_and_knowledge_answers"
+          }
+        ]
+      },
+      "agent_id": "hotel_operations.hat.document_and_knowledge_answers",
+      "allowed_actions": [
+        "hotel_operations.document_and_knowledge_answers"
+      ],
+      "block_ids": [
+        "knowledge",
+        "document_engine"
+      ],
+      "discipline": "document_and_knowledge_answers",
+      "display_name": "hotel operations Document And Knowledge Answers Hat",
+      "extends": "hotel_operations.base",
+      "handoffs": [],
+      "human_authority": true,
+      "kind": "hat",
+      "manifest_version": "1.0.0",
+      "memory": {
+        "pii_policy": "never_store_pii",
+        "save": [],
+        "scope": "tenant_project"
+      },
+      "strategy": "REUSE",
+      "summary": "Specialized hat for capability 'document_and_knowledge_answers' (strategy=REUSE). Adapted from TEKsystems retail hat pattern; estate/product-neutral.",
+      "tags": [
+        "hat",
+        "factory-generated",
+        "hotel_operations",
+        "document_and_knowledge_answers"
+      ]
+    },
+    {
+      "activation": {
+        "default_enabled": true,
+        "mode": "hybrid",
+        "put_off_by": [
+          "disable:hotel_operations.hat.operations_billing"
+        ],
+        "triggers": [
+          {
+            "type": "intent",
+            "value": "operations_billing"
+          },
+          {
+            "type": "capability",
+            "value": "operations_billing"
+          }
+        ]
+      },
+      "agent_id": "hotel_operations.hat.operations_billing",
+      "allowed_actions": [
+        "hotel_operations.operations_billing"
+      ],
+      "block_ids": [
+        "billing",
+        "hotel_v2"
+      ],
+      "discipline": "operations_billing",
+      "display_name": "hotel operations Operations Billing Hat",
+      "extends": "hotel_operations.base",
+      "handoffs": [],
+      "human_authority": true,
+      "kind": "hat",
+      "manifest_version": "1.0.0",
+      "memory": {
+        "pii_policy": "never_store_pii",
+        "save": [],
+        "scope": "tenant_project"
+      },
+      "strategy": "REUSE",
+      "summary": "Specialized hat for capability 'operations_billing' (strategy=REUSE). Adapted from TEKsystems retail hat pattern; estate/product-neutral.",
+      "tags": [
+        "hat",
+        "factory-generated",
+        "hotel_operations",
+        "operations_billing"
+      ]
+    },
+    {
+      "activation": {
+        "default_enabled": true,
+        "mode": "hybrid",
+        "put_off_by": [
+          "disable:hotel_operations.hat.operations_oversight_dashboard"
+        ],
+        "triggers": [
+          {
+            "type": "intent",
+            "value": "operations_oversight_dashboard"
+          },
+          {
+            "type": "capability",
+            "value": "operations_oversight_dashboard"
+          }
+        ]
+      },
+      "agent_id": "hotel_operations.hat.operations_oversight_dashboard",
+      "allowed_actions": [
+        "hotel_operations.operations_oversight_dashboard"
+      ],
+      "block_ids": [
+        "dashboard",
+        "multi_tenant_rbac"
+      ],
+      "discipline": "operations_oversight_dashboard",
+      "display_name": "hotel operations Operations Oversight Dashboard Hat",
+      "extends": "hotel_operations.base",
+      "handoffs": [],
+      "human_authority": true,
+      "kind": "hat",
+      "manifest_version": "1.0.0",
+      "memory": {
+        "pii_policy": "never_store_pii",
+        "save": [],
+        "scope": "tenant_project"
+      },
+      "strategy": "REUSE",
+      "summary": "Specialized hat for capability 'operations_oversight_dashboard' (strategy=REUSE). Adapted from TEKsystems retail hat pattern; estate/product-neutral.",
+      "tags": [
+        "hat",
+        "factory-generated",
+        "hotel_operations",
+        "operations_oversight_dashboard"
+      ]
+    },
+    {
+      "activation": {
+        "default_enabled": true,
+        "mode": "hybrid",
+        "put_off_by": [
+          "disable:hotel_operations.hat.external_integration_adapter"
+        ],
+        "triggers": [
+          {
+            "type": "intent",
+            "value": "external_integration_adapter"
+          },
+          {
+            "type": "capability",
+            "value": "external_integration_adapter"
+          }
+        ]
+      },
+      "agent_id": "hotel_operations.hat.external_integration_adapter",
+      "allowed_actions": [
+        "hotel_operations.external_integration_adapter"
+      ],
+      "block_ids": [
+        "mcp_adapter",
+        "hospitality_connectors"
+      ],
+      "discipline": "external_integration_adapter",
+      "display_name": "hotel operations External Integration Adapter Hat",
+      "extends": "hotel_operations.base",
+      "handoffs": [],
+      "human_authority": true,
+      "kind": "hat",
+      "manifest_version": "1.0.0",
+      "memory": {
+        "pii_policy": "never_store_pii",
+        "save": [],
+        "scope": "tenant_project"
+      },
+      "strategy": "REUSE",
+      "summary": "Specialized hat for capability 'external_integration_adapter' (strategy=REUSE). Adapted from TEKsystems retail hat pattern; estate/product-neutral.",
+      "tags": [
+        "hat",
+        "factory-generated",
+        "hotel_operations",
+        "external_integration_adapter"
+      ]
+    }
+  ],
+  "schema_version": "1.0.0"
+}

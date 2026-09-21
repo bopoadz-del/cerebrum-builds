@@ -1,0 +1,47 @@
+{
+  "activation": {
+    "default_enabled": true,
+    "mode": "hybrid",
+    "put_off_by": [
+      "disable:hotel_operations.hat.housekeeping_and_maintenance"
+    ],
+    "triggers": [
+      {
+        "type": "intent",
+        "value": "housekeeping_and_maintenance"
+      },
+      {
+        "type": "capability",
+        "value": "housekeeping_and_maintenance"
+      }
+    ]
+  },
+  "agent_id": "hotel_operations.hat.housekeeping_and_maintenance",
+  "allowed_actions": [
+    "hotel_operations.housekeeping_and_maintenance"
+  ],
+  "block_ids": [
+    "estate_maintenance",
+    "workflow"
+  ],
+  "discipline": "housekeeping_and_maintenance",
+  "display_name": "hotel operations Housekeeping And Maintenance Hat",
+  "extends": "hotel_operations.base",
+  "handoffs": [],
+  "human_authority": true,
+  "kind": "hat",
+  "manifest_version": "1.0.0",
+  "memory": {
+    "pii_policy": "never_store_pii",
+    "save": [],
+    "scope": "tenant_project"
+  },
+  "strategy": "REUSE",
+  "summary": "Specialized hat for capability 'housekeeping_and_maintenance' (strategy=REUSE). Adapted from TEKsystems retail hat pattern; estate/product-neutral.",
+  "tags": [
+    "hat",
+    "factory-generated",
+    "hotel_operations",
+    "housekeeping_and_maintenance"
+  ]
+}

@@ -87,12 +87,10 @@
   "price_cents": 0,
   "product_blocks": [
     "estate_maintenance",
-    "estate_registry",
-    "portfolio_rollup",
-    "readiness_engine"
+    "estate_registry"
   ],
   "prompts": [],
-  "source": "factory-vendor-mirror",
+  "source": "factory-kits",
   "status": "available",
   "tags": [
     "domain",
@@ -102,9 +100,7 @@
   ],
   "vendored_blocks": {
     "estate_maintenance": "vendor/blocks/estate_maintenance",
-    "estate_registry": "vendor/blocks/estate_registry",
-    "portfolio_rollup": "vendor/blocks/portfolio_rollup",
-    "readiness_engine": "vendor/blocks/readiness_engine"
+    "estate_registry": "vendor/blocks/estate_registry"
   },
   "version": "1.3.0"
 }

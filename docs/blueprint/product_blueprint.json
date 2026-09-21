@@ -2,111 +2,102 @@
   "capabilities": [
     {
       "block_ids": [
-        "workflow",
-        "database",
-        "validation",
-        "event_bus",
-        "queue",
-        "audit"
-      ],
-      "description": "Handles the full reservation lifecycle including availability checks, real-time booking, modifications, cancellations, and stay records across all channels.",
-      "id": "booking_management",
-      "required": true,
-      "strategy_hint": "REUSE"
-    },
-    {
-      "block_ids": [
         "estate_registry",
+        "hotel_v2"
+      ],
+      "description": "Maintain the registry of properties, buildings, floors, room types and individual rooms, with their status and attributes, as the shared reference for every other capability.",
+      "id": "property_and_room_registry",
+      "required": true,
+      "strategy_hint": "REUSE"
+    },
+    {
+      "block_ids": [
+        "hotel_v2",
+        "workflow"
+      ],
+      "description": "Handle the guest stay lifecycle operationally: reservations and arrivals, check-in and check-out, room assignment and moves, and the guest record for the duration of the stay.",
+      "id": "front_desk_and_guest_stay",
+      "required": true,
+      "strategy_hint": "REUSE"
+    },
+    {
+      "block_ids": [
         "estate_maintenance",
-        "database",
-        "team",
-        "workflow",
-        "audit"
+        "workflow"
       ],
-      "description": "Manages rooms, rate plans, seasonal inventory, and property configuration for one or many hotel properties.",
-      "id": "property_management",
+      "description": "Schedule and track cleaning, room turnover, and repair work against rooms and property assets, with work orders, assignment, and completion state.",
+      "id": "housekeeping_and_maintenance",
       "required": true,
       "strategy_hint": "REUSE"
     },
     {
       "block_ids": [
-        "formula_executor",
-        "readiness_engine",
-        "recommendation_template",
-        "analytics",
-        "database"
-      ],
-      "description": "Calculates and adjusts room rates in real time based on demand, occupancy, seasonality, competitor signals, and configurable pricing rules.",
-      "id": "dynamic_pricing",
-      "required": true,
-      "strategy_hint": "REUSE"
-    },
-    {
-      "block_ids": [
-        "capture",
-        "knowledge",
-        "vector_search",
-        "analytics",
+        "guest_rfm_segmentation",
+        "channel_router",
         "notification"
       ],
-      "description": "Collects, moderates, and responds to guest reviews; analyzes sentiment and surfaces reputation trends for each property.",
-      "id": "review_management",
+      "description": "Segment guests by stay behaviour and value, and drive guest messaging and offers through the channels the property has configured.",
+      "id": "guest_engagement_and_segmentation",
+      "required": true,
+      "strategy_hint": "REUSE"
+    },
+    {
+      "block_ids": [
+        "knowledge",
+        "document_engine"
+      ],
+      "description": "Ingest the property's own documents (manuals, SOPs, rate sheets) and answer staff questions from them, with retrieval grounded in the uploaded sources.",
+      "id": "document_and_knowledge_answers",
+      "required": true,
+      "strategy_hint": "REUSE"
+    },
+    {
+      "block_ids": [
+        "billing",
+        "hotel_v2"
+      ],
+      "description": "Record operational charges and folio-level billing, with currency and tax/VAT regime left as explicit configuration that must be set before any financial rule is generated.",
+      "id": "operations_billing",
       "required": true,
       "strategy_hint": "REUSE"
     },
     {
       "block_ids": [
         "dashboard",
-        "analytics",
-        "portfolio_rollup",
-        "database"
+        "multi_tenant_rbac"
       ],
-      "description": "Provides operational dashboards and reports covering occupancy, revenue, booking pace, channel performance, and guest satisfaction.",
-      "id": "analytics_dashboard",
+      "description": "Give management a live view of occupancy, room status, open work orders, and guest activity, in a tenant-scoped dashboard.",
+      "id": "operations_oversight_dashboard",
       "required": true,
       "strategy_hint": "REUSE"
     },
     {
       "block_ids": [
-        "notification",
-        "event_bus",
-        "queue",
-        "workflow"
+        "mcp_adapter",
+        "hospitality_connectors"
       ],
-      "description": "Sends timely booking confirmations, reminders, pricing alerts, and internal staff notifications via email, SMS, and in-app channels.",
-      "id": "notification_system",
-      "required": true,
-      "strategy_hint": "REUSE"
-    },
-    {
-      "block_ids": [
-        "vector_search",
-        "knowledge",
-        "recommendation_template",
-        "memory",
-        "analytics"
-      ],
-      "description": "Enables guests to search properties and rooms with filters, and recommends personalized stays, packages, and upsells based on preferences and history.",
-      "id": "search_recommendation",
+      "description": "Provide the single attach point for external property systems, to be named later; no integration is assumed until the user specifies one.",
+      "id": "external_integration_adapter",
       "required": true,
       "strategy_hint": "REUSE"
     }
   ],
   "connectors": [],
+  "delivery_format": "zip",
   "drafting_mode": "architect_llm",
-  "drafting_note": null,
+  "drafting_note": "inventory: 'hotel_operations' is not on the declared-ready list (hotels, insurance, construction, finance, retail); the Store kit for this vertical is unverified \u2014 domain depth not guaranteed",
   "edge_profile": "standard",
   "factory_scenario": "CREATE_PRODUCT",
   "human_authority": true,
-  "n_required": 7,
-  "product_id": "hospitality",
-  "product_name": "StayFlow Hospitality Platform",
+  "n_required": 8,
+  "product_id": "hotel-operations",
+  "product_name": "hotel operations",
   "schema_version": "product_blueprint.v1",
-  "summary": "StayFlow is an all-in-one hotel booking and property management platform for independent hotels, boutique inns, and small hotel groups. It unifies real-time reservation management, room inventory and rate control, dynamic pricing, guest reviews, and operational analytics, while keeping staff and guests informed with automated notifications and AI-assisted search and recommendations.",
+  "summary": "A hotel operations platform that runs the day-to-day work of one or more properties: rooms and front-desk operations, housekeeping and maintenance, guest engagement, and the operational records behind them. It serves hotel staff and management (front desk, housekeeping, maintenance, and management), and optionally guests where guest-facing workflows are switched on. It answers questions from the property's own uploaded documents -- manuals, SOPs, and rate sheets -- through the knowledge and docu",
   "ui_modules": [
     "command_center",
     "operational_chat",
     "resident_engineer"
   ],
-  "vertical": "hospitality"
+  "vertical": "hotel_operations"
 }

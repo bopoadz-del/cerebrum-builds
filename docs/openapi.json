@@ -1,152 +1,2562 @@
 {
-  "openapi": "3.1.0",
+  "components": {
+    "schemas": {
+      "document_and_knowledge_answers": {
+        "properties": {
+          "answer": {
+            "title": "Answer",
+            "type": "string"
+          },
+          "attachment_path": {
+            "title": "Attachment Path",
+            "type": "string"
+          },
+          "authority_label": {
+            "enum": [
+              "certified",
+              "documents",
+              "formulas",
+              "procedures"
+            ],
+            "title": "Authority Label",
+            "type": "string"
+          },
+          "document_kind": {
+            "enum": [
+              "manual",
+              "sop",
+              "rate_sheet",
+              "policy",
+              "other"
+            ],
+            "title": "Document Kind",
+            "type": "string",
+            "x-required": true
+          },
+          "document_text": {
+            "title": "Document Text",
+            "type": "string",
+            "x-required": true
+          },
+          "notes": {
+            "title": "Notes",
+            "type": "string"
+          },
+          "question": {
+            "title": "Question",
+            "type": "string",
+            "x-required": true
+          },
+          "reference": {
+            "title": "Reference",
+            "type": "string",
+            "x-required": true
+          },
+          "source_document": {
+            "title": "Source Document",
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "open",
+              "in_progress",
+              "closed"
+            ],
+            "title": "Status",
+            "type": "string",
+            "x-required": true
+          },
+          "title": {
+            "title": "Title",
+            "type": "string",
+            "x-required": true
+          }
+        },
+        "required": [
+          "reference",
+          "status",
+          "title",
+          "document_kind",
+          "question",
+          "document_text"
+        ],
+        "type": "object"
+      },
+      "external_integration_adapter": {
+        "properties": {
+          "direction": {
+            "enum": [
+              "inbound",
+              "outbound"
+            ],
+            "title": "Direction",
+            "type": "string",
+            "x-required": true
+          },
+          "endpoint_url": {
+            "title": "Endpoint Url",
+            "type": "string"
+          },
+          "notes": {
+            "title": "Notes",
+            "type": "string"
+          },
+          "payload_format": {
+            "enum": [
+              "json",
+              "csv",
+              "xml"
+            ],
+            "title": "Payload Format",
+            "type": "string",
+            "x-required": true
+          },
+          "records_seen": {
+            "minimum": 0,
+            "title": "Records Seen",
+            "type": "integer"
+          },
+          "reference": {
+            "title": "Reference",
+            "type": "string",
+            "x-required": true
+          },
+          "resource": {
+            "title": "Resource",
+            "type": "string",
+            "x-required": true
+          },
+          "status": {
+            "enum": [
+              "open",
+              "in_progress",
+              "closed"
+            ],
+            "title": "Status",
+            "type": "string",
+            "x-required": true
+          },
+          "system": {
+            "enum": [
+              "opera",
+              "micros",
+              "maximo",
+              "loyalty_lms",
+              "grms",
+              "gaming_cms"
+            ],
+            "title": "System",
+            "type": "string",
+            "x-required": true
+          }
+        },
+        "required": [
+          "reference",
+          "status",
+          "system",
+          "resource",
+          "direction",
+          "payload_format"
+        ],
+        "type": "object"
+      },
+      "front_desk_and_guest_stay": {
+        "properties": {
+          "arrival_date": {
+            "title": "Arrival Date",
+            "type": "string",
+            "x-required": true
+          },
+          "departure_date": {
+            "title": "Departure Date",
+            "type": "string"
+          },
+          "folio_currency": {
+            "title": "Folio Currency",
+            "type": "string"
+          },
+          "guest_name": {
+            "title": "Guest Name",
+            "type": "string",
+            "x-required": true
+          },
+          "guests_count": {
+            "maximum": 10,
+            "minimum": 1,
+            "title": "Guests Count",
+            "type": "integer"
+          },
+          "notes": {
+            "title": "Notes",
+            "type": "string"
+          },
+          "reference": {
+            "title": "Reference",
+            "type": "string",
+            "x-required": true
+          },
+          "room_number": {
+            "title": "Room Number",
+            "type": "string",
+            "x-required": true
+          },
+          "status": {
+            "enum": [
+              "open",
+              "in_progress",
+              "closed"
+            ],
+            "title": "Status",
+            "type": "string",
+            "x-required": true
+          },
+          "stay_status": {
+            "enum": [
+              "reserved",
+              "checked_in",
+              "checked_out",
+              "no_show",
+              "cancelled"
+            ],
+            "title": "Stay Status",
+            "type": "string",
+            "x-required": true
+          }
+        },
+        "required": [
+          "reference",
+          "status",
+          "guest_name",
+          "room_number",
+          "arrival_date",
+          "stay_status"
+        ],
+        "type": "object"
+      },
+      "guest_engagement_and_segmentation": {
+        "properties": {
+          "delivery_channel": {
+            "enum": [
+              "mcp",
+              "email"
+            ],
+            "title": "Delivery Channel",
+            "type": "string",
+            "x-required": true
+          },
+          "frequency": {
+            "maximum": 1000,
+            "minimum": 0,
+            "title": "Frequency",
+            "type": "integer",
+            "x-required": true
+          },
+          "guest_name": {
+            "title": "Guest Name",
+            "type": "string",
+            "x-required": true
+          },
+          "monetary": {
+            "maximum": 1000000.0,
+            "minimum": 0.0,
+            "title": "Monetary",
+            "type": "number",
+            "x-required": true
+          },
+          "notes": {
+            "title": "Notes",
+            "type": "string"
+          },
+          "offer_code": {
+            "title": "Offer Code",
+            "type": "string"
+          },
+          "recency_days": {
+            "maximum": 3650,
+            "minimum": 0,
+            "title": "Recency Days",
+            "type": "integer",
+            "x-required": true
+          },
+          "reference": {
+            "title": "Reference",
+            "type": "string",
+            "x-required": true
+          },
+          "segment": {
+            "enum": [
+              "champion",
+              "loyal",
+              "potential",
+              "at_risk",
+              "dormant"
+            ],
+            "title": "Segment",
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "open",
+              "in_progress",
+              "closed"
+            ],
+            "title": "Status",
+            "type": "string",
+            "x-required": true
+          }
+        },
+        "required": [
+          "reference",
+          "status",
+          "guest_name",
+          "recency_days",
+          "frequency",
+          "monetary",
+          "delivery_channel"
+        ],
+        "type": "object"
+      },
+      "housekeeping_and_maintenance": {
+        "properties": {
+          "assigned_to": {
+            "title": "Assigned To",
+            "type": "string"
+          },
+          "due_date": {
+            "title": "Due Date",
+            "type": "string"
+          },
+          "notes": {
+            "title": "Notes",
+            "type": "string"
+          },
+          "priority": {
+            "enum": [
+              "low",
+              "normal",
+              "high",
+              "urgent"
+            ],
+            "title": "Priority",
+            "type": "string",
+            "x-required": true
+          },
+          "reference": {
+            "title": "Reference",
+            "type": "string",
+            "x-required": true
+          },
+          "room_number": {
+            "title": "Room Number",
+            "type": "string",
+            "x-required": true
+          },
+          "status": {
+            "enum": [
+              "open",
+              "in_progress",
+              "closed"
+            ],
+            "title": "Status",
+            "type": "string",
+            "x-required": true
+          },
+          "title": {
+            "title": "Title",
+            "type": "string",
+            "x-required": true
+          },
+          "work_status": {
+            "enum": [
+              "open",
+              "assigned",
+              "in_progress",
+              "done",
+              "cancelled"
+            ],
+            "title": "Work Status",
+            "type": "string",
+            "x-required": true
+          },
+          "work_type": {
+            "enum": [
+              "housekeeping",
+              "maintenance",
+              "inspection"
+            ],
+            "title": "Work Type",
+            "type": "string",
+            "x-required": true
+          }
+        },
+        "required": [
+          "reference",
+          "status",
+          "title",
+          "work_type",
+          "room_number",
+          "priority",
+          "work_status"
+        ],
+        "type": "object"
+      },
+      "operations_billing": {
+        "properties": {
+          "amount": {
+            "maximum": 1000000.0,
+            "minimum": 0.0,
+            "title": "Amount",
+            "type": "number",
+            "x-required": true
+          },
+          "charge_type": {
+            "enum": [
+              "room",
+              "food_and_beverage",
+              "spa",
+              "minibar",
+              "laundry",
+              "other"
+            ],
+            "title": "Charge Type",
+            "type": "string",
+            "x-required": true
+          },
+          "currency": {
+            "title": "Currency",
+            "type": "string"
+          },
+          "folio_reference": {
+            "title": "Folio Reference",
+            "type": "string",
+            "x-required": true
+          },
+          "notes": {
+            "title": "Notes",
+            "type": "string"
+          },
+          "reference": {
+            "title": "Reference",
+            "type": "string",
+            "x-required": true
+          },
+          "setting": {
+            "title": "Setting",
+            "type": "string",
+            "x-required": true
+          },
+          "status": {
+            "enum": [
+              "open",
+              "in_progress",
+              "closed"
+            ],
+            "title": "Status",
+            "type": "string",
+            "x-required": true
+          },
+          "tax_rate_percent": {
+            "maximum": 100.0,
+            "minimum": 0.0,
+            "title": "Tax Rate Percent",
+            "type": "number"
+          },
+          "total_amount": {
+            "minimum": 0.0,
+            "title": "Total Amount",
+            "type": "number"
+          }
+        },
+        "required": [
+          "setting",
+          "reference",
+          "status",
+          "folio_reference",
+          "charge_type",
+          "amount"
+        ],
+        "type": "object"
+      },
+      "operations_oversight_dashboard": {
+        "properties": {
+          "dashboard_name": {
+            "title": "Dashboard Name",
+            "type": "string",
+            "x-required": true
+          },
+          "notes": {
+            "title": "Notes",
+            "type": "string"
+          },
+          "occupancy_percent": {
+            "maximum": 100.0,
+            "minimum": 0.0,
+            "title": "Occupancy Percent",
+            "type": "number"
+          },
+          "open_work_orders": {
+            "maximum": 10000,
+            "minimum": 0,
+            "title": "Open Work Orders",
+            "type": "integer"
+          },
+          "operator_role": {
+            "enum": [
+              "operator",
+              "admin"
+            ],
+            "title": "Operator Role",
+            "type": "string",
+            "x-required": true
+          },
+          "reference": {
+            "title": "Reference",
+            "type": "string",
+            "x-required": true
+          },
+          "status": {
+            "enum": [
+              "open",
+              "in_progress",
+              "closed"
+            ],
+            "title": "Status",
+            "type": "string",
+            "x-required": true
+          },
+          "widget": {
+            "enum": [
+              "occupancy",
+              "room_status",
+              "work_orders",
+              "guest_activity"
+            ],
+            "title": "Widget",
+            "type": "string",
+            "x-required": true
+          },
+          "window_days": {
+            "maximum": 90,
+            "minimum": 1,
+            "title": "Window Days",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "reference",
+          "status",
+          "dashboard_name",
+          "widget",
+          "operator_role"
+        ],
+        "type": "object"
+      },
+      "property_and_room_registry": {
+        "properties": {
+          "building": {
+            "title": "Building",
+            "type": "string"
+          },
+          "capacity": {
+            "maximum": 12,
+            "minimum": 1,
+            "title": "Capacity",
+            "type": "integer"
+          },
+          "floor": {
+            "maximum": 200,
+            "minimum": 0,
+            "title": "Floor",
+            "type": "integer"
+          },
+          "notes": {
+            "title": "Notes",
+            "type": "string"
+          },
+          "property_name": {
+            "title": "Property Name",
+            "type": "string",
+            "x-required": true
+          },
+          "reference": {
+            "title": "Reference",
+            "type": "string",
+            "x-required": true
+          },
+          "room_number": {
+            "title": "Room Number",
+            "type": "string",
+            "x-required": true
+          },
+          "room_status": {
+            "enum": [
+              "available",
+              "occupied",
+              "dirty",
+              "cleaned",
+              "out_of_order"
+            ],
+            "title": "Room Status",
+            "type": "string",
+            "x-required": true
+          },
+          "room_type": {
+            "enum": [
+              "standard",
+              "superior",
+              "deluxe",
+              "suite",
+              "accessible"
+            ],
+            "title": "Room Type",
+            "type": "string",
+            "x-required": true
+          },
+          "status": {
+            "enum": [
+              "open",
+              "in_progress",
+              "closed"
+            ],
+            "title": "Status",
+            "type": "string",
+            "x-required": true
+          }
+        },
+        "required": [
+          "reference",
+          "status",
+          "property_name",
+          "room_number",
+          "room_type",
+          "room_status"
+        ],
+        "type": "object"
+      }
+    },
+    "securitySchemes": {
+      "bearerAuth": {
+        "scheme": "bearer",
+        "type": "http"
+      }
+    }
+  },
   "info": {
-    "title": "Hotel Booking Platform",
-    "description": "Cerebrum Hotel Booking Platform \u2014 guests search, compare, and reserve rooms; operators manage inventory, pricing, reviews, and notifications. Mutations require a bearer operator token.",
+    "description": "Hotel operations platform: rooms and front desk, housekeeping and maintenance, guest engagement, document answers and the operational records behind them.",
+    "title": "Hotel Operations",
     "version": "1.0.0"
   },
+  "openapi": "3.0.3",
   "paths": {
-    "/v1/admin/export": {
+    "/": {
       "get": {
-        "summary": "Admin Export",
-        "operationId": "admin_export_v1_admin_export_get",
+        "operationId": "ui_root__get",
         "responses": {
           "200": {
-            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Ui Root"
+      }
+    },
+    "/health": {
+      "get": {
+        "operationId": "health_health_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Health"
+      }
+    },
+    "/metrics": {
+      "get": {
+        "operationId": "metrics_metrics_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Metrics"
+      }
+    },
+    "/v1/capabilities": {
+      "get": {
+        "description": "WRITER -- Platform manufacturer. Capability HTTP surface.",
+        "operationId": "capabilities_v1_capabilities_get",
+        "responses": {
+          "200": {
             "content": {
               "application/json": {
                 "schema": {
                   "additionalProperties": true,
-                  "type": "object",
-                  "title": "Response Admin Export V1 Admin Export Get"
+                  "title": "Response Capabilities V1 Capabilities Get",
+                  "type": "object"
                 }
               }
-            }
+            },
+            "description": "Successful Response"
           }
-        }
+        },
+        "summary": "Capabilities"
       }
     },
-    "/v1/{capability_id}": {
+    "/v1/catalog": {
+      "get": {
+        "description": "COLLECTOR -- Binding surveyor.",
+        "operationId": "catalog_v1_catalog_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Catalog V1 Catalog Get",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Catalog"
+      }
+    },
+    "/v1/document_and_knowledge_answers": {
+      "get": {
+        "operationId": "document_and_knowledge_answers_list_v1_document_and_knowledge_answers_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Document And Knowledge Answers List V1 Document And Knowledge Answers Get",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Document And Knowledge Answers List"
+      },
       "post": {
-        "summary": "Post Capability",
-        "operationId": "post_capability_v1__capability_id__post",
+        "operationId": "document_and_knowledge_answers_create_v1_document_and_knowledge_answers_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "additionalProperties": true,
+                "title": "Payload",
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Document And Knowledge Answers Create V1 Document And Knowledge Answers Post",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Document And Knowledge Answers Create"
+      }
+    },
+    "/v1/document_and_knowledge_answers/{item_id}": {
+      "delete": {
+        "operationId": "document_and_knowledge_answers_delete_v1_document_and_knowledge_answers__item_id__delete",
         "parameters": [
           {
-            "name": "capability_id",
             "in": "path",
+            "name": "item_id",
             "required": true,
             "schema": {
-              "type": "string",
-              "title": "Capability Id"
+              "title": "Item Id",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Document And Knowledge Answers Delete V1 Document And Knowledge Answers  Item Id  Delete",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Document And Knowledge Answers Delete"
+      },
+      "get": {
+        "operationId": "document_and_knowledge_answers_get_v1_document_and_knowledge_answers__item_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "item_id",
+            "required": true,
+            "schema": {
+              "title": "Item Id",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Document And Knowledge Answers Get V1 Document And Knowledge Answers  Item Id  Get",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Document And Knowledge Answers Get"
+      },
+      "put": {
+        "operationId": "document_and_knowledge_answers_update_v1_document_and_knowledge_answers__item_id__put",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "item_id",
+            "required": true,
+            "schema": {
+              "title": "Item Id",
+              "type": "integer"
             }
           }
         ],
         "requestBody": {
-          "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "type": "object",
                 "additionalProperties": true,
-                "title": "Request Payload"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Successful Response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "additionalProperties": true,
-                  "title": "Response Post Capability V1  Capability Id  Post"
-                }
+                "title": "Payload",
+                "type": "object"
               }
             }
           },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Document And Knowledge Answers Update V1 Document And Knowledge Answers  Item Id  Put",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
           "422": {
-            "description": "Validation Error",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/HTTPValidationError"
                 }
               }
-            }
+            },
+            "description": "Validation Error"
           }
-        }
-      },
+        },
+        "summary": "Document And Knowledge Answers Update"
+      }
+    },
+    "/v1/external_integration_adapter": {
       "get": {
-        "summary": "Get Capability",
-        "operationId": "get_capability_v1__capability_id__get",
+        "operationId": "external_integration_adapter_list_v1_external_integration_adapter_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response External Integration Adapter List V1 External Integration Adapter Get",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "External Integration Adapter List"
+      },
+      "post": {
+        "operationId": "external_integration_adapter_create_v1_external_integration_adapter_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "additionalProperties": true,
+                "title": "Payload",
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response External Integration Adapter Create V1 External Integration Adapter Post",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "External Integration Adapter Create"
+      }
+    },
+    "/v1/external_integration_adapter/{item_id}": {
+      "delete": {
+        "operationId": "external_integration_adapter_delete_v1_external_integration_adapter__item_id__delete",
         "parameters": [
           {
-            "name": "capability_id",
             "in": "path",
+            "name": "item_id",
             "required": true,
             "schema": {
-              "type": "string",
-              "title": "Capability Id"
+              "title": "Item Id",
+              "type": "integer"
             }
           }
         ],
         "responses": {
           "200": {
-            "description": "Successful Response",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
                   "additionalProperties": true,
-                  "title": "Response Get Capability V1  Capability Id  Get"
+                  "title": "Response External Integration Adapter Delete V1 External Integration Adapter  Item Id  Delete",
+                  "type": "object"
                 }
               }
-            }
+            },
+            "description": "Successful Response"
           },
           "422": {
-            "description": "Validation Error",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/HTTPValidationError"
                 }
               }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "External Integration Adapter Delete"
+      },
+      "get": {
+        "operationId": "external_integration_adapter_get_v1_external_integration_adapter__item_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "item_id",
+            "required": true,
+            "schema": {
+              "title": "Item Id",
+              "type": "integer"
             }
           }
-        }
-      }
-    },
-    "/v1": {
-      "get": {
-        "summary": "List Capabilities",
-        "operationId": "list_capabilities_v1_get",
+        ],
         "responses": {
           "200": {
-            "description": "Successful Response",
             "content": {
               "application/json": {
                 "schema": {
                   "additionalProperties": true,
-                  "type": "object",
-                  "title": "Response List Capabilities V1 Get"
+                  "title": "Response External Integration Adapter Get V1 External Integration Adapter  Item Id  Get",
+                  "type": "object"
                 }
               }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "External Integration Adapter Get"
+      },
+      "put": {
+        "operationId": "external_integration_adapter_update_v1_external_integration_adapter__item_id__put",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "item_id",
+            "required": true,
+            "schema": {
+              "title": "Item Id",
+              "type": "integer"
             }
           }
-        }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "additionalProperties": true,
+                "title": "Payload",
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response External Integration Adapter Update V1 External Integration Adapter  Item Id  Put",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "External Integration Adapter Update"
+      }
+    },
+    "/v1/front_desk_and_guest_stay": {
+      "get": {
+        "operationId": "front_desk_and_guest_stay_list_v1_front_desk_and_guest_stay_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Front Desk And Guest Stay List V1 Front Desk And Guest Stay Get",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Front Desk And Guest Stay List"
+      },
+      "post": {
+        "operationId": "front_desk_and_guest_stay_create_v1_front_desk_and_guest_stay_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "additionalProperties": true,
+                "title": "Payload",
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Front Desk And Guest Stay Create V1 Front Desk And Guest Stay Post",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Front Desk And Guest Stay Create"
+      }
+    },
+    "/v1/front_desk_and_guest_stay/{item_id}": {
+      "delete": {
+        "operationId": "front_desk_and_guest_stay_delete_v1_front_desk_and_guest_stay__item_id__delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "item_id",
+            "required": true,
+            "schema": {
+              "title": "Item Id",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Front Desk And Guest Stay Delete V1 Front Desk And Guest Stay  Item Id  Delete",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Front Desk And Guest Stay Delete"
+      },
+      "get": {
+        "operationId": "front_desk_and_guest_stay_get_v1_front_desk_and_guest_stay__item_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "item_id",
+            "required": true,
+            "schema": {
+              "title": "Item Id",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Front Desk And Guest Stay Get V1 Front Desk And Guest Stay  Item Id  Get",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Front Desk And Guest Stay Get"
+      },
+      "put": {
+        "operationId": "front_desk_and_guest_stay_update_v1_front_desk_and_guest_stay__item_id__put",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "item_id",
+            "required": true,
+            "schema": {
+              "title": "Item Id",
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "additionalProperties": true,
+                "title": "Payload",
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Front Desk And Guest Stay Update V1 Front Desk And Guest Stay  Item Id  Put",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Front Desk And Guest Stay Update"
+      }
+    },
+    "/v1/gates": {
+      "get": {
+        "description": "TESTER -- Acceptance inspector. Coverage only; does not run tests.",
+        "operationId": "gates_v1_gates_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Gates V1 Gates Get",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Gates"
+      }
+    },
+    "/v1/guest_engagement_and_segmentation": {
+      "get": {
+        "operationId": "guest_engagement_and_segmentation_list_v1_guest_engagement_and_segmentation_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Guest Engagement And Segmentation List V1 Guest Engagement And Segmentation Get",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Guest Engagement And Segmentation List"
+      },
+      "post": {
+        "operationId": "guest_engagement_and_segmentation_create_v1_guest_engagement_and_segmentation_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "additionalProperties": true,
+                "title": "Payload",
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Guest Engagement And Segmentation Create V1 Guest Engagement And Segmentation Post",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Guest Engagement And Segmentation Create"
+      }
+    },
+    "/v1/guest_engagement_and_segmentation/{item_id}": {
+      "delete": {
+        "operationId": "guest_engagement_and_segmentation_delete_v1_guest_engagement_and_segmentation__item_id__delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "item_id",
+            "required": true,
+            "schema": {
+              "title": "Item Id",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Guest Engagement And Segmentation Delete V1 Guest Engagement And Segmentation  Item Id  Delete",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Guest Engagement And Segmentation Delete"
+      },
+      "get": {
+        "operationId": "guest_engagement_and_segmentation_get_v1_guest_engagement_and_segmentation__item_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "item_id",
+            "required": true,
+            "schema": {
+              "title": "Item Id",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Guest Engagement And Segmentation Get V1 Guest Engagement And Segmentation  Item Id  Get",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Guest Engagement And Segmentation Get"
+      },
+      "put": {
+        "operationId": "guest_engagement_and_segmentation_update_v1_guest_engagement_and_segmentation__item_id__put",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "item_id",
+            "required": true,
+            "schema": {
+              "title": "Item Id",
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "additionalProperties": true,
+                "title": "Payload",
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Guest Engagement And Segmentation Update V1 Guest Engagement And Segmentation  Item Id  Put",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Guest Engagement And Segmentation Update"
+      }
+    },
+    "/v1/housekeeping_and_maintenance": {
+      "get": {
+        "operationId": "housekeeping_and_maintenance_list_v1_housekeeping_and_maintenance_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Housekeeping And Maintenance List V1 Housekeeping And Maintenance Get",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Housekeeping And Maintenance List"
+      },
+      "post": {
+        "operationId": "housekeeping_and_maintenance_create_v1_housekeeping_and_maintenance_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "additionalProperties": true,
+                "title": "Payload",
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Housekeeping And Maintenance Create V1 Housekeeping And Maintenance Post",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Housekeeping And Maintenance Create"
+      }
+    },
+    "/v1/housekeeping_and_maintenance/{item_id}": {
+      "delete": {
+        "operationId": "housekeeping_and_maintenance_delete_v1_housekeeping_and_maintenance__item_id__delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "item_id",
+            "required": true,
+            "schema": {
+              "title": "Item Id",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Housekeeping And Maintenance Delete V1 Housekeeping And Maintenance  Item Id  Delete",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Housekeeping And Maintenance Delete"
+      },
+      "get": {
+        "operationId": "housekeeping_and_maintenance_get_v1_housekeeping_and_maintenance__item_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "item_id",
+            "required": true,
+            "schema": {
+              "title": "Item Id",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Housekeeping And Maintenance Get V1 Housekeeping And Maintenance  Item Id  Get",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Housekeeping And Maintenance Get"
+      },
+      "put": {
+        "operationId": "housekeeping_and_maintenance_update_v1_housekeeping_and_maintenance__item_id__put",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "item_id",
+            "required": true,
+            "schema": {
+              "title": "Item Id",
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "additionalProperties": true,
+                "title": "Payload",
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Housekeeping And Maintenance Update V1 Housekeeping And Maintenance  Item Id  Put",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Housekeeping And Maintenance Update"
+      }
+    },
+    "/v1/inventory": {
+      "get": {
+        "description": "CLONER -- Block stocker. Pinned vendor lock, read live.",
+        "operationId": "inventory_v1_inventory_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Inventory V1 Inventory Get",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Inventory"
+      }
+    },
+    "/v1/jobs": {
+      "get": {
+        "description": "Roster of every kernel job description.",
+        "operationId": "list_jobs_v1_jobs_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response List Jobs V1 Jobs Get",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "List Jobs"
+      }
+    },
+    "/v1/operations_billing": {
+      "get": {
+        "operationId": "operations_billing_list_v1_operations_billing_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Operations Billing List V1 Operations Billing Get",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Operations Billing List"
+      },
+      "post": {
+        "operationId": "operations_billing_create_v1_operations_billing_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "additionalProperties": true,
+                "title": "Payload",
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Operations Billing Create V1 Operations Billing Post",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Operations Billing Create"
+      }
+    },
+    "/v1/operations_billing/{item_id}": {
+      "delete": {
+        "operationId": "operations_billing_delete_v1_operations_billing__item_id__delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "item_id",
+            "required": true,
+            "schema": {
+              "title": "Item Id",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Operations Billing Delete V1 Operations Billing  Item Id  Delete",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Operations Billing Delete"
+      },
+      "get": {
+        "operationId": "operations_billing_get_v1_operations_billing__item_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "item_id",
+            "required": true,
+            "schema": {
+              "title": "Item Id",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Operations Billing Get V1 Operations Billing  Item Id  Get",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Operations Billing Get"
+      },
+      "put": {
+        "operationId": "operations_billing_update_v1_operations_billing__item_id__put",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "item_id",
+            "required": true,
+            "schema": {
+              "title": "Item Id",
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "additionalProperties": true,
+                "title": "Payload",
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Operations Billing Update V1 Operations Billing  Item Id  Put",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Operations Billing Update"
+      }
+    },
+    "/v1/operations_oversight_dashboard": {
+      "get": {
+        "operationId": "operations_oversight_dashboard_list_v1_operations_oversight_dashboard_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Operations Oversight Dashboard List V1 Operations Oversight Dashboard Get",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Operations Oversight Dashboard List"
+      },
+      "post": {
+        "operationId": "operations_oversight_dashboard_create_v1_operations_oversight_dashboard_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "additionalProperties": true,
+                "title": "Payload",
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Operations Oversight Dashboard Create V1 Operations Oversight Dashboard Post",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Operations Oversight Dashboard Create"
+      }
+    },
+    "/v1/operations_oversight_dashboard/{item_id}": {
+      "delete": {
+        "operationId": "operations_oversight_dashboard_delete_v1_operations_oversight_dashboard__item_id__delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "item_id",
+            "required": true,
+            "schema": {
+              "title": "Item Id",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Operations Oversight Dashboard Delete V1 Operations Oversight Dashboard  Item Id  Delete",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Operations Oversight Dashboard Delete"
+      },
+      "get": {
+        "operationId": "operations_oversight_dashboard_get_v1_operations_oversight_dashboard__item_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "item_id",
+            "required": true,
+            "schema": {
+              "title": "Item Id",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Operations Oversight Dashboard Get V1 Operations Oversight Dashboard  Item Id  Get",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Operations Oversight Dashboard Get"
+      },
+      "put": {
+        "operationId": "operations_oversight_dashboard_update_v1_operations_oversight_dashboard__item_id__put",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "item_id",
+            "required": true,
+            "schema": {
+              "title": "Item Id",
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "additionalProperties": true,
+                "title": "Payload",
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Operations Oversight Dashboard Update V1 Operations Oversight Dashboard  Item Id  Put",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Operations Oversight Dashboard Update"
+      }
+    },
+    "/v1/product/ingestion/drive/callback": {
+      "get": {
+        "operationId": "drive_callback_v1_product_ingestion_drive_callback_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "title": "Response Drive Callback V1 Product Ingestion Drive Callback Get",
+                  "type": "null"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Drive Callback",
+        "tags": [
+          "ingestion-scaffold"
+        ]
+      }
+    },
+    "/v1/product/ingestion/drive/connect": {
+      "post": {
+        "operationId": "drive_connect_v1_product_ingestion_drive_connect_post",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "title": "Response Drive Connect V1 Product Ingestion Drive Connect Post",
+                  "type": "null"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Drive Connect",
+        "tags": [
+          "ingestion-scaffold"
+        ]
+      }
+    },
+    "/v1/product/ingestion/drive/files": {
+      "get": {
+        "operationId": "drive_files_v1_product_ingestion_drive_files_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "title": "Response Drive Files V1 Product Ingestion Drive Files Get",
+                  "type": "null"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Drive Files",
+        "tags": [
+          "ingestion-scaffold"
+        ]
+      }
+    },
+    "/v1/product/ingestion/drive/sync/{file_id}": {
+      "post": {
+        "operationId": "drive_sync_v1_product_ingestion_drive_sync__file_id__post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "file_id",
+            "required": true,
+            "schema": {
+              "title": "File Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "title": "Response Drive Sync V1 Product Ingestion Drive Sync  File Id  Post",
+                  "type": "null"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Drive Sync",
+        "tags": [
+          "ingestion-scaffold"
+        ]
+      }
+    },
+    "/v1/product/ingestion/formulas": {
+      "get": {
+        "operationId": "list_formula_overlays_v1_product_ingestion_formulas_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "title": "Response List Formula Overlays V1 Product Ingestion Formulas Get",
+                  "type": "null"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "List Formula Overlays",
+        "tags": [
+          "ingestion-scaffold"
+        ]
+      },
+      "post": {
+        "operationId": "submit_formula_overlay_v1_product_ingestion_formulas_post",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "title": "Response Submit Formula Overlay V1 Product Ingestion Formulas Post",
+                  "type": "null"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Submit Formula Overlay",
+        "tags": [
+          "ingestion-scaffold"
+        ]
+      }
+    },
+    "/v1/product/ingestion/upload": {
+      "post": {
+        "operationId": "upload_document_v1_product_ingestion_upload_post",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "title": "Response Upload Document V1 Product Ingestion Upload Post",
+                  "type": "null"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Upload Document",
+        "tags": [
+          "ingestion-scaffold"
+        ]
+      }
+    },
+    "/v1/property_and_room_registry": {
+      "get": {
+        "operationId": "property_and_room_registry_list_v1_property_and_room_registry_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Property And Room Registry List V1 Property And Room Registry Get",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Property And Room Registry List"
+      },
+      "post": {
+        "operationId": "property_and_room_registry_create_v1_property_and_room_registry_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "additionalProperties": true,
+                "title": "Payload",
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Property And Room Registry Create V1 Property And Room Registry Post",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Property And Room Registry Create"
+      }
+    },
+    "/v1/property_and_room_registry/{item_id}": {
+      "delete": {
+        "operationId": "property_and_room_registry_delete_v1_property_and_room_registry__item_id__delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "item_id",
+            "required": true,
+            "schema": {
+              "title": "Item Id",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Property And Room Registry Delete V1 Property And Room Registry  Item Id  Delete",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Property And Room Registry Delete"
+      },
+      "get": {
+        "operationId": "property_and_room_registry_get_v1_property_and_room_registry__item_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "item_id",
+            "required": true,
+            "schema": {
+              "title": "Item Id",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Property And Room Registry Get V1 Property And Room Registry  Item Id  Get",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Property And Room Registry Get"
+      },
+      "put": {
+        "operationId": "property_and_room_registry_update_v1_property_and_room_registry__item_id__put",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "item_id",
+            "required": true,
+            "schema": {
+              "title": "Item Id",
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "additionalProperties": true,
+                "title": "Payload",
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Property And Room Registry Update V1 Property And Room Registry  Item Id  Put",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Property And Room Registry Update"
+      }
+    },
+    "/v1/provenance": {
+      "get": {
+        "description": "STORE_MANAGER -- Store registrar. Clone register and provenance.",
+        "operationId": "provenance_v1_provenance_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Provenance V1 Provenance Get",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Provenance"
+      }
+    },
+    "/v1/rag/corpus": {
+      "get": {
+        "description": "What this tenant has uploaded -- count and layers, never another's.",
+        "operationId": "rag_corpus_v1_rag_corpus_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Rag Corpus V1 Rag Corpus Get",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Rag Corpus",
+        "tags": [
+          "knowledge"
+        ]
       }
     },
     "/v1/rag/ingest": {
       "post": {
-        "summary": "Rag Ingest",
         "operationId": "rag_ingest_v1_rag_ingest_post",
         "requestBody": {
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/RagIngestBody"
+                "additionalProperties": true,
+                "title": "Payload",
+                "type": "object"
               }
             }
           },
@@ -154,449 +2564,231 @@
         },
         "responses": {
           "200": {
-            "description": "Successful Response",
             "content": {
               "application/json": {
                 "schema": {
                   "additionalProperties": true,
-                  "type": "object",
-                  "title": "Response Rag Ingest V1 Rag Ingest Post"
+                  "title": "Response Rag Ingest V1 Rag Ingest Post",
+                  "type": "object"
                 }
               }
-            }
+            },
+            "description": "Successful Response"
           },
           "422": {
-            "description": "Validation Error",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/HTTPValidationError"
                 }
               }
-            }
+            },
+            "description": "Validation Error"
           }
-        }
-      }
-    },
-    "/v1/steward/rag/ingest": {
-      "post": {
-        "summary": "Steward Rag Ingest",
-        "operationId": "steward_rag_ingest_v1_steward_rag_ingest_post",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/RagIngestBody"
-              }
-            }
-          },
-          "required": true
         },
-        "responses": {
-          "200": {
-            "description": "Successful Response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "additionalProperties": true,
-                  "type": "object",
-                  "title": "Response Steward Rag Ingest V1 Steward Rag Ingest Post"
-                }
-              }
-            }
-          },
-          "422": {
-            "description": "Validation Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            }
-          }
-        }
+        "summary": "Rag Ingest",
+        "tags": [
+          "knowledge"
+        ]
       }
     },
     "/v1/rag/query": {
       "get": {
+        "operationId": "rag_query_get_v1_rag_query_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "q",
+            "required": false,
+            "schema": {
+              "default": "",
+              "title": "Q",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "top_k",
+            "required": false,
+            "schema": {
+              "default": 4,
+              "title": "Top K",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Rag Query Get V1 Rag Query Get",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Rag Query Get",
+        "tags": [
+          "knowledge"
+        ]
+      },
+      "post": {
+        "operationId": "rag_query_v1_rag_query_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "additionalProperties": true,
+                "title": "Payload",
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Rag Query V1 Rag Query Post",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
         "summary": "Rag Query",
-        "operationId": "rag_query_v1_rag_query_get",
-        "parameters": [
-          {
-            "name": "q",
-            "in": "query",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "minLength": 1,
-              "title": "Q"
-            }
-          },
-          {
-            "name": "layer",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "anyOf": [
-                {
-                  "type": "integer",
-                  "maximum": 2,
-                  "minimum": 1
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "title": "Layer"
-            }
-          },
-          {
-            "name": "top_k",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "integer",
-              "maximum": 20,
-              "minimum": 1,
-              "default": 5,
-              "title": "Top K"
-            }
-          }
-        ],
+        "tags": [
+          "knowledge"
+        ]
+      }
+    },
+    "/v1/work_queue": {
+      "get": {
+        "operationId": "work_queue_list_v1_work_queue_get",
         "responses": {
           "200": {
-            "description": "Successful Response",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
                   "additionalProperties": true,
-                  "title": "Response Rag Query V1 Rag Query Get"
+                  "title": "Response Work Queue List V1 Work Queue Get",
+                  "type": "object"
                 }
               }
-            }
-          },
-          "422": {
-            "description": "Validation Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            }
+            },
+            "description": "Successful Response"
           }
-        }
+        },
+        "summary": "Work Queue List"
       },
       "post": {
-        "summary": "Rag Query Post",
-        "operationId": "rag_query_post_v1_rag_query_post",
+        "operationId": "work_queue_enqueue_v1_work_queue_post",
         "requestBody": {
-          "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "type": "object",
                 "additionalProperties": true,
-                "title": "Body"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Successful Response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "additionalProperties": true,
-                  "title": "Response Rag Query Post V1 Rag Query Post"
-                }
+                "title": "Payload",
+                "type": "object"
               }
             }
           },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Work Queue Enqueue V1 Work Queue Post",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
           "422": {
-            "description": "Validation Error",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/HTTPValidationError"
                 }
               }
-            }
+            },
+            "description": "Validation Error"
           }
-        }
+        },
+        "summary": "Work Queue Enqueue"
       }
     },
-    "/v1/steward/rag/query": {
-      "get": {
-        "summary": "Steward Rag Query",
-        "operationId": "steward_rag_query_v1_steward_rag_query_get",
+    "/v1/work_queue/{item_id}/process": {
+      "post": {
+        "operationId": "work_queue_process_v1_work_queue__item_id__process_post",
         "parameters": [
           {
-            "name": "q",
-            "in": "query",
+            "in": "path",
+            "name": "item_id",
             "required": true,
             "schema": {
-              "type": "string",
-              "minLength": 1,
-              "title": "Q"
-            }
-          },
-          {
-            "name": "layer",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "anyOf": [
-                {
-                  "type": "integer",
-                  "maximum": 2,
-                  "minimum": 1
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "title": "Layer"
-            }
-          },
-          {
-            "name": "top_k",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "integer",
-              "maximum": 20,
-              "minimum": 1,
-              "default": 5,
-              "title": "Top K"
+              "title": "Item Id",
+              "type": "integer"
             }
           }
         ],
         "responses": {
           "200": {
-            "description": "Successful Response",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
                   "additionalProperties": true,
-                  "title": "Response Steward Rag Query V1 Steward Rag Query Get"
+                  "title": "Response Work Queue Process V1 Work Queue  Item Id  Process Post",
+                  "type": "object"
                 }
               }
-            }
+            },
+            "description": "Successful Response"
           },
           "422": {
-            "description": "Validation Error",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/HTTPValidationError"
                 }
               }
-            }
-          }
-        }
-      },
-      "post": {
-        "summary": "Steward Rag Query Post",
-        "operationId": "steward_rag_query_post_v1_steward_rag_query_post",
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "additionalProperties": true,
-                "title": "Body"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Successful Response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "additionalProperties": true,
-                  "title": "Response Steward Rag Query Post V1 Steward Rag Query Post"
-                }
-              }
-            }
-          },
-          "422": {
-            "description": "Validation Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/health": {
-      "get": {
-        "summary": "Health",
-        "operationId": "health_health_get",
-        "responses": {
-          "200": {
-            "description": "Successful Response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "additionalProperties": true,
-                  "type": "object",
-                  "title": "Response Health Health Get"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/": {
-      "get": {
-        "summary": "Ui Index",
-        "operationId": "ui_index__get",
-        "responses": {
-          "200": {
-            "description": "Successful Response",
-            "content": {
-              "text/html": {
-                "schema": {
-                  "type": "string"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/ui": {
-      "get": {
-        "summary": "Ui Alias",
-        "operationId": "ui_alias_ui_get",
-        "responses": {
-          "200": {
-            "description": "Successful Response",
-            "content": {
-              "text/html": {
-                "schema": {
-                  "type": "string"
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-  },
-  "components": {
-    "schemas": {
-      "HTTPValidationError": {
-        "properties": {
-          "detail": {
-            "items": {
-              "$ref": "#/components/schemas/ValidationError"
             },
-            "type": "array",
-            "title": "Detail"
+            "description": "Validation Error"
           }
         },
-        "type": "object",
-        "title": "HTTPValidationError"
-      },
-      "RagIngestBody": {
-        "properties": {
-          "text": {
-            "type": "string",
-            "minLength": 1,
-            "title": "Text"
-          },
-          "doc_id": {
-            "type": "string",
-            "minLength": 1,
-            "title": "Doc Id",
-            "default": "sample"
-          },
-          "title": {
-            "type": "string",
-            "minLength": 1,
-            "title": "Title",
-            "default": "sample"
-          },
-          "layer": {
-            "type": "integer",
-            "maximum": 2.0,
-            "minimum": 1.0,
-            "title": "Layer",
-            "default": 1
-          },
-          "property_id": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Property Id"
-          }
-        },
-        "type": "object",
-        "required": [
-          "text"
-        ],
-        "title": "RagIngestBody"
-      },
-      "ValidationError": {
-        "properties": {
-          "loc": {
-            "items": {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "integer"
-                }
-              ]
-            },
-            "type": "array",
-            "title": "Location"
-          },
-          "msg": {
-            "type": "string",
-            "title": "Message"
-          },
-          "type": {
-            "type": "string",
-            "title": "Error Type"
-          },
-          "input": {
-            "title": "Input"
-          },
-          "ctx": {
-            "type": "object",
-            "title": "Context"
-          }
-        },
-        "type": "object",
-        "required": [
-          "loc",
-          "msg",
-          "type"
-        ],
-        "title": "ValidationError"
+        "summary": "Work Queue Process"
       }
     }
   }

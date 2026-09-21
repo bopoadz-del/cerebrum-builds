@@ -1,0 +1,41 @@
+{
+  "schema": "writer.blockers.v1",
+  "product_id": "hotel-operations",
+  "resolved": [],
+  "blockers": [
+    {
+      "id": "vendor_knowledge_unloadable",
+      "capability": "document_and_knowledge_answers",
+      "block": "knowledge",
+      "bound_in_inventory": true,
+      "declared_in_handler": false,
+      "reason": "the vendored knowledge block imports vendor.cerebrum.core.vector_store, which this delivered runtime slice does not ship; app.dispatch.load_block falls back to the registry class and, finding that import also fails, refuses by name",
+      "resolution": "retrieval is served by app/retrieval.py over the tenant's own rag_document/rag_chunk tables (alembic 0003_rag_corpus) with app/llm.py answers and precedence.v1 labels; BLOCK_DEFAULT_ACTIONS still carries knowledge: search for the inventory binding"
+    },
+    {
+      "id": "vendor_mcp_adapter_crashes",
+      "capability": "external_integration_adapter",
+      "block": "mcp_adapter",
+      "bound_in_inventory": true,
+      "declared_in_handler": false,
+      "reason": "the vendored mcp_adapter block raises '_LazyRegistry' object has no attribute 'items' for every action it declares (list_tools, describe)",
+      "resolution": "the capability attaches through hospitality_connectors, which runs in fixture mode offline and refuses an unknown system or an unconfigured live URL; BLOCK_DEFAULT_ACTIONS still carries mcp_adapter: list_tools"
+    },
+    {
+      "id": "vendor_document_engine_shim",
+      "capability": "document_and_knowledge_answers",
+      "block": "document_engine",
+      "declared_in_handler": true,
+      "reason": "vendor/blocks/document_engine/block.py resolves the block through vendor.cerebrum.blocks.document_engine, whose package __init__ loads a file that is not in the delivery (document_engine_block.py)",
+      "resolution": "app.dispatch.load_block loads the same Store class from its wrapper package (vendor.cerebrum.blocks.document_engine_block) and wraps it in the adapter's calling convention; the block itself runs, nothing is re-implemented"
+    },
+    {
+      "id": "frontend_source_not_built_by_image",
+      "capability": null,
+      "block": null,
+      "declared_in_handler": false,
+      "reason": "frontend/src ships React modules (one per declared UI module) and frontend/package.json declares a build script, but the Dockerfile serves app/static/index.html -- the console that actually drives the live routes -- and never runs a node build. A node build stage would need a node base image and registry access at image-build time, which this offline platform does not have.",
+      "resolution": "app/static/index.html is the ONE served UI: it discovers capabilities from GET /v1/capabilities and drives the real routes (verified by the factory's ui_end_to_end probe: /v1/capabilities, /v1/operations_billing, /v1/rag/ingest, /v1/rag/query all answered, no findings). frontend/src carries the module sources the factory's surface gate requires; it is not the served artifact."
+    }
+  ]
+}

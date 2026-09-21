@@ -1,0 +1,74 @@
+{
+  "backups": {
+    "destination": "BACKUP_DIR, else STORAGE_PATH/backups — the same disk as the database, so this protects against logical loss, not disk loss (see spof)",
+    "postgres": "pg_dump when DATABASE_URL is set. The image does not ship pg_dump; scripts/backup.sh names that and exits 2 rather than writing a file that is not a dump.",
+    "restore_drill": "tests/test_backup_restore.py restores what scripts/backup.sh produces (dump, wipe, restore, planted row readable)",
+    "script": "scripts/backup.sh",
+    "sqlite": "SQLite online backup of STORAGE_PATH/platform.db: the sqlite3 CLI when installed, else the Python stdlib backup() API on the same file — the image ships python, not the CLI, so both legs work in the deployed container"
+  },
+  "capacity": {
+    "disk_gb": 1,
+    "ha": false,
+    "replicas": 0,
+    "rollback_retains_disk": true
+  },
+  "ci": {
+    "jobs": [
+      "test: python -m pytest tests, plus an import of app.main with an empty environment",
+      "audit: pip-audit and bandit -ll -r app",
+      "bench: scripts/bench.py, p95 under the 500ms budget",
+      "image: docker build, then boot the built container on a self-chosen PORT (8931), probe /health, /metrics, / and /console/, and wait for the image's own HEALTHCHECK to report healthy"
+    ],
+    "workflow": ".github/workflows/ci.yml"
+  },
+  "health": {
+    "checks": [
+      "process",
+      "persistent_disk",
+      "database",
+      "migrations"
+    ],
+    "fail_closed": true,
+    "path": "/health",
+    "probe": "HEALTHCHECK CMD python3 -c urllib.request.urlopen('http://127.0.0.1:'+os.environ.get('PORT','8000')+'/health') — interval 10s, timeout 3s, start-period 40s, retries 3",
+    "render": "healthCheckPath: /health (same probe; 503 takes the instance out)",
+    "start_period_reason": "the entrypoint applies migrations before uvicorn binds, so the first probe must tolerate that window",
+    "unconditional_ok_is": "F1",
+    "where_it_answers_before_traffic": "the HEALTHCHECK follows $PORT, the port the entrypoint binds (docker run -e PORT=8931 in CI proves it); /health answers 503 until STORAGE_PATH is writable, platform.db opens and alembic is at head"
+  },
+  "logging": {
+    "correlation_header": "x-request-id",
+    "emoji_on_machine_stdout": false,
+    "f13": "structured request lines are ASCII JSON; emoji stripped",
+    "format": "json_lines"
+  },
+  "packaging": {
+    "assets": {
+      "/": "app/static/index.html — the dependency-free console, copied from the tree",
+      "/console": "frontend-dist — the React bundle, COPY --from=console /ui/dist"
+    },
+    "console_stage": "node:18-slim: npm ci against the committed frontend/package-lock.json, npx tsc --noEmit, npx vite build --outDir dist --emptyOutDir. A lockfile out of step with package.json fails the build. vite's base is /console/ (frontend/vite.config.ts), so the emitted index.html asks for /console/assets/*, which is where app/main.py mounts the bundle; with vite's default base it asked the root for /assets/* and the page 404ed its own JavaScript.",
+    "entrypoint": "scripts/entrypoint.sh: mkdir STORAGE_PATH, alembic upgrade head, exec uvicorn app.main:app on ${PORT:-8000}. It resolves the repository root from its own path, so the same file boots from the image, from a checkout and from a Procfile slug.",
+    "gate": "RUN python3 scripts/release_gate.py inside the build: layout, console routes, packaging contract, bundle, models, boot on a throwaway store, committed openapi vs served routes, and the code-phase suite. A red suite cannot become a deployable image.",
+    "image": "Dockerfile, two stages (console -> runtime)",
+    "secrets": ".dockerignore excludes .env/.env.local and local databases; every credential arrives from the platform environment, so no layer carries one",
+    "service_boot_artifacts": "the gate's own /app/data is removed after the build: the image ships no database, and the runtime root is created and migrated on boot",
+    "user": "root. The Render disk is mounted for the container user; a non-root user is a hardening follow-up that has to keep the mount writable (worth doing, not done here).",
+    "verified": "docker is not installed on the build box (`which docker` exits 1), so the image was never built here and no successful `docker build` is claimed. What was run instead, in a fresh venv from requirements.txt + requirements-dev.txt: the console stage itself (npm ci exit 0, npx tsc --noEmit exit 0, npx vite build exit 0; the emitted dist/index.html references /console/assets/index-CP6ku3iL.js and /console/assets/index-mvQIC1Su.css), and the entrypoint exactly as ENTRYPOINT runs it, against empty throwaway STORAGE_PATHs on port 8931: all three alembic revisions applied to head (0003_conversation_corpus), GET /health 200 with process/persistent_disk/database/migrations all ok, GET /metrics 200, GET / 200, GET /console/ 404 (the bundle is a build artefact, present only after the image COPY), process stopped by the captured PID. The Dockerfile's own HEALTHCHECK command was then executed verbatim: exit 0 with PORT=8931 (the bound port) and exit 1 with PORT=9999, which is the check that the probe follows $PORT. scripts/release_gate.py exits 0 (layout, console, packaging, bundle, models, boot, openapi, suite) and scripts/bench.py printed STORE_BENCH_P95_MS=283.0 (budget 500). The first place the Dockerfile runs end to end is the CI `image` job."
+  },
+  "revisions": {
+    "mark_n": "baseline",
+    "mark_n_plus_1": "changed",
+    "n": "rev-n",
+    "n_plus_1": "rev-n-plus-1"
+  },
+  "rollback": {
+    "drill": "scripts/rollback.sh writes the target revision to STORAGE_PATH/deploy_revision and prints the APP_REVISION/APP_MARK the restart needs (app/revision.py reports those two from the environment, so the restart is the change); boot applies alembic upgrade head, so the schema is not downgraded. The rollback drill itself is the factory's deploy_observe exercise (start rev-n, persist a row, start rev-n-plus-1 with a detectable mark, roll back to rev-n, assert prior health and prior data): no tests/test_deploy.py exists in this tree, and this stage does not claim to have run that outer drill.",
+    "performed": true,
+    "render_equivalent": "Dashboard rollback to the previous deploy; same disk",
+    "script": "scripts/rollback.sh"
+  },
+  "schema_version": "deploy_observe.v1",
+  "spof": "SPOF: Render rollback restarts a prior image against the same single-instance disk. There is no replica and no multi-AZ handoff. Losing the disk loses live SQLite (platform.db) and same-disk backups. Rollback does not create HA. A prior image that cannot read a newer schema is an S10 concern; this stage rolls back process identity, not a second copy of the data.",
+  "sqlite_on_mounted_disk": true
+}

@@ -1,0 +1,48 @@
+{
+  "activation": {
+    "default_enabled": true,
+    "mode": "hybrid",
+    "put_off_by": [
+      "disable:real_estate.hat.qualification_and_broker_summary"
+    ],
+    "triggers": [
+      {
+        "type": "intent",
+        "value": "qualification_and_broker_summary"
+      },
+      {
+        "type": "capability",
+        "value": "qualification_and_broker_summary"
+      }
+    ]
+  },
+  "agent_id": "real_estate.hat.qualification_and_broker_summary",
+  "allowed_actions": [
+    "real_estate.qualification_and_broker_summary"
+  ],
+  "block_ids": [
+    "validation",
+    "recommendation_template",
+    "knowledge"
+  ],
+  "discipline": "qualification_and_broker_summary",
+  "display_name": "CallOps Qualification And Broker Summary Hat",
+  "extends": "real_estate.base",
+  "handoffs": [],
+  "human_authority": true,
+  "kind": "hat",
+  "manifest_version": "1.0.0",
+  "memory": {
+    "pii_policy": "never_store_pii",
+    "save": [],
+    "scope": "tenant_project"
+  },
+  "strategy": "REUSE",
+  "summary": "Specialized hat for capability 'qualification_and_broker_summary' (strategy=REUSE). Adapted from TEKsystems retail hat pattern; estate/product-neutral.",
+  "tags": [
+    "hat",
+    "factory-generated",
+    "real_estate",
+    "qualification_and_broker_summary"
+  ]
+}

@@ -1,0 +1,44 @@
+{
+  "activation": {
+    "default_enabled": true,
+    "mode": "hybrid",
+    "put_off_by": [
+      "disable:real_estate.hat.warm_transfer"
+    ],
+    "triggers": [
+      {
+        "type": "intent",
+        "value": "warm_transfer"
+      },
+      {
+        "type": "capability",
+        "value": "warm_transfer"
+      }
+    ]
+  },
+  "agent_id": "real_estate.hat.warm_transfer",
+  "allowed_actions": [
+    "real_estate.warm_transfer"
+  ],
+  "block_ids": [],
+  "discipline": "warm_transfer",
+  "display_name": "CallOps Warm Transfer Hat",
+  "extends": "real_estate.base",
+  "handoffs": [],
+  "human_authority": true,
+  "kind": "hat",
+  "manifest_version": "1.0.0",
+  "memory": {
+    "pii_policy": "never_store_pii",
+    "save": [],
+    "scope": "tenant_project"
+  },
+  "strategy": "GENERATE",
+  "summary": "Specialized hat for capability 'warm_transfer' (strategy=GENERATE). Adapted from TEKsystems retail hat pattern; estate/product-neutral.",
+  "tags": [
+    "hat",
+    "factory-generated",
+    "real_estate",
+    "warm_transfer"
+  ]
+}

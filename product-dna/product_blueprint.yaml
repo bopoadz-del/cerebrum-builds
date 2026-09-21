@@ -1,0 +1,136 @@
+schema_version: product_blueprint.v1
+product_id: real-estate
+product_name: CallOps
+vertical: real_estate
+summary: CallOps is an outbound AI voice-calling platform for a real-estate brokerage,
+  built first for PSI. It ingests brokerage lead files, queues and paces dials against
+  calling windows and caps, pitches real project numbers retrieved from ingested project
+  sheets under a cite-or-refuse discipline, qualifies each conversation into a fixed
+  three-outcome vocabulary with collected fields, and hands warm leads to a human
+  broker through a whispered summary and conference bridge. Every call event is written
+  t
+capabilities:
+- id: lead_intake_and_dial_queue
+  description: CSV/Excel lead files are parsed into lead records (name, phone, language,
+    project tag) and held as a durable dial list. Daily call cap and concurrency are
+    reserve-policy settings on the queue; retry backoff for busy/no-answer (max 3
+    spaced attempts) and per-language best-call-window are computed rat
+  block_ids:
+  - capture
+  - queue
+  - formula_executor
+  - validation
+  strategy_hint: REUSE
+  required: true
+- id: call_state_machine
+  description: Each lead's call lifecycle runs as an explicit state machine — queued,
+    dialing, answered, pitched, qualified, transferred, callback, closed — with the
+    configured call-window schedule enforced as a guard on transitions, keyed to the
+    call's SID.
+  block_ids:
+  - workflow
+  - orchestrator
+  - event_bus
+  strategy_hint: REUSE
+  required: true
+- id: project_knowledge_grounding
+  description: PSI project sheets (price lists, payment plans, handover dates) are
+    ingested through the retrieval pipeline and pitched per project tag with no hard-coded
+    scripts. Claims about price, handover date, or payment plan are cited from retrieved
+    documents or withheld — cite-or-refuse applied exactly where
+  block_ids:
+  - knowledge
+  - vector_search
+  - ingestion_provenance
+  - evidence_or_refuse
+  - llm_enhancer
+  strategy_hint: REUSE
+  required: true
+- id: voice_gateway
+  description: 'Twilio Programmable Voice wrapper: originate outbound call, ASR gather
+    in English and Arabic, Polly Neural TTS, and status-callback events (initiated
+    / ringing / answered / completed / failed / busy / no-answer) mapped onto workflow
+    transitions keyed by Call SID. Ships with the Twilio edge stubbed u'
+  block_ids: []
+  strategy_hint: GENERATE
+  required: true
+- id: warm_transfer
+  description: 'On a qualifying outcome: collect the conversation summary, dial the
+    broker leg, whisper the private summary to the broker only via TTS, conference-bridge
+    both parties, and return the transfer outcome. Validated as a bridge sequence
+    against the same fake-Twilio harness.'
+  block_ids: []
+  strategy_hint: GENERATE
+  required: true
+- id: qualification_and_broker_summary
+  description: 'Qualification is a schema, not prose: outcome is one enum — project_interested,
+    other_re_interested, not_interested — alongside collected fields (property type,
+    budget, area, timeline). The broker summary is structured from that record rather
+    than written freehand.'
+  block_ids:
+  - validation
+  - recommendation_template
+  - knowledge
+  strategy_hint: REUSE
+  required: true
+- id: outcome_capture_and_ledger
+  description: Every call writes its outcome through the route-persists pattern and
+    each call event is appended to an audit ledger, so attempt, answer, and transfer
+    history survive restarts and are reconstructable per call SID.
+  block_ids:
+  - audit_chain
+  - database
+  - storage
+  - agent_state_sync
+  strategy_hint: REUSE
+  required: true
+- id: crm_destination_placeholder
+  description: The outbound destination for call outcome plus broker summary is unstated,
+    so CRM integration ships as a marked placeholder — a stubbed connector that records
+    intent and shape without claiming a working integration. Activated when a CRM
+    destination is named.
+  block_ids:
+  - mock_connector_bus
+  - webhook
+  strategy_hint: REUSE
+  required: true
+- id: notification
+  description: Notification capability (reused from the block store)
+  block_ids:
+  - notification
+  strategy_hint: REUSE
+  required: true
+- id: local_drive
+  description: Local Drive capability (reused from the block store)
+  block_ids:
+  - local_drive
+  strategy_hint: REUSE
+  required: true
+- id: google_drive
+  description: Google Drive capability (reused from the block store)
+  block_ids:
+  - google_drive
+  strategy_hint: REUSE
+  required: true
+- id: mcp_adapter
+  description: Mcp Adapter capability (reused from the block store)
+  block_ids:
+  - mcp_adapter
+  strategy_hint: REUSE
+  required: true
+ui_modules:
+- command_center
+- operational_chat
+- resident_engineer
+connectors:
+- twilio_programmable_voice_voice_gateway_ships_stubbed_no_credentials_caller_number_provided
+- crm_salesforce_hubspot_zoho_for_call_outcome_and_broker_summary_shipping_as_a_marked_placeholder
+- whatsapp_webhook
+edge_profile: standard
+human_authority: true
+factory_scenario: CREATE_PRODUCT
+drafting_mode: architect_llm
+drafting_note: 'inventory: ''real_estate'' is not on the declared-ready list (hotels,
+  insurance, construction, finance, retail); the Store kit for this vertical is unverified
+  — domain depth not guaranteed'
+delivery_format: zip

@@ -1,0 +1,52 @@
+# What must never reach the build context.
+#
+# Secrets: `COPY . .` would otherwise bake an operator's .env into a layer,
+# where it survives in the image even after the file is deleted. Settings come
+# from the platform's environment only. .env.example is a template with no
+# values and is kept (the release gate and the store harness read it).
+.env
+.env.local
+.env.*.local
+*.pem
+*.key
+
+# Version control and editor state
+.git
+.gitignore
+.codewhale
+.vscode
+.idea
+.DS_Store
+
+# Local state: the image builds from source, never from a working checkout's
+# database, backups or test cache. (Render mounts the real disk at /var/data.)
+data
+backups
+*.db
+*.db-wal
+*.db-shm
+*.sqlite3
+
+# Python build and cache artefacts
+.venv
+venv
+__pycache__
+*.pyc
+*.pyo
+.mypy_cache
+.ruff_cache
+.pytest_cache
+.coverage
+htmlcov
+
+# Node artefacts: the console stage installs from the lockfile and builds its
+# own dist/, so a local tree must not shadow it.
+frontend/node_modules
+frontend/dist
+node_modules
+dist
+
+# Build logs written by the factory's writer role
+docs/writer_*.jsonl
+docs/writer_*.log
+*.log

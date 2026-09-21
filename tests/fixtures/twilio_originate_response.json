@@ -1,0 +1,7 @@
+{
+  "direction": "outbound-api",
+  "from": "+10000000000",
+  "sid": "CAfake01000000000000000000000000",
+  "status": "queued",
+  "to": "+971500000000"
+}

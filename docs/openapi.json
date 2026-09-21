@@ -1,504 +1,4 @@
 {
-  "openapi": "3.1.0",
-  "info": {
-    "title": "Hotel Booking Platform",
-    "description": "Cerebrum Hotel Booking Platform \u2014 guests search, compare, and reserve rooms; operators manage inventory, pricing, reviews, and notifications. Mutations require a bearer operator token.",
-    "version": "1.0.0"
-  },
-  "paths": {
-    "/v1/admin/export": {
-      "get": {
-        "summary": "Admin Export",
-        "operationId": "admin_export_v1_admin_export_get",
-        "responses": {
-          "200": {
-            "description": "Successful Response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "additionalProperties": true,
-                  "type": "object",
-                  "title": "Response Admin Export V1 Admin Export Get"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/v1/{capability_id}": {
-      "post": {
-        "summary": "Post Capability",
-        "operationId": "post_capability_v1__capability_id__post",
-        "parameters": [
-          {
-            "name": "capability_id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "title": "Capability Id"
-            }
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "additionalProperties": true,
-                "title": "Request Payload"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Successful Response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "additionalProperties": true,
-                  "title": "Response Post Capability V1  Capability Id  Post"
-                }
-              }
-            }
-          },
-          "422": {
-            "description": "Validation Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            }
-          }
-        }
-      },
-      "get": {
-        "summary": "Get Capability",
-        "operationId": "get_capability_v1__capability_id__get",
-        "parameters": [
-          {
-            "name": "capability_id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "title": "Capability Id"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful Response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "additionalProperties": true,
-                  "title": "Response Get Capability V1  Capability Id  Get"
-                }
-              }
-            }
-          },
-          "422": {
-            "description": "Validation Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/v1": {
-      "get": {
-        "summary": "List Capabilities",
-        "operationId": "list_capabilities_v1_get",
-        "responses": {
-          "200": {
-            "description": "Successful Response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "additionalProperties": true,
-                  "type": "object",
-                  "title": "Response List Capabilities V1 Get"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/v1/rag/ingest": {
-      "post": {
-        "summary": "Rag Ingest",
-        "operationId": "rag_ingest_v1_rag_ingest_post",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/RagIngestBody"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "description": "Successful Response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "additionalProperties": true,
-                  "type": "object",
-                  "title": "Response Rag Ingest V1 Rag Ingest Post"
-                }
-              }
-            }
-          },
-          "422": {
-            "description": "Validation Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/v1/steward/rag/ingest": {
-      "post": {
-        "summary": "Steward Rag Ingest",
-        "operationId": "steward_rag_ingest_v1_steward_rag_ingest_post",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/RagIngestBody"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "description": "Successful Response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "additionalProperties": true,
-                  "type": "object",
-                  "title": "Response Steward Rag Ingest V1 Steward Rag Ingest Post"
-                }
-              }
-            }
-          },
-          "422": {
-            "description": "Validation Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/v1/rag/query": {
-      "get": {
-        "summary": "Rag Query",
-        "operationId": "rag_query_v1_rag_query_get",
-        "parameters": [
-          {
-            "name": "q",
-            "in": "query",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "minLength": 1,
-              "title": "Q"
-            }
-          },
-          {
-            "name": "layer",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "anyOf": [
-                {
-                  "type": "integer",
-                  "maximum": 2,
-                  "minimum": 1
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "title": "Layer"
-            }
-          },
-          {
-            "name": "top_k",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "integer",
-              "maximum": 20,
-              "minimum": 1,
-              "default": 5,
-              "title": "Top K"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful Response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "additionalProperties": true,
-                  "title": "Response Rag Query V1 Rag Query Get"
-                }
-              }
-            }
-          },
-          "422": {
-            "description": "Validation Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            }
-          }
-        }
-      },
-      "post": {
-        "summary": "Rag Query Post",
-        "operationId": "rag_query_post_v1_rag_query_post",
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "additionalProperties": true,
-                "title": "Body"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Successful Response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "additionalProperties": true,
-                  "title": "Response Rag Query Post V1 Rag Query Post"
-                }
-              }
-            }
-          },
-          "422": {
-            "description": "Validation Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/v1/steward/rag/query": {
-      "get": {
-        "summary": "Steward Rag Query",
-        "operationId": "steward_rag_query_v1_steward_rag_query_get",
-        "parameters": [
-          {
-            "name": "q",
-            "in": "query",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "minLength": 1,
-              "title": "Q"
-            }
-          },
-          {
-            "name": "layer",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "anyOf": [
-                {
-                  "type": "integer",
-                  "maximum": 2,
-                  "minimum": 1
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "title": "Layer"
-            }
-          },
-          {
-            "name": "top_k",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "integer",
-              "maximum": 20,
-              "minimum": 1,
-              "default": 5,
-              "title": "Top K"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful Response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "additionalProperties": true,
-                  "title": "Response Steward Rag Query V1 Steward Rag Query Get"
-                }
-              }
-            }
-          },
-          "422": {
-            "description": "Validation Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            }
-          }
-        }
-      },
-      "post": {
-        "summary": "Steward Rag Query Post",
-        "operationId": "steward_rag_query_post_v1_steward_rag_query_post",
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "additionalProperties": true,
-                "title": "Body"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Successful Response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "additionalProperties": true,
-                  "title": "Response Steward Rag Query Post V1 Steward Rag Query Post"
-                }
-              }
-            }
-          },
-          "422": {
-            "description": "Validation Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/health": {
-      "get": {
-        "summary": "Health",
-        "operationId": "health_health_get",
-        "responses": {
-          "200": {
-            "description": "Successful Response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "additionalProperties": true,
-                  "type": "object",
-                  "title": "Response Health Health Get"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/": {
-      "get": {
-        "summary": "Ui Index",
-        "operationId": "ui_index__get",
-        "responses": {
-          "200": {
-            "description": "Successful Response",
-            "content": {
-              "text/html": {
-                "schema": {
-                  "type": "string"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/ui": {
-      "get": {
-        "summary": "Ui Alias",
-        "operationId": "ui_alias_ui_get",
-        "responses": {
-          "200": {
-            "description": "Successful Response",
-            "content": {
-              "text/html": {
-                "schema": {
-                  "type": "string"
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-  },
   "components": {
     "schemas": {
       "HTTPValidationError": {
@@ -507,56 +7,12 @@
             "items": {
               "$ref": "#/components/schemas/ValidationError"
             },
-            "type": "array",
-            "title": "Detail"
+            "title": "Detail",
+            "type": "array"
           }
         },
-        "type": "object",
-        "title": "HTTPValidationError"
-      },
-      "RagIngestBody": {
-        "properties": {
-          "text": {
-            "type": "string",
-            "minLength": 1,
-            "title": "Text"
-          },
-          "doc_id": {
-            "type": "string",
-            "minLength": 1,
-            "title": "Doc Id",
-            "default": "sample"
-          },
-          "title": {
-            "type": "string",
-            "minLength": 1,
-            "title": "Title",
-            "default": "sample"
-          },
-          "layer": {
-            "type": "integer",
-            "maximum": 2.0,
-            "minimum": 1.0,
-            "title": "Layer",
-            "default": 1
-          },
-          "property_id": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Property Id"
-          }
-        },
-        "type": "object",
-        "required": [
-          "text"
-        ],
-        "title": "RagIngestBody"
+        "title": "HTTPValidationError",
+        "type": "object"
       },
       "ValidationError": {
         "properties": {
@@ -571,32 +27,1503 @@
                 }
               ]
             },
-            "type": "array",
-            "title": "Location"
+            "title": "Location",
+            "type": "array"
           },
           "msg": {
-            "type": "string",
-            "title": "Message"
+            "title": "Message",
+            "type": "string"
           },
           "type": {
-            "type": "string",
-            "title": "Error Type"
-          },
-          "input": {
-            "title": "Input"
-          },
-          "ctx": {
-            "type": "object",
-            "title": "Context"
+            "title": "Error Type",
+            "type": "string"
           }
         },
-        "type": "object",
         "required": [
           "loc",
           "msg",
           "type"
         ],
-        "title": "ValidationError"
+        "title": "ValidationError",
+        "type": "object"
+      }
+    }
+  },
+  "info": {
+    "description": "Outbound AI voice calling for a real-estate brokerage: lead intake and dial pacing, project-sheet grounded pitches under cite-or-refuse, the Twilio voice edge, warm transfer to a broker, and the outcome ledger behind the dashboard.",
+    "title": "CallOps",
+    "version": "1.0.0"
+  },
+  "openapi": "3.1.0",
+  "paths": {
+    "/health": {
+      "get": {
+        "operationId": "health_health_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Health"
+      }
+    },
+    "/metrics": {
+      "get": {
+        "operationId": "metrics_metrics_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Metrics"
+      }
+    },
+    "/v1/auth/whoami": {
+      "get": {
+        "operationId": "whoami_v1_auth_whoami_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Whoami V1 Auth Whoami Get",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "description": "no token, or a token bound to no tenant"
+          },
+          "422": {
+            "description": "missing required field, value outside a vocabulary, or malformed body"
+          }
+        },
+        "summary": "Whoami",
+        "tags": [
+          "platform"
+        ]
+      }
+    },
+    "/v1/authority": {
+      "get": {
+        "operationId": "authority_v1_authority_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Authority V1 Authority Get",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "description": "no token, or a token bound to no tenant"
+          },
+          "422": {
+            "description": "missing required field, value outside a vocabulary, or malformed body"
+          }
+        },
+        "summary": "Authority",
+        "tags": [
+          "platform"
+        ]
+      }
+    },
+    "/v1/blocks": {
+      "get": {
+        "operationId": "blocks_v1_blocks_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Blocks V1 Blocks Get",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "description": "no token, or a token bound to no tenant"
+          },
+          "422": {
+            "description": "missing required field, value outside a vocabulary, or malformed body"
+          }
+        },
+        "summary": "Blocks",
+        "tags": [
+          "platform"
+        ]
+      }
+    },
+    "/v1/calls/{call_sid}": {
+      "get": {
+        "operationId": "call_detail_v1_calls__call_sid__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "call_sid",
+            "required": true,
+            "schema": {
+              "title": "Call Sid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Call Detail V1 Calls  Call Sid  Get",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "description": "no token, or a token bound to no tenant"
+          },
+          "404": {
+            "description": "not this tenant's record"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Call Detail",
+        "tags": [
+          "dashboard"
+        ]
+      }
+    },
+    "/v1/capabilities": {
+      "get": {
+        "operationId": "capabilities_v1_capabilities_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Capabilities V1 Capabilities Get",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "description": "no token, or a token bound to no tenant"
+          },
+          "422": {
+            "description": "missing required field, value outside a vocabulary, or malformed body"
+          }
+        },
+        "summary": "Capabilities",
+        "tags": [
+          "kernel"
+        ]
+      }
+    },
+    "/v1/catalog": {
+      "get": {
+        "operationId": "catalog_v1_catalog_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Catalog V1 Catalog Get",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "description": "no token, or a token bound to no tenant"
+          },
+          "422": {
+            "description": "missing required field, value outside a vocabulary, or malformed body"
+          }
+        },
+        "summary": "Catalog",
+        "tags": [
+          "kernel"
+        ]
+      }
+    },
+    "/v1/connectors": {
+      "get": {
+        "description": "What is connected, what is stubbed, and what each one is missing.",
+        "operationId": "connectors_v1_connectors_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Connectors V1 Connectors Get",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "description": "no token, or a token bound to no tenant"
+          },
+          "422": {
+            "description": "missing required field, value outside a vocabulary, or malformed body"
+          }
+        },
+        "summary": "Connectors",
+        "tags": [
+          "platform"
+        ]
+      }
+    },
+    "/v1/connectors/webhook/probe": {
+      "post": {
+        "description": "Prove the live connector: one real POST to the operator's webhook.\n\nThe URL is checked against the private-address guard before anything is\ndialled, so this cannot be turned into a request-forgery probe against\nthe operator's own network.",
+        "operationId": "webhook_probe_v1_connectors_webhook_probe_post",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Webhook Probe V1 Connectors Webhook Probe Post",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "description": "no token, or a token bound to no tenant"
+          },
+          "422": {
+            "description": "missing required field, value outside a vocabulary, or malformed body"
+          }
+        },
+        "summary": "Webhook Probe",
+        "tags": [
+          "platform"
+        ]
+      }
+    },
+    "/v1/dashboard": {
+      "get": {
+        "operationId": "dashboard_v1_dashboard_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Dashboard V1 Dashboard Get",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "description": "no token, or a token bound to no tenant"
+          },
+          "422": {
+            "description": "missing required field, value outside a vocabulary, or malformed body"
+          }
+        },
+        "summary": "Dashboard",
+        "tags": [
+          "dashboard"
+        ]
+      }
+    },
+    "/v1/dial-queue": {
+      "get": {
+        "operationId": "dial_queue_v1_dial_queue_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Dial Queue V1 Dial Queue Get",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "description": "no token, or a token bound to no tenant"
+          },
+          "422": {
+            "description": "missing required field, value outside a vocabulary, or malformed body"
+          }
+        },
+        "summary": "Dial Queue",
+        "tags": [
+          "leads"
+        ]
+      }
+    },
+    "/v1/dial-queue/{item_id}/claim": {
+      "post": {
+        "operationId": "claim_v1_dial_queue__item_id__claim_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "item_id",
+            "required": true,
+            "schema": {
+              "title": "Item Id",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Claim V1 Dial Queue  Item Id  Claim Post",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "description": "no token, or a token bound to no tenant"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Claim",
+        "tags": [
+          "leads"
+        ]
+      }
+    },
+    "/v1/dial-queue/{item_id}/process": {
+      "post": {
+        "description": "Run a claimed item through its capability, as the item's own tenant.",
+        "operationId": "process_v1_dial_queue__item_id__process_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "item_id",
+            "required": true,
+            "schema": {
+              "title": "Item Id",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Process V1 Dial Queue  Item Id  Process Post",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "description": "no token, or a token bound to no tenant"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Process",
+        "tags": [
+          "leads"
+        ]
+      }
+    },
+    "/v1/formulas": {
+      "get": {
+        "operationId": "formula_catalog_v1_formulas_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Formula Catalog V1 Formulas Get",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "description": "no token, or a token bound to no tenant"
+          },
+          "422": {
+            "description": "missing required field, value outside a vocabulary, or malformed body"
+          }
+        },
+        "summary": "Formula Catalog",
+        "tags": [
+          "dashboard"
+        ]
+      }
+    },
+    "/v1/formulas/{name}": {
+      "post": {
+        "description": "Run one formula with the operator's inputs. Never guesses a currency.",
+        "operationId": "run_formula_v1_formulas__name__post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "name",
+            "required": true,
+            "schema": {
+              "title": "Name",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Run Formula V1 Formulas  Name  Post",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "description": "no token, or a token bound to no tenant"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Run Formula",
+        "tags": [
+          "dashboard"
+        ]
+      }
+    },
+    "/v1/gates": {
+      "get": {
+        "operationId": "gates_v1_gates_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Gates V1 Gates Get",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "description": "no token, or a token bound to no tenant"
+          },
+          "422": {
+            "description": "missing required field, value outside a vocabulary, or malformed body"
+          }
+        },
+        "summary": "Gates",
+        "tags": [
+          "kernel"
+        ]
+      }
+    },
+    "/v1/inventory": {
+      "get": {
+        "operationId": "inventory_v1_inventory_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Inventory V1 Inventory Get",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "description": "no token, or a token bound to no tenant"
+          },
+          "422": {
+            "description": "missing required field, value outside a vocabulary, or malformed body"
+          }
+        },
+        "summary": "Inventory",
+        "tags": [
+          "kernel"
+        ]
+      }
+    },
+    "/v1/jobs": {
+      "get": {
+        "operationId": "jobs_v1_jobs_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Jobs V1 Jobs Get",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "description": "no token, or a token bound to no tenant"
+          },
+          "422": {
+            "description": "missing required field, value outside a vocabulary, or malformed body"
+          }
+        },
+        "summary": "Jobs",
+        "tags": [
+          "kernel"
+        ]
+      }
+    },
+    "/v1/leads/import": {
+      "get": {
+        "description": "What each lead file has become, per source file.\n\nThe read twin of the import: an operator who has uploaded three sheets\nneeds to see which file produced which leads, how many of them are\ndialable, and what held the rest \u2014 without re-uploading anything. An\nempty register is a valid answer (200, zero batches); the ledger of\nnothing is not a missing resource.",
+        "operationId": "import_register_v1_leads_import_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Import Register V1 Leads Import Get",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "description": "no token, or a token bound to no tenant"
+          },
+          "422": {
+            "description": "missing required field, value outside a vocabulary, or malformed body"
+          }
+        },
+        "summary": "Import Register",
+        "tags": [
+          "leads"
+        ]
+      },
+      "post": {
+        "description": "Parse a brokerage lead file into dial-list rows for this tenant.",
+        "operationId": "import_leads_v1_leads_import_post",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Import Leads V1 Leads Import Post",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "description": "no token, or a token bound to no tenant"
+          },
+          "422": {
+            "description": "missing required field, value outside a vocabulary, or malformed body"
+          }
+        },
+        "summary": "Import Leads",
+        "tags": [
+          "leads"
+        ]
+      }
+    },
+    "/v1/ledger/verify": {
+      "get": {
+        "description": "Verify this tenant's ledger chains \u2014 read-only, whole-tenant by default.\n\nThe audit ledger is the platform's memory of every call event, so the\ncheap question an operator asks is \"does it still verify?\" \u2014 not\n\"verify this one SID\". With no ``call_sid`` the whole tenant ledger is\nwalked, one chain per call, and the answer names every chain that does\nnot link. An empty ledger verifies (zero entries, zero violations):\nnothing to reconstruct is not a failing check.",
+        "operationId": "verify_ledger_v1_ledger_verify_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Verify Ledger V1 Ledger Verify Get",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "description": "no token, or a token bound to no tenant"
+          },
+          "422": {
+            "description": "missing required field, value outside a vocabulary, or malformed body"
+          }
+        },
+        "summary": "Verify Ledger",
+        "tags": [
+          "dashboard"
+        ]
+      },
+      "post": {
+        "operationId": "verify_v1_ledger_verify_post",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Verify V1 Ledger Verify Post",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "description": "no token, or a token bound to no tenant"
+          },
+          "422": {
+            "description": "missing required field, value outside a vocabulary, or malformed body"
+          }
+        },
+        "summary": "Verify",
+        "tags": [
+          "dashboard"
+        ]
+      }
+    },
+    "/v1/mcp": {
+      "post": {
+        "description": "MCP JSON-RPC over the declared capabilities, as this tenant.\n\nListing the tools is a read. ``tools/call`` runs a capability handler and\npersists through the same envelope the HTTP route uses, so it asks for\nthe write permission \u2014 the surface is not a way around the permission\nmodel the routes enforce.",
+        "operationId": "mcp_v1_mcp_post",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Mcp V1 Mcp Post",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "description": "no token, or a token bound to no tenant"
+          },
+          "422": {
+            "description": "missing required field, value outside a vocabulary, or malformed body"
+          }
+        },
+        "summary": "Mcp",
+        "tags": [
+          "platform"
+        ]
+      }
+    },
+    "/v1/metrics/campaigns": {
+      "get": {
+        "operationId": "campaign_metrics_v1_metrics_campaigns_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Campaign Metrics V1 Metrics Campaigns Get",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "description": "no token, or a token bound to no tenant"
+          },
+          "422": {
+            "description": "missing required field, value outside a vocabulary, or malformed body"
+          }
+        },
+        "summary": "Campaign Metrics",
+        "tags": [
+          "dashboard"
+        ]
+      }
+    },
+    "/v1/provenance": {
+      "get": {
+        "operationId": "provenance_v1_provenance_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Provenance V1 Provenance Get",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "description": "no token, or a token bound to no tenant"
+          },
+          "422": {
+            "description": "missing required field, value outside a vocabulary, or malformed body"
+          }
+        },
+        "summary": "Provenance",
+        "tags": [
+          "kernel"
+        ]
+      }
+    },
+    "/v1/rag/corpus": {
+      "get": {
+        "operationId": "corpus_v1_rag_corpus_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Corpus V1 Rag Corpus Get",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "description": "no token, or a token bound to no tenant"
+          },
+          "422": {
+            "description": "missing required field, value outside a vocabulary, or malformed body"
+          }
+        },
+        "summary": "Corpus",
+        "tags": [
+          "retrieval"
+        ]
+      }
+    },
+    "/v1/rag/forget": {
+      "post": {
+        "operationId": "forget_v1_rag_forget_post",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Forget V1 Rag Forget Post",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "description": "no token, or a token bound to no tenant"
+          },
+          "422": {
+            "description": "missing required field, value outside a vocabulary, or malformed body"
+          }
+        },
+        "summary": "Forget",
+        "tags": [
+          "retrieval"
+        ]
+      }
+    },
+    "/v1/rag/ground": {
+      "get": {
+        "description": "Cite-or-refuse posture: per project, which claims retrieval can carry.\n\nFor every ingested project this asks the corpus the three questions that\ncreate liability \u2014 price, payment plan, handover date \u2014 and reports\nwhich of them has a retrieved passage behind it. A claim with no\npassage is the one the live call will withhold, so an operator can see\nthat before a dial rather than after a complaint. Projects with nothing\ningested report as ungrounded, never as answered.",
+        "operationId": "ground_posture_v1_rag_ground_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Ground Posture V1 Rag Ground Get",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "description": "no token, or a token bound to no tenant"
+          },
+          "422": {
+            "description": "missing required field, value outside a vocabulary, or malformed body"
+          }
+        },
+        "summary": "Ground Posture",
+        "tags": [
+          "retrieval"
+        ]
+      },
+      "post": {
+        "operationId": "ground_v1_rag_ground_post",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Ground V1 Rag Ground Post",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "description": "no token, or a token bound to no tenant"
+          },
+          "422": {
+            "description": "missing required field, value outside a vocabulary, or malformed body"
+          }
+        },
+        "summary": "Ground",
+        "tags": [
+          "retrieval"
+        ]
+      }
+    },
+    "/v1/rag/ingest": {
+      "get": {
+        "description": "The provenance of every ingested sheet: source, project, digest.\n\n``/v1/rag/corpus`` lists the documents; this is the ingest register an\noperator needs before a campaign \u2014 which file each project's numbers\ncame from, whether it was certified, and the digest that identifies the\nrevision of the sheet those numbers were quoted out of. It also states\nthe body this endpoint accepts, so an uploader can be wired without\nreading the source. An empty register answers 200: no sheets ingested\nis a state, not a missing resource.",
+        "operationId": "ingest_register_v1_rag_ingest_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Ingest Register V1 Rag Ingest Get",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "description": "no token, or a token bound to no tenant"
+          },
+          "422": {
+            "description": "missing required field, value outside a vocabulary, or malformed body"
+          }
+        },
+        "summary": "Ingest Register",
+        "tags": [
+          "retrieval"
+        ]
+      },
+      "post": {
+        "operationId": "ingest_v1_rag_ingest_post",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Ingest V1 Rag Ingest Post",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "description": "no token, or a token bound to no tenant"
+          },
+          "422": {
+            "description": "missing required field, value outside a vocabulary, or malformed body"
+          }
+        },
+        "summary": "Ingest",
+        "tags": [
+          "retrieval"
+        ]
+      }
+    },
+    "/v1/rag/query": {
+      "get": {
+        "description": "The same retrieval as the POST, addressed by query string.\n\nAn operator following a citation in a browser tab, or a console that\ncannot POST, still gets the tenant-scoped passages \u2014 under the same\nguards: the corpus is resolved from the authenticated principal, and a\nquery with no question is refused by name rather than answered with\nnothing.",
+        "operationId": "query_get_v1_rag_query_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Query Get V1 Rag Query Get",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "description": "no token, or a token bound to no tenant"
+          },
+          "422": {
+            "description": "missing required field, value outside a vocabulary, or malformed body"
+          }
+        },
+        "summary": "Query Get",
+        "tags": [
+          "retrieval"
+        ]
+      },
+      "post": {
+        "operationId": "query_v1_rag_query_post",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Query V1 Rag Query Post",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "description": "no token, or a token bound to no tenant"
+          },
+          "422": {
+            "description": "missing required field, value outside a vocabulary, or malformed body"
+          }
+        },
+        "summary": "Query",
+        "tags": [
+          "retrieval"
+        ]
+      }
+    },
+    "/v1/settings": {
+      "get": {
+        "description": "Which settings are set \u2014 never their values, and never a default invented.",
+        "operationId": "settings_v1_settings_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Settings V1 Settings Get",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "description": "no token, or a token bound to no tenant"
+          },
+          "422": {
+            "description": "missing required field, value outside a vocabulary, or malformed body"
+          }
+        },
+        "summary": "Settings",
+        "tags": [
+          "platform"
+        ]
+      }
+    },
+    "/v1/voice/edge": {
+      "get": {
+        "description": "Whether the Twilio edge is connected, and what is missing if not.",
+        "operationId": "edge_state_v1_voice_edge_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Edge State V1 Voice Edge Get",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "description": "no token, or a token bound to no tenant"
+          },
+          "422": {
+            "description": "missing required field, value outside a vocabulary, or malformed body"
+          }
+        },
+        "summary": "Edge State",
+        "tags": [
+          "voice"
+        ]
+      }
+    },
+    "/v1/voice/gather": {
+      "post": {
+        "description": "Speech gathered from the caller, turned into the next spoken turn.",
+        "operationId": "gather_v1_voice_gather_post",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Gather V1 Voice Gather Post",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "description": "no token, or a token bound to no tenant"
+          },
+          "422": {
+            "description": "missing required field, value outside a vocabulary, or malformed body"
+          }
+        },
+        "summary": "Gather",
+        "tags": [
+          "voice"
+        ]
+      }
+    },
+    "/v1/voice/originate": {
+      "post": {
+        "description": "Place the outbound call, inside the campaign's pacing policy.\n\nThe cap and the call window are checked here, not only in the console:\na token holder with the dialling opt-in should not be able to bypass the\npolicy the operator set for the campaign. The answer and status-callback\nURLs come from settings \u2014 a caller who could name them could point the\ncarrier at anything.",
+        "operationId": "originate_v1_voice_originate_post",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Originate V1 Voice Originate Post",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "description": "no token, or a token bound to no tenant"
+          },
+          "422": {
+            "description": "missing required field, value outside a vocabulary, or malformed body"
+          }
+        },
+        "summary": "Originate",
+        "tags": [
+          "voice"
+        ]
+      }
+    },
+    "/v1/voice/status-callback": {
+      "post": {
+        "description": "A carrier status becomes a workflow transition, keyed by Call SID.",
+        "operationId": "status_callback_v1_voice_status_callback_post",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Status Callback V1 Voice Status Callback Post",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "description": "no token, or a token bound to no tenant"
+          },
+          "422": {
+            "description": "missing required field, value outside a vocabulary, or malformed body"
+          }
+        },
+        "summary": "Status Callback",
+        "tags": [
+          "voice"
+        ]
+      }
+    },
+    "/v1/voice/whisper": {
+      "post": {
+        "description": "The private whisper TwiML \u2014 spoken to the broker leg only.",
+        "operationId": "whisper_v1_voice_whisper_post",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "description": "no token, or a token bound to no tenant"
+          },
+          "422": {
+            "description": "missing required field, value outside a vocabulary, or malformed body"
+          }
+        },
+        "summary": "Whisper",
+        "tags": [
+          "voice"
+        ]
+      }
+    },
+    "/v1/{capability}": {
+      "get": {
+        "operationId": "list_records_v1__capability__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "capability",
+            "required": true,
+            "schema": {
+              "title": "Capability",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response List Records V1  Capability  Get",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "description": "no token, or a token bound to no tenant"
+          },
+          "404": {
+            "description": "not this tenant's record"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "List Records",
+        "tags": [
+          "capabilities"
+        ]
+      },
+      "post": {
+        "operationId": "create_record_v1__capability__post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "capability",
+            "required": true,
+            "schema": {
+              "title": "Capability",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "description": "no token, or a token bound to no tenant"
+          },
+          "409": {
+            "description": "the capability refused the record on domain grounds"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Create Record",
+        "tags": [
+          "capabilities"
+        ]
+      }
+    },
+    "/v1/{capability}/{record_id}": {
+      "delete": {
+        "operationId": "delete_record_v1__capability___record_id__delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "capability",
+            "required": true,
+            "schema": {
+              "title": "Capability",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "record_id",
+            "required": true,
+            "schema": {
+              "title": "Record Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "description": "no token, or a token bound to no tenant"
+          },
+          "404": {
+            "description": "not this tenant's record"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Delete Record",
+        "tags": [
+          "capabilities"
+        ]
+      },
+      "get": {
+        "operationId": "get_record_v1__capability___record_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "capability",
+            "required": true,
+            "schema": {
+              "title": "Capability",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "record_id",
+            "required": true,
+            "schema": {
+              "title": "Record Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "description": "no token, or a token bound to no tenant"
+          },
+          "404": {
+            "description": "not this tenant's record"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Record",
+        "tags": [
+          "capabilities"
+        ]
+      },
+      "put": {
+        "operationId": "replace_record_v1__capability___record_id__put",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "capability",
+            "required": true,
+            "schema": {
+              "title": "Capability",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "record_id",
+            "required": true,
+            "schema": {
+              "title": "Record Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "description": "no token, or a token bound to no tenant"
+          },
+          "404": {
+            "description": "not this tenant's record"
+          },
+          "409": {
+            "description": "the capability refused the record on domain grounds"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Replace Record",
+        "tags": [
+          "capabilities"
+        ]
       }
     }
   }

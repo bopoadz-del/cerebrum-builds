@@ -1,0 +1,46 @@
+{
+  "activation": {
+    "default_enabled": true,
+    "mode": "hybrid",
+    "put_off_by": [
+      "disable:real_estate.hat.notification"
+    ],
+    "triggers": [
+      {
+        "type": "intent",
+        "value": "notification"
+      },
+      {
+        "type": "capability",
+        "value": "notification"
+      }
+    ]
+  },
+  "agent_id": "real_estate.hat.notification",
+  "allowed_actions": [
+    "real_estate.notification"
+  ],
+  "block_ids": [
+    "notification"
+  ],
+  "discipline": "notification",
+  "display_name": "CallOps Notification Hat",
+  "extends": "real_estate.base",
+  "handoffs": [],
+  "human_authority": true,
+  "kind": "hat",
+  "manifest_version": "1.0.0",
+  "memory": {
+    "pii_policy": "never_store_pii",
+    "save": [],
+    "scope": "tenant_project"
+  },
+  "strategy": "REUSE",
+  "summary": "Specialized hat for capability 'notification' (strategy=REUSE). Adapted from TEKsystems retail hat pattern; estate/product-neutral.",
+  "tags": [
+    "hat",
+    "factory-generated",
+    "real_estate",
+    "notification"
+  ]
+}

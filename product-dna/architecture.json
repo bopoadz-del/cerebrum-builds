@@ -1,0 +1,113 @@
+{
+  "capabilities": [
+    {
+      "block_ids": [
+        "capture",
+        "queue",
+        "formula_executor",
+        "validation"
+      ],
+      "capability_id": "lead_intake_and_dial_queue",
+      "strategy": "REUSE"
+    },
+    {
+      "block_ids": [
+        "workflow",
+        "orchestrator",
+        "event_bus"
+      ],
+      "capability_id": "call_state_machine",
+      "strategy": "REUSE"
+    },
+    {
+      "block_ids": [
+        "knowledge",
+        "vector_search",
+        "ingestion_provenance",
+        "evidence_or_refuse",
+        "llm_enhancer"
+      ],
+      "capability_id": "project_knowledge_grounding",
+      "strategy": "REUSE"
+    },
+    {
+      "block_ids": [],
+      "capability_id": "voice_gateway",
+      "strategy": "GENERATE"
+    },
+    {
+      "block_ids": [],
+      "capability_id": "warm_transfer",
+      "strategy": "GENERATE"
+    },
+    {
+      "block_ids": [
+        "validation",
+        "recommendation_template",
+        "knowledge"
+      ],
+      "capability_id": "qualification_and_broker_summary",
+      "strategy": "REUSE"
+    },
+    {
+      "block_ids": [
+        "audit_chain",
+        "database",
+        "storage",
+        "agent_state_sync"
+      ],
+      "capability_id": "outcome_capture_and_ledger",
+      "strategy": "REUSE"
+    },
+    {
+      "block_ids": [
+        "mock_connector_bus",
+        "webhook"
+      ],
+      "capability_id": "crm_destination_placeholder",
+      "strategy": "REUSE"
+    },
+    {
+      "block_ids": [
+        "notification"
+      ],
+      "capability_id": "notification",
+      "strategy": "REUSE"
+    },
+    {
+      "block_ids": [
+        "local_drive"
+      ],
+      "capability_id": "local_drive",
+      "strategy": "REUSE"
+    },
+    {
+      "block_ids": [
+        "google_drive"
+      ],
+      "capability_id": "google_drive",
+      "strategy": "REUSE"
+    },
+    {
+      "block_ids": [
+        "mcp_adapter"
+      ],
+      "capability_id": "mcp_adapter",
+      "strategy": "REUSE"
+    }
+  ],
+  "connectors": [
+    "twilio_programmable_voice_voice_gateway_ships_stubbed_no_credentials_caller_number_provided",
+    "crm_salesforce_hubspot_zoho_for_call_outcome_and_broker_summary_shipping_as_a_marked_placeholder",
+    "whatsapp_webhook"
+  ],
+  "layers": [],
+  "product_id": "real-estate",
+  "schema_version": "1.0.0",
+  "ui_modules": [
+    "command_center",
+    "operational_chat",
+    "resident_engineer"
+  ],
+  "vertical": "real_estate"
+}

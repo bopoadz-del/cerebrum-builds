@@ -1,164 +1,290 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Hotel Booking Platform</title>
-  <style>
-    :root { font-family: "IBM Plex Sans", "Segoe UI", sans-serif; background: #10141c; color: #e8eef6; }
-    body { margin: 0; }
-    header { padding: 1.2rem 1.5rem; border-bottom: 1px solid #2a3548; background: #141a24; }
-    h1 { margin: 0; font-size: 1.4rem; }
-    p.sub { margin: 0.35rem 0 0; color: #93a3bd; }
-    nav { display: flex; flex-wrap: wrap; gap: 0.4rem; padding: 0.8rem 1.5rem; }
-    nav button { background: #1c2430; color: #e8eef6; border: 1px solid #3a4c68; padding: 0.35rem 0.7rem; cursor: pointer; }
-    nav button.active { background: #0d4d73; }
-    main { padding: 1rem 1.5rem 3rem; }
-    label { display: block; margin: 0.6rem 0 0.2rem; }
-    input, textarea, select { width: 100%; max-width: 36rem; background: #0d1118; color: #e8eef6; border: 1px solid #3a4c68; padding: 0.4rem; }
-    button.act { margin-top: 0.8rem; background: #0d4d73; color: #fff; border: 0; padding: 0.5rem 1rem; cursor: pointer; }
-    pre { background: #0d1118; padding: 0.8rem; overflow: auto; }
-    .mods { display: grid; gap: 0.6rem; grid-template-columns: repeat(auto-fill, minmax(14rem, 1fr)); }
-    .card { border: 1px solid #2a3548; padding: 0.7rem; }
-  </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CallOps — operator console</title>
+<style>
+ :root { color-scheme: light dark; --line:#8883; --ok:#1a7f4b; --bad:#b3261e; --dim:#6b7280; }
+ * { box-sizing: border-box; }
+ body { font: 15px/1.5 system-ui, sans-serif; margin: 0; padding: 20px; max-width: 1180px; }
+ h1 { font-size: 22px; margin: 0 0 2px; }
+ h2 { font-size: 15px; margin: 0 0 8px; text-transform: uppercase; letter-spacing: .06em; color: var(--dim); }
+ .dim { color: var(--dim); font-size: 13px; }
+ .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(330px, 1fr)); gap: 14px; margin-top: 16px; }
+ .card { border: 1px solid var(--line); border-radius: 10px; padding: 14px; }
+ .row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-bottom: 8px; }
+ label { font-size: 12px; color: var(--dim); display: block; margin-bottom: 3px; }
+ input, select, textarea, button { font: inherit; padding: 6px 8px; border-radius: 6px; border: 1px solid var(--line); background: transparent; color: inherit; }
+ input, select, textarea { width: 100%; }
+ textarea { min-height: 68px; font-family: ui-monospace, monospace; font-size: 12px; }
+ button { cursor: pointer; }
+ button.primary { border-color: var(--ok); }
+ pre { background: #8881; padding: 8px; border-radius: 6px; overflow: auto; max-height: 260px; font-size: 12px; margin: 6px 0 0; }
+ .field { margin-bottom: 7px; }
+ .badge { display: inline-block; font-size: 11px; text-transform: uppercase; letter-spacing: .06em;
+          border: 1px solid var(--line); border-radius: 999px; padding: 1px 8px; margin-left: 6px; }
+ .badge.certified { border-color: var(--ok); color: var(--ok); }
+ .badge.documents { border-color: #2563eb; color: #2563eb; }
+ .badge.formulas { border-color: #a855f7; color: #a855f7; }
+ .badge.procedures { border-color: var(--dim); color: var(--dim); }
+ .err { color: var(--bad); }
+ .ok { color: var(--ok); }
+ table { width: 100%; border-collapse: collapse; font-size: 13px; }
+ td, th { border-bottom: 1px solid var(--line); text-align: left; padding: 3px 4px; }
+</style>
 </head>
 <body>
-  <header>
-    <h1>Hotel Booking Platform</h1>
-    <p class="sub">Hospitality operators — bookings, properties, pricing, reviews, and guest notices. Operator / admin. Mutations require a bearer operator token. OPERATOR_TOKEN is not stored in git.</p>
-  </header>
-  <nav id="nav"></nav>
-  <main>
-    <section id="command_center" class="panel">
-      <h2>Command center</h2>
-      <div class="mods" id="modules"></div>
-    </section>
-    <section id="live" class="panel">
-      <h2 id="cap-title">booking_management</h2>
-      <label>Operator token <input id="operator-token" type="password" autocomplete="off" placeholder="OPERATOR_TOKEN" /></label>
-      <label>Capability
-        <select id="capability"></select>
-      </label>
-      <label>Reference <input id="reference" value="sample" /></label>
-      <label>Status <input id="status" value="open" /></label>
-      <button class="act" id="post-btn" type="button">POST create</button>
-      <button class="act" id="get-btn" type="button">GET records</button>
-      <pre id="out">Ready.</pre>
-    </section>
-    <section id="operational_chat" class="panel">
-      <h2>Operational chat — property notes</h2>
-      <label>Title <input id="rag-title" value="Hotel occupancy pack" /></label>
-      <label>Text <textarea id="rag-text" rows="3">Hotel occupancy, peak season night rate, and guest booking notes for the hospitality pilot.</textarea></label>
-      <button class="act" id="ingest-btn" type="button">Ingest pack</button>
-      <label>Query <input id="rag-q" value="hotel occupancy" /></label>
-      <button class="act" id="query-btn" type="button">Query notes</button>
-    </section>
-    <section id="resident_engineer" class="panel">
-      <h2>Resident engineer</h2>
-      <p class="sub">Same live POST/GET routes. No second API.</p>
-    </section>
-  </main>
-  <script>
-    const CAPS = [
-      "booking_management",
-      "property_management",
-      "dynamic_pricing",
-      "review_management",
-      "analytics_dashboard",
-      "notification_system",
-      "search_recommendation"
-    ];
-    const UI = ["command_center", "operational_chat", "resident_engineer"];
-    const MAP = {
-      command_center: "booking_management",
-      operational_chat: "property_management",
-      resident_engineer: "analytics_dashboard"
-    };
-    let current = "booking_management";
-    const nav = document.getElementById("nav");
-    const modules = document.getElementById("modules");
-    const capSelect = document.getElementById("capability");
-    UI.forEach((name) => {
-      const b = document.createElement("button");
-      b.textContent = name;
-      b.onclick = () => select(MAP[name] || "booking_management", b);
-      nav.appendChild(b);
-      const card = document.createElement("div");
-      card.className = "card";
-      card.textContent = name;
-      modules.appendChild(card);
-    });
-    CAPS.forEach((name) => {
-      const card = document.createElement("div");
-      card.className = "card";
-      card.textContent = name;
-      modules.appendChild(card);
-      const opt = document.createElement("option");
-      opt.value = name;
-      opt.textContent = name;
-      capSelect.appendChild(opt);
-    });
-    capSelect.onchange = () => select(capSelect.value);
-    function select(id, btn) {
-      current = id;
-      document.getElementById("cap-title").textContent = id;
-      capSelect.value = id;
-      [...nav.children].forEach((el) => el.classList.remove("active"));
-      if (btn) btn.classList.add("active");
-    }
-    function authHeaders() {
-      const headers = {"Content-Type": "application/json"};
-      const token = (document.getElementById("operator-token").value || "").trim();
-      if (token) headers["Authorization"] = "Bearer " + token;
-      return headers;
-    }
-    function extraFields(id) {
-      const extras = {
-        booking_management: {stay_kind: "night", room_label: "sample"},
-        property_management: {property_kind: "hotel", property_name: "sample"},
-        dynamic_pricing: {season: "peak", rate_plan: "sample"},
-        review_management: {rating_band: "excellent", guest_name: "sample"},
-        analytics_dashboard: {view_name: "sample", horizon: "today"},
-        notification_system: {notice_kind: "confirmation", guest_name: "sample"},
-        search_recommendation: {stay_intent: "leisure", destination: "sample"}
-      };
-      return extras[id] || {};
-    }
-    document.getElementById("post-btn").onclick = async () => {
-      const body = {
-        reference: document.getElementById("reference").value || "sample",
-        status: document.getElementById("status").value || "open",
-        ...extraFields(current)
-      };
-      const res = await fetch("/v1/" + current, {
-        method: "POST",
-        headers: authHeaders(),
-        body: JSON.stringify(body)
-      });
-      document.getElementById("out").textContent = JSON.stringify(await res.json(), null, 2);
-    };
-    document.getElementById("get-btn").onclick = async () => {
-      const res = await fetch("/v1/" + current);
-      document.getElementById("out").textContent = JSON.stringify(await res.json(), null, 2);
-    };
-    document.getElementById("ingest-btn").onclick = async () => {
-      const res = await fetch("/v1/rag/ingest", {
-        method: "POST",
-        headers: authHeaders(),
-        body: JSON.stringify({
-          layer: 1,
-          doc_id: document.getElementById("reference").value || "sample",
-          title: document.getElementById("rag-title").value,
-          text: document.getElementById("rag-text").value
-        })
-      });
-      document.getElementById("out").textContent = JSON.stringify(await res.json(), null, 2);
-    };
-    document.getElementById("query-btn").onclick = async () => {
-      const q = encodeURIComponent(document.getElementById("rag-q").value || "occupancy");
-      const res = await fetch("/v1/rag/query?q=" + q);
-      document.getElementById("out").textContent = JSON.stringify(await res.json(), null, 2);
-    };
-  </script>
+<h1>CallOps <span class="dim">— outbound calling console for PSI</span></h1>
+<div class="dim">Tenant resolved from your token; every answer shows the authority layer it came from.</div>
+
+<div class="row" style="margin-top:10px">
+  <div style="flex:0 0 320px"><label for="token">Bearer token</label><input id="token" value="dev-local-token"></div>
+  <div style="flex:0 0 240px"><label for="campaign">Campaign</label><input id="campaign" value="psi-q3"></div>
+  <button onclick="boot()">Connect</button>
+  <span id="who" class="dim"></span>
+</div>
+
+<div class="grid">
+  <div class="card">
+    <h2>1 · Lead file → dial queue</h2>
+    <label for="leads">Brokerage lead file (CSV)</label>
+    <textarea id="leads">name,phone,language,project
+Fatima Al Ali,+971501234567,ar,az-zahra
+Omar Haddad,+971509876543,en,marina-gate
+Rania,00447911123456,en,az-zahra</textarea>
+    <div class="row" style="margin-top:8px">
+      <button class="primary" onclick="importLeads()">Parse &amp; queue</button>
+      <button onclick="loadQueue()">Show dial queue</button>
+    </div>
+    <pre id="leads-out">—</pre>
+    <div id="queue-out"></div>
+  </div>
+
+  <div class="card">
+    <h2>2 · Project sheet → grounded pitch</h2>
+    <label for="sheet">Project sheet text (price list, payment plan, handover)</label>
+    <textarea id="sheet">Az Zahra Tower price list. One bedroom apartments start from AED 1,250,000. Two bedroom from AED 1,890,000. Payment plan: 20% down, 60 monthly instalments. Handover Q4 2027.</textarea>
+    <div class="row" style="margin-top:8px">
+      <input id="project" value="az-zahra" placeholder="project tag">
+      <button onclick="ingest()">Ingest</button>
+    </div>
+    <label for="question">Caller's question</label>
+    <input id="question" value="What is the starting price and when is handover?">
+    <div class="row" style="margin-top:8px"><button class="primary" onclick="ask()">Ask (cite or refuse)</button></div>
+    <pre id="rag-out">—</pre>
+  </div>
+
+  <div class="card">
+    <h2>3 · Qualification → broker summary</h2>
+    <label for="call_sid">Call SID</label>
+    <input id="call_sid" value="CAconsole00000000000000000000001">
+    <label for="outcome">Outcome (the brief's three)</label>
+    <select id="outcome">
+      <option>project_interested</option>
+      <option>other_re_interested</option>
+      <option>not_interested</option>
+    </select>
+    <label for="transcript">What the caller said</label>
+    <textarea id="transcript">Yes, I like this project. I want a two bedroom apartment, budget around 2 million, handover in six months.</textarea>
+    <div class="row" style="margin-top:8px">
+      <button class="primary" onclick="qualify()">Qualify</button>
+      <button onclick="transfer()">Warm transfer</button>
+    </div>
+    <pre id="qual-out">—</pre>
+  </div>
+
+  <div class="card">
+    <h2>4 · Any capability (contract-driven)</h2>
+    <div class="row">
+      <select id="cap" onchange="buildForm()"></select>
+      <button onclick="buildForm()">Rebuild form</button>
+    </div>
+    <div id="form"></div>
+    <div class="row"><button class="primary" onclick="postCap()">POST /v1/&lt;capability&gt;</button>
+      <button onclick="listCap()">List rows</button></div>
+    <pre id="cap-out">—</pre>
+  </div>
+
+  <div class="card">
+    <h2>5 · Formulas (money settings are yours)</h2>
+    <div class="row">
+      <select id="formula">
+        <option>calls_remaining</option>
+        <option>dial_pacing</option>
+        <option>retry_backoff</option>
+        <option>best_call_window</option>
+        <option>campaign_metrics</option>
+        <option>price_with_tax</option>
+        <option>broker_commission</option>
+      </select>
+      <button class="primary" onclick="runFormula()">Run</button>
+    </div>
+    <label for="formula-inputs">Inputs (JSON)</label>
+    <textarea id="formula-inputs">{"amount": 1250000, "quantity": 1}</textarea>
+    <pre id="formula-out">—</pre>
+  </div>
+
+  <div class="card">
+    <h2>6 · Dashboard &amp; connectors</h2>
+    <div class="row">
+      <button class="primary" onclick="dashboard()">Metrics</button>
+      <button onclick="connectors()">Connectors</button>
+      <button onclick="verifyLedger()">Verify ledger</button>
+    </div>
+    <div id="chart"></div>
+    <pre id="dash-out">—</pre>
+  </div>
+</div>
+
+<p class="dim" id="note"></p>
+
+<script>
+const $ = (id) => document.getElementById(id);
+function token() { return $("token").value.trim(); }
+function headers(extra) {
+  return Object.assign({ "Authorization": "Bearer " + token(), "Content-Type": "application/json" }, extra || {});
+}
+function layerBadge(label) {
+  if (!label) return "";
+  const layer = String(label).split(":")[0];
+  return '<span class="badge ' + layer + '">' + label + '</span>';
+}
+async function call(method, path, body) {
+  const options = { method, headers: headers() };
+  if (body !== undefined) options.body = JSON.stringify(body);
+  const response = await fetch(path, options);
+  let payload;
+  try { payload = await response.json(); } catch (e) { payload = { status: response.status, nonJson: true }; }
+  return { status: response.status, payload };
+}
+function render(id, result, authorityLabel) {
+  const badge = authorityLabel ? layerBadge(authorityLabel) : "";
+  $(id).innerHTML = '<span class="' + (result.status < 300 ? "ok" : "err") + '">HTTP ' + result.status + '</span>' + badge
+    + '<br>' + JSON.stringify(result.payload, null, 1);
+}
+async function boot() {
+  const who = await call("GET", "/v1/auth/whoami");
+  $("who").textContent = who.status < 300
+    ? "connected as tenant " + who.payload.tenant.tenant_id
+    : "not connected (HTTP " + who.status + ")";
+  const caps = await call("GET", "/v1/capabilities");
+  if (caps.status < 300) {
+    $("cap").innerHTML = caps.payload.capabilities
+      .map((c) => '<option value="' + c.capability_id + '">' + c.capability_id + '</option>').join("");
+    buildForm();
+  }
+  const conn = await call("GET", "/v1/connectors");
+  if (conn.status < 300) {
+    $("note").textContent = "Stubbed connectors: " + conn.payload.stubbed.join(", ")
+      + " — every stub names the setting it is missing.";
+  }
+}
+function buildForm() {
+  const capId = $("cap").value;
+  $("form").innerHTML = "loading…";
+  fetch("/v1/capabilities", { headers: headers() }).then((r) => r.json()).then((data) => {
+    const cap = (data.capabilities || []).find((c) => c.capability_id === capId);
+    if (!cap) { $("form").innerHTML = "unknown capability"; return; }
+    $("form").innerHTML = cap.fields.map((f) => {
+      const name = f.name;
+      const required = f.required ? " *" : "";
+      if (f.allowed_values) {
+        return '<div class="field"><label>' + name + required + '</label><select data-field="' + name + '">'
+          + f.allowed_values.map((v) => '<option>' + v + '</option>').join("") + '</select></div>';
+      }
+      return '<div class="field"><label>' + name + required + '</label><input data-field="' + name + '"'
+        + (f.required ? ' value="sample"' : '') + '></div>';
+    }).join("");
+  });
+}
+function formPayload() {
+  const payload = {};
+  document.querySelectorAll("#form [data-field]").forEach((node) => {
+    const value = node.value;
+    if (value !== "") payload[node.getAttribute("data-field")] = value;
+  });
+  return payload;
+}
+async function postCap() {
+  const capId = $("cap").value;
+  const payload = formPayload();
+  if (!payload.reference) payload.reference = "console-" + Date.now();
+  if (!payload.status) payload.status = "open";
+  const result = await call("POST", "/v1/" + capId, payload);
+  render("cap-out", result, (result.payload.authority || {}).label);
+}
+async function listCap() {
+  const result = await call("GET", "/v1/" + $("cap").value);
+  render("cap-out", result, (result.payload.authority || {}).label);
+}
+async function importLeads() {
+  const result = await call("POST", "/v1/leads/import", {
+    text: $("leads").value, campaign: $("campaign").value, file_name: "psi-leads.csv",
+  });
+  render("leads-out", result, (result.payload.authority || {}).label);
+  loadQueue();
+}
+async function loadQueue() {
+  const result = await call("GET", "/v1/dial-queue?campaign=" + encodeURIComponent($("campaign").value));
+  const body = result.payload || {};
+  const metrics = (body.cap || {}).result;
+  let html = '<div class="dim">calls remaining: <b>' + (metrics === undefined ? "—" : metrics)
+    + '</b>' + layerBadge((body.authority || {}).label) + ' · depth ' + JSON.stringify(body.depth || {}) + '</div>';
+  const rows = (body.queued || []).slice(0, 6);
+  html += '<table><tr><th>#</th><th>lead</th><th>lang</th><th>window</th><th>state</th></tr>';
+  rows.forEach((row) => {
+    html += '<tr><td>' + row.id + '</td><td>' + (row.lead_name || "") + '</td><td>' + (row.language || "")
+      + '</td><td>' + (row.best_call_window || "") + '</td><td>' + (row.queue_state || "") + '</td></tr>';
+  });
+  $("queue-out").innerHTML = html + '</table>';
+}
+async function ingest() {
+  const result = await call("POST", "/v1/rag/ingest", {
+    text: $("sheet").value, project_tag: $("project").value, title: "console sheet", certified: true,
+  });
+  render("rag-out", result, (result.payload.authority || {}).label);
+}
+async function ask() {
+  const result = await call("POST", "/v1/rag/ground", {
+    project_tag: $("project").value, question: $("question").value,
+  });
+  render("rag-out", result, (result.payload.authority || {}).label);
+}
+async function qualify() {
+  const result = await call("POST", "/v1/qualification_and_broker_summary", {
+    call_sid: $("call_sid").value, outcome: $("outcome").value, reference: "console-" + Date.now(),
+    status: "open", transcript: $("transcript").value, project_tag: $("project").value, language: "en",
+  });
+  render("qual-out", result, (result.payload.authority || {}).label);
+}
+async function transfer() {
+  const result = await call("POST", "/v1/warm_transfer", {
+    call_sid: $("call_sid").value, outcome: "transferred", qualified_outcome: $("outcome").value,
+    reference: "console-" + Date.now(), status: "open", project_tag: $("project").value,
+  });
+  render("qual-out", result, (result.payload.authority || {}).label);
+}
+async function runFormula() {
+  let inputs = {};
+  try { inputs = JSON.parse($("formula-inputs").value || "{}"); } catch (e) { inputs = {}; }
+  const result = await call("POST", "/v1/formulas/" + $("formula").value, inputs);
+  render("formula-out", result, (result.payload.authority || {}).label);
+}
+async function dashboard() {
+  const result = await call("GET", "/v1/dashboard?campaign=" + encodeURIComponent($("campaign").value));
+  render("dash-out", result, (result.payload.authority || {}).label);
+  $("chart").innerHTML = (result.payload || {}).chart || "";
+}
+async function connectors() {
+  const result = await call("GET", "/v1/connectors");
+  render("dash-out", result, (result.payload.authority || {}).label);
+}
+async function verifyLedger() {
+  const result = await call("POST", "/v1/ledger/verify", { call_sid: $("call_sid").value });
+  render("dash-out", result, "");
+}
+boot();
+</script>
 </body>
 </html>

@@ -1,10 +1,20 @@
-fastapi>=0.110
-uvicorn[standard]>=0.27
+# Runtime dependencies. Persistence is stdlib sqlite3 against one storage
+# root (STORAGE_PATH), or the operator's Postgres when DATABASE_URL is set.
+#
+# Floors, not pins: high enough to exclude the published advisories the audit
+# job scans for (the starlette 0.4x line carries several), and low enough that
+# a patch release does not need a code change.
+fastapi>=0.141
+starlette>=1.6
+uvicorn>=0.29
 pydantic>=2.0
-sqlalchemy>=2.0
 alembic>=1.13
-httpx>=0.27
-pytest>=8.0
-pyyaml>=6.0
-python-multipart>=0.0.9
-numpy>=2.1.0,<3
+sqlalchemy>=2.0
+# Postgres, when the operator sets DATABASE_URL. Declared so the deployment
+# path is real rather than a scheme the platform cannot dial: app/db.py maps
+# postgres:// and postgresql:// onto psycopg (v3), and alembic/env.py uses
+# that same normalised URL for migrations.
+psycopg[binary]>=3.1
+# The audit job scans the whole environment, build tooling included; this
+# floor keeps that scan clean rather than pinning a version in CI only.
+setuptools>=83.0.0

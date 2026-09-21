@@ -1,0 +1,55 @@
+{
+  "product_id": "real-estate",
+  "stubs": [
+    {
+      "capability": "voice_gateway",
+      "edge": "twilio_programmable_voice",
+      "settings": ["TWILIO_ACCOUNT_SID", "TWILIO_AUTH_TOKEN", "TWILIO_CALLER_NUMBER", "TWILIO_ALLOW_DIALING"],
+      "reason": "no Twilio account, auth token or caller number was supplied (the brief chose stubs)",
+      "what_works": "TwiML (Polly Neural say + en/ar speech gather), the originate request shape, and all seven status callbacks mapped onto workflow transitions, certified against tests/fixtures/twilio_status_callbacks.json",
+      "activates_when": "credentials are set AND TWILIO_ALLOW_DIALING=1"
+    },
+    {
+      "capability": "warm_transfer",
+      "settings": ["BROKER_TRANSFER_NUMBER"],
+      "reason": "no broker number was supplied",
+      "what_works": "the summarise → dial → whisper → bridge sequence is built and returned step by step; without a dialable broker leg the outcome is recorded as declined with the setting named",
+      "activates_when": "BROKER_TRANSFER_NUMBER is set to a dialable number"
+    },
+    {
+      "capability": "crm_destination_placeholder",
+      "settings": ["CRM_DESTINATION"],
+      "reason": "the brief names no CRM",
+      "what_works": "outcome + broker summary are recorded with the exact payload shape a connector would send",
+      "activates_when": "CRM_DESTINATION names an address; the connector itself is still not built and says so"
+    },
+    {
+      "capability": "google_drive",
+      "settings": ["GOOGLE_CLIENT_ID", "GOOGLE_CLIENT_SECRET", "GOOGLE_REFRESH_TOKEN", "GOOGLE_DRIVE_FOLDER_ID"],
+      "reason": "no Google credentials were supplied",
+      "what_works": "the OAuth refresh + Drive v3 request sequence, certified against a fake transport",
+      "activates_when": "credentials are set AND GOOGLE_ALLOW_API=1"
+    },
+    {
+      "capability": "notification",
+      "settings": ["SALES_CHANNEL_WEBHOOK"],
+      "reason": "no broker / sales channel webhook was supplied",
+      "what_works": "the alert is composed, recorded and reported stubbed; with a webhook set it is delivered for real through the private-address guard",
+      "activates_when": "SALES_CHANNEL_WEBHOOK or BROKER_ALERT_WEBHOOK is set"
+    },
+    {
+      "capability": "project_knowledge_grounding",
+      "settings": ["LLM_PROVIDER", "LLM_API_KEY"],
+      "reason": "no model provider was supplied",
+      "what_works": "the deterministic grounded planner answers from retrieved project-sheet text with citations, and withholds what the corpus cannot support",
+      "activates_when": "LLM_PROVIDER and LLM_API_KEY are set; the model's draft still passes the grounding check"
+    },
+    {
+      "capability": "qualification_and_broker_summary",
+      "settings": ["CURRENCY", "VAT_RATE", "BROKER_COMMISSION_RATE"],
+      "reason": "the brief states no country, currency or tax rate",
+      "what_works": "qualification, the collected fields and the structured summary are recorded; a budget is stored without a currency rather than labelled with one nobody chose",
+      "activates_when": "the operator sets the currency and rates"
+    }
+  ]
+}

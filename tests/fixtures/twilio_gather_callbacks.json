@@ -1,0 +1,20 @@
+{
+  "interest": {
+    "CallSid": "CAfake02000000000000000000000000",
+    "Confidence": "0.92",
+    "Language": "en-US",
+    "SpeechResult": "Yes, I like this project, send me the details"
+  },
+  "not_interested": {
+    "CallSid": "CAfake03000000000000000000000000",
+    "Confidence": "0.88",
+    "Language": "en-US",
+    "SpeechResult": "not interested, remove my number"
+  },
+  "price_question_ar": {
+    "CallSid": "CAfake04000000000000000000000000",
+    "Confidence": "0.77",
+    "Language": "ar-SA",
+    "SpeechResult": "\u0643\u0645 \u0633\u0639\u0631 \u0627\u0644\u0634\u0642\u0629"
+  }
+}

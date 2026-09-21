@@ -72,84 +72,84 @@ def test_every_capability_handle_returns_mapping():
     failures = []
     from app.actions import lead_intake_and_dial_queue
     try:
-        out = lead_intake_and_dial_queue.handle({'language': 'en', 'lead_name': 'sample', 'phone': 'sample', 'project_tag': 'sample', 'reference': 'sample', 'status': 'open', 'daily_call_cap': 'sample', 'concurrency': 'sample', 'attempt_count': 1, 'retry_backoff_minutes': 'sample', 'queue_status': 'queued'})
+        out = lead_intake_and_dial_queue.handle({'reference': 'sample', 'status': 'open', 'lead_name': 'sample', 'phone': 'sample', 'language': 'en', 'project_tag': 'sample', 'source_file': 'sample', 'call_window': 'sample', 'daily_call_cap': 1, 'concurrency': 1, 'attempt_count': 1, 'retry_backoff_minutes': 1, 'queue_status': 'queued', 'notes': 'sample'})
     except Exception as exc:
         out = {'ok': False, 'error': type(exc).__name__ + ': ' + str(exc)}
     if not isinstance(out, dict):
         failures.append('lead_intake_and_dial_queue handle() must return a dict, got ' + type(out).__name__)
     from app.actions import call_state_machine
     try:
-        out = call_state_machine.handle({'call_sid': 'sample', 'current_state': 'queued', 'reference': 'sample', 'status': 'open', 'window_state': 'open', 'previous_state': 'queued', 'attempt_count': 1})
+        out = call_state_machine.handle({'reference': 'sample', 'status': 'open', 'call_sid': 'sample', 'lead_name': 'sample', 'phone': 'sample', 'current_state': 'queued', 'previous_state': 'queued', 'call_window': 'sample', 'window_state': 'open', 'transition_event': 'sample', 'attempt_count': 1, 'notes': 'sample'})
     except Exception as exc:
         out = {'ok': False, 'error': type(exc).__name__ + ': ' + str(exc)}
     if not isinstance(out, dict):
         failures.append('call_state_machine handle() must return a dict, got ' + type(out).__name__)
     from app.actions import project_knowledge_grounding
     try:
-        out = project_knowledge_grounding.handle({'claim_type': 'price', 'project_tag': 'sample', 'question': 'sample', 'reference': 'sample', 'status': 'open', 'authority_label': 'certified'})
+        out = project_knowledge_grounding.handle({'reference': 'sample', 'status': 'open', 'project_tag': 'sample', 'claim_type': 'price', 'question': 'sample', 'document_name': 'sample', 'document_text': 'sample', 'citation': 'sample', 'authority_label': 'certified', 'grounded': True, 'answer': 'sample', 'notes': 'sample'})
     except Exception as exc:
         out = {'ok': False, 'error': type(exc).__name__ + ': ' + str(exc)}
     if not isinstance(out, dict):
         failures.append('project_knowledge_grounding handle() must return a dict, got ' + type(out).__name__)
     from app.actions import voice_gateway
     try:
-        out = voice_gateway.handle({'language': 'en', 'reference': 'sample', 'status': 'open', 'call_status': 'initiated', 'direction': 'outbound', 'asr_engine': 'twilio_gather_speech', 'twilio_mode': 'stubbed'})
+        out = voice_gateway.handle({'reference': 'sample', 'status': 'open', 'call_sid': 'sample', 'direction': 'outbound', 'to_number': 'sample', 'from_number': 'sample', 'language': 'en', 'voice': 'sample', 'asr_engine': 'twilio_gather_speech', 'twilio_mode': 'stubbed', 'call_status': 'initiated', 'twiml': 'sample', 'recording_url': 'sample', 'notes': 'sample'})
     except Exception as exc:
         out = {'ok': False, 'error': type(exc).__name__ + ': ' + str(exc)}
     if not isinstance(out, dict):
         failures.append('voice_gateway handle() must return a dict, got ' + type(out).__name__)
     from app.actions import warm_transfer
     try:
-        out = warm_transfer.handle({'call_sid': 'sample', 'outcome': 'project_interested', 'reference': 'sample', 'status': 'open', 'summary': 'sample', 'transfer_status': 'initiated'})
+        out = warm_transfer.handle({'reference': 'sample', 'status': 'open', 'call_sid': 'sample', 'lead_name': 'sample', 'outcome': 'project_interested', 'broker_number': 'sample', 'conference_name': 'sample', 'summary': 'sample', 'whisper_text': 'sample', 'transfer_status': 'initiated', 'whisper_delivered': True, 'notes': 'sample'})
     except Exception as exc:
         out = {'ok': False, 'error': type(exc).__name__ + ': ' + str(exc)}
     if not isinstance(out, dict):
         failures.append('warm_transfer handle() must return a dict, got ' + type(out).__name__)
     from app.actions import qualification_and_broker_summary
     try:
-        out = qualification_and_broker_summary.handle({'call_sid': 'sample', 'outcome': 'project_interested', 'reference': 'sample', 'status': 'open', 'property_type': 'apartment', 'budget': 'sample'})
+        out = qualification_and_broker_summary.handle({'reference': 'sample', 'status': 'open', 'call_sid': 'sample', 'lead_name': 'sample', 'outcome': 'project_interested', 'property_type': 'apartment', 'budget': 1.0, 'area': 'sample', 'timeline': 'sample', 'currency_setting': 'sample', 'broker_summary': 'sample', 'recommended_action': 'sample', 'notes': 'sample'})
     except Exception as exc:
         out = {'ok': False, 'error': type(exc).__name__ + ': ' + str(exc)}
     if not isinstance(out, dict):
         failures.append('qualification_and_broker_summary handle() must return a dict, got ' + type(out).__name__)
     from app.actions import outcome_capture_and_ledger
     try:
-        out = outcome_capture_and_ledger.handle({'call_sid': 'sample', 'event_type': 'attempt', 'reference': 'sample', 'status': 'open', 'outcome': 'project_interested', 'attempt_count': 1, 'ledger_index': 'sample'})
+        out = outcome_capture_and_ledger.handle({'reference': 'sample', 'status': 'open', 'call_sid': 'sample', 'campaign': 'sample', 'event_type': 'attempt', 'outcome': 'project_interested', 'attempt_count': 1, 'ledger_index': 1, 'vector_clock': 'sample', 'notes': 'sample'})
     except Exception as exc:
         out = {'ok': False, 'error': type(exc).__name__ + ': ' + str(exc)}
     if not isinstance(out, dict):
         failures.append('outcome_capture_and_ledger handle() must return a dict, got ' + type(out).__name__)
     from app.actions import crm_destination_placeholder
     try:
-        out = crm_destination_placeholder.handle({'crm_system': 'unstated', 'reference': 'sample', 'status': 'open', 'delivery_state': 'queued'})
+        out = crm_destination_placeholder.handle({'reference': 'sample', 'status': 'open', 'crm_system': 'unstated', 'destination_url': 'sample', 'payload_shape': 'sample', 'delivery_state': 'queued', 'mock_mode': True, 'notes': 'sample'})
     except Exception as exc:
         out = {'ok': False, 'error': type(exc).__name__ + ': ' + str(exc)}
     if not isinstance(out, dict):
         failures.append('crm_destination_placeholder handle() must return a dict, got ' + type(out).__name__)
     from app.actions import notification
     try:
-        out = notification.handle({'channel': 'email', 'reference': 'sample', 'status': 'open', 'trigger_event': 'lead_qualified', 'delivery_state': 'queued'})
+        out = notification.handle({'reference': 'sample', 'status': 'open', 'channel': 'email', 'recipient': 'sample', 'subject': 'sample', 'message': 'sample', 'trigger_event': 'lead_qualified', 'delivery_state': 'queued', 'notes': 'sample'})
     except Exception as exc:
         out = {'ok': False, 'error': type(exc).__name__ + ': ' + str(exc)}
     if not isinstance(out, dict):
         failures.append('notification handle() must return a dict, got ' + type(out).__name__)
     from app.actions import local_drive
     try:
-        out = local_drive.handle({'operation': 'read', 'reference': 'sample', 'relative_path': 'sample', 'status': 'open', 'bytes_written': 'sample'})
+        out = local_drive.handle({'reference': 'sample', 'status': 'open', 'root_path': 'sample', 'relative_path': 'sample', 'operation': 'read', 'bytes_written': 1, 'content_preview': 'sample', 'notes': 'sample'})
     except Exception as exc:
         out = {'ok': False, 'error': type(exc).__name__ + ': ' + str(exc)}
     if not isinstance(out, dict):
         failures.append('local_drive handle() must return a dict, got ' + type(out).__name__)
     from app.actions import google_drive
     try:
-        out = google_drive.handle({'GOOGLE_CLIENT_ID': 'id-1', 'GOOGLE_CLIENT_SECRET': 'sample', 'GOOGLE_REFRESH_TOKEN': 'sample', 'drive_mode': 'stubbed', 'operation': 'upload', 'reference': 'sample', 'status': 'open'})
+        out = google_drive.handle({'reference': 'sample', 'status': 'open', 'drive_mode': 'stubbed', 'folder_id': 'id-1', 'file_name': 'sample', 'operation': 'upload', 'credential_setting': 'sample', 'notes': 'sample'})
     except Exception as exc:
         out = {'ok': False, 'error': type(exc).__name__ + ': ' + str(exc)}
     if not isinstance(out, dict):
         failures.append('google_drive handle() must return a dict, got ' + type(out).__name__)
     from app.actions import mcp_adapter
     try:
-        out = mcp_adapter.handle({'catalog_scope': 'platform', 'reference': 'sample', 'status': 'open'})
+        out = mcp_adapter.handle({'reference': 'sample', 'status': 'open', 'tool_name': 'sample', 'catalog_scope': 'platform', 'request_shape': 'sample', 'response_shape': 'sample', 'notes': 'sample'})
     except Exception as exc:
         out = {'ok': False, 'error': type(exc).__name__ + ': ' + str(exc)}
     if not isinstance(out, dict):
@@ -166,7 +166,7 @@ def test_every_capability_executes_end_to_end():
     import json as _json
     failures = []
     from app.actions import lead_intake_and_dial_queue
-    out = lead_intake_and_dial_queue.handle({'language': 'en', 'lead_name': 'sample', 'phone': 'sample', 'project_tag': 'sample', 'reference': 'sample', 'status': 'open', 'daily_call_cap': 'sample', 'concurrency': 'sample', 'attempt_count': 1, 'retry_backoff_minutes': 'sample', 'queue_status': 'queued'})
+    out = lead_intake_and_dial_queue.handle({'reference': 'sample', 'status': 'open', 'lead_name': 'sample', 'phone': 'sample', 'language': 'en', 'project_tag': 'sample', 'source_file': 'sample', 'call_window': 'sample', 'daily_call_cap': 1, 'concurrency': 1, 'attempt_count': 1, 'retry_backoff_minutes': 1, 'queue_status': 'queued', 'notes': 'sample'})
     if not isinstance(out, dict):
         failures.append('lead_intake_and_dial_queue returned a non-dict: ' + repr(out)[:120])
     elif out.get("ok") is False:
@@ -174,7 +174,7 @@ def test_every_capability_executes_end_to_end():
     elif '\"status\": \"error\"' in _json.dumps(out, default=str) or '\"status\": \"failed\"' in _json.dumps(out, default=str):
         failures.append('lead_intake_and_dial_queue reported ok around a failed block call: ' + _json.dumps(out, default=str)[:300])
     from app.actions import call_state_machine
-    out = call_state_machine.handle({'call_sid': 'sample', 'current_state': 'queued', 'reference': 'sample', 'status': 'open', 'window_state': 'open', 'previous_state': 'queued', 'attempt_count': 1})
+    out = call_state_machine.handle({'reference': 'sample', 'status': 'open', 'call_sid': 'sample', 'lead_name': 'sample', 'phone': 'sample', 'current_state': 'queued', 'previous_state': 'queued', 'call_window': 'sample', 'window_state': 'open', 'transition_event': 'sample', 'attempt_count': 1, 'notes': 'sample'})
     if not isinstance(out, dict):
         failures.append('call_state_machine returned a non-dict: ' + repr(out)[:120])
     elif out.get("ok") is False:
@@ -182,7 +182,7 @@ def test_every_capability_executes_end_to_end():
     elif '\"status\": \"error\"' in _json.dumps(out, default=str) or '\"status\": \"failed\"' in _json.dumps(out, default=str):
         failures.append('call_state_machine reported ok around a failed block call: ' + _json.dumps(out, default=str)[:300])
     from app.actions import project_knowledge_grounding
-    out = project_knowledge_grounding.handle({'claim_type': 'price', 'project_tag': 'sample', 'question': 'sample', 'reference': 'sample', 'status': 'open', 'authority_label': 'certified'})
+    out = project_knowledge_grounding.handle({'reference': 'sample', 'status': 'open', 'project_tag': 'sample', 'claim_type': 'price', 'question': 'sample', 'document_name': 'sample', 'document_text': 'sample', 'citation': 'sample', 'authority_label': 'certified', 'grounded': True, 'answer': 'sample', 'notes': 'sample'})
     if not isinstance(out, dict):
         failures.append('project_knowledge_grounding returned a non-dict: ' + repr(out)[:120])
     elif out.get("ok") is False:
@@ -190,7 +190,7 @@ def test_every_capability_executes_end_to_end():
     elif '\"status\": \"error\"' in _json.dumps(out, default=str) or '\"status\": \"failed\"' in _json.dumps(out, default=str):
         failures.append('project_knowledge_grounding reported ok around a failed block call: ' + _json.dumps(out, default=str)[:300])
     from app.actions import voice_gateway
-    out = voice_gateway.handle({'language': 'en', 'reference': 'sample', 'status': 'open', 'call_status': 'initiated', 'direction': 'outbound', 'asr_engine': 'twilio_gather_speech', 'twilio_mode': 'stubbed'})
+    out = voice_gateway.handle({'reference': 'sample', 'status': 'open', 'call_sid': 'sample', 'direction': 'outbound', 'to_number': 'sample', 'from_number': 'sample', 'language': 'en', 'voice': 'sample', 'asr_engine': 'twilio_gather_speech', 'twilio_mode': 'stubbed', 'call_status': 'initiated', 'twiml': 'sample', 'recording_url': 'sample', 'notes': 'sample'})
     if not isinstance(out, dict):
         failures.append('voice_gateway returned a non-dict: ' + repr(out)[:120])
     elif out.get("ok") is False:
@@ -198,7 +198,7 @@ def test_every_capability_executes_end_to_end():
     elif '\"status\": \"error\"' in _json.dumps(out, default=str) or '\"status\": \"failed\"' in _json.dumps(out, default=str):
         failures.append('voice_gateway reported ok around a failed block call: ' + _json.dumps(out, default=str)[:300])
     from app.actions import warm_transfer
-    out = warm_transfer.handle({'call_sid': 'sample', 'outcome': 'project_interested', 'reference': 'sample', 'status': 'open', 'summary': 'sample', 'transfer_status': 'initiated'})
+    out = warm_transfer.handle({'reference': 'sample', 'status': 'open', 'call_sid': 'sample', 'lead_name': 'sample', 'outcome': 'project_interested', 'broker_number': 'sample', 'conference_name': 'sample', 'summary': 'sample', 'whisper_text': 'sample', 'transfer_status': 'initiated', 'whisper_delivered': True, 'notes': 'sample'})
     if not isinstance(out, dict):
         failures.append('warm_transfer returned a non-dict: ' + repr(out)[:120])
     elif out.get("ok") is False:
@@ -206,7 +206,7 @@ def test_every_capability_executes_end_to_end():
     elif '\"status\": \"error\"' in _json.dumps(out, default=str) or '\"status\": \"failed\"' in _json.dumps(out, default=str):
         failures.append('warm_transfer reported ok around a failed block call: ' + _json.dumps(out, default=str)[:300])
     from app.actions import qualification_and_broker_summary
-    out = qualification_and_broker_summary.handle({'call_sid': 'sample', 'outcome': 'project_interested', 'reference': 'sample', 'status': 'open', 'property_type': 'apartment', 'budget': 'sample'})
+    out = qualification_and_broker_summary.handle({'reference': 'sample', 'status': 'open', 'call_sid': 'sample', 'lead_name': 'sample', 'outcome': 'project_interested', 'property_type': 'apartment', 'budget': 1.0, 'area': 'sample', 'timeline': 'sample', 'currency_setting': 'sample', 'broker_summary': 'sample', 'recommended_action': 'sample', 'notes': 'sample'})
     if not isinstance(out, dict):
         failures.append('qualification_and_broker_summary returned a non-dict: ' + repr(out)[:120])
     elif out.get("ok") is False:
@@ -214,7 +214,7 @@ def test_every_capability_executes_end_to_end():
     elif '\"status\": \"error\"' in _json.dumps(out, default=str) or '\"status\": \"failed\"' in _json.dumps(out, default=str):
         failures.append('qualification_and_broker_summary reported ok around a failed block call: ' + _json.dumps(out, default=str)[:300])
     from app.actions import outcome_capture_and_ledger
-    out = outcome_capture_and_ledger.handle({'call_sid': 'sample', 'event_type': 'attempt', 'reference': 'sample', 'status': 'open', 'outcome': 'project_interested', 'attempt_count': 1, 'ledger_index': 'sample'})
+    out = outcome_capture_and_ledger.handle({'reference': 'sample', 'status': 'open', 'call_sid': 'sample', 'campaign': 'sample', 'event_type': 'attempt', 'outcome': 'project_interested', 'attempt_count': 1, 'ledger_index': 1, 'vector_clock': 'sample', 'notes': 'sample'})
     if not isinstance(out, dict):
         failures.append('outcome_capture_and_ledger returned a non-dict: ' + repr(out)[:120])
     elif out.get("ok") is False:
@@ -222,7 +222,7 @@ def test_every_capability_executes_end_to_end():
     elif '\"status\": \"error\"' in _json.dumps(out, default=str) or '\"status\": \"failed\"' in _json.dumps(out, default=str):
         failures.append('outcome_capture_and_ledger reported ok around a failed block call: ' + _json.dumps(out, default=str)[:300])
     from app.actions import crm_destination_placeholder
-    out = crm_destination_placeholder.handle({'crm_system': 'unstated', 'reference': 'sample', 'status': 'open', 'delivery_state': 'queued'})
+    out = crm_destination_placeholder.handle({'reference': 'sample', 'status': 'open', 'crm_system': 'unstated', 'destination_url': 'sample', 'payload_shape': 'sample', 'delivery_state': 'queued', 'mock_mode': True, 'notes': 'sample'})
     if not isinstance(out, dict):
         failures.append('crm_destination_placeholder returned a non-dict: ' + repr(out)[:120])
     elif out.get("ok") is False:
@@ -230,7 +230,7 @@ def test_every_capability_executes_end_to_end():
     elif '\"status\": \"error\"' in _json.dumps(out, default=str) or '\"status\": \"failed\"' in _json.dumps(out, default=str):
         failures.append('crm_destination_placeholder reported ok around a failed block call: ' + _json.dumps(out, default=str)[:300])
     from app.actions import notification
-    out = notification.handle({'channel': 'email', 'reference': 'sample', 'status': 'open', 'trigger_event': 'lead_qualified', 'delivery_state': 'queued'})
+    out = notification.handle({'reference': 'sample', 'status': 'open', 'channel': 'email', 'recipient': 'sample', 'subject': 'sample', 'message': 'sample', 'trigger_event': 'lead_qualified', 'delivery_state': 'queued', 'notes': 'sample'})
     if not isinstance(out, dict):
         failures.append('notification returned a non-dict: ' + repr(out)[:120])
     elif out.get("ok") is False:
@@ -238,7 +238,7 @@ def test_every_capability_executes_end_to_end():
     elif '\"status\": \"error\"' in _json.dumps(out, default=str) or '\"status\": \"failed\"' in _json.dumps(out, default=str):
         failures.append('notification reported ok around a failed block call: ' + _json.dumps(out, default=str)[:300])
     from app.actions import local_drive
-    out = local_drive.handle({'operation': 'read', 'reference': 'sample', 'relative_path': 'sample', 'status': 'open', 'bytes_written': 'sample'})
+    out = local_drive.handle({'reference': 'sample', 'status': 'open', 'root_path': 'sample', 'relative_path': 'sample', 'operation': 'read', 'bytes_written': 1, 'content_preview': 'sample', 'notes': 'sample'})
     if not isinstance(out, dict):
         failures.append('local_drive returned a non-dict: ' + repr(out)[:120])
     elif out.get("ok") is False:
@@ -246,7 +246,7 @@ def test_every_capability_executes_end_to_end():
     elif '\"status\": \"error\"' in _json.dumps(out, default=str) or '\"status\": \"failed\"' in _json.dumps(out, default=str):
         failures.append('local_drive reported ok around a failed block call: ' + _json.dumps(out, default=str)[:300])
     from app.actions import google_drive
-    out = google_drive.handle({'GOOGLE_CLIENT_ID': 'id-1', 'GOOGLE_CLIENT_SECRET': 'sample', 'GOOGLE_REFRESH_TOKEN': 'sample', 'drive_mode': 'stubbed', 'operation': 'upload', 'reference': 'sample', 'status': 'open'})
+    out = google_drive.handle({'reference': 'sample', 'status': 'open', 'drive_mode': 'stubbed', 'folder_id': 'id-1', 'file_name': 'sample', 'operation': 'upload', 'credential_setting': 'sample', 'notes': 'sample'})
     if not isinstance(out, dict):
         failures.append('google_drive returned a non-dict: ' + repr(out)[:120])
     elif out.get("ok") is False:
@@ -254,7 +254,7 @@ def test_every_capability_executes_end_to_end():
     elif '\"status\": \"error\"' in _json.dumps(out, default=str) or '\"status\": \"failed\"' in _json.dumps(out, default=str):
         failures.append('google_drive reported ok around a failed block call: ' + _json.dumps(out, default=str)[:300])
     from app.actions import mcp_adapter
-    out = mcp_adapter.handle({'catalog_scope': 'platform', 'reference': 'sample', 'status': 'open'})
+    out = mcp_adapter.handle({'reference': 'sample', 'status': 'open', 'tool_name': 'sample', 'catalog_scope': 'platform', 'request_shape': 'sample', 'response_shape': 'sample', 'notes': 'sample'})
     if not isinstance(out, dict):
         failures.append('mcp_adapter returned a non-dict: ' + repr(out)[:120])
     elif out.get("ok") is False:

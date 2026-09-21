@@ -41,25 +41,25 @@ def _refused(response):
 
 def test_call_state_machine_refuses_a_missing_required_field():
     """A partial record is refused, never completed by the handler."""
-    body = {'current_state': 'queued', 'reference': 'sample', 'status': 'open', 'window_state': 'open', 'previous_state': 'queued', 'attempt_count': 1}
+    body = {'status': 'open', 'call_sid': 'sample', 'lead_name': 'sample', 'phone': 'sample', 'current_state': 'queued', 'previous_state': 'queued', 'call_window': 'sample', 'window_state': 'open', 'transition_event': 'sample', 'attempt_count': 1, 'notes': 'sample'}
     resp = client.post("/v1/call_state_machine", json=body, headers=AUTH)
     assert resp.status_code in (400, 403, 404, 409, 422) or _refused(resp), (
-        "call_state_machine accepted a payload with no call_sid: " + resp.text[:200]
+        "call_state_machine accepted a payload with no reference: " + resp.text[:200]
     )
 
 
 def test_call_state_machine_refuses_a_value_outside_its_vocabulary():
     """A column that accepts any string is not that column."""
-    body = {'call_sid': 'sample', 'current_state': 'not-a-declared-value', 'reference': 'sample', 'status': 'open', 'window_state': 'open', 'previous_state': 'queued', 'attempt_count': 1}
+    body = {'reference': 'sample', 'status': 'not-a-declared-value', 'call_sid': 'sample', 'lead_name': 'sample', 'phone': 'sample', 'current_state': 'queued', 'previous_state': 'queued', 'call_window': 'sample', 'window_state': 'open', 'transition_event': 'sample', 'attempt_count': 1, 'notes': 'sample'}
     resp = client.post("/v1/call_state_machine", json=body, headers=AUTH)
     assert resp.status_code in (400, 403, 404, 409, 422) or _refused(resp), (
-        "call_state_machine accepted an undeclared current_state: " + resp.text[:200]
+        "call_state_machine accepted an undeclared status: " + resp.text[:200]
     )
 
 
 def test_call_state_machine_does_not_leak_across_tenants():
     """404, never 403 and never the row: existence itself is private."""
-    body = {'call_sid': 'sample', 'current_state': 'queued', 'reference': 'sample', 'status': 'open', 'window_state': 'open', 'previous_state': 'queued', 'attempt_count': 1}
+    body = {'reference': 'sample', 'status': 'open', 'call_sid': 'sample', 'lead_name': 'sample', 'phone': 'sample', 'current_state': 'queued', 'previous_state': 'queued', 'call_window': 'sample', 'window_state': 'open', 'transition_event': 'sample', 'attempt_count': 1, 'notes': 'sample'}
     made = client.post("/v1/call_state_machine", json=body, headers=AUTH)
     if made.status_code != 200:
         pytest.skip("capability did not accept the sample record")
@@ -94,25 +94,25 @@ def test_call_state_machine_refuses_a_malformed_payload():
 
 def test_crm_destination_placeholder_refuses_a_missing_required_field():
     """A partial record is refused, never completed by the handler."""
-    body = {'reference': 'sample', 'status': 'open', 'delivery_state': 'queued'}
+    body = {'status': 'open', 'crm_system': 'unstated', 'destination_url': 'sample', 'payload_shape': 'sample', 'delivery_state': 'queued', 'mock_mode': True, 'notes': 'sample'}
     resp = client.post("/v1/crm_destination_placeholder", json=body, headers=AUTH)
     assert resp.status_code in (400, 403, 404, 409, 422) or _refused(resp), (
-        "crm_destination_placeholder accepted a payload with no crm_system: " + resp.text[:200]
+        "crm_destination_placeholder accepted a payload with no reference: " + resp.text[:200]
     )
 
 
 def test_crm_destination_placeholder_refuses_a_value_outside_its_vocabulary():
     """A column that accepts any string is not that column."""
-    body = {'crm_system': 'not-a-declared-value', 'reference': 'sample', 'status': 'open', 'delivery_state': 'queued'}
+    body = {'reference': 'sample', 'status': 'not-a-declared-value', 'crm_system': 'unstated', 'destination_url': 'sample', 'payload_shape': 'sample', 'delivery_state': 'queued', 'mock_mode': True, 'notes': 'sample'}
     resp = client.post("/v1/crm_destination_placeholder", json=body, headers=AUTH)
     assert resp.status_code in (400, 403, 404, 409, 422) or _refused(resp), (
-        "crm_destination_placeholder accepted an undeclared crm_system: " + resp.text[:200]
+        "crm_destination_placeholder accepted an undeclared status: " + resp.text[:200]
     )
 
 
 def test_crm_destination_placeholder_does_not_leak_across_tenants():
     """404, never 403 and never the row: existence itself is private."""
-    body = {'crm_system': 'unstated', 'reference': 'sample', 'status': 'open', 'delivery_state': 'queued'}
+    body = {'reference': 'sample', 'status': 'open', 'crm_system': 'unstated', 'destination_url': 'sample', 'payload_shape': 'sample', 'delivery_state': 'queued', 'mock_mode': True, 'notes': 'sample'}
     made = client.post("/v1/crm_destination_placeholder", json=body, headers=AUTH)
     if made.status_code != 200:
         pytest.skip("capability did not accept the sample record")
@@ -195,27 +195,30 @@ def test_google_drive_refuses_a_malformed_payload():
         )
 
 
+# -- lead_intake_and_dial_queue ----------------------------------
+
+
 def test_lead_intake_and_dial_queue_refuses_a_missing_required_field():
     """A partial record is refused, never completed by the handler."""
-    body = {'lead_name': 'sample', 'phone': 'sample', 'project_tag': 'sample', 'reference': 'sample', 'status': 'open', 'daily_call_cap': 'sample', 'concurrency': 'sample', 'attempt_count': 1, 'retry_backoff_minutes': 'sample', 'queue_status': 'queued'}
+    body = {'status': 'open', 'lead_name': 'sample', 'phone': 'sample', 'language': 'en', 'project_tag': 'sample', 'source_file': 'sample', 'call_window': 'sample', 'daily_call_cap': 1, 'concurrency': 1, 'attempt_count': 1, 'retry_backoff_minutes': 1, 'queue_status': 'queued', 'notes': 'sample'}
     resp = client.post("/v1/lead_intake_and_dial_queue", json=body, headers=AUTH)
     assert resp.status_code in (400, 403, 404, 409, 422) or _refused(resp), (
-        "lead_intake_and_dial_queue accepted a payload with no language: " + resp.text[:200]
+        "lead_intake_and_dial_queue accepted a payload with no reference: " + resp.text[:200]
     )
 
 
 def test_lead_intake_and_dial_queue_refuses_a_value_outside_its_vocabulary():
     """A column that accepts any string is not that column."""
-    body = {'language': 'not-a-declared-value', 'lead_name': 'sample', 'phone': 'sample', 'project_tag': 'sample', 'reference': 'sample', 'status': 'open', 'daily_call_cap': 'sample', 'concurrency': 'sample', 'attempt_count': 1, 'retry_backoff_minutes': 'sample', 'queue_status': 'queued'}
+    body = {'reference': 'sample', 'status': 'not-a-declared-value', 'lead_name': 'sample', 'phone': 'sample', 'language': 'en', 'project_tag': 'sample', 'source_file': 'sample', 'call_window': 'sample', 'daily_call_cap': 1, 'concurrency': 1, 'attempt_count': 1, 'retry_backoff_minutes': 1, 'queue_status': 'queued', 'notes': 'sample'}
     resp = client.post("/v1/lead_intake_and_dial_queue", json=body, headers=AUTH)
     assert resp.status_code in (400, 403, 404, 409, 422) or _refused(resp), (
-        "lead_intake_and_dial_queue accepted an undeclared language: " + resp.text[:200]
+        "lead_intake_and_dial_queue accepted an undeclared status: " + resp.text[:200]
     )
 
 
 def test_lead_intake_and_dial_queue_does_not_leak_across_tenants():
     """404, never 403 and never the row: existence itself is private."""
-    body = {'language': 'en', 'lead_name': 'sample', 'phone': 'sample', 'project_tag': 'sample', 'reference': 'sample', 'status': 'open', 'daily_call_cap': 'sample', 'concurrency': 'sample', 'attempt_count': 1, 'retry_backoff_minutes': 'sample', 'queue_status': 'queued'}
+    body = {'reference': 'sample', 'status': 'open', 'lead_name': 'sample', 'phone': 'sample', 'language': 'en', 'project_tag': 'sample', 'source_file': 'sample', 'call_window': 'sample', 'daily_call_cap': 1, 'concurrency': 1, 'attempt_count': 1, 'retry_backoff_minutes': 1, 'queue_status': 'queued', 'notes': 'sample'}
     made = client.post("/v1/lead_intake_and_dial_queue", json=body, headers=AUTH)
     if made.status_code != 200:
         pytest.skip("capability did not accept the sample record")
@@ -250,25 +253,25 @@ def test_lead_intake_and_dial_queue_refuses_a_malformed_payload():
 
 def test_local_drive_refuses_a_missing_required_field():
     """A partial record is refused, never completed by the handler."""
-    body = {'reference': 'sample', 'relative_path': 'sample', 'status': 'open', 'bytes_written': 'sample'}
+    body = {'status': 'open', 'root_path': 'sample', 'relative_path': 'sample', 'operation': 'read', 'bytes_written': 1, 'content_preview': 'sample', 'notes': 'sample'}
     resp = client.post("/v1/local_drive", json=body, headers=AUTH)
     assert resp.status_code in (400, 403, 404, 409, 422) or _refused(resp), (
-        "local_drive accepted a payload with no operation: " + resp.text[:200]
+        "local_drive accepted a payload with no reference: " + resp.text[:200]
     )
 
 
 def test_local_drive_refuses_a_value_outside_its_vocabulary():
     """A column that accepts any string is not that column."""
-    body = {'operation': 'not-a-declared-value', 'reference': 'sample', 'relative_path': 'sample', 'status': 'open', 'bytes_written': 'sample'}
+    body = {'reference': 'sample', 'status': 'not-a-declared-value', 'root_path': 'sample', 'relative_path': 'sample', 'operation': 'read', 'bytes_written': 1, 'content_preview': 'sample', 'notes': 'sample'}
     resp = client.post("/v1/local_drive", json=body, headers=AUTH)
     assert resp.status_code in (400, 403, 404, 409, 422) or _refused(resp), (
-        "local_drive accepted an undeclared operation: " + resp.text[:200]
+        "local_drive accepted an undeclared status: " + resp.text[:200]
     )
 
 
 def test_local_drive_does_not_leak_across_tenants():
     """404, never 403 and never the row: existence itself is private."""
-    body = {'operation': 'read', 'reference': 'sample', 'relative_path': 'sample', 'status': 'open', 'bytes_written': 'sample'}
+    body = {'reference': 'sample', 'status': 'open', 'root_path': 'sample', 'relative_path': 'sample', 'operation': 'read', 'bytes_written': 1, 'content_preview': 'sample', 'notes': 'sample'}
     made = client.post("/v1/local_drive", json=body, headers=AUTH)
     if made.status_code != 200:
         pytest.skip("capability did not accept the sample record")
@@ -303,25 +306,25 @@ def test_local_drive_refuses_a_malformed_payload():
 
 def test_mcp_adapter_refuses_a_missing_required_field():
     """A partial record is refused, never completed by the handler."""
-    body = {'reference': 'sample', 'status': 'open'}
+    body = {'status': 'open', 'tool_name': 'sample', 'catalog_scope': 'platform', 'request_shape': 'sample', 'response_shape': 'sample', 'notes': 'sample'}
     resp = client.post("/v1/mcp_adapter", json=body, headers=AUTH)
     assert resp.status_code in (400, 403, 404, 409, 422) or _refused(resp), (
-        "mcp_adapter accepted a payload with no catalog_scope: " + resp.text[:200]
+        "mcp_adapter accepted a payload with no reference: " + resp.text[:200]
     )
 
 
 def test_mcp_adapter_refuses_a_value_outside_its_vocabulary():
     """A column that accepts any string is not that column."""
-    body = {'catalog_scope': 'not-a-declared-value', 'reference': 'sample', 'status': 'open'}
+    body = {'reference': 'sample', 'status': 'not-a-declared-value', 'tool_name': 'sample', 'catalog_scope': 'platform', 'request_shape': 'sample', 'response_shape': 'sample', 'notes': 'sample'}
     resp = client.post("/v1/mcp_adapter", json=body, headers=AUTH)
     assert resp.status_code in (400, 403, 404, 409, 422) or _refused(resp), (
-        "mcp_adapter accepted an undeclared catalog_scope: " + resp.text[:200]
+        "mcp_adapter accepted an undeclared status: " + resp.text[:200]
     )
 
 
 def test_mcp_adapter_does_not_leak_across_tenants():
     """404, never 403 and never the row: existence itself is private."""
-    body = {'catalog_scope': 'platform', 'reference': 'sample', 'status': 'open'}
+    body = {'reference': 'sample', 'status': 'open', 'tool_name': 'sample', 'catalog_scope': 'platform', 'request_shape': 'sample', 'response_shape': 'sample', 'notes': 'sample'}
     made = client.post("/v1/mcp_adapter", json=body, headers=AUTH)
     if made.status_code != 200:
         pytest.skip("capability did not accept the sample record")
@@ -356,25 +359,25 @@ def test_mcp_adapter_refuses_a_malformed_payload():
 
 def test_notification_refuses_a_missing_required_field():
     """A partial record is refused, never completed by the handler."""
-    body = {'reference': 'sample', 'status': 'open', 'trigger_event': 'lead_qualified', 'delivery_state': 'queued'}
+    body = {'status': 'open', 'channel': 'email', 'recipient': 'sample', 'subject': 'sample', 'message': 'sample', 'trigger_event': 'lead_qualified', 'delivery_state': 'queued', 'notes': 'sample'}
     resp = client.post("/v1/notification", json=body, headers=AUTH)
     assert resp.status_code in (400, 403, 404, 409, 422) or _refused(resp), (
-        "notification accepted a payload with no channel: " + resp.text[:200]
+        "notification accepted a payload with no reference: " + resp.text[:200]
     )
 
 
 def test_notification_refuses_a_value_outside_its_vocabulary():
     """A column that accepts any string is not that column."""
-    body = {'channel': 'not-a-declared-value', 'reference': 'sample', 'status': 'open', 'trigger_event': 'lead_qualified', 'delivery_state': 'queued'}
+    body = {'reference': 'sample', 'status': 'not-a-declared-value', 'channel': 'email', 'recipient': 'sample', 'subject': 'sample', 'message': 'sample', 'trigger_event': 'lead_qualified', 'delivery_state': 'queued', 'notes': 'sample'}
     resp = client.post("/v1/notification", json=body, headers=AUTH)
     assert resp.status_code in (400, 403, 404, 409, 422) or _refused(resp), (
-        "notification accepted an undeclared channel: " + resp.text[:200]
+        "notification accepted an undeclared status: " + resp.text[:200]
     )
 
 
 def test_notification_does_not_leak_across_tenants():
     """404, never 403 and never the row: existence itself is private."""
-    body = {'channel': 'email', 'reference': 'sample', 'status': 'open', 'trigger_event': 'lead_qualified', 'delivery_state': 'queued'}
+    body = {'reference': 'sample', 'status': 'open', 'channel': 'email', 'recipient': 'sample', 'subject': 'sample', 'message': 'sample', 'trigger_event': 'lead_qualified', 'delivery_state': 'queued', 'notes': 'sample'}
     made = client.post("/v1/notification", json=body, headers=AUTH)
     if made.status_code != 200:
         pytest.skip("capability did not accept the sample record")
@@ -409,25 +412,25 @@ def test_notification_refuses_a_malformed_payload():
 
 def test_outcome_capture_and_ledger_refuses_a_missing_required_field():
     """A partial record is refused, never completed by the handler."""
-    body = {'event_type': 'attempt', 'reference': 'sample', 'status': 'open', 'outcome': 'project_interested', 'attempt_count': 1, 'ledger_index': 'sample'}
+    body = {'status': 'open', 'call_sid': 'sample', 'campaign': 'sample', 'event_type': 'attempt', 'outcome': 'project_interested', 'attempt_count': 1, 'ledger_index': 1, 'vector_clock': 'sample', 'notes': 'sample'}
     resp = client.post("/v1/outcome_capture_and_ledger", json=body, headers=AUTH)
     assert resp.status_code in (400, 403, 404, 409, 422) or _refused(resp), (
-        "outcome_capture_and_ledger accepted a payload with no call_sid: " + resp.text[:200]
+        "outcome_capture_and_ledger accepted a payload with no reference: " + resp.text[:200]
     )
 
 
 def test_outcome_capture_and_ledger_refuses_a_value_outside_its_vocabulary():
     """A column that accepts any string is not that column."""
-    body = {'call_sid': 'sample', 'event_type': 'not-a-declared-value', 'reference': 'sample', 'status': 'open', 'outcome': 'project_interested', 'attempt_count': 1, 'ledger_index': 'sample'}
+    body = {'reference': 'sample', 'status': 'not-a-declared-value', 'call_sid': 'sample', 'campaign': 'sample', 'event_type': 'attempt', 'outcome': 'project_interested', 'attempt_count': 1, 'ledger_index': 1, 'vector_clock': 'sample', 'notes': 'sample'}
     resp = client.post("/v1/outcome_capture_and_ledger", json=body, headers=AUTH)
     assert resp.status_code in (400, 403, 404, 409, 422) or _refused(resp), (
-        "outcome_capture_and_ledger accepted an undeclared event_type: " + resp.text[:200]
+        "outcome_capture_and_ledger accepted an undeclared status: " + resp.text[:200]
     )
 
 
 def test_outcome_capture_and_ledger_does_not_leak_across_tenants():
     """404, never 403 and never the row: existence itself is private."""
-    body = {'call_sid': 'sample', 'event_type': 'attempt', 'reference': 'sample', 'status': 'open', 'outcome': 'project_interested', 'attempt_count': 1, 'ledger_index': 'sample'}
+    body = {'reference': 'sample', 'status': 'open', 'call_sid': 'sample', 'campaign': 'sample', 'event_type': 'attempt', 'outcome': 'project_interested', 'attempt_count': 1, 'ledger_index': 1, 'vector_clock': 'sample', 'notes': 'sample'}
     made = client.post("/v1/outcome_capture_and_ledger", json=body, headers=AUTH)
     if made.status_code != 200:
         pytest.skip("capability did not accept the sample record")
@@ -462,25 +465,25 @@ def test_outcome_capture_and_ledger_refuses_a_malformed_payload():
 
 def test_project_knowledge_grounding_refuses_a_missing_required_field():
     """A partial record is refused, never completed by the handler."""
-    body = {'project_tag': 'sample', 'question': 'sample', 'reference': 'sample', 'status': 'open', 'authority_label': 'certified'}
+    body = {'status': 'open', 'project_tag': 'sample', 'claim_type': 'price', 'question': 'sample', 'document_name': 'sample', 'document_text': 'sample', 'citation': 'sample', 'authority_label': 'certified', 'grounded': True, 'answer': 'sample', 'notes': 'sample'}
     resp = client.post("/v1/project_knowledge_grounding", json=body, headers=AUTH)
     assert resp.status_code in (400, 403, 404, 409, 422) or _refused(resp), (
-        "project_knowledge_grounding accepted a payload with no claim_type: " + resp.text[:200]
+        "project_knowledge_grounding accepted a payload with no reference: " + resp.text[:200]
     )
 
 
 def test_project_knowledge_grounding_refuses_a_value_outside_its_vocabulary():
     """A column that accepts any string is not that column."""
-    body = {'claim_type': 'not-a-declared-value', 'project_tag': 'sample', 'question': 'sample', 'reference': 'sample', 'status': 'open', 'authority_label': 'certified'}
+    body = {'reference': 'sample', 'status': 'not-a-declared-value', 'project_tag': 'sample', 'claim_type': 'price', 'question': 'sample', 'document_name': 'sample', 'document_text': 'sample', 'citation': 'sample', 'authority_label': 'certified', 'grounded': True, 'answer': 'sample', 'notes': 'sample'}
     resp = client.post("/v1/project_knowledge_grounding", json=body, headers=AUTH)
     assert resp.status_code in (400, 403, 404, 409, 422) or _refused(resp), (
-        "project_knowledge_grounding accepted an undeclared claim_type: " + resp.text[:200]
+        "project_knowledge_grounding accepted an undeclared status: " + resp.text[:200]
     )
 
 
 def test_project_knowledge_grounding_does_not_leak_across_tenants():
     """404, never 403 and never the row: existence itself is private."""
-    body = {'claim_type': 'price', 'project_tag': 'sample', 'question': 'sample', 'reference': 'sample', 'status': 'open', 'authority_label': 'certified'}
+    body = {'reference': 'sample', 'status': 'open', 'project_tag': 'sample', 'claim_type': 'price', 'question': 'sample', 'document_name': 'sample', 'document_text': 'sample', 'citation': 'sample', 'authority_label': 'certified', 'grounded': True, 'answer': 'sample', 'notes': 'sample'}
     made = client.post("/v1/project_knowledge_grounding", json=body, headers=AUTH)
     if made.status_code != 200:
         pytest.skip("capability did not accept the sample record")
@@ -515,25 +518,25 @@ def test_project_knowledge_grounding_refuses_a_malformed_payload():
 
 def test_qualification_and_broker_summary_refuses_a_missing_required_field():
     """A partial record is refused, never completed by the handler."""
-    body = {'outcome': 'project_interested', 'reference': 'sample', 'status': 'open', 'property_type': 'apartment', 'budget': 'sample'}
+    body = {'status': 'open', 'call_sid': 'sample', 'lead_name': 'sample', 'outcome': 'project_interested', 'property_type': 'apartment', 'budget': 1.0, 'area': 'sample', 'timeline': 'sample', 'currency_setting': 'sample', 'broker_summary': 'sample', 'recommended_action': 'sample', 'notes': 'sample'}
     resp = client.post("/v1/qualification_and_broker_summary", json=body, headers=AUTH)
     assert resp.status_code in (400, 403, 404, 409, 422) or _refused(resp), (
-        "qualification_and_broker_summary accepted a payload with no call_sid: " + resp.text[:200]
+        "qualification_and_broker_summary accepted a payload with no reference: " + resp.text[:200]
     )
 
 
 def test_qualification_and_broker_summary_refuses_a_value_outside_its_vocabulary():
     """A column that accepts any string is not that column."""
-    body = {'call_sid': 'sample', 'outcome': 'not-a-declared-value', 'reference': 'sample', 'status': 'open', 'property_type': 'apartment', 'budget': 'sample'}
+    body = {'reference': 'sample', 'status': 'not-a-declared-value', 'call_sid': 'sample', 'lead_name': 'sample', 'outcome': 'project_interested', 'property_type': 'apartment', 'budget': 1.0, 'area': 'sample', 'timeline': 'sample', 'currency_setting': 'sample', 'broker_summary': 'sample', 'recommended_action': 'sample', 'notes': 'sample'}
     resp = client.post("/v1/qualification_and_broker_summary", json=body, headers=AUTH)
     assert resp.status_code in (400, 403, 404, 409, 422) or _refused(resp), (
-        "qualification_and_broker_summary accepted an undeclared outcome: " + resp.text[:200]
+        "qualification_and_broker_summary accepted an undeclared status: " + resp.text[:200]
     )
 
 
 def test_qualification_and_broker_summary_does_not_leak_across_tenants():
     """404, never 403 and never the row: existence itself is private."""
-    body = {'call_sid': 'sample', 'outcome': 'project_interested', 'reference': 'sample', 'status': 'open', 'property_type': 'apartment', 'budget': 'sample'}
+    body = {'reference': 'sample', 'status': 'open', 'call_sid': 'sample', 'lead_name': 'sample', 'outcome': 'project_interested', 'property_type': 'apartment', 'budget': 1.0, 'area': 'sample', 'timeline': 'sample', 'currency_setting': 'sample', 'broker_summary': 'sample', 'recommended_action': 'sample', 'notes': 'sample'}
     made = client.post("/v1/qualification_and_broker_summary", json=body, headers=AUTH)
     if made.status_code != 200:
         pytest.skip("capability did not accept the sample record")
@@ -568,25 +571,25 @@ def test_qualification_and_broker_summary_refuses_a_malformed_payload():
 
 def test_voice_gateway_refuses_a_missing_required_field():
     """A partial record is refused, never completed by the handler."""
-    body = {'reference': 'sample', 'status': 'open', 'call_status': 'initiated', 'direction': 'outbound', 'asr_engine': 'twilio_gather_speech', 'twilio_mode': 'stubbed'}
+    body = {'status': 'open', 'call_sid': 'sample', 'direction': 'outbound', 'to_number': 'sample', 'from_number': 'sample', 'language': 'en', 'voice': 'sample', 'asr_engine': 'twilio_gather_speech', 'twilio_mode': 'stubbed', 'call_status': 'initiated', 'twiml': 'sample', 'recording_url': 'sample', 'notes': 'sample'}
     resp = client.post("/v1/voice_gateway", json=body, headers=AUTH)
     assert resp.status_code in (400, 403, 404, 409, 422) or _refused(resp), (
-        "voice_gateway accepted a payload with no language: " + resp.text[:200]
+        "voice_gateway accepted a payload with no reference: " + resp.text[:200]
     )
 
 
 def test_voice_gateway_refuses_a_value_outside_its_vocabulary():
     """A column that accepts any string is not that column."""
-    body = {'language': 'not-a-declared-value', 'reference': 'sample', 'status': 'open', 'call_status': 'initiated', 'direction': 'outbound', 'asr_engine': 'twilio_gather_speech', 'twilio_mode': 'stubbed'}
+    body = {'reference': 'sample', 'status': 'not-a-declared-value', 'call_sid': 'sample', 'direction': 'outbound', 'to_number': 'sample', 'from_number': 'sample', 'language': 'en', 'voice': 'sample', 'asr_engine': 'twilio_gather_speech', 'twilio_mode': 'stubbed', 'call_status': 'initiated', 'twiml': 'sample', 'recording_url': 'sample', 'notes': 'sample'}
     resp = client.post("/v1/voice_gateway", json=body, headers=AUTH)
     assert resp.status_code in (400, 403, 404, 409, 422) or _refused(resp), (
-        "voice_gateway accepted an undeclared language: " + resp.text[:200]
+        "voice_gateway accepted an undeclared status: " + resp.text[:200]
     )
 
 
 def test_voice_gateway_does_not_leak_across_tenants():
     """404, never 403 and never the row: existence itself is private."""
-    body = {'language': 'en', 'reference': 'sample', 'status': 'open', 'call_status': 'initiated', 'direction': 'outbound', 'asr_engine': 'twilio_gather_speech', 'twilio_mode': 'stubbed'}
+    body = {'reference': 'sample', 'status': 'open', 'call_sid': 'sample', 'direction': 'outbound', 'to_number': 'sample', 'from_number': 'sample', 'language': 'en', 'voice': 'sample', 'asr_engine': 'twilio_gather_speech', 'twilio_mode': 'stubbed', 'call_status': 'initiated', 'twiml': 'sample', 'recording_url': 'sample', 'notes': 'sample'}
     made = client.post("/v1/voice_gateway", json=body, headers=AUTH)
     if made.status_code != 200:
         pytest.skip("capability did not accept the sample record")
@@ -621,25 +624,25 @@ def test_voice_gateway_refuses_a_malformed_payload():
 
 def test_warm_transfer_refuses_a_missing_required_field():
     """A partial record is refused, never completed by the handler."""
-    body = {'outcome': 'project_interested', 'reference': 'sample', 'status': 'open', 'summary': 'sample', 'transfer_status': 'initiated'}
+    body = {'status': 'open', 'call_sid': 'sample', 'lead_name': 'sample', 'outcome': 'project_interested', 'broker_number': 'sample', 'conference_name': 'sample', 'summary': 'sample', 'whisper_text': 'sample', 'transfer_status': 'initiated', 'whisper_delivered': True, 'notes': 'sample'}
     resp = client.post("/v1/warm_transfer", json=body, headers=AUTH)
     assert resp.status_code in (400, 403, 404, 409, 422) or _refused(resp), (
-        "warm_transfer accepted a payload with no call_sid: " + resp.text[:200]
+        "warm_transfer accepted a payload with no reference: " + resp.text[:200]
     )
 
 
 def test_warm_transfer_refuses_a_value_outside_its_vocabulary():
     """A column that accepts any string is not that column."""
-    body = {'call_sid': 'sample', 'outcome': 'not-a-declared-value', 'reference': 'sample', 'status': 'open', 'summary': 'sample', 'transfer_status': 'initiated'}
+    body = {'reference': 'sample', 'status': 'not-a-declared-value', 'call_sid': 'sample', 'lead_name': 'sample', 'outcome': 'project_interested', 'broker_number': 'sample', 'conference_name': 'sample', 'summary': 'sample', 'whisper_text': 'sample', 'transfer_status': 'initiated', 'whisper_delivered': True, 'notes': 'sample'}
     resp = client.post("/v1/warm_transfer", json=body, headers=AUTH)
     assert resp.status_code in (400, 403, 404, 409, 422) or _refused(resp), (
-        "warm_transfer accepted an undeclared outcome: " + resp.text[:200]
+        "warm_transfer accepted an undeclared status: " + resp.text[:200]
     )
 
 
 def test_warm_transfer_does_not_leak_across_tenants():
     """404, never 403 and never the row: existence itself is private."""
-    body = {'call_sid': 'sample', 'outcome': 'project_interested', 'reference': 'sample', 'status': 'open', 'summary': 'sample', 'transfer_status': 'initiated'}
+    body = {'reference': 'sample', 'status': 'open', 'call_sid': 'sample', 'lead_name': 'sample', 'outcome': 'project_interested', 'broker_number': 'sample', 'conference_name': 'sample', 'summary': 'sample', 'whisper_text': 'sample', 'transfer_status': 'initiated', 'whisper_delivered': True, 'notes': 'sample'}
     made = client.post("/v1/warm_transfer", json=body, headers=AUTH)
     if made.status_code != 200:
         pytest.skip("capability did not accept the sample record")

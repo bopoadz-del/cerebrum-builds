@@ -14,7 +14,7 @@ from app.observe import JsonFormatter, REQUEST_ID_HEADER, strip_emoji
 from app.revision import MARK_BASELINE, REVISION_N
 
 ENTITY = 'call_state_machine'
-SAMPLE = {'call_sid': 's10-row', 'current_state': 'queued', 'reference': 's10-row', 'status': 'open', 'window_state': 'open', 'previous_state': 'queued', 'attempt_count': 0}
+SAMPLE = {'reference': 's10-row', 'status': 'open', 'call_sid': 's10-row', 'lead_name': 's10-row', 'phone': 's10-row', 'current_state': 'queued', 'previous_state': 'queued', 'call_window': 's10-row', 'window_state': 'open', 'transition_event': 's10-row', 'attempt_count': 0, 'notes': 's10-row'}
 TENANT = "test-tenant"
 
 

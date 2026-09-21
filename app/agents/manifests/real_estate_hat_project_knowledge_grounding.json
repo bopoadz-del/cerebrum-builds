@@ -1,0 +1,50 @@
+{
+  "activation": {
+    "default_enabled": true,
+    "mode": "hybrid",
+    "put_off_by": [
+      "disable:real_estate.hat.project_knowledge_grounding"
+    ],
+    "triggers": [
+      {
+        "type": "intent",
+        "value": "project_knowledge_grounding"
+      },
+      {
+        "type": "capability",
+        "value": "project_knowledge_grounding"
+      }
+    ]
+  },
+  "agent_id": "real_estate.hat.project_knowledge_grounding",
+  "allowed_actions": [
+    "real_estate.project_knowledge_grounding"
+  ],
+  "block_ids": [
+    "knowledge",
+    "vector_search",
+    "ingestion_provenance",
+    "evidence_or_refuse",
+    "llm_enhancer"
+  ],
+  "discipline": "project_knowledge_grounding",
+  "display_name": "CallOps Project Knowledge Grounding Hat",
+  "extends": "real_estate.base",
+  "handoffs": [],
+  "human_authority": true,
+  "kind": "hat",
+  "manifest_version": "1.0.0",
+  "memory": {
+    "pii_policy": "never_store_pii",
+    "save": [],
+    "scope": "tenant_project"
+  },
+  "strategy": "REUSE",
+  "summary": "Specialized hat for capability 'project_knowledge_grounding' (strategy=REUSE). Adapted from TEKsystems retail hat pattern; estate/product-neutral.",
+  "tags": [
+    "hat",
+    "factory-generated",
+    "real_estate",
+    "project_knowledge_grounding"
+  ]
+}

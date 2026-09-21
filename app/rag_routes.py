@@ -1,159 +1,160 @@
-"""Hotel property notes ingest/query HTTP. Quoted paths required by PHASE 2."""
+"""HTTP routes for the property's own documents: ingest and query.
+
+Written by the factory WRITER role (codewhale exec)
+
+    POST /v1/rag/ingest   plant a manual, SOP, rate sheet or policy
+    POST /v1/rag/query    ask a question of this tenant's corpus
+    GET  /v1/rag/query    the same query, by ?q=
+
+Every answer carries its authority layer (precedence.v1) and its citations,
+and the tenant is resolved from the platform token -- never from the body.
+"""
 
 from __future__ import annotations
 
-import json
-import math
-import re
-from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, Optional
 
-from fastapi import APIRouter, HTTPException, Query, Request
-from pydantic import BaseModel, Field
+from fastapi import APIRouter, HTTPException, Request
 
-from app.auth import require_operator
-from app.block_inputs import record_mutation_audit
-from app.store import storage_root
+from app import authority, llm, retrieval
 
-router = APIRouter()
+router = APIRouter(tags=["knowledge"])
 
-HOTEL_INDEX = "hotel_property_notes_v1"
+KINDS = ("manual", "sop", "rate_sheet", "policy", "certified_standard", "other")
 
 
-class RagIngestBody(BaseModel):
-    text: str = Field(..., min_length=1)
-    doc_id: str = Field("sample", min_length=1)
-    title: str = Field("sample", min_length=1)
-    layer: int = Field(1, ge=1, le=2)
-    property_id: Optional[str] = None
+def _tenant(request: Request):
+    from app.auth import require_platform_token
+
+    return require_platform_token(request)
 
 
-def _rag_dir() -> Path:
-    path = storage_root() / "rag"
-    path.mkdir(parents=True, exist_ok=True)
-    return path
+def _body(payload: Optional[Dict[str, Any]]) -> Dict[str, Any]:
+    return dict(payload or {})
 
 
-def _index_path() -> Path:
-    return _rag_dir() / f"{HOTEL_INDEX}.jsonl"
-
-
-def _tokens(text: str) -> List[str]:
-    return [t for t in re.findall(r"[a-z0-9]+", text.lower()) if t]
-
-
-def _score(query: str, text: str) -> float:
-    q = set(_tokens(query))
-    d = _tokens(text)
-    if not q or not d:
-        return 0.0
-    overlap = len(q.intersection(d))
-    return overlap / math.sqrt(len(q) * max(len(d), 1))
-
-
-def _read_index() -> List[Dict[str, Any]]:
-    path = _index_path()
-    if not path.is_file():
-        return []
-    rows: List[Dict[str, Any]] = []
-    for line in path.read_text(encoding="utf-8").splitlines():
-        if not line.strip():
-            continue
-        try:
-            rows.append(json.loads(line))
-        except json.JSONDecodeError:
-            continue
-    return rows
+def _text_of(payload: Dict[str, Any]) -> str:
+    for key in ("text", "content", "document_text", "paragraph", "body"):
+        value = payload.get(key)
+        if isinstance(value, str) and value.strip():
+            return value
+    return ""
 
 
 @router.post("/v1/rag/ingest")
-def rag_ingest(body: RagIngestBody, request: Request) -> Dict[str, Any]:
-    principal = require_operator(request)
-    record = {
-        "doc_id": body.doc_id,
-        "title": body.title,
-        "text": body.text,
-        "layer": body.layer,
-        "property_id": body.property_id,
-        "index": HOTEL_INDEX,
-        "retrieval": "lexical_jsonl",
-        "actor": principal.subject,
-        "actor_role": principal.role,
-    }
-    path = _index_path()
-    with path.open("a", encoding="utf-8") as handle:
-        handle.write(json.dumps(record, ensure_ascii=False) + "\n")
-    record_mutation_audit(
-        principal,
-        action="rag_ingest",
-        resource=body.doc_id,
-        details={
-            "status": "open",
-            "capability": "rag_ingest",
-            "category": "hospitality",
-            "layer": body.layer,
-            "retrieval": "lexical_jsonl",
-        },
-    )
-    return {
-        "ok": True,
-        "ingested": True,
-        "doc_id": body.doc_id,
-        "layer": body.layer,
-        "retrieval": "lexical_jsonl",
-        "actor": principal.subject,
-        "actor_role": principal.role,
-    }
+def rag_ingest(payload: Dict[str, Any], request: Request) -> Dict[str, Any]:
+    tenant = _tenant(request)
+    body = _body(payload)
+    text = _text_of(body)
+    if not text.strip():
+        raise HTTPException(
+            status_code=422,
+            detail="Missing required field: text (or content/document_text)",
+        )
+    title = str(body.get("title") or body.get("name") or "").strip()
+    if not title:
+        title = text.strip().splitlines()[0][:120] if text.strip() else "untitled"
+    kind = str(body.get("kind") or body.get("document_kind") or "other").strip().lower()
+    if kind not in KINDS:
+        raise HTTPException(
+            status_code=422,
+            detail="kind must be one of: " + ", ".join(KINDS),
+        )
+    authority_label = str(body.get("authority") or body.get("authority_label") or "documents").strip().lower()
+    if authority_label not in authority.LABELS:
+        raise HTTPException(
+            status_code=422,
+            detail="authority must be one of: " + ", ".join(authority.LABELS),
+        )
+    try:
+        stored = retrieval.ingest(
+            title=title,
+            kind=kind,
+            text=text,
+            tenant_id=tenant.tenant_id,
+            authority_label=authority_label,
+            source_path=body.get("source_path") or body.get("attachment_path"),
+        )
+    except retrieval.RetrievalError as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
+    return {"ok": True, "capability": "document_and_knowledge_answers", **stored}
 
 
-@router.post("/v1/steward/rag/ingest")
-def steward_rag_ingest(body: RagIngestBody, request: Request) -> Dict[str, Any]:
-    return rag_ingest(body, request)
-
-
-@router.get("/v1/rag/query")
-def rag_query(
-    q: str = Query(..., min_length=1),
-    layer: Optional[int] = Query(None, ge=1, le=2),
-    top_k: int = Query(5, ge=1, le=20),
-) -> Dict[str, Any]:
-    hits = []
-    for row in _read_index():
-        if layer is not None and row.get("layer") != layer:
-            continue
-        score = _score(q, f"{row.get('title', '')} {row.get('text', '')}")
-        if score <= 0:
-            continue
-        hits.append({**row, "score": round(score, 6)})
-    hits.sort(key=lambda item: item["score"], reverse=True)
-    return {
-        "ok": True,
-        "query": q,
-        "hits": hits[:top_k],
-        "hit_count": min(len(hits), top_k),
-        "retrieval": "lexical_jsonl",
-    }
+def _run_query(question: str, request: Request, top_k: int) -> Dict[str, Any]:
+    tenant = _tenant(request)
+    if not question.strip():
+        raise HTTPException(status_code=422, detail="Missing required field: q")
+    try:
+        answer = llm.answer(question, tenant_id=tenant.tenant_id, top_k=top_k)
+    except retrieval.RetrievalError as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
+    return answer
 
 
 @router.post("/v1/rag/query")
-def rag_query_post(body: Dict[str, Any]) -> Dict[str, Any]:
-    q = str(body.get("q") or body.get("query") or "")
-    if not q:
-        raise HTTPException(status_code=422, detail="q required")
-    layer = body.get("layer")
-    top_k = int(body.get("top_k") or 5)
-    return rag_query(q=q, layer=layer, top_k=top_k)
+def rag_query(payload: Dict[str, Any], request: Request) -> Dict[str, Any]:
+    body = _body(payload)
+    question = ""
+    for key in ("q", "query", "question"):
+        value = body.get(key)
+        if isinstance(value, str) and value.strip():
+            question = value
+            break
+    try:
+        top_k = int(body.get("top_k") or 4)
+    except (TypeError, ValueError):
+        raise HTTPException(status_code=422, detail="top_k must be an integer")
+    return _run_query(question, request, top_k)
 
 
-@router.get("/v1/steward/rag/query")
-def steward_rag_query(
-    q: str = Query(..., min_length=1),
-    layer: Optional[int] = Query(None, ge=1, le=2),
-    top_k: int = Query(5, ge=1, le=20),
-) -> Dict[str, Any]:
-    return rag_query(q=q, layer=layer, top_k=top_k)
+def _corpus_summary(tenant_id: str) -> Dict[str, Any]:
+    """What this tenant has on file: count and layers, never another's."""
+    from app.db import connect, is_postgres
+
+    sql = (
+        "SELECT id, title, kind, authority_label, created_at FROM rag_document"
+        " WHERE tenant_id = ? ORDER BY id"
+    )
+    conn = connect()
+    try:
+        cur = conn.execute(sql.replace("?", "%s") if is_postgres() else sql, (tenant_id,))
+        rows = cur.fetchall()
+        items = []
+        for row in rows:
+            mapping = getattr(row, "_mapping", None)
+            items.append(dict(mapping) if mapping is not None else dict(row))
+    finally:
+        conn.close()
+    layers = sorted({str(item.get("authority_label") or "") for item in items} - {""})
+    return {"items": items, "total": len(items), "layers": layers}
 
 
-@router.post("/v1/steward/rag/query")
-def steward_rag_query_post(body: Dict[str, Any]) -> Dict[str, Any]:
-    return rag_query_post(body)
+@router.get("/v1/rag/query")
+def rag_query_get(request: Request, q: str = "", top_k: int = 4) -> Dict[str, Any]:
+    """Ask this tenant's corpus, or describe the surface when no question is given.
+
+    A GET with no ``q`` states what this surface answers FROM -- the
+    precedence.v1 ladder, the layers this property's own corpus can supply,
+    and the label an answer with no higher source would carry -- so an
+    operator (or the console) can see which layer an answer comes from before
+    asking. That is the same label every answer below carries.
+    """
+    if not q.strip():
+        tenant = _tenant(request)
+        return {
+            "ok": True,
+            "capability": "document_and_knowledge_answers",
+            "question": None,
+            "answers": [],
+            "label": "documents",
+            "authority": authority.ladder_document(),
+            "corpus": _corpus_summary(tenant.tenant_id),
+        }
+    return _run_query(q, request, top_k)
+
+
+@router.get("/v1/rag/corpus")
+def rag_corpus(request: Request) -> Dict[str, Any]:
+    """What this tenant has uploaded -- count and layers, never another's."""
+    tenant = _tenant(request)
+    return {"ok": True, **_corpus_summary(tenant.tenant_id)}

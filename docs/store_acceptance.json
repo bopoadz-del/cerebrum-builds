@@ -1,0 +1,140 @@
+{
+  "checks": [
+    "no_token_401",
+    "missing_field_422",
+    "enum_422",
+    "ui_served_200",
+    "rag_roundtrip_hit",
+    "single_persistence_root",
+    "ci_present_and_full_suite",
+    "handler_bodies_distinct",
+    "health_fail_closed",
+    "openapi_committed",
+    "docker_health_200",
+    "cross_tenant_404",
+    "migration_no_create_all",
+    "negative_floor",
+    "postgres_boot_200",
+    "one_live_connector",
+    "metrics_served",
+    "backup_restore_roundtrip",
+    "bench_p95",
+    "audit_clean",
+    "authorship_floor"
+  ],
+  "detail": "docker is required \u2014 Store-green runs acceptance inside the image",
+  "lines": [
+    {
+      "detail": "not measured",
+      "name": "no_token_401",
+      "status": "FAIL"
+    },
+    {
+      "detail": "not measured",
+      "name": "missing_field_422",
+      "status": "FAIL"
+    },
+    {
+      "detail": "not measured",
+      "name": "enum_422",
+      "status": "FAIL"
+    },
+    {
+      "detail": "not measured",
+      "name": "ui_served_200",
+      "status": "FAIL"
+    },
+    {
+      "detail": "not measured",
+      "name": "rag_roundtrip_hit",
+      "status": "FAIL"
+    },
+    {
+      "detail": "not measured",
+      "name": "single_persistence_root",
+      "status": "FAIL"
+    },
+    {
+      "detail": "not measured",
+      "name": "ci_present_and_full_suite",
+      "status": "FAIL"
+    },
+    {
+      "detail": "not measured",
+      "name": "handler_bodies_distinct",
+      "status": "FAIL"
+    },
+    {
+      "detail": "not measured",
+      "name": "health_fail_closed",
+      "status": "FAIL"
+    },
+    {
+      "detail": "not measured",
+      "name": "openapi_committed",
+      "status": "FAIL"
+    },
+    {
+      "detail": "not measured",
+      "name": "docker_health_200",
+      "status": "FAIL"
+    },
+    {
+      "detail": "not measured",
+      "name": "cross_tenant_404",
+      "status": "FAIL"
+    },
+    {
+      "detail": "not measured",
+      "name": "migration_no_create_all",
+      "status": "FAIL"
+    },
+    {
+      "detail": "not measured",
+      "name": "negative_floor",
+      "status": "FAIL"
+    },
+    {
+      "detail": "not measured",
+      "name": "postgres_boot_200",
+      "status": "FAIL"
+    },
+    {
+      "detail": "not measured",
+      "name": "one_live_connector",
+      "status": "FAIL"
+    },
+    {
+      "detail": "not measured",
+      "name": "metrics_served",
+      "status": "FAIL"
+    },
+    {
+      "detail": "not measured",
+      "name": "backup_restore_roundtrip",
+      "status": "FAIL"
+    },
+    {
+      "detail": "not measured",
+      "name": "bench_p95",
+      "status": "FAIL"
+    },
+    {
+      "detail": "not measured",
+      "name": "audit_clean",
+      "status": "FAIL"
+    },
+    {
+      "detail": "not measured",
+      "name": "authorship_floor",
+      "status": "FAIL"
+    }
+  ],
+  "missing": true,
+  "ok": false,
+  "passed": 0,
+  "schema_version": "store_acceptance.v1",
+  "score": "0/21",
+  "total": 21,
+  "via": "scripts/acceptance.py"
+}

@@ -1,0 +1,35 @@
+{
+  "agent_id": "callops.hat.voice_gateway",
+  "kind": "hat",
+  "product_id": "real-estate",
+  "capability_id": "voice_gateway",
+  "activation": {
+    "default_enabled": false,
+    "mode": "manual",
+    "put_off_by": [
+      "disable:callops.hat.voice_gateway"
+    ],
+    "triggers": [
+      {
+        "type": "capability",
+        "value": "voice_gateway"
+      }
+    ]
+  },
+  "allowed_actions": [
+    "callops.voice_gateway"
+  ],
+  "scope": {
+    "reads": [
+      "this capability's own columns"
+    ],
+    "writes": [
+      "one row in this capability's table, via the route"
+    ],
+    "never": [
+      "another capability's table",
+      "vendor/**",
+      "tests/**"
+    ]
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "agent_id": "callops.hat.project_knowledge_grounding",
+  "kind": "hat",
+  "product_id": "real-estate",
+  "capability_id": "project_knowledge_grounding",
+  "activation": {
+    "default_enabled": false,
+    "mode": "manual",
+    "put_off_by": [
+      "disable:callops.hat.project_knowledge_grounding"
+    ],
+    "triggers": [
+      {
+        "type": "capability",
+        "value": "project_knowledge_grounding"
+      }
+    ]
+  },
+  "allowed_actions": [
+    "callops.project_knowledge_grounding"
+  ],
+  "scope": {
+    "reads": [
+      "this capability's own columns"
+    ],
+    "writes": [
+      "one row in this capability's table, via the route"
+    ],
+    "never": [
+      "another capability's table",
+      "vendor/**",
+      "tests/**"
+    ]
+  }
+}

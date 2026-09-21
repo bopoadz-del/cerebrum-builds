@@ -1,0 +1,10 @@
+{
+  "ordered": [
+    {"layer": "certified", "rank": 1},
+    {"layer": "documents", "rank": 2},
+    {"layer": "formulas", "rank": 3},
+    {"layer": "procedures", "rank": 4}
+  ],
+  "rule": "lowest rank wins; the model is told the winner and never chooses",
+  "schema": "precedence.v1"
+}

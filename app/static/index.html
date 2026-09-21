@@ -1,164 +1,969 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Hotel Booking Platform</title>
-  <style>
-    :root { font-family: "IBM Plex Sans", "Segoe UI", sans-serif; background: #10141c; color: #e8eef6; }
-    body { margin: 0; }
-    header { padding: 1.2rem 1.5rem; border-bottom: 1px solid #2a3548; background: #141a24; }
-    h1 { margin: 0; font-size: 1.4rem; }
-    p.sub { margin: 0.35rem 0 0; color: #93a3bd; }
-    nav { display: flex; flex-wrap: wrap; gap: 0.4rem; padding: 0.8rem 1.5rem; }
-    nav button { background: #1c2430; color: #e8eef6; border: 1px solid #3a4c68; padding: 0.35rem 0.7rem; cursor: pointer; }
-    nav button.active { background: #0d4d73; }
-    main { padding: 1rem 1.5rem 3rem; }
-    label { display: block; margin: 0.6rem 0 0.2rem; }
-    input, textarea, select { width: 100%; max-width: 36rem; background: #0d1118; color: #e8eef6; border: 1px solid #3a4c68; padding: 0.4rem; }
-    button.act { margin-top: 0.8rem; background: #0d4d73; color: #fff; border: 0; padding: 0.5rem 1rem; cursor: pointer; }
-    pre { background: #0d1118; padding: 0.8rem; overflow: auto; }
-    .mods { display: grid; gap: 0.6rem; grid-template-columns: repeat(auto-fill, minmax(14rem, 1fr)); }
-    .card { border: 1px solid #2a3548; padding: 0.7rem; }
-  </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CallOps — operations desk</title>
+<style>
+ :root { color-scheme: light dark; --line:#8883; --ok:#16794a; --bad:#a3282f; --ink:#6662; }
+ * { box-sizing: border-box; }
+ body { font: 15px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif; margin: 0 auto; padding: 24px; max-width: 1120px; }
+ h1 { font-size: 21px; margin: 0 0 4px; }
+ h2 { font-size: 16px; margin: 26px 0 8px; }
+ h3 { font-size: 14px; margin: 0 0 6px; }
+ code { font-size: 12px; }
+ .dim { opacity: .72; font-size: 13px; }
+ .row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+ .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px; }
+ .fields { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 10px; }
+ .card { border: 1px solid var(--line); border-radius: 8px; padding: 12px; margin: 0 0 12px; }
+ .field { display: flex; flex-direction: column; gap: 3px; }
+ .field label { font-size: 12px; opacity: .8; }
+ .field .req { color: var(--bad); }
+ input, select, textarea, button { font: inherit; padding: 6px 8px; border-radius: 6px; border: 1px solid var(--line); background: transparent; color: inherit; }
+ textarea { width: 100%; min-height: 76px; font: 13px/1.45 ui-monospace, SFMono-Regular, Menlo, monospace; }
+ button { cursor: pointer; }
+ button.primary { border-color: var(--ok); font-weight: 600; }
+ pre { background: var(--ink); padding: 8px; border-radius: 6px; overflow: auto; max-height: 340px; font-size: 12px; margin: 8px 0 0; }
+ table { border-collapse: collapse; width: 100%; font-size: 13px; }
+ th, td { text-align: left; border-bottom: 1px solid var(--line); padding: 5px 6px; vertical-align: top; }
+ th { font-size: 12px; opacity: .75; font-weight: 600; }
+ .err { color: var(--bad); }
+ .ok { color: var(--ok); }
+ .pill { font-size: 12px; border: 1px solid var(--line); border-radius: 999px; padding: 1px 8px; white-space: nowrap; }
+ .pill.good { border-color: var(--ok); color: var(--ok); }
+ .pill.bad { border-color: var(--bad); color: var(--bad); }
+ .answer { border-left: 3px solid var(--ok); padding: 6px 10px; margin: 10px 0 0; }
+ .answer.withheld { border-left-color: var(--bad); }
+ details { margin-top: 8px; }
+ summary { cursor: pointer; font-size: 13px; opacity: .85; }
+ .cap-card h3 { word-break: break-all; }
+</style>
 </head>
 <body>
-  <header>
-    <h1>Hotel Booking Platform</h1>
-    <p class="sub">Hospitality operators — bookings, properties, pricing, reviews, and guest notices. Operator / admin. Mutations require a bearer operator token. OPERATOR_TOKEN is not stored in git.</p>
-  </header>
-  <nav id="nav"></nav>
-  <main>
-    <section id="command_center" class="panel">
-      <h2>Command center</h2>
-      <div class="mods" id="modules"></div>
-    </section>
-    <section id="live" class="panel">
-      <h2 id="cap-title">booking_management</h2>
-      <label>Operator token <input id="operator-token" type="password" autocomplete="off" placeholder="OPERATOR_TOKEN" /></label>
-      <label>Capability
-        <select id="capability"></select>
-      </label>
-      <label>Reference <input id="reference" value="sample" /></label>
-      <label>Status <input id="status" value="open" /></label>
-      <button class="act" id="post-btn" type="button">POST create</button>
-      <button class="act" id="get-btn" type="button">GET records</button>
-      <pre id="out">Ready.</pre>
-    </section>
-    <section id="operational_chat" class="panel">
-      <h2>Operational chat — property notes</h2>
-      <label>Title <input id="rag-title" value="Hotel occupancy pack" /></label>
-      <label>Text <textarea id="rag-text" rows="3">Hotel occupancy, peak season night rate, and guest booking notes for the hospitality pilot.</textarea></label>
-      <button class="act" id="ingest-btn" type="button">Ingest pack</button>
-      <label>Query <input id="rag-q" value="hotel occupancy" /></label>
-      <button class="act" id="query-btn" type="button">Query notes</button>
-    </section>
-    <section id="resident_engineer" class="panel">
-      <h2>Resident engineer</h2>
-      <p class="sub">Same live POST/GET routes. No second API.</p>
-    </section>
-  </main>
-  <script>
-    const CAPS = [
-      "booking_management",
-      "property_management",
-      "dynamic_pricing",
-      "review_management",
-      "analytics_dashboard",
-      "notification_system",
-      "search_recommendation"
-    ];
-    const UI = ["command_center", "operational_chat", "resident_engineer"];
-    const MAP = {
-      command_center: "booking_management",
-      operational_chat: "property_management",
-      resident_engineer: "analytics_dashboard"
-    };
-    let current = "booking_management";
-    const nav = document.getElementById("nav");
-    const modules = document.getElementById("modules");
-    const capSelect = document.getElementById("capability");
-    UI.forEach((name) => {
-      const b = document.createElement("button");
-      b.textContent = name;
-      b.onclick = () => select(MAP[name] || "booking_management", b);
-      nav.appendChild(b);
-      const card = document.createElement("div");
-      card.className = "card";
-      card.textContent = name;
-      modules.appendChild(card);
+
+<h1>CallOps — operations desk</h1>
+<p class="dim">Outbound AI voice-calling for the brokerage. This desk talks to the platform's own routes
+(<code>GET /v1/capabilities</code>, <code>POST /v1/&lt;capability&gt;</code>, <code>GET /v1/&lt;capability&gt;</code>,
+<code>GET /v1/&lt;capability&gt;/{id}</code>) with your bearer token. Nothing is mocked client-side.</p>
+
+<section class="card">
+  <div class="row">
+    <label for="token">Bearer token</label>
+    <input id="token" type="password" size="24" value="dev-local-token" autocomplete="off" spellcheck="false">
+    <button id="load">Load capabilities</button>
+    <span id="capsStatus" class="dim">not loaded</span>
+  </div>
+  <p class="dim">Every <code>/v1</code> call carries <code>Authorization: Bearer &lt;token&gt;</code>.
+  The dev default is <code>dev-local-token</code>; <code>PLATFORM_TOKEN</code> on the server changes it.</p>
+</section>
+
+<h2>Capabilities discovered</h2>
+<p class="dim">Read from <code>GET /v1/capabilities</code>. Pick one here or in the desk below; the desk drives it
+against the real route, then re-reads the list to show the record persisted.</p>
+<div id="caps" class="grid"></div>
+
+<h2>Project corpus</h2>
+<p class="dim">Ask what the ingested PSI project sheets actually say. The answer carries the
+authority layer it came from (<code>precedence.v1</code>) and its citations, or it is withheld —
+cite-or-refuse applies to the project numbers the bot is allowed to quote.</p>
+<section class="card">
+  <div class="row">
+    <label for="question">Question</label>
+    <input id="question" size="46" value="What is the starting price at PSI Marina?" spellcheck="false">
+    <button id="ask" class="primary">Ask the corpus</button>
+    <span id="askStatus" class="dim">nothing asked yet</span>
+  </div>
+  <div class="row" id="askHead"></div>
+  <div id="askAnswer"></div>
+  <pre id="askBody"></pre>
+</section>
+
+<h2>Campaign outcomes</h2>
+<p class="dim">Every call event the platform wrote is in the ledger; this reads it back through
+<code>GET /v1/analytics/campaign_metrics</code> — attempted, answered, the three-outcome interest
+split, transfers and conversion, per campaign. The counts are arithmetic over your own rows
+(<code>app/formulas</code>), and the answer says so: layer <span class="pill">formulas</span>.
+Nothing here is written by the desk, and nothing is estimated.</p>
+<section class="card">
+  <div class="row">
+    <label for="campaign">Campaign</label>
+    <input id="campaign" size="24" placeholder="all campaigns" spellcheck="false">
+    <button id="metrics" class="primary">Load metrics</button>
+    <span id="metricsStatus" class="dim">not loaded</span>
+  </div>
+  <div class="row" id="metricsHead"></div>
+  <div id="metricsBody"></div>
+</section>
+
+<h2>Operations desk</h2>
+<section class="card">
+  <div class="row">
+    <label for="cap">Capability</label>
+    <select id="cap"></select>
+    <button id="send" class="primary">Send POST</button>
+    <button id="reset">Reset values</button>
+    <span id="capMeta" class="dim"></span>
+  </div>
+  <p class="dim" id="capSummary">Load the capabilities to populate this form.</p>
+  <div id="form" class="fields"></div>
+  <details>
+    <summary>Payload preview — what the desk will POST</summary>
+    <pre id="payload">{}</pre>
+  </details>
+</section>
+
+<h2>Response</h2>
+<section class="card">
+  <div class="row" id="respHead"><span class="dim">nothing sent yet</span></div>
+  <div id="answer"></div>
+  <div id="respBody"></div>
+</section>
+
+<h2>Recent records</h2>
+<section class="card">
+  <div class="row">
+    <span id="recStatus" class="dim">no capability driven yet</span>
+    <button id="refresh">Reload records</button>
+  </div>
+  <div id="records"></div>
+  <div id="recordDetail"></div>
+</section>
+
+<p class="dim">Self-contained page: no CDN, no external fonts, no build step. It is served by the FastAPI app at
+<code>GET /</code> and works offline.</p>
+
+<script>
+"use strict";
+
+/* The precedence ladder this platform answers with (precedence.v1). */
+var LADDER = ["certified", "documents", "formulas", "procedures"];
+
+/* Field lists per capability, hard-coded from the server-side contract
+   (app/models.py plus each route's edge guard). Required fields first; the
+   values are option values the API accepts, so a Send is a valid record.
+   Keep this literal valid JSON: the desk parses what it renders. */
+/* FIELDS-JSON-START */
+var CAPABILITY_FIELDS = {
+  "lead_intake_and_dial_queue": {
+    "summary": "Capture an inbound lead file and place it on the dial queue (language, project, call cap, concurrency).",
+    "fields": [
+      { "name": "reference", "label": "reference", "kind": "text", "value": "LEAD-1001", "required": true },
+      { "name": "status", "label": "status", "kind": "select", "options": ["open", "in_progress", "closed"], "value": "open", "required": true },
+      { "name": "lead_name", "label": "lead_name", "kind": "text", "value": "Noura Al-Farsi", "required": true },
+      { "name": "phone", "label": "phone (E.164)", "kind": "text", "value": "+971500001001", "required": true },
+      { "name": "language", "label": "language", "kind": "select", "options": ["en", "ar"], "value": "en", "required": true },
+      { "name": "project_tag", "label": "project_tag", "kind": "text", "value": "PSI-MARINA", "required": true },
+      { "name": "daily_call_cap", "label": "daily_call_cap", "kind": "number", "value": 40, "min": 1, "max": 100000 },
+      { "name": "concurrency", "label": "concurrency", "kind": "number", "value": 2, "min": 1, "max": 50 },
+      { "name": "attempt_count", "label": "attempt_count", "kind": "number", "value": 0, "min": 0, "max": 3 },
+      { "name": "retry_backoff_minutes", "label": "retry_backoff_minutes", "kind": "number", "value": 15, "min": 0, "max": 1440 },
+      { "name": "queue_status", "label": "queue_status", "kind": "select", "options": ["queued", "dialing", "paused", "exhausted"], "value": "queued" },
+      { "name": "notes", "label": "notes", "kind": "textarea", "value": "" }
+    ]
+  },
+  "call_state_machine": {
+    "summary": "One call's lifecycle keyed to its Call SID: queued -> dialing -> answered -> pitched -> qualified -> transferred | callback | closed, with the call window as a guard.",
+    "fields": [
+      { "name": "reference", "label": "reference", "kind": "text", "value": "CALL-1001", "required": true },
+      { "name": "status", "label": "status", "kind": "select", "options": ["open", "in_progress", "closed"], "value": "open", "required": true },
+      { "name": "call_sid", "label": "call_sid", "kind": "text", "value": "CA1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d", "required": true },
+      { "name": "current_state", "label": "current_state", "kind": "select", "options": ["queued", "dialing", "answered", "pitched", "qualified", "transferred", "callback", "closed"], "value": "queued", "required": true },
+      { "name": "previous_state", "label": "previous_state", "kind": "select", "options": ["queued", "dialing", "answered", "pitched", "qualified", "transferred", "callback", "closed"], "value": "queued" },
+      { "name": "window_state", "label": "window_state", "kind": "select", "options": ["open", "closed"], "value": "open" },
+      { "name": "call_window", "label": "call_window", "kind": "text", "value": "09:00-18:00" },
+      { "name": "transition_event", "label": "transition_event", "kind": "text", "value": "" },
+      { "name": "attempt_count", "label": "attempt_count", "kind": "number", "value": 0, "min": 0, "max": 3 },
+      { "name": "notes", "label": "notes", "kind": "textarea", "value": "" }
+    ]
+  },
+  "project_knowledge_grounding": {
+    "summary": "Answer a price / payment-plan / handover-date question from the project's own sheet, with the authority layer attached — or withhold the claim.",
+    "fields": [
+      { "name": "reference", "label": "reference", "kind": "text", "value": "GRD-1001", "required": true },
+      { "name": "status", "label": "status", "kind": "select", "options": ["open", "in_progress", "closed"], "value": "open", "required": true },
+      { "name": "project_tag", "label": "project_tag", "kind": "text", "value": "PSI-MARINA", "required": true },
+      { "name": "claim_type", "label": "claim_type", "kind": "select", "options": ["price", "payment_plan", "handover_date", "other"], "value": "price", "required": true },
+      { "name": "question", "label": "question", "kind": "text", "value": "What is the starting price of a one-bedroom at PSI Marina?", "required": true },
+      { "name": "authority_label", "label": "authority_label", "kind": "select", "options": ["certified", "documents", "formulas", "procedures"], "value": "certified" },
+      { "name": "document_name", "label": "document_name", "kind": "text", "value": "PSI Marina price sheet" },
+      { "name": "document_text", "label": "document_text (ingested before the claim is judged)", "kind": "textarea", "value": "PSI Marina Residences — project sheet\nStarting price: AED 1,250,000 for a one-bedroom apartment.\nPayment plan: 40% during construction, 60% on handover.\nHandover date: Q1 2027." },
+      { "name": "notes", "label": "notes", "kind": "textarea", "value": "" }
+    ]
+  },
+  "voice_gateway": {
+    "summary": "Originate an outbound call, or take a Twilio status callback keyed to the Call SID. The transport is stubbed offline; no socket is opened.",
+    "fields": [
+      { "name": "reference", "label": "reference", "kind": "text", "value": "VGW-1001", "required": true },
+      { "name": "status", "label": "status", "kind": "select", "options": ["open", "in_progress", "closed"], "value": "open", "required": true },
+      { "name": "language", "label": "language", "kind": "select", "options": ["en", "ar"], "value": "en", "required": true },
+      { "name": "direction", "label": "direction", "kind": "select", "options": ["outbound", "inbound"], "value": "outbound" },
+      { "name": "to_number", "label": "to_number (originate)", "kind": "text", "value": "+971500001002" },
+      { "name": "from_number", "label": "from_number", "kind": "text", "value": "+971400000000" },
+      { "name": "call_sid", "label": "call_sid (status callback only)", "kind": "text", "value": "" },
+      { "name": "call_status", "label": "call_status (empty = originate)", "kind": "select", "options": ["", "initiated", "ringing", "answered", "completed", "failed", "busy", "no-answer"], "value": "" },
+      { "name": "twilio_mode", "label": "twilio_mode", "kind": "select", "options": ["stubbed", "live"], "value": "stubbed" },
+      { "name": "voice", "label": "voice", "kind": "text", "value": "Polly.Joanna-Neural" },
+      { "name": "asr_engine", "label": "asr_engine", "kind": "select", "options": ["twilio_gather_speech"], "value": "twilio_gather_speech" },
+      { "name": "notes", "label": "notes (spoken prompt on originate)", "kind": "textarea", "value": "Hello, this is the PSI Marina property line." }
+    ]
+  },
+  "warm_transfer": {
+    "summary": "Bridge a qualified lead to the broker with a private whisper summary and a conference room.",
+    "fields": [
+      { "name": "reference", "label": "reference", "kind": "text", "value": "XFER-1001", "required": true },
+      { "name": "status", "label": "status", "kind": "select", "options": ["open", "in_progress", "closed"], "value": "open", "required": true },
+      { "name": "call_sid", "label": "call_sid", "kind": "text", "value": "CA1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d", "required": true },
+      { "name": "outcome", "label": "outcome", "kind": "select", "options": ["project_interested", "other_re_interested", "not_interested"], "value": "project_interested", "required": true },
+      { "name": "summary", "label": "summary (the broker's whisper)", "kind": "textarea", "value": "Noura Al-Farsi, PSI Marina one-bedroom, AED 1.25M, handover Q1 2027 — qualified and ready for the broker.", "required": true },
+      { "name": "broker_number", "label": "broker_number (E.164)", "kind": "text", "value": "+971500001003" },
+      { "name": "lead_name", "label": "lead_name", "kind": "text", "value": "Noura Al-Farsi" },
+      { "name": "conference_name", "label": "conference_name", "kind": "text", "value": "" },
+      { "name": "whisper_text", "label": "whisper_text", "kind": "textarea", "value": "" },
+      { "name": "transfer_status", "label": "transfer_status", "kind": "select", "options": ["initiated", "bridged", "failed", "declined"], "value": "initiated" },
+      { "name": "notes", "label": "notes", "kind": "textarea", "value": "" }
+    ]
+  },
+  "qualification_and_broker_summary": {
+    "summary": "Screen a finished call against the fixed outcome vocabulary and write the broker summary with the next action named.",
+    "fields": [
+      { "name": "reference", "label": "reference", "kind": "text", "value": "QUAL-1001", "required": true },
+      { "name": "status", "label": "status", "kind": "select", "options": ["open", "in_progress", "closed"], "value": "open", "required": true },
+      { "name": "call_sid", "label": "call_sid", "kind": "text", "value": "CA1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d", "required": true },
+      { "name": "outcome", "label": "outcome", "kind": "select", "options": ["project_interested", "other_re_interested", "not_interested"], "value": "project_interested", "required": true },
+      { "name": "lead_name", "label": "lead_name", "kind": "text", "value": "Noura Al-Farsi" },
+      { "name": "property_type", "label": "property_type", "kind": "select", "options": ["apartment", "villa", "townhouse", "plot", "office"], "value": "apartment" },
+      { "name": "budget", "label": "budget", "kind": "number", "value": 1250000, "min": 0 },
+      { "name": "area", "label": "area", "kind": "text", "value": "Dubai Marina" },
+      { "name": "timeline", "label": "timeline", "kind": "text", "value": "Q1 2027" },
+      { "name": "currency_setting", "label": "currency_setting", "kind": "text", "value": "AED" },
+      { "name": "notes", "label": "notes", "kind": "textarea", "value": "" }
+    ]
+  },
+  "outcome_capture_and_ledger": {
+    "summary": "Append one call event to the audit ledger and sync the dialer's state with a vector clock.",
+    "fields": [
+      { "name": "reference", "label": "reference", "kind": "text", "value": "LEDG-1001", "required": true },
+      { "name": "status", "label": "status", "kind": "select", "options": ["open", "in_progress", "closed"], "value": "open", "required": true },
+      { "name": "call_sid", "label": "call_sid", "kind": "text", "value": "CA1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d", "required": true },
+      { "name": "event_type", "label": "event_type", "kind": "select", "options": ["attempt", "answer", "outcome", "transfer", "disposition"], "value": "outcome", "required": true },
+      { "name": "outcome", "label": "outcome", "kind": "select", "options": ["project_interested", "other_re_interested", "not_interested"], "value": "project_interested" },
+      { "name": "campaign", "label": "campaign", "kind": "text", "value": "PSI-MARINA-Q4" },
+      { "name": "attempt_count", "label": "attempt_count", "kind": "number", "value": 1, "min": 0, "max": 3 },
+      { "name": "ledger_index", "label": "ledger_index", "kind": "number", "value": 0, "min": 0 },
+      { "name": "notes", "label": "notes", "kind": "textarea", "value": "" }
+    ]
+  },
+  "crm_destination_placeholder": {
+    "summary": "The CRM attach point. Nothing is pushed until an operator names a system: an unnamed destination is recorded as stubbed, never invented.",
+    "fields": [
+      { "name": "reference", "label": "reference", "kind": "text", "value": "CRM-1001", "required": true },
+      { "name": "status", "label": "status", "kind": "select", "options": ["open", "in_progress", "closed"], "value": "open", "required": true },
+      { "name": "crm_system", "label": "crm_system", "kind": "select", "options": ["unstated", "salesforce", "hubspot", "zoho"], "value": "salesforce", "required": true },
+      { "name": "destination_url", "label": "destination_url", "kind": "text", "value": "https://crm.invalid/webhook/callops" },
+      { "name": "delivery_state", "label": "delivery_state", "kind": "select", "options": ["queued", "stubbed", "refused"], "value": "queued" },
+      { "name": "mock_mode", "label": "mock_mode", "kind": "bool", "value": false },
+      { "name": "payload_shape", "label": "payload_shape", "kind": "textarea", "value": "" },
+      { "name": "notes", "label": "notes", "kind": "textarea", "value": "" }
+    ]
+  },
+  "notification": {
+    "summary": "Ping the broker when a lead qualifies (or a transfer lands / a call fails): one delivery plus one notification event.",
+    "fields": [
+      { "name": "reference", "label": "reference", "kind": "text", "value": "NOTIF-1001", "required": true },
+      { "name": "status", "label": "status", "kind": "select", "options": ["open", "in_progress", "closed"], "value": "open", "required": true },
+      { "name": "channel", "label": "channel", "kind": "select", "options": ["email", "sms", "mcp", "webhook"], "value": "mcp", "required": true },
+      { "name": "trigger_event", "label": "trigger_event", "kind": "select", "options": ["lead_qualified", "transfer_completed", "call_failed", "campaign_summary"], "value": "lead_qualified", "required": true },
+      { "name": "recipient", "label": "recipient", "kind": "text", "value": "broker@psi-marina.example" },
+      { "name": "subject", "label": "subject (blank = named by the trigger)", "kind": "text", "value": "" },
+      { "name": "message", "label": "message", "kind": "textarea", "value": "Noura Al-Farsi qualified on PSI Marina (AED 1.25M, one-bedroom) — ready for a warm transfer." },
+      { "name": "delivery_state", "label": "delivery_state", "kind": "select", "options": ["queued", "sent", "failed"], "value": "queued" },
+      { "name": "notes", "label": "notes", "kind": "textarea", "value": "" }
+    ]
+  },
+  "local_drive": {
+    "summary": "Read, write, list or delete one file inside the configured local drive root — path-confined, never outside it.",
+    "fields": [
+      { "name": "reference", "label": "reference", "kind": "text", "value": "LDRV-1001", "required": true },
+      { "name": "status", "label": "status", "kind": "select", "options": ["open", "in_progress", "closed"], "value": "open", "required": true },
+      { "name": "relative_path", "label": "relative_path", "kind": "text", "value": "calls/LDRV-1001.txt", "required": true },
+      { "name": "operation", "label": "operation", "kind": "select", "options": ["read", "write", "list", "delete"], "value": "write", "required": true },
+      { "name": "root_path", "label": "root_path (blank = configured root)", "kind": "text", "value": "" },
+      { "name": "content_preview", "label": "content_preview", "kind": "textarea", "value": "PSI Marina — call LDRV-1001: qualified, broker summary attached." },
+      { "name": "bytes_written", "label": "bytes_written", "kind": "number", "value": 0, "min": 0 },
+      { "name": "notes", "label": "notes", "kind": "textarea", "value": "" }
+    ]
+  },
+  "google_drive": {
+    "summary": "The Google Drive connector. Offline it runs stubbed and says so by name instead of reporting a transfer that never happened.",
+    "fields": [
+      { "name": "reference", "label": "reference", "kind": "text", "value": "GDRV-1001", "required": true },
+      { "name": "status", "label": "status", "kind": "select", "options": ["open", "in_progress", "closed"], "value": "open", "required": true },
+      { "name": "GOOGLE_CLIENT_ID", "label": "GOOGLE_CLIENT_ID (deploy-time setting, read from the environment; leaving it blank runs the connector stubbed)", "kind": "text", "value": "", "required": false },
+      { "name": "GOOGLE_CLIENT_SECRET", "label": "GOOGLE_CLIENT_SECRET (deploy-time setting)", "kind": "text", "value": "", "required": false },
+      { "name": "GOOGLE_REFRESH_TOKEN", "label": "GOOGLE_REFRESH_TOKEN (deploy-time setting)", "kind": "text", "value": "", "required": false },
+      { "name": "drive_mode", "label": "drive_mode", "kind": "select", "options": ["stubbed", "live"], "value": "stubbed", "required": true },
+      { "name": "operation", "label": "operation", "kind": "select", "options": ["upload", "download", "list"], "value": "list", "required": true },
+      { "name": "folder_id", "label": "folder_id", "kind": "text", "value": "root" },
+      { "name": "file_name", "label": "file_name", "kind": "text", "value": "PSI-Marina-price-sheet.pdf" },
+      { "name": "credential_setting", "label": "credential_setting", "kind": "text", "value": "" },
+      { "name": "notes", "label": "notes", "kind": "textarea", "value": "" }
+    ]
+  },
+  "mcp_adapter": {
+    "summary": "The MCP attach point: list the tool catalogue for a scope. Offline it falls back to the committed block contracts and names the fallback.",
+    "fields": [
+      { "name": "reference", "label": "reference", "kind": "text", "value": "MCP-1001", "required": true },
+      { "name": "status", "label": "status", "kind": "select", "options": ["open", "in_progress", "closed"], "value": "open", "required": true },
+      { "name": "catalog_scope", "label": "catalog_scope", "kind": "select", "options": ["platform", "vendor", "tenant"], "value": "platform", "required": true },
+      { "name": "tool_name", "label": "tool_name (blank = list)", "kind": "text", "value": "" },
+      { "name": "request_shape", "label": "request_shape", "kind": "textarea", "value": "" },
+      { "name": "response_shape", "label": "response_shape", "kind": "textarea", "value": "" },
+      { "name": "notes", "label": "notes", "kind": "textarea", "value": "" }
+    ]
+  }
+};
+/* FIELDS-JSON-END */
+
+var CAPS = [];
+var CURRENT = null;
+
+function $(id) { return document.getElementById(id); }
+
+function el(tag, className, text) {
+  var node = document.createElement(tag);
+  if (className) node.className = className;
+  if (text !== undefined && text !== null) node.textContent = String(text);
+  return node;
+}
+
+function jsonText(value) {
+  try { return JSON.stringify(value, null, 2); } catch (e) { return String(value); }
+}
+
+function token() { return ($("token").value || "").trim(); }
+
+function headers() {
+  return { "Authorization": "Bearer " + token(), "Content-Type": "application/json" };
+}
+
+function call(path, init) {
+  var options = { headers: headers(), method: (init && init.method) || "GET" };
+  if (init && init.body !== undefined) options.body = init.body;
+  return fetch(path, options).then(function (res) {
+    return res.text().then(function (text) {
+      var body = null;
+      if (text) {
+        try { body = JSON.parse(text); } catch (e) { body = text; }
+      }
+      return { status: res.status, body: body };
     });
-    CAPS.forEach((name) => {
-      const card = document.createElement("div");
-      card.className = "card";
-      card.textContent = name;
-      modules.appendChild(card);
-      const opt = document.createElement("option");
-      opt.value = name;
-      opt.textContent = name;
-      capSelect.appendChild(opt);
+  }, function (err) {
+    return { status: 0, body: { ok: false, error: String(err && err.message ? err.message : err) } };
+  });
+}
+
+function authorityValue(value) {
+  var v = String(value === undefined || value === null ? "" : value).trim().toLowerCase();
+  return LADDER.indexOf(v) >= 0 ? v : "";
+}
+
+/* The authority layer on any answer we show: the answer's own label first,
+   then the label on the evidence hits behind it. */
+function authorityOf(body) {
+  if (!body || typeof body !== "object") return "";
+  var direct = authorityValue(body.authority_label);
+  if (direct) return direct;
+  if (body.result && typeof body.result === "object") {
+    var inResult = authorityValue(body.result.authority_label);
+    if (inResult) return inResult;
+  }
+  var queue = [body];
+  var seen = 0;
+  while (queue.length && seen < 400) {
+    seen += 1;
+    var node = queue.shift();
+    if (!node || typeof node !== "object") continue;
+    if (Object.prototype.toString.call(node) === "[object Array]") {
+      for (var i = 0; i < node.length; i += 1) queue.push(node[i]);
+      continue;
+    }
+    var own = authorityValue(node.authority);
+    if (own) return own;
+    var keys = Object.keys(node);
+    for (var k = 0; k < keys.length; k += 1) queue.push(node[keys[k]]);
+  }
+  return "";
+}
+
+function authorityPill(label) {
+  return el("span", "pill good", "authority: " + label);
+}
+
+/* The capability's own payload. The route answers
+   {ok, capability, result, stored}; ``result`` is the action envelope
+   (action_id / status / output) and the handler's fields -- answer,
+   authority_label, evidence, transition -- live in ``result.output``. Older
+   or unwrapped answers carry them directly on ``result``, so both are read. */
+function handlerPayload(body) {
+  if (!body || typeof body !== "object") return null;
+  var result = body.result;
+  if (!result || typeof result !== "object") return null;
+  if (result.output && typeof result.output === "object") return result.output;
+  return result;
+}
+
+/* ---------------------------------------------------------------- discovery */
+
+function loadCapabilities() {
+  $("capsStatus").textContent = "loading GET /v1/capabilities …";
+  $("capsStatus").className = "dim";
+  return call("/v1/capabilities").then(function (res) {
+    if (res.status !== 200 || !res.body || !res.body.items) {
+      CAPS = [];
+      $("capsStatus").textContent = "GET /v1/capabilities answered HTTP " + res.status +
+        " — check that the platform is up";
+      $("capsStatus").className = "err";
+      renderCaps([]);
+      populatePicker([]);
+      return;
+    }
+    CAPS = res.body.items;
+    $("capsStatus").textContent = CAPS.length + " capabilities served";
+    $("capsStatus").className = "dim";
+    renderCaps(CAPS);
+    populatePicker(CAPS);
+  });
+}
+
+function renderCaps(items) {
+  var host = $("caps");
+  host.textContent = "";
+  items.forEach(function (item) {
+    var id = item.id || item.capability_id || "";
+    var card = el("div", "card cap-card");
+    card.appendChild(el("h3", null, id));
+    card.appendChild(el("div", "dim", "entity " + (item.entity || "—")));
+    card.appendChild(el("div", "dim", "source " + (item.source || "—")));
+    card.appendChild(el("div", "dim", "blocks: " +
+      ((item.blocks && item.blocks.length) ? item.blocks.join(", ") : "none declared")));
+    var http = item.http || {};
+    ["create", "list", "get"].forEach(function (verb) {
+      if (http[verb]) card.appendChild(el("div", "dim", http[verb]));
     });
-    capSelect.onchange = () => select(capSelect.value);
-    function select(id, btn) {
-      current = id;
-      document.getElementById("cap-title").textContent = id;
-      capSelect.value = id;
-      [...nav.children].forEach((el) => el.classList.remove("active"));
-      if (btn) btn.classList.add("active");
-    }
-    function authHeaders() {
-      const headers = {"Content-Type": "application/json"};
-      const token = (document.getElementById("operator-token").value || "").trim();
-      if (token) headers["Authorization"] = "Bearer " + token;
-      return headers;
-    }
-    function extraFields(id) {
-      const extras = {
-        booking_management: {stay_kind: "night", room_label: "sample"},
-        property_management: {property_kind: "hotel", property_name: "sample"},
-        dynamic_pricing: {season: "peak", rate_plan: "sample"},
-        review_management: {rating_band: "excellent", guest_name: "sample"},
-        analytics_dashboard: {view_name: "sample", horizon: "today"},
-        notification_system: {notice_kind: "confirmation", guest_name: "sample"},
-        search_recommendation: {stay_intent: "leisure", destination: "sample"}
+    var row = el("div", "row");
+    var drive = el("button", CAPABILITY_FIELDS[id] ? "primary" : "",
+      CAPABILITY_FIELDS[id] ? "Open in desk" : "Open in desk (raw JSON)");
+    drive.onclick = function () { selectCapability(id); };
+    row.appendChild(drive);
+    if (http.list) {
+      var list = el("button", null, "GET list");
+      list.onclick = function () {
+        selectCapability(id);
+        $("cap").value = id;
+        loadRecords();
       };
-      return extras[id] || {};
+      row.appendChild(list);
     }
-    document.getElementById("post-btn").onclick = async () => {
-      const body = {
-        reference: document.getElementById("reference").value || "sample",
-        status: document.getElementById("status").value || "open",
-        ...extraFields(current)
-      };
-      const res = await fetch("/v1/" + current, {
-        method: "POST",
-        headers: authHeaders(),
-        body: JSON.stringify(body)
+    card.appendChild(row);
+    host.appendChild(card);
+  });
+}
+
+function populatePicker(items) {
+  var picker = $("cap");
+  var previous = picker.value;
+  picker.textContent = "";
+  items.forEach(function (item) {
+    var id = item.id || item.capability_id || "";
+    if (!id) return;
+    var option = el("option", null, CAPABILITY_FIELDS[id] ? id : id + " (raw JSON)");
+    option.value = id;
+    picker.appendChild(option);
+  });
+  if (previous) picker.value = previous;
+  if (!picker.value && picker.options.length) picker.value = picker.options[0].value;
+  selectCapability(picker.value);
+}
+
+/* ----------------------------------------------------------- the desk form */
+
+function selectCapability(id) {
+  CURRENT = id;
+  if (id) $("cap").value = id;
+  var spec = CAPABILITY_FIELDS[id];
+  var cap = null;
+  for (var i = 0; i < CAPS.length; i += 1) {
+    if ((CAPS[i].id || CAPS[i].capability_id) === id) { cap = CAPS[i]; break; }
+  }
+  $("capMeta").textContent = cap
+    ? "entity " + (cap.entity || id) + (cap.http && cap.http.create ? " · " + cap.http.create : "")
+    : "";
+  $("capSummary").textContent = spec
+    ? spec.summary
+    : "No field list is hard-coded for this capability; the desk sends the JSON body below.";
+  renderForm(id, spec);
+  $("recordDetail").textContent = "";
+}
+
+function renderForm(id, spec) {
+  var host = $("form");
+  host.textContent = "";
+  if (!spec) {
+    var field = el("div", "field");
+    field.appendChild(el("label", null, "JSON body for POST /v1/" + id));
+    var area = el("textarea");
+    area.id = "rawBody";
+    area.value = jsonText({ reference: "RAW-1001", status: "open" });
+    area.addEventListener("input", updatePayloadPreview);
+    field.appendChild(area);
+    host.appendChild(field);
+    updatePayloadPreview();
+    return;
+  }
+  spec.fields.forEach(function (item) {
+    var field = el("div", "field");
+    var label = el("label", null, item.label + (item.required ? " *" : ""));
+    label.setAttribute("for", "f_" + item.name);
+    field.appendChild(label);
+    var widget;
+    if (item.kind === "select") {
+      widget = el("select");
+      (item.options || []).forEach(function (value) {
+        var option = el("option", null, value === "" ? "(empty)" : value);
+        option.value = value;
+        widget.appendChild(option);
       });
-      document.getElementById("out").textContent = JSON.stringify(await res.json(), null, 2);
-    };
-    document.getElementById("get-btn").onclick = async () => {
-      const res = await fetch("/v1/" + current);
-      document.getElementById("out").textContent = JSON.stringify(await res.json(), null, 2);
-    };
-    document.getElementById("ingest-btn").onclick = async () => {
-      const res = await fetch("/v1/rag/ingest", {
-        method: "POST",
-        headers: authHeaders(),
-        body: JSON.stringify({
-          layer: 1,
-          doc_id: document.getElementById("reference").value || "sample",
-          title: document.getElementById("rag-title").value,
-          text: document.getElementById("rag-text").value
-        })
+      widget.value = item.value === undefined ? "" : String(item.value);
+    } else if (item.kind === "textarea") {
+      widget = el("textarea");
+      widget.value = item.value === undefined ? "" : String(item.value);
+    } else if (item.kind === "bool") {
+      widget = el("input");
+      widget.type = "checkbox";
+      widget.checked = Boolean(item.value);
+      field.className = "field row";
+    } else {
+      widget = el("input");
+      widget.type = item.kind === "number" ? "number" : "text";
+      if (item.min !== undefined) widget.min = String(item.min);
+      if (item.max !== undefined) widget.max = String(item.max);
+      if (item.kind === "number") widget.step = "any";
+      widget.value = item.value === undefined ? "" : String(item.value);
+      widget.spellcheck = false;
+    }
+    widget.id = "f_" + item.name;
+    widget.addEventListener("input", updatePayloadPreview);
+    widget.addEventListener("change", updatePayloadPreview);
+    field.appendChild(widget);
+    host.appendChild(field);
+  });
+  updatePayloadPreview();
+}
+
+function collectPayload() {
+  var spec = CAPABILITY_FIELDS[CURRENT];
+  if (!spec) {
+    var raw = $("rawBody");
+    if (!raw) return {};
+    try {
+      return JSON.parse(raw.value || "{}");
+    } catch (e) {
+      return { __parse_error__: String(e.message) };
+    }
+  }
+  var payload = {};
+  spec.fields.forEach(function (item) {
+    var widget = $("f_" + item.name);
+    if (!widget) return;
+    if (item.kind === "bool") {
+      payload[item.name] = widget.checked;
+      return;
+    }
+    if (item.kind === "number") {
+      var rawNumber = String(widget.value || "").trim();
+      if (rawNumber === "") return;
+      var number = Number(rawNumber);
+      payload[item.name] = isNaN(number) ? rawNumber : number;
+      return;
+    }
+    var value = String(widget.value === undefined || widget.value === null ? "" : widget.value);
+    if (value.trim() === "") return;
+    payload[item.name] = value;
+  });
+  return payload;
+}
+
+function updatePayloadPreview() {
+  $("payload").textContent = jsonText(collectPayload());
+}
+
+/* --------------------------------------------------------------- sending */
+
+function send() {
+  var id = CURRENT;
+  if (!id) { setHead(bad("no capability selected"), ""); return; }
+  var payload = collectPayload();
+  if (payload && payload.__parse_error__) {
+    setHead(bad("payload is not valid JSON: " + payload.__parse_error__), "");
+    return;
+  }
+  setHead(el("span", "pill", "sending POST /v1/" + id + " …"), "");
+  $("answer").textContent = "";
+  $("respBody").textContent = "";
+  var started = "POST /v1/" + id;
+  call("/v1/" + id, { method: "POST", body: JSON.stringify(payload) }).then(function (res) {
+    renderResponse(started, res, payload);
+    if (res.body && res.body.ok === true) {
+      loadRecords();
+    }
+  });
+}
+
+function okPill(text) { return el("span", "pill good", text); }
+function badPill(text) { return el("span", "pill bad", text); }
+
+function setHead(node, note) {
+  var head = $("respHead");
+  head.textContent = "";
+  head.appendChild(node);
+  if (note) head.appendChild(el("span", "dim", note));
+}
+
+function renderResponse(started, res, payload) {
+  var body = res.body;
+  var isObject = body && typeof body === "object";
+  var okFlag = isObject ? body.ok === true : false;
+  var label = authorityOf(body);
+
+  setHead(okFlag ? okPill("ok: true")
+                 : badPill(isObject && body.ok === false ? "ok: false" : "HTTP " + res.status),
+          started + " → HTTP " + res.status);
+  if (label) $("respHead").appendChild(authorityPill(label));
+  if (isObject && body.result && typeof body.result === "object" &&
+      typeof body.result.action_id === "string") {
+    $("respHead").appendChild(el("span", "dim",
+      body.result.action_id + " · " + (body.result.status || "status unstated")));
+  }
+
+  $("answer").textContent = "";
+  if (res.status === 401) {
+    $("answer").appendChild(el("p", "err",
+      "HTTP 401 authentication_required — the bearer token was refused. Paste the platform token " +
+      "(dev default dev-local-token) and load again."));
+  }
+  var result = handlerPayload(body);
+  if (result && typeof result === "object") {
+    var answerText = typeof result.answer === "string" ? result.answer : "";
+    var withheld = typeof result.withheld_reason === "string" ? result.withheld_reason : "";
+    if (answerText || withheld) {
+      var box = el("div", "answer" + (answerText ? "" : " withheld"));
+      var head = el("div", "row");
+      head.appendChild(el("span", label ? "pill good" : "pill",
+        "authority: " + (label || "none returned")));
+      if (typeof result.question === "string" && result.question) {
+        head.appendChild(el("span", "dim", result.question));
+      }
+      box.appendChild(head);
+      if (answerText) box.appendChild(el("p", null, answerText));
+      if (withheld) box.appendChild(el("p", "err", "withheld: " + withheld));
+      if (typeof result.citation === "string" && result.citation) {
+        box.appendChild(el("div", "dim", "citation: " + result.citation));
+      }
+      var evidence = result.evidence;
+      if (Object.prototype.toString.call(evidence) === "[object Array]" && evidence.length) {
+        var table = el("table");
+        var headRow = el("tr");
+        ["citation", "authority", "score"].forEach(function (name) {
+          headRow.appendChild(el("th", null, name));
+        });
+        table.appendChild(headRow);
+        evidence.forEach(function (hit) {
+          var row = el("tr");
+          row.appendChild(el("td", null, hit && hit.citation ? hit.citation : "—"));
+          var cell = el("td");
+          var hitAuthority = authorityValue(hit && hit.authority);
+          cell.appendChild(el("span", hitAuthority ? "pill good" : "pill",
+            "authority: " + (hitAuthority || "unstated")));
+          row.appendChild(cell);
+          row.appendChild(el("td", null, hit && hit.score !== undefined ? hit.score : "—"));
+          table.appendChild(row);
+        });
+        box.appendChild(table);
+      }
+      $("answer").appendChild(box);
+    }
+  }
+
+  var facts = null;
+  if (result && typeof result === "object") {
+    var signals = [];
+    var transition = result.transition;
+    if (transition && typeof transition === "object") {
+      signals.push("transition: " + (transition.from_state || "?") + " -> " + (transition.to_state || "?") +
+        (transition.guard ? " (guard " + transition.guard + ")" : ""));
+    }
+    if (typeof result.call_sid === "string" && result.call_sid) signals.push("call_sid: " + result.call_sid);
+    if (result.delivered !== undefined) {
+      signals.push("delivered: " + String(result.delivered) + " via " + (result.channel_used || "?") +
+        " (" + (result.delivery_state || "?") + ")");
+    } else if (result.delivery_state !== undefined) {
+      signals.push("delivery_state: " + String(result.delivery_state));
+    }
+    if (result.recommended_action) {
+      signals.push("recommended_action: " + result.recommended_action +
+        (result.handoff_required ? " (handoff required)" : ""));
+    }
+    if (result.grounded !== undefined) {
+      signals.push("grounded: " + String(result.grounded) +
+        (result.ingest_state ? " · ingest " + result.ingest_state : ""));
+    }
+    if (result.tool_count !== undefined) {
+      signals.push("tools listed: " + result.tool_count + " (source " + (result.catalog_source || "?") + ")");
+    }
+    if (result.transfer_status) signals.push("transfer_status: " + result.transfer_status);
+    if (result.blocker) signals.push("blocker: " + result.blocker);
+    if (signals.length) {
+      facts = el("div", "dim");
+      signals.forEach(function (line) { facts.appendChild(el("div", null, line)); });
+    }
+  }
+
+  $("respBody").textContent = "";
+  $("respBody").appendChild(detailsOpen("request payload", payload));
+  if (facts) $("respBody").appendChild(facts);
+  if (isObject && body.error !== undefined) {
+    var err = el("details");
+    err.open = true;
+    err.appendChild(el("summary", "err", "error"));
+    err.appendChild(el("pre", "err", jsonText(body.error)));
+    $("respBody").appendChild(err);
+  }
+  if (isObject && body.result !== undefined) {
+    $("respBody").appendChild(detailsOpen("capability result", handlerPayload(body)));
+    $("respBody").appendChild(detailsOpen("action envelope (result)", body.result));
+  }
+  if (isObject && body.stored !== undefined) {
+    $("respBody").appendChild(detailsOpen("stored — the row the route persisted", body.stored));
+  }
+  if (!isObject) $("respBody").appendChild(detailsOpen("response body", String(body)));
+  $("respBody").appendChild(detailsOpen("full response envelope", res));
+}
+
+function detailsOpen(summary, value) {
+  var node = el("details");
+  node.open = true;
+  node.appendChild(el("summary", null, summary));
+  node.appendChild(el("pre", null, jsonText(value)));
+  return node;
+}
+
+/* ----------------------------------------------------------- recent records */
+
+function loadRecords() {
+  var id = CURRENT;
+  if (!id) return Promise.resolve();
+  var path = "/v1/" + id + "?limit=10&order=desc";
+  $("recStatus").textContent = "GET " + path + " …";
+  $("recStatus").className = "dim";
+  return call(path).then(function (res) {
+    var body = res.body;
+    var items = body && typeof body === "object" &&
+      Object.prototype.toString.call(body.items) === "[object Array]" ? body.items : [];
+    if (res.status !== 200 || !items.length && !(body && body.ok === true)) {
+      $("recStatus").textContent = "GET " + path + " answered HTTP " + res.status;
+      $("recStatus").className = "err";
+      $("records").textContent = "";
+      return;
+    }
+    var total = body.total === undefined ? items.length : body.total;
+    $("recStatus").textContent = "GET " + path + " → HTTP " + res.status + " · " +
+      items.length + " shown of " + total + " stored for this tenant";
+    $("recStatus").className = "dim";
+    renderRecords(id, items);
+  });
+}
+
+function renderRecords(id, items) {
+  var host = $("records");
+  host.textContent = "";
+  if (!items.length) {
+    host.appendChild(el("p", "dim",
+      "No records for this capability yet — send one and it will appear here."));
+    return;
+  }
+  var table = el("table");
+  var headRow = el("tr");
+  ["id", "reference", "status", "authority", ""].forEach(function (name) {
+    headRow.appendChild(el("th", null, name));
+  });
+  table.appendChild(headRow);
+  items.forEach(function (item) {
+    var row = el("tr");
+    row.appendChild(el("td", null, item.id === undefined ? "—" : item.id));
+    row.appendChild(el("td", null, item.reference === undefined ? "—" : item.reference));
+    row.appendChild(el("td", null, item.status === undefined ? "—" : item.status));
+    var label = authorityValue(item.authority_label);
+    row.appendChild(el("td", null, label ? "authority: " + label : "—"));
+    var cell = el("td");
+    var get = el("button", null, "GET /{id}");
+    get.onclick = function () { loadRecord(id, item.id); };
+    cell.appendChild(get);
+    row.appendChild(cell);
+    table.appendChild(row);
+  });
+  host.appendChild(table);
+}
+
+function loadRecord(id, recordId) {
+  if (recordId === undefined || recordId === null) return;
+  var path = "/v1/" + id + "/" + recordId;
+  $("recordDetail").textContent = "";
+  $("recordDetail").appendChild(el("p", "dim", "GET " + path + " …"));
+  call(path).then(function (res) {
+    $("recordDetail").textContent = "";
+    var head = el("div", "row");
+    head.appendChild(res.status === 200 ? okPill("HTTP 200") : badPill("HTTP " + res.status));
+    head.appendChild(el("span", "dim", path));
+    var label = authorityOf(res.body);
+    if (label) head.appendChild(authorityPill(label));
+    $("recordDetail").appendChild(head);
+    $("recordDetail").appendChild(el("pre", null, jsonText(res.body)));
+  });
+}
+
+/* ------------------------------------------------------- project corpus */
+
+/* Ask the corpus. GET /v1/rag/query answers with the layer it came from
+   (label / authority, precedence.v1) and its citations, or with the withheld
+   reason -- the same label the capability answers carry. */
+function askCorpus() {
+  var question = ($("question").value || "").trim();
+  if (!question) { $("askStatus").textContent = "type a question first"; return; }
+  $("askStatus").textContent = "asking GET /v1/rag/query …";
+  $("askHead").textContent = "";
+  $("askAnswer").textContent = "";
+  $("askBody").textContent = "";
+  call("/v1/rag/query?q=" + encodeURIComponent(question)).then(function (res) {
+    var body = res.body;
+    var isObject = body && typeof body === "object";
+    $("askStatus").textContent = "GET /v1/rag/query → HTTP " + res.status;
+    if (!isObject) {
+      $("askBody").textContent = String(body);
+      return;
+    }
+    var label = authorityOf(body) || (typeof body.label === "string" ? body.label : "");
+    if (label) $("askHead").appendChild(authorityPill(label));
+    if (body.precedence || body.authority) {
+      var ladder = body.precedence ? body.precedence
+        : (body.authority && (body.authority.schema || body.authority.ordered ? "precedence.v1" : ""));
+      if (ladder) $("askHead").appendChild(el("span", "dim", ladder + " governs this answer"));
+    }
+    var answers = Array.isArray(body.answers) ? body.answers : [];
+    if (answers.length) {
+      answers.forEach(function (item) {
+        var layer = item.label || item.authority || label || "";
+        $("askAnswer").appendChild(el("p", null,
+          (layer ? "[" + layer + "] " : "") + (item.answer || "")));
+        (item.citations || []).forEach(function (citation) {
+          $("askAnswer").appendChild(el("p", "dim", "cited: " + jsonText(citation)));
+        });
       });
-      document.getElementById("out").textContent = JSON.stringify(await res.json(), null, 2);
-    };
-    document.getElementById("query-btn").onclick = async () => {
-      const q = encodeURIComponent(document.getElementById("rag-q").value || "occupancy");
-      const res = await fetch("/v1/rag/query?q=" + q);
-      document.getElementById("out").textContent = JSON.stringify(await res.json(), null, 2);
-    };
-  </script>
+    } else if (body.withheld_reason || body.answer === "") {
+      $("askAnswer").appendChild(el("p", "err",
+        body.withheld_reason || "the corpus holds nothing that supports that claim: withheld"));
+    }
+    $("askBody").textContent = jsonText(body);
+  });
+}
+
+/* ------------------------------------------------------- campaign outcomes */
+
+/* The manager's numbers, read from the ledger the calls wrote. The route
+   answers with its precedence.v1 layer (formulas); the desk renders it, so an
+   operator can see this is arithmetic over their rows and not a recollection. */
+function loadCampaignMetrics() {
+  var campaign = ($("campaign").value || "").trim();
+  var path = "/v1/analytics/campaign_metrics" +
+    (campaign ? "?campaign=" + encodeURIComponent(campaign) : "");
+  $("metricsStatus").textContent = "loading GET " + path + " …";
+  $("metricsStatus").className = "dim";
+  $("metricsHead").textContent = "";
+  $("metricsBody").textContent = "";
+  call(path).then(function (res) {
+    var body = res.body;
+    $("metricsStatus").textContent = "GET " + path + " → HTTP " + res.status;
+    if (!body || typeof body !== "object") {
+      $("metricsBody").appendChild(el("pre", null, String(body)));
+      return;
+    }
+    if (body.ok === false) {
+      $("metricsStatus").className = "err";
+      $("metricsBody").appendChild(el("p", "err", body.error || "refused"));
+      return;
+    }
+    var label = authorityOf(body);
+    if (label) $("metricsHead").appendChild(authorityPill(label));
+    if (body.precedence) {
+      $("metricsHead").appendChild(el("span", "dim", body.precedence + " governs this answer"));
+    }
+    var rows = Array.isArray(body.campaigns) ? body.campaigns : [];
+    if (!rows.length) {
+      $("metricsBody").appendChild(el("p", "dim",
+        "no ledger rows yet — the metrics appear as calls are recorded"));
+      return;
+    }
+    var table = el("table");
+    var head = el("tr");
+    ["campaign", "attempted", "answered", "answered %", "project_interested",
+     "other_re_interested", "not_interested", "transfers", "conversion %"].forEach(function (name) {
+      head.appendChild(el("th", null, name));
+    });
+    table.appendChild(head);
+    rows.forEach(function (item) {
+      var interest = item.interest || {};
+      var row = el("tr");
+      [item.campaign, item.attempted, item.answered, item.answered_rate,
+       interest.project_interested || 0, interest.other_re_interested || 0,
+       interest.not_interested || 0, item.transfers, item.conversion].forEach(function (value) {
+        row.appendChild(el("td", null, value === undefined ? "—" : String(value)));
+      });
+      table.appendChild(row);
+    });
+    $("metricsBody").appendChild(table);
+    var totals = body.totals || {};
+    if (totals.campaigns !== undefined) {
+      $("metricsBody").appendChild(el("p", "dim",
+        totals.campaigns + " campaign(s) · " + totals.attempted + " attempted · " +
+        totals.answered + " answered · " + totals.transfers + " transferred · conversion " +
+        totals.conversion + "% (" + (totals.conversion_basis || "transfers/attempted") + ")"));
+    }
+    $("metricsBody").appendChild(el("pre", null, jsonText(body)));
+  });
+}
+
+/* ------------------------------------------------------------------ wiring */
+
+$("load").onclick = loadCapabilities;
+$("token").addEventListener("change", loadCapabilities);
+$("cap").addEventListener("change", function (event) {
+  selectCapability(event.target.value);
+  loadRecords();
+});
+$("send").onclick = send;
+$("ask").onclick = askCorpus;
+$("metrics").onclick = loadCampaignMetrics;
+$("campaign").addEventListener("keydown", function (event) {
+  if (event.key === "Enter") loadCampaignMetrics();
+});
+$("refresh").onclick = loadRecords;
+$("reset").onclick = function () {
+  var spec = CAPABILITY_FIELDS[CURRENT];
+  if (spec) renderForm(CURRENT, spec);
+};
+
+loadCapabilities();
+loadCampaignMetrics();
+</script>
 </body>
 </html>

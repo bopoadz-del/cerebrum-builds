@@ -1,0 +1,49 @@
+{
+  "activation": {
+    "default_enabled": true,
+    "mode": "hybrid",
+    "put_off_by": [
+      "disable:real_estate.hat.lead_intake_and_dial_queue"
+    ],
+    "triggers": [
+      {
+        "type": "intent",
+        "value": "lead_intake_and_dial_queue"
+      },
+      {
+        "type": "capability",
+        "value": "lead_intake_and_dial_queue"
+      }
+    ]
+  },
+  "agent_id": "real_estate.hat.lead_intake_and_dial_queue",
+  "allowed_actions": [
+    "real_estate.lead_intake_and_dial_queue"
+  ],
+  "block_ids": [
+    "capture",
+    "queue",
+    "formula_executor",
+    "validation"
+  ],
+  "discipline": "lead_intake_and_dial_queue",
+  "display_name": "CallOps Lead Intake And Dial Queue Hat",
+  "extends": "real_estate.base",
+  "handoffs": [],
+  "human_authority": true,
+  "kind": "hat",
+  "manifest_version": "1.0.0",
+  "memory": {
+    "pii_policy": "never_store_pii",
+    "save": [],
+    "scope": "tenant_project"
+  },
+  "strategy": "REUSE",
+  "summary": "Specialized hat for capability 'lead_intake_and_dial_queue' (strategy=REUSE). Adapted from TEKsystems retail hat pattern; estate/product-neutral.",
+  "tags": [
+    "hat",
+    "factory-generated",
+    "real_estate",
+    "lead_intake_and_dial_queue"
+  ]
+}

@@ -1,0 +1,623 @@
+{
+  "agents": [
+    {
+      "activation": {
+        "default_enabled": true,
+        "mode": "auto",
+        "put_off_by": [
+          "disable:real_estate.base"
+        ],
+        "triggers": [
+          {
+            "type": "intent",
+            "value": "unknown"
+          }
+        ]
+      },
+      "agent_id": "real_estate.base",
+      "allowed_actions": [
+        "real_estate.lead_intake_and_dial_queue",
+        "real_estate.call_state_machine",
+        "real_estate.project_knowledge_grounding",
+        "real_estate.voice_gateway",
+        "real_estate.warm_transfer",
+        "real_estate.qualification_and_broker_summary",
+        "real_estate.outcome_capture_and_ledger",
+        "real_estate.crm_destination_placeholder",
+        "real_estate.notification",
+        "real_estate.local_drive",
+        "real_estate.google_drive",
+        "real_estate.mcp_adapter"
+      ],
+      "context_sources": [
+        {
+          "description": "Tenant/project documents via hybrid retrieval",
+          "kind": "project_documents",
+          "source_id": "project_docs"
+        }
+      ],
+      "discipline": "base",
+      "display_name": "CallOps Base Agent",
+      "extends": null,
+      "handoffs": [],
+      "human_authority": true,
+      "kind": "base",
+      "manifest_version": "1.0.0",
+      "memory": {
+        "pii_policy": "never_store_pii",
+        "save": [],
+        "scope": "tenant_project"
+      },
+      "summary": "Shared product cortex adapted from TEKsystems hat patterns: trusted context, ActionRegistry awareness, honesty policies. Discipline hats specialize this base \u2014 they never replace it.",
+      "tags": [
+        "base",
+        "factory-generated",
+        "real_estate"
+      ]
+    },
+    {
+      "activation": {
+        "default_enabled": true,
+        "mode": "hybrid",
+        "put_off_by": [
+          "disable:real_estate.hat.lead_intake_and_dial_queue"
+        ],
+        "triggers": [
+          {
+            "type": "intent",
+            "value": "lead_intake_and_dial_queue"
+          },
+          {
+            "type": "capability",
+            "value": "lead_intake_and_dial_queue"
+          }
+        ]
+      },
+      "agent_id": "real_estate.hat.lead_intake_and_dial_queue",
+      "allowed_actions": [
+        "real_estate.lead_intake_and_dial_queue"
+      ],
+      "block_ids": [
+        "capture",
+        "queue",
+        "formula_executor",
+        "validation"
+      ],
+      "discipline": "lead_intake_and_dial_queue",
+      "display_name": "CallOps Lead Intake And Dial Queue Hat",
+      "extends": "real_estate.base",
+      "handoffs": [],
+      "human_authority": true,
+      "kind": "hat",
+      "manifest_version": "1.0.0",
+      "memory": {
+        "pii_policy": "never_store_pii",
+        "save": [],
+        "scope": "tenant_project"
+      },
+      "strategy": "REUSE",
+      "summary": "Specialized hat for capability 'lead_intake_and_dial_queue' (strategy=REUSE). Adapted from TEKsystems retail hat pattern; estate/product-neutral.",
+      "tags": [
+        "hat",
+        "factory-generated",
+        "real_estate",
+        "lead_intake_and_dial_queue"
+      ]
+    },
+    {
+      "activation": {
+        "default_enabled": true,
+        "mode": "hybrid",
+        "put_off_by": [
+          "disable:real_estate.hat.call_state_machine"
+        ],
+        "triggers": [
+          {
+            "type": "intent",
+            "value": "call_state_machine"
+          },
+          {
+            "type": "capability",
+            "value": "call_state_machine"
+          }
+        ]
+      },
+      "agent_id": "real_estate.hat.call_state_machine",
+      "allowed_actions": [
+        "real_estate.call_state_machine"
+      ],
+      "block_ids": [
+        "workflow",
+        "orchestrator",
+        "event_bus"
+      ],
+      "discipline": "call_state_machine",
+      "display_name": "CallOps Call State Machine Hat",
+      "extends": "real_estate.base",
+      "handoffs": [],
+      "human_authority": true,
+      "kind": "hat",
+      "manifest_version": "1.0.0",
+      "memory": {
+        "pii_policy": "never_store_pii",
+        "save": [],
+        "scope": "tenant_project"
+      },
+      "strategy": "REUSE",
+      "summary": "Specialized hat for capability 'call_state_machine' (strategy=REUSE). Adapted from TEKsystems retail hat pattern; estate/product-neutral.",
+      "tags": [
+        "hat",
+        "factory-generated",
+        "real_estate",
+        "call_state_machine"
+      ]
+    },
+    {
+      "activation": {
+        "default_enabled": true,
+        "mode": "hybrid",
+        "put_off_by": [
+          "disable:real_estate.hat.project_knowledge_grounding"
+        ],
+        "triggers": [
+          {
+            "type": "intent",
+            "value": "project_knowledge_grounding"
+          },
+          {
+            "type": "capability",
+            "value": "project_knowledge_grounding"
+          }
+        ]
+      },
+      "agent_id": "real_estate.hat.project_knowledge_grounding",
+      "allowed_actions": [
+        "real_estate.project_knowledge_grounding"
+      ],
+      "block_ids": [
+        "knowledge",
+        "vector_search",
+        "ingestion_provenance",
+        "evidence_or_refuse",
+        "llm_enhancer"
+      ],
+      "discipline": "project_knowledge_grounding",
+      "display_name": "CallOps Project Knowledge Grounding Hat",
+      "extends": "real_estate.base",
+      "handoffs": [],
+      "human_authority": true,
+      "kind": "hat",
+      "manifest_version": "1.0.0",
+      "memory": {
+        "pii_policy": "never_store_pii",
+        "save": [],
+        "scope": "tenant_project"
+      },
+      "strategy": "REUSE",
+      "summary": "Specialized hat for capability 'project_knowledge_grounding' (strategy=REUSE). Adapted from TEKsystems retail hat pattern; estate/product-neutral.",
+      "tags": [
+        "hat",
+        "factory-generated",
+        "real_estate",
+        "project_knowledge_grounding"
+      ]
+    },
+    {
+      "activation": {
+        "default_enabled": true,
+        "mode": "hybrid",
+        "put_off_by": [
+          "disable:real_estate.hat.voice_gateway"
+        ],
+        "triggers": [
+          {
+            "type": "intent",
+            "value": "voice_gateway"
+          },
+          {
+            "type": "capability",
+            "value": "voice_gateway"
+          }
+        ]
+      },
+      "agent_id": "real_estate.hat.voice_gateway",
+      "allowed_actions": [
+        "real_estate.voice_gateway"
+      ],
+      "block_ids": [],
+      "discipline": "voice_gateway",
+      "display_name": "CallOps Voice Gateway Hat",
+      "extends": "real_estate.base",
+      "handoffs": [],
+      "human_authority": true,
+      "kind": "hat",
+      "manifest_version": "1.0.0",
+      "memory": {
+        "pii_policy": "never_store_pii",
+        "save": [],
+        "scope": "tenant_project"
+      },
+      "strategy": "GENERATE",
+      "summary": "Specialized hat for capability 'voice_gateway' (strategy=GENERATE). Adapted from TEKsystems retail hat pattern; estate/product-neutral.",
+      "tags": [
+        "hat",
+        "factory-generated",
+        "real_estate",
+        "voice_gateway"
+      ]
+    },
+    {
+      "activation": {
+        "default_enabled": true,
+        "mode": "hybrid",
+        "put_off_by": [
+          "disable:real_estate.hat.warm_transfer"
+        ],
+        "triggers": [
+          {
+            "type": "intent",
+            "value": "warm_transfer"
+          },
+          {
+            "type": "capability",
+            "value": "warm_transfer"
+          }
+        ]
+      },
+      "agent_id": "real_estate.hat.warm_transfer",
+      "allowed_actions": [
+        "real_estate.warm_transfer"
+      ],
+      "block_ids": [],
+      "discipline": "warm_transfer",
+      "display_name": "CallOps Warm Transfer Hat",
+      "extends": "real_estate.base",
+      "handoffs": [],
+      "human_authority": true,
+      "kind": "hat",
+      "manifest_version": "1.0.0",
+      "memory": {
+        "pii_policy": "never_store_pii",
+        "save": [],
+        "scope": "tenant_project"
+      },
+      "strategy": "GENERATE",
+      "summary": "Specialized hat for capability 'warm_transfer' (strategy=GENERATE). Adapted from TEKsystems retail hat pattern; estate/product-neutral.",
+      "tags": [
+        "hat",
+        "factory-generated",
+        "real_estate",
+        "warm_transfer"
+      ]
+    },
+    {
+      "activation": {
+        "default_enabled": true,
+        "mode": "hybrid",
+        "put_off_by": [
+          "disable:real_estate.hat.qualification_and_broker_summary"
+        ],
+        "triggers": [
+          {
+            "type": "intent",
+            "value": "qualification_and_broker_summary"
+          },
+          {
+            "type": "capability",
+            "value": "qualification_and_broker_summary"
+          }
+        ]
+      },
+      "agent_id": "real_estate.hat.qualification_and_broker_summary",
+      "allowed_actions": [
+        "real_estate.qualification_and_broker_summary"
+      ],
+      "block_ids": [
+        "validation",
+        "recommendation_template",
+        "knowledge"
+      ],
+      "discipline": "qualification_and_broker_summary",
+      "display_name": "CallOps Qualification And Broker Summary Hat",
+      "extends": "real_estate.base",
+      "handoffs": [],
+      "human_authority": true,
+      "kind": "hat",
+      "manifest_version": "1.0.0",
+      "memory": {
+        "pii_policy": "never_store_pii",
+        "save": [],
+        "scope": "tenant_project"
+      },
+      "strategy": "REUSE",
+      "summary": "Specialized hat for capability 'qualification_and_broker_summary' (strategy=REUSE). Adapted from TEKsystems retail hat pattern; estate/product-neutral.",
+      "tags": [
+        "hat",
+        "factory-generated",
+        "real_estate",
+        "qualification_and_broker_summary"
+      ]
+    },
+    {
+      "activation": {
+        "default_enabled": true,
+        "mode": "hybrid",
+        "put_off_by": [
+          "disable:real_estate.hat.outcome_capture_and_ledger"
+        ],
+        "triggers": [
+          {
+            "type": "intent",
+            "value": "outcome_capture_and_ledger"
+          },
+          {
+            "type": "capability",
+            "value": "outcome_capture_and_ledger"
+          }
+        ]
+      },
+      "agent_id": "real_estate.hat.outcome_capture_and_ledger",
+      "allowed_actions": [
+        "real_estate.outcome_capture_and_ledger"
+      ],
+      "block_ids": [
+        "audit_chain",
+        "database",
+        "storage",
+        "agent_state_sync"
+      ],
+      "discipline": "outcome_capture_and_ledger",
+      "display_name": "CallOps Outcome Capture And Ledger Hat",
+      "extends": "real_estate.base",
+      "handoffs": [],
+      "human_authority": true,
+      "kind": "hat",
+      "manifest_version": "1.0.0",
+      "memory": {
+        "pii_policy": "never_store_pii",
+        "save": [],
+        "scope": "tenant_project"
+      },
+      "strategy": "REUSE",
+      "summary": "Specialized hat for capability 'outcome_capture_and_ledger' (strategy=REUSE). Adapted from TEKsystems retail hat pattern; estate/product-neutral.",
+      "tags": [
+        "hat",
+        "factory-generated",
+        "real_estate",
+        "outcome_capture_and_ledger"
+      ]
+    },
+    {
+      "activation": {
+        "default_enabled": true,
+        "mode": "hybrid",
+        "put_off_by": [
+          "disable:real_estate.hat.crm_destination_placeholder"
+        ],
+        "triggers": [
+          {
+            "type": "intent",
+            "value": "crm_destination_placeholder"
+          },
+          {
+            "type": "capability",
+            "value": "crm_destination_placeholder"
+          }
+        ]
+      },
+      "agent_id": "real_estate.hat.crm_destination_placeholder",
+      "allowed_actions": [
+        "real_estate.crm_destination_placeholder"
+      ],
+      "block_ids": [
+        "mock_connector_bus",
+        "webhook"
+      ],
+      "discipline": "crm_destination_placeholder",
+      "display_name": "CallOps Crm Destination Placeholder Hat",
+      "extends": "real_estate.base",
+      "handoffs": [],
+      "human_authority": true,
+      "kind": "hat",
+      "manifest_version": "1.0.0",
+      "memory": {
+        "pii_policy": "never_store_pii",
+        "save": [],
+        "scope": "tenant_project"
+      },
+      "strategy": "REUSE",
+      "summary": "Specialized hat for capability 'crm_destination_placeholder' (strategy=REUSE). Adapted from TEKsystems retail hat pattern; estate/product-neutral.",
+      "tags": [
+        "hat",
+        "factory-generated",
+        "real_estate",
+        "crm_destination_placeholder"
+      ]
+    },
+    {
+      "activation": {
+        "default_enabled": true,
+        "mode": "hybrid",
+        "put_off_by": [
+          "disable:real_estate.hat.notification"
+        ],
+        "triggers": [
+          {
+            "type": "intent",
+            "value": "notification"
+          },
+          {
+            "type": "capability",
+            "value": "notification"
+          }
+        ]
+      },
+      "agent_id": "real_estate.hat.notification",
+      "allowed_actions": [
+        "real_estate.notification"
+      ],
+      "block_ids": [
+        "notification"
+      ],
+      "discipline": "notification",
+      "display_name": "CallOps Notification Hat",
+      "extends": "real_estate.base",
+      "handoffs": [],
+      "human_authority": true,
+      "kind": "hat",
+      "manifest_version": "1.0.0",
+      "memory": {
+        "pii_policy": "never_store_pii",
+        "save": [],
+        "scope": "tenant_project"
+      },
+      "strategy": "REUSE",
+      "summary": "Specialized hat for capability 'notification' (strategy=REUSE). Adapted from TEKsystems retail hat pattern; estate/product-neutral.",
+      "tags": [
+        "hat",
+        "factory-generated",
+        "real_estate",
+        "notification"
+      ]
+    },
+    {
+      "activation": {
+        "default_enabled": true,
+        "mode": "hybrid",
+        "put_off_by": [
+          "disable:real_estate.hat.local_drive"
+        ],
+        "triggers": [
+          {
+            "type": "intent",
+            "value": "local_drive"
+          },
+          {
+            "type": "capability",
+            "value": "local_drive"
+          }
+        ]
+      },
+      "agent_id": "real_estate.hat.local_drive",
+      "allowed_actions": [
+        "real_estate.local_drive"
+      ],
+      "block_ids": [
+        "local_drive"
+      ],
+      "discipline": "local_drive",
+      "display_name": "CallOps Local Drive Hat",
+      "extends": "real_estate.base",
+      "handoffs": [],
+      "human_authority": true,
+      "kind": "hat",
+      "manifest_version": "1.0.0",
+      "memory": {
+        "pii_policy": "never_store_pii",
+        "save": [],
+        "scope": "tenant_project"
+      },
+      "strategy": "REUSE",
+      "summary": "Specialized hat for capability 'local_drive' (strategy=REUSE). Adapted from TEKsystems retail hat pattern; estate/product-neutral.",
+      "tags": [
+        "hat",
+        "factory-generated",
+        "real_estate",
+        "local_drive"
+      ]
+    },
+    {
+      "activation": {
+        "default_enabled": true,
+        "mode": "hybrid",
+        "put_off_by": [
+          "disable:real_estate.hat.google_drive"
+        ],
+        "triggers": [
+          {
+            "type": "intent",
+            "value": "google_drive"
+          },
+          {
+            "type": "capability",
+            "value": "google_drive"
+          }
+        ]
+      },
+      "agent_id": "real_estate.hat.google_drive",
+      "allowed_actions": [
+        "real_estate.google_drive"
+      ],
+      "block_ids": [
+        "google_drive"
+      ],
+      "discipline": "google_drive",
+      "display_name": "CallOps Google Drive Hat",
+      "extends": "real_estate.base",
+      "handoffs": [],
+      "human_authority": true,
+      "kind": "hat",
+      "manifest_version": "1.0.0",
+      "memory": {
+        "pii_policy": "never_store_pii",
+        "save": [],
+        "scope": "tenant_project"
+      },
+      "strategy": "REUSE",
+      "summary": "Specialized hat for capability 'google_drive' (strategy=REUSE). Adapted from TEKsystems retail hat pattern; estate/product-neutral.",
+      "tags": [
+        "hat",
+        "factory-generated",
+        "real_estate",
+        "google_drive"
+      ]
+    },
+    {
+      "activation": {
+        "default_enabled": true,
+        "mode": "hybrid",
+        "put_off_by": [
+          "disable:real_estate.hat.mcp_adapter"
+        ],
+        "triggers": [
+          {
+            "type": "intent",
+            "value": "mcp_adapter"
+          },
+          {
+            "type": "capability",
+            "value": "mcp_adapter"
+          }
+        ]
+      },
+      "agent_id": "real_estate.hat.mcp_adapter",
+      "allowed_actions": [
+        "real_estate.mcp_adapter"
+      ],
+      "block_ids": [
+        "mcp_adapter"
+      ],
+      "discipline": "mcp_adapter",
+      "display_name": "CallOps Mcp Adapter Hat",
+      "extends": "real_estate.base",
+      "handoffs": [],
+      "human_authority": true,
+      "kind": "hat",
+      "manifest_version": "1.0.0",
+      "memory": {
+        "pii_policy": "never_store_pii",
+        "save": [],
+        "scope": "tenant_project"
+      },
+      "strategy": "REUSE",
+      "summary": "Specialized hat for capability 'mcp_adapter' (strategy=REUSE). Adapted from TEKsystems retail hat pattern; estate/product-neutral.",
+      "tags": [
+        "hat",
+        "factory-generated",
+        "real_estate",
+        "mcp_adapter"
+      ]
+    }
+  ],
+  "schema_version": "1.0.0"
+}

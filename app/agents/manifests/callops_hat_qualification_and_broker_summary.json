@@ -1,0 +1,35 @@
+{
+  "agent_id": "callops.hat.qualification_and_broker_summary",
+  "kind": "hat",
+  "product_id": "real-estate",
+  "capability_id": "qualification_and_broker_summary",
+  "activation": {
+    "default_enabled": false,
+    "mode": "manual",
+    "put_off_by": [
+      "disable:callops.hat.qualification_and_broker_summary"
+    ],
+    "triggers": [
+      {
+        "type": "capability",
+        "value": "qualification_and_broker_summary"
+      }
+    ]
+  },
+  "allowed_actions": [
+    "callops.qualification_and_broker_summary"
+  ],
+  "scope": {
+    "reads": [
+      "this capability's own columns"
+    ],
+    "writes": [
+      "one row in this capability's table, via the route"
+    ],
+    "never": [
+      "another capability's table",
+      "vendor/**",
+      "tests/**"
+    ]
+  }
+}

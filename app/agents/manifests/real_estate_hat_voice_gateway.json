@@ -1,0 +1,44 @@
+{
+  "activation": {
+    "default_enabled": true,
+    "mode": "hybrid",
+    "put_off_by": [
+      "disable:real_estate.hat.voice_gateway"
+    ],
+    "triggers": [
+      {
+        "type": "intent",
+        "value": "voice_gateway"
+      },
+      {
+        "type": "capability",
+        "value": "voice_gateway"
+      }
+    ]
+  },
+  "agent_id": "real_estate.hat.voice_gateway",
+  "allowed_actions": [
+    "real_estate.voice_gateway"
+  ],
+  "block_ids": [],
+  "discipline": "voice_gateway",
+  "display_name": "CallOps Voice Gateway Hat",
+  "extends": "real_estate.base",
+  "handoffs": [],
+  "human_authority": true,
+  "kind": "hat",
+  "manifest_version": "1.0.0",
+  "memory": {
+    "pii_policy": "never_store_pii",
+    "save": [],
+    "scope": "tenant_project"
+  },
+  "strategy": "GENERATE",
+  "summary": "Specialized hat for capability 'voice_gateway' (strategy=GENERATE). Adapted from TEKsystems retail hat pattern; estate/product-neutral.",
+  "tags": [
+    "hat",
+    "factory-generated",
+    "real_estate",
+    "voice_gateway"
+  ]
+}

@@ -1,0 +1,35 @@
+{
+  "agent_id": "callops.hat.call_state_machine",
+  "kind": "hat",
+  "product_id": "real-estate",
+  "capability_id": "call_state_machine",
+  "activation": {
+    "default_enabled": false,
+    "mode": "manual",
+    "put_off_by": [
+      "disable:callops.hat.call_state_machine"
+    ],
+    "triggers": [
+      {
+        "type": "capability",
+        "value": "call_state_machine"
+      }
+    ]
+  },
+  "allowed_actions": [
+    "callops.call_state_machine"
+  ],
+  "scope": {
+    "reads": [
+      "this capability's own columns"
+    ],
+    "writes": [
+      "one row in this capability's table, via the route"
+    ],
+    "never": [
+      "another capability's table",
+      "vendor/**",
+      "tests/**"
+    ]
+  }
+}

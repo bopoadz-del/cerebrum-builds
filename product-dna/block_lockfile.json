@@ -1,0 +1,99 @@
+{
+  "blocks_commit": "930519e090281cfe859aafb830c725eece24f98b",
+  "factory_commit": "5c917d3cafd91d2375203c1baa3d9ec1d8be04c6",
+  "pins": [
+    {
+      "block_id": "agent_state_sync",
+      "source": "dual_registry"
+    },
+    {
+      "block_id": "audit_chain",
+      "source": "dual_registry"
+    },
+    {
+      "block_id": "capture",
+      "source": "dual_registry"
+    },
+    {
+      "block_id": "database",
+      "source": "dual_registry"
+    },
+    {
+      "block_id": "event_bus",
+      "source": "dual_registry"
+    },
+    {
+      "block_id": "evidence_or_refuse",
+      "source": "dual_registry"
+    },
+    {
+      "block_id": "formula_executor",
+      "source": "dual_registry"
+    },
+    {
+      "block_id": "google_drive",
+      "source": "dual_registry"
+    },
+    {
+      "block_id": "ingestion_provenance",
+      "source": "dual_registry"
+    },
+    {
+      "block_id": "knowledge",
+      "source": "dual_registry"
+    },
+    {
+      "block_id": "llm_enhancer",
+      "source": "dual_registry"
+    },
+    {
+      "block_id": "local_drive",
+      "source": "dual_registry"
+    },
+    {
+      "block_id": "mcp_adapter",
+      "source": "dual_registry"
+    },
+    {
+      "block_id": "mock_connector_bus",
+      "source": "dual_registry"
+    },
+    {
+      "block_id": "notification",
+      "source": "dual_registry"
+    },
+    {
+      "block_id": "orchestrator",
+      "source": "dual_registry"
+    },
+    {
+      "block_id": "queue",
+      "source": "dual_registry"
+    },
+    {
+      "block_id": "recommendation_template",
+      "source": "dual_registry"
+    },
+    {
+      "block_id": "storage",
+      "source": "dual_registry"
+    },
+    {
+      "block_id": "validation",
+      "source": "dual_registry"
+    },
+    {
+      "block_id": "vector_search",
+      "source": "dual_registry"
+    },
+    {
+      "block_id": "webhook",
+      "source": "dual_registry"
+    },
+    {
+      "block_id": "workflow",
+      "source": "dual_registry"
+    }
+  ],
+  "schema_version": "1.0.0"
+}

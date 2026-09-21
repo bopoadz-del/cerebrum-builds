@@ -13,8 +13,19 @@ pydantic>=2.0
 alembic>=1.13
 sqlalchemy>=2.0
 starlette>=0.37
-# Postgres, when the operator sets DATABASE_URL. Declared here so the
-# deployment path is real rather than a scheme the platform cannot dial:
-# app/db.py maps postgres:// and postgresql:// onto psycopg (v3), and
-# alembic/env.py uses that same normalised URL for migrations.
-psycopg[binary]>=3.1
+
+# Vendored block dependencies. Derived by AST from the source the
+# CLONER copied in, not hand-kept. 'module' means the block cannot
+# import without it; 'action' means it imports, reports healthy, and
+# fails only on the feature that needs it -- the quieter defect.
+Pint  # action: pint in formula_executor.py
+aiofiles  # module: aiofiles in storage.py
+aiohttp  # action: aiohttp in webhook.py
+aiosmtplib  # action: aiosmtplib in notification.py
+cryptography  # action: cryptography in google_drive.py
+httpx  # action: httpx in formula_executor.py, google_drive.py, knowledge.py
+numpy  # module: numpy in formula_executor.py, vector_search.py
+psycopg2-binary  # action: psycopg2 in database.py
+redis  # action: redis in queue.py
+scikit-learn  # module: sklearn in vector_search.py
+sympy  # action: sympy in formula_executor.py

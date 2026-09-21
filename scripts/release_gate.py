@@ -61,8 +61,24 @@ def main() -> int:
         )
         print(f"artifacts: {len(sources)} total, {len(agent)} written by the coding agent")
     else:
-        print("docs/build_provenance.json: MISSING")
-        ok = False
+        # docs/build_provenance.json is the factory's own record and does not
+        # ship (builds_push.FACTORY_INTERNAL_PATHS), so a delivered platform
+        # never has it. Demanding it here failed the image build of every
+        # platform at Dockerfile's release-gate step -- a suite with 108
+        # passing tests was reported as 0/13 because acceptance never ran.
+        # Report authorship from what IS in the tree: the stamp each handler
+        # carries in its own source. Reported, not judged -- the acceptance
+        # floor's authorship_floor check is the one place that is decided.
+        actions = ROOT / "app" / "actions"
+        handlers = [
+            p for p in sorted(actions.glob("*.py")) if not p.name.startswith("_")
+        ] if actions.is_dir() else []
+        stamped = 0
+        for path in handlers:
+            text = path.read_text(encoding="utf-8", errors="replace")
+            if "CODER_MODEL" in text or "coding agent" in text.lower() or "coder CLI" in text:
+                stamped += 1
+        print(f"handlers: {len(handlers)} total, {stamped} stamped by the coding agent")
 
     print("VERDICT:", "PASS" if ok else "FAIL")
     return 0 if ok else 1

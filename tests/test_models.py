@@ -25,7 +25,7 @@ def test_every_model_round_trips():
     for key, value in record.items():
         assert fetched[key] == value, (key, fetched[key], value)
     assert any(r['id'] == saved['id'] for r in store.list_all('crm_destination_placeholder', tenant_id=TENANT))
-    record = {'GOOGLE_CLIENT_ID': 'id-1', 'GOOGLE_CLIENT_SECRET': 'sample', 'GOOGLE_REFRESH_TOKEN': 'sample', 'drive_mode': 'stubbed', 'operation': 'upload', 'reference': 'sample', 'status': 'open'}
+    record = {'drive_mode': 'stubbed', 'operation': 'upload', 'reference': 'sample', 'status': 'open'}
     saved = store.save('google_drive', record, tenant_id=TENANT)
     assert saved['id'] is not None, 'no id assigned for google_drive'
     fetched = store.get('google_drive', saved['id'], tenant_id=TENANT)

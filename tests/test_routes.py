@@ -239,7 +239,7 @@ def test_every_capability_route_answers():
             if listed.status_code != 200:
                 failures.append('local_drive list: HTTP ' + str(listed.status_code))
 
-    payload = {'GOOGLE_CLIENT_ID': 'id-1', 'GOOGLE_CLIENT_SECRET': 'sample', 'GOOGLE_REFRESH_TOKEN': 'sample', 'drive_mode': 'stubbed', 'operation': 'upload', 'reference': 'sample', 'status': 'open'}
+    payload = {'drive_mode': 'stubbed', 'operation': 'upload', 'reference': 'sample', 'status': 'open'}
     resp = client.post("/v1/google_drive", json=payload, headers=AUTH)
     if resp.status_code != 200:
         failures.append('google_drive: HTTP ' + str(resp.status_code) + ': ' + resp.text[:200])
@@ -539,7 +539,7 @@ def test_every_capability_route_accepts_payload():
                 if missing.status_code != 404:
                     failures.append('local_drive missing id: HTTP ' + str(missing.status_code) + ' (expected 404)')
 
-    payload = {'GOOGLE_CLIENT_ID': 'id-1', 'GOOGLE_CLIENT_SECRET': 'sample', 'GOOGLE_REFRESH_TOKEN': 'sample', 'drive_mode': 'stubbed', 'operation': 'upload', 'reference': 'sample', 'status': 'open'}
+    payload = {'drive_mode': 'stubbed', 'operation': 'upload', 'reference': 'sample', 'status': 'open'}
     resp = client.post("/v1/google_drive", json=payload, headers=AUTH)
     if resp.status_code != 200:
         failures.append('google_drive: HTTP ' + str(resp.status_code) + ': ' + resp.text[:200])

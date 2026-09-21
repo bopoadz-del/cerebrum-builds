@@ -1440,12 +1440,12 @@ def _google_drive_edge_guard(payload: Dict[str, Any]) -> None:
     it POSTs, and a contract that lives only in the model is a contract the
     sample cannot see -- the edge then refuses it.
     """
-    required_fields = ['GOOGLE_CLIENT_ID', 'GOOGLE_CLIENT_SECRET', 'GOOGLE_REFRESH_TOKEN', 'reference', 'status', 'drive_mode', 'operation']
+    required_fields = ['reference', 'status', 'drive_mode', 'operation']
     for _name in required_fields:
         if _name not in payload or payload[_name] in (None, ""):
             raise HTTPException(status_code=422,
                                 detail="Missing required field: " + _name)
-    constraints = {'GOOGLE_CLIENT_ID': {'required': True}, 'GOOGLE_CLIENT_SECRET': {'required': True}, 'GOOGLE_REFRESH_TOKEN': {'required': True}, 'reference': {'required': True}, 'status': {'allowed_values': ['open', 'in_progress', 'closed'], 'required': True}, 'drive_mode': {'allowed_values': ['stubbed', 'live'], 'required': True}, 'operation': {'allowed_values': ['upload', 'download', 'list'], 'required': True}}
+    constraints = {'reference': {'required': True}, 'status': {'allowed_values': ['open', 'in_progress', 'closed'], 'required': True}, 'drive_mode': {'allowed_values': ['stubbed', 'live'], 'required': True}, 'operation': {'allowed_values': ['upload', 'download', 'list'], 'required': True}}
     for _name, _rules in constraints.items():
         if _name not in payload:
             continue

@@ -147,25 +147,25 @@ def test_crm_destination_placeholder_refuses_a_malformed_payload():
 
 def test_google_drive_refuses_a_missing_required_field():
     """A partial record is refused, never completed by the handler."""
-    body = {'GOOGLE_CLIENT_SECRET': 'sample', 'GOOGLE_REFRESH_TOKEN': 'sample', 'drive_mode': 'stubbed', 'operation': 'upload', 'reference': 'sample', 'status': 'open'}
+    body = {'status': 'open', 'drive_mode': 'stubbed', 'folder_id': 'id-1', 'file_name': 'sample', 'operation': 'upload', 'credential_setting': 'sample', 'notes': 'sample'}
     resp = client.post("/v1/google_drive", json=body, headers=AUTH)
     assert resp.status_code in (400, 403, 404, 409, 422) or _refused(resp), (
-        "google_drive accepted a payload with no GOOGLE_CLIENT_ID: " + resp.text[:200]
+        "google_drive accepted a payload with no reference: " + resp.text[:200]
     )
 
 
 def test_google_drive_refuses_a_value_outside_its_vocabulary():
     """A column that accepts any string is not that column."""
-    body = {'GOOGLE_CLIENT_ID': 'id-1', 'GOOGLE_CLIENT_SECRET': 'sample', 'GOOGLE_REFRESH_TOKEN': 'sample', 'drive_mode': 'not-a-declared-value', 'operation': 'upload', 'reference': 'sample', 'status': 'open'}
+    body = {'reference': 'sample', 'status': 'not-a-declared-value', 'drive_mode': 'stubbed', 'folder_id': 'id-1', 'file_name': 'sample', 'operation': 'upload', 'credential_setting': 'sample', 'notes': 'sample'}
     resp = client.post("/v1/google_drive", json=body, headers=AUTH)
     assert resp.status_code in (400, 403, 404, 409, 422) or _refused(resp), (
-        "google_drive accepted an undeclared drive_mode: " + resp.text[:200]
+        "google_drive accepted an undeclared status: " + resp.text[:200]
     )
 
 
 def test_google_drive_does_not_leak_across_tenants():
     """404, never 403 and never the row: existence itself is private."""
-    body = {'GOOGLE_CLIENT_ID': 'id-1', 'GOOGLE_CLIENT_SECRET': 'sample', 'GOOGLE_REFRESH_TOKEN': 'sample', 'drive_mode': 'stubbed', 'operation': 'upload', 'reference': 'sample', 'status': 'open'}
+    body = {'reference': 'sample', 'status': 'open', 'drive_mode': 'stubbed', 'folder_id': 'id-1', 'file_name': 'sample', 'operation': 'upload', 'credential_setting': 'sample', 'notes': 'sample'}
     made = client.post("/v1/google_drive", json=body, headers=AUTH)
     if made.status_code != 200:
         pytest.skip("capability did not accept the sample record")
@@ -193,9 +193,6 @@ def test_google_drive_refuses_a_malformed_payload():
         assert resp.status_code in (400, 403, 404, 409, 422) or _refused(resp), (
             "google_drive accepted malformed input %r" % (junk,)
         )
-
-
-# -- lead_intake_and_dial_queue ----------------------------------
 
 
 def test_lead_intake_and_dial_queue_refuses_a_missing_required_field():

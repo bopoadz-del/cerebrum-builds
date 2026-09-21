@@ -26,6 +26,67 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 os.environ["STORAGE_PATH"] = tempfile.mkdtemp(prefix="platform-test-")
 
+# Settings the operator supplies at deploy time are not a build failure. This
+# must run BEFORE the first import of ``app`` below: a product that reads a
+# required credential at import would otherwise KeyError inside the factory's
+# own tests. Shared, word for word, with scripts/acceptance.py.
+DEPLOY_TIME_PLACEHOLDER = "set-at-deploy"
+
+
+def _stand_in_for_deploy_time_settings(root):
+    """Give every setting the product REQUIRES, and the build cannot have, a
+    stand-in -- so importing the product does not KeyError on a credential its
+    operator supplies at deploy time. Returns the names stood in for."""
+    import ast as _ast
+    import os as _os
+    from pathlib import Path as _Path
+
+    root = _Path(root)
+    examples = {}
+    env_example = root / ".env.example"
+    if env_example.is_file():
+        for raw in env_example.read_text(encoding="utf-8", errors="replace").splitlines():
+            line = raw.strip()
+            if not line or line.startswith("#") or "=" not in line:
+                continue
+            key, _, value = line.partition("=")
+            value = value.split(" #", 1)[0].strip().strip("'\"")
+            if key.strip():
+                examples[key.strip()] = value
+
+    def _is_environ(node):
+        if isinstance(node, _ast.Attribute) and node.attr == "environ":
+            return isinstance(node.value, _ast.Name) and node.value.id == "os"
+        return isinstance(node, _ast.Name) and node.id == "environ"
+
+    required = set()
+    app_dir = root / "app"
+    if app_dir.is_dir():
+        for path in app_dir.rglob("*.py"):
+            if "__pycache__" in path.parts:
+                continue
+            try:
+                tree = _ast.parse(path.read_text(encoding="utf-8", errors="replace"))
+            except (SyntaxError, ValueError):
+                continue
+            for node in _ast.walk(tree):
+                if (
+                    isinstance(node, _ast.Subscript)
+                    and isinstance(node.ctx, _ast.Load)
+                    and _is_environ(node.value)
+                    and isinstance(node.slice, _ast.Constant)
+                    and isinstance(node.slice.value, str)
+                ):
+                    required.add(node.slice.value)
+
+    stood_in = []
+    for name in sorted(required):
+        if name not in _os.environ:
+            _os.environ[name] = examples.get(name) or DEPLOY_TIME_PLACEHOLDER
+            stood_in.append(name)
+    return stood_in
+_stand_in_for_deploy_time_settings(Path(__file__).resolve().parents[1])
+
 # Schema is versioned. connect() does not CREATE TABLE. Apply head so
 # model/route tests have tables; a missing revision fails the suite.
 # ImportError is only for isolation probes that exec this file without app/.

@@ -438,8 +438,8 @@ class GoogleDrive:
     GOOGLE_REFRESH_TOKEN: str = ""
     notes: str = ""
 
-    FIELDS = ['GOOGLE_CLIENT_ID', 'GOOGLE_CLIENT_SECRET', 'GOOGLE_REFRESH_TOKEN', 'reference', 'status', 'drive_mode', 'folder_id', 'file_name', 'operation', 'credential_setting', 'notes']
-    CONSTRAINTS = {'reference': {'required': True}, 'status': {'allowed_values': ['open', 'in_progress', 'closed'], 'required': True}, 'drive_mode': {'allowed_values': ['stubbed', 'live'], 'required': True}, 'folder_id': {'required': False}, 'file_name': {'required': False}, 'operation': {'allowed_values': ['upload', 'download', 'list'], 'required': True}, 'credential_setting': {'required': False}, 'GOOGLE_CLIENT_ID': {'required': True}, 'GOOGLE_CLIENT_SECRET': {'required': True}, 'GOOGLE_REFRESH_TOKEN': {'required': True}, 'notes': {'required': False}}
+    FIELDS = ['reference', 'status', 'drive_mode', 'folder_id', 'file_name', 'operation', 'credential_setting', 'notes']
+    CONSTRAINTS = {'reference': {'required': True}, 'status': {'allowed_values': ['open', 'in_progress', 'closed'], 'required': True}, 'drive_mode': {'allowed_values': ['stubbed', 'live'], 'required': True}, 'folder_id': {'required': False}, 'file_name': {'required': False}, 'operation': {'allowed_values': ['upload', 'download', 'list'], 'required': True}, 'credential_setting': {'required': False}, 'notes': {'required': False}}
     ENTITY = "google_drive"
     _FIELD_PY = {}
     _FIELD_JSON = {}

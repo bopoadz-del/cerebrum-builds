@@ -2,5 +2,32 @@
   "edge_profile": "standard",
   "human_authority": true,
   "isolation": "property",
-  "pii_in_learning": false
+  "pii_in_learning": false,
+  "egress": {
+    "default": "offline",
+    "ci_contract": "tests/conftest.py blocks non-loopback sockets",
+    "optional_pilot_connectors": [
+      {
+        "id": "dxb_data",
+        "env": ["DXB_DATA_MCP_URL"],
+        "destination": "https://dxbdata.io/mcp",
+        "purpose": "official DLD area medians and rental yields"
+      },
+      {
+        "id": "dld",
+        "env": ["DLD_QUERY_URL"],
+        "destination": "https://offerbrief.com/api",
+        "mcp_command": "uvx --with 'mcp<2' dld-mcp",
+        "purpose": "DLD sales transactions and Ejari rental stats"
+      },
+      {
+        "id": "apify_bayut",
+        "env": ["APIFY_TOKEN"],
+        "destination": "https://api.apify.com/v2",
+        "actor": "memo23/apify-bayut-scraper",
+        "purpose": "capped Bayut for-sale asking harvest"
+      }
+    ],
+    "honesty": "each connector answers not_configured when env is unset; never fabricates market numbers"
+  }
 }

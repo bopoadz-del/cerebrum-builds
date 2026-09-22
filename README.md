@@ -9,10 +9,12 @@ and hands warm leads to a human broker through a **whispered summary and
 conference bridge**. Every call event is written down and reconstructable per
 Call SID.
 
-Offline by contract: no Store callbacks, no cloud LLM, no outbound HTTP except
-the one connector the operator configures. Every Store block is vendored into
+Offline by contract: no Store callbacks, no cloud LLM, and no outbound HTTP
+unless the operator opts a connector in. Every Store block is vendored into
 this repository and executed in-process. The Twilio edge is **stubbed** until a
-real account and caller number exist, and CI never dials.
+real account and caller number exist, and CI never dials. Optional property-
+market egress (DXB Data, dld-mcp data plane, Apify Bayut) is pilot-box only —
+see [docs/market_connectors_runbook.md](docs/market_connectors_runbook.md).
 
 ## Run it
 
@@ -105,6 +107,21 @@ treated as credential material — never logged, never echoed by `/health`, and
 never used to dial out unless the same names are set in the process
 environment.
 
+**Property market evidence (CHADi pilot).** Opt-in egress for official solds
+and asking prices. Each source answers `status: not_configured` when its env
+is unset and never fabricates numbers. CI stays offline (mocked tests).
+
+| Setting | Enables | Routes |
+| --- | --- | --- |
+| `DXB_DATA_MCP_URL` | DXB Data MCP (official DLD area medians/yields). JBR/Marina → DLD `Marsa Dubai`. | `POST /v1/market/dxb/snapshot`, `/yield`, `/compare` |
+| `DLD_QUERY_URL` | DLD sales/Ejari stats (same HTTP plane as `uvx --with 'mcp<2' dld-mcp`) | `POST /v1/market/dld/sales_stats` |
+| `APIFY_TOKEN` | Bayut for-sale harvest via Actor `memo23/apify-bayut-scraper` + `startUrls` (capped; do **not** use apify/web-fetch) | `POST /v1/market/apify/bayut_buy` |
+
+`GET /v1/market/status` and `GET /v1/capabilities` → `market_sources` report
+which of the three are configured. Market numbers are **not** injected into
+`project_knowledge_grounding` — cite-or-refuse stays project-sheet corpus only.
+Operator runbook: `docs/market_connectors_runbook.md`.
+
 ## Capabilities
 
 | Capability | What it does | Blocks |
@@ -185,6 +202,10 @@ path that does run — it never reports a block as answered.
 Twilio is stubbed by design: no account and no caller number were supplied.
 `tests/fixtures/twilio/` holds the recorded webhook fixtures the gateway and
 the transfer are verified against.
+
+Money settings (`CURRENCY`, `BROKER_COMMISSION_PERCENT`) still refuse by name
+until set. Market connectors are real clients when env is set on a pilot box;
+without env they are `not_configured`, not silent stubs.
 
 ## Docker
 

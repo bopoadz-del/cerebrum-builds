@@ -42,7 +42,13 @@ def inventory() -> Dict[str, Any]:
 @router.get("/capabilities")
 def capabilities() -> Dict[str, Any]:
     """WRITER — Platform manufacturer. Capability HTTP surface."""
-    return {"items": jobs.CAPABILITIES}
+    from app.connectors import market_status
+
+    return {
+        "items": jobs.CAPABILITIES,
+        "market_sources": market_status(),
+        "market_http": jobs.MARKET_HTTP,
+    }
 
 
 @router.get("/gates")

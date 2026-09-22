@@ -16,7 +16,7 @@ from app import backup, store
 from app.migrations import current_revision, downgrade, upgrade_head, upgrade_to
 
 ENTITY = 'call_state_machine'
-SAMPLE = {'call_sid': 's10-row', 'current_state': 'queued', 'reference': 's10-row', 'status': 'open', 'window_state': 'open', 'previous_state': 'queued', 'attempt_count': 0}
+SAMPLE = {'reference': 's10-row', 'status': 'open', 'call_sid': 's10-row', 'lead_name': 's10-row', 'phone': 's10-row', 'current_state': 'queued', 'previous_state': 'queued', 'call_window': 's10-row', 'window_state': 'open', 'transition_event': 's10-row', 'attempt_count': 0, 'notes': 's10-row'}
 #: Tenant the generated tests act as. Tenant-scoped store calls require
 #: an explicit tenant — never a default (the tenancy module's rule).
 TENANT = "test-tenant"

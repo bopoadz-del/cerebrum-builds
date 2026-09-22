@@ -200,7 +200,7 @@ def test_front_desk_and_guest_stay_refuses_a_malformed_payload():
 
 def test_guest_engagement_and_segmentation_refuses_a_missing_required_field():
     """A partial record is refused, never completed by the handler."""
-    body = {'status': 'open', 'guest_name': 'sample', 'recency_days': 1, 'frequency': 1, 'monetary': 1, 'segment': 'champion', 'delivery_channel': 'mcp', 'offer_code': 'id-1', 'notes': 'sample'}
+    body = {'status': 'open', 'guest_name': 'sample', 'recency_days': 1, 'frequency': 1, 'monetary': 1.0, 'segment': 'champion', 'delivery_channel': 'mcp', 'offer_code': 'id-1', 'notes': 'sample'}
     resp = client.post("/v1/guest_engagement_and_segmentation", json=body, headers=AUTH)
     assert resp.status_code in (400, 403, 404, 409, 422) or _refused(resp), (
         "guest_engagement_and_segmentation accepted a payload with no reference: " + resp.text[:200]
@@ -209,7 +209,7 @@ def test_guest_engagement_and_segmentation_refuses_a_missing_required_field():
 
 def test_guest_engagement_and_segmentation_refuses_a_value_outside_its_vocabulary():
     """A column that accepts any string is not that column."""
-    body = {'reference': 'sample', 'status': 'not-a-declared-value', 'guest_name': 'sample', 'recency_days': 1, 'frequency': 1, 'monetary': 1, 'segment': 'champion', 'delivery_channel': 'mcp', 'offer_code': 'id-1', 'notes': 'sample'}
+    body = {'reference': 'sample', 'status': 'not-a-declared-value', 'guest_name': 'sample', 'recency_days': 1, 'frequency': 1, 'monetary': 1.0, 'segment': 'champion', 'delivery_channel': 'mcp', 'offer_code': 'id-1', 'notes': 'sample'}
     resp = client.post("/v1/guest_engagement_and_segmentation", json=body, headers=AUTH)
     assert resp.status_code in (400, 403, 404, 409, 422) or _refused(resp), (
         "guest_engagement_and_segmentation accepted an undeclared status: " + resp.text[:200]
@@ -218,7 +218,7 @@ def test_guest_engagement_and_segmentation_refuses_a_value_outside_its_vocabular
 
 def test_guest_engagement_and_segmentation_does_not_leak_across_tenants():
     """404, never 403 and never the row: existence itself is private."""
-    body = {'reference': 'sample', 'status': 'open', 'guest_name': 'sample', 'recency_days': 1, 'frequency': 1, 'monetary': 1, 'segment': 'champion', 'delivery_channel': 'mcp', 'offer_code': 'id-1', 'notes': 'sample'}
+    body = {'reference': 'sample', 'status': 'open', 'guest_name': 'sample', 'recency_days': 1, 'frequency': 1, 'monetary': 1.0, 'segment': 'champion', 'delivery_channel': 'mcp', 'offer_code': 'id-1', 'notes': 'sample'}
     made = client.post("/v1/guest_engagement_and_segmentation", json=body, headers=AUTH)
     if made.status_code != 200:
         pytest.skip("capability did not accept the sample record")
@@ -306,7 +306,7 @@ def test_housekeeping_and_maintenance_refuses_a_malformed_payload():
 
 def test_operations_billing_refuses_a_missing_required_field():
     """A partial record is refused, never completed by the handler."""
-    body = {'reference': 'sample', 'status': 'open', 'folio_reference': 'sample', 'charge_type': 'room', 'amount': 1, 'currency': 'sample', 'tax_rate_percent': 1, 'total_amount': 1, 'notes': 'sample'}
+    body = {'reference': 'sample', 'status': 'open', 'folio_reference': 'sample', 'charge_type': 'room', 'amount': 1.0, 'currency': 'sample', 'tax_rate_percent': 1.0, 'total_amount': 1.0, 'notes': 'sample'}
     resp = client.post("/v1/operations_billing", json=body, headers=AUTH)
     assert resp.status_code in (400, 403, 404, 409, 422) or _refused(resp), (
         "operations_billing accepted a payload with no setting: " + resp.text[:200]
@@ -315,7 +315,7 @@ def test_operations_billing_refuses_a_missing_required_field():
 
 def test_operations_billing_refuses_a_value_outside_its_vocabulary():
     """A column that accepts any string is not that column."""
-    body = {'setting': 'sample', 'reference': 'sample', 'status': 'not-a-declared-value', 'folio_reference': 'sample', 'charge_type': 'room', 'amount': 1, 'currency': 'sample', 'tax_rate_percent': 1, 'total_amount': 1, 'notes': 'sample'}
+    body = {'setting': 'sample', 'reference': 'sample', 'status': 'not-a-declared-value', 'folio_reference': 'sample', 'charge_type': 'room', 'amount': 1.0, 'currency': 'sample', 'tax_rate_percent': 1.0, 'total_amount': 1.0, 'notes': 'sample'}
     resp = client.post("/v1/operations_billing", json=body, headers=AUTH)
     assert resp.status_code in (400, 403, 404, 409, 422) or _refused(resp), (
         "operations_billing accepted an undeclared status: " + resp.text[:200]
@@ -324,7 +324,7 @@ def test_operations_billing_refuses_a_value_outside_its_vocabulary():
 
 def test_operations_billing_does_not_leak_across_tenants():
     """404, never 403 and never the row: existence itself is private."""
-    body = {'setting': 'sample', 'reference': 'sample', 'status': 'open', 'folio_reference': 'sample', 'charge_type': 'room', 'amount': 1, 'currency': 'sample', 'tax_rate_percent': 1, 'total_amount': 1, 'notes': 'sample'}
+    body = {'setting': 'sample', 'reference': 'sample', 'status': 'open', 'folio_reference': 'sample', 'charge_type': 'room', 'amount': 1.0, 'currency': 'sample', 'tax_rate_percent': 1.0, 'total_amount': 1.0, 'notes': 'sample'}
     made = client.post("/v1/operations_billing", json=body, headers=AUTH)
     if made.status_code != 200:
         pytest.skip("capability did not accept the sample record")
@@ -359,7 +359,7 @@ def test_operations_billing_refuses_a_malformed_payload():
 
 def test_operations_oversight_dashboard_refuses_a_missing_required_field():
     """A partial record is refused, never completed by the handler."""
-    body = {'status': 'open', 'dashboard_name': 'sample', 'widget': 'occupancy', 'window_days': 1, 'operator_role': 'operator', 'occupancy_percent': 1, 'open_work_orders': 1, 'notes': 'sample'}
+    body = {'status': 'open', 'dashboard_name': 'sample', 'widget': 'occupancy', 'window_days': 1, 'operator_role': 'operator', 'occupancy_percent': 1.0, 'open_work_orders': 1, 'notes': 'sample'}
     resp = client.post("/v1/operations_oversight_dashboard", json=body, headers=AUTH)
     assert resp.status_code in (400, 403, 404, 409, 422) or _refused(resp), (
         "operations_oversight_dashboard accepted a payload with no reference: " + resp.text[:200]
@@ -368,7 +368,7 @@ def test_operations_oversight_dashboard_refuses_a_missing_required_field():
 
 def test_operations_oversight_dashboard_refuses_a_value_outside_its_vocabulary():
     """A column that accepts any string is not that column."""
-    body = {'reference': 'sample', 'status': 'not-a-declared-value', 'dashboard_name': 'sample', 'widget': 'occupancy', 'window_days': 1, 'operator_role': 'operator', 'occupancy_percent': 1, 'open_work_orders': 1, 'notes': 'sample'}
+    body = {'reference': 'sample', 'status': 'not-a-declared-value', 'dashboard_name': 'sample', 'widget': 'occupancy', 'window_days': 1, 'operator_role': 'operator', 'occupancy_percent': 1.0, 'open_work_orders': 1, 'notes': 'sample'}
     resp = client.post("/v1/operations_oversight_dashboard", json=body, headers=AUTH)
     assert resp.status_code in (400, 403, 404, 409, 422) or _refused(resp), (
         "operations_oversight_dashboard accepted an undeclared status: " + resp.text[:200]
@@ -377,7 +377,7 @@ def test_operations_oversight_dashboard_refuses_a_value_outside_its_vocabulary()
 
 def test_operations_oversight_dashboard_does_not_leak_across_tenants():
     """404, never 403 and never the row: existence itself is private."""
-    body = {'reference': 'sample', 'status': 'open', 'dashboard_name': 'sample', 'widget': 'occupancy', 'window_days': 1, 'operator_role': 'operator', 'occupancy_percent': 1, 'open_work_orders': 1, 'notes': 'sample'}
+    body = {'reference': 'sample', 'status': 'open', 'dashboard_name': 'sample', 'widget': 'occupancy', 'window_days': 1, 'operator_role': 'operator', 'occupancy_percent': 1.0, 'open_work_orders': 1, 'notes': 'sample'}
     made = client.post("/v1/operations_oversight_dashboard", json=body, headers=AUTH)
     if made.status_code != 200:
         pytest.skip("capability did not accept the sample record")

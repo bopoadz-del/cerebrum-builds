@@ -33,7 +33,7 @@ def test_every_model_round_trips():
     for key, value in record.items():
         assert fetched[key] == value, (key, fetched[key], value)
     assert any(r['id'] == saved['id'] for r in store.list_all('front_desk_and_guest_stay', tenant_id=TENANT))
-    record = {'reference': 'sample', 'status': 'open', 'guest_name': 'sample', 'recency_days': 1, 'frequency': 1, 'monetary': 1, 'segment': 'champion', 'delivery_channel': 'mcp', 'offer_code': 'id-1', 'notes': 'sample'}
+    record = {'reference': 'sample', 'status': 'open', 'guest_name': 'sample', 'recency_days': 1, 'frequency': 1, 'monetary': 1.0, 'segment': 'champion', 'delivery_channel': 'mcp', 'offer_code': 'id-1', 'notes': 'sample'}
     saved = store.save('guest_engagement_and_segmentation', record, tenant_id=TENANT)
     assert saved['id'] is not None, 'no id assigned for guest_engagement_and_segmentation'
     fetched = store.get('guest_engagement_and_segmentation', saved['id'], tenant_id=TENANT)
@@ -49,7 +49,7 @@ def test_every_model_round_trips():
     for key, value in record.items():
         assert fetched[key] == value, (key, fetched[key], value)
     assert any(r['id'] == saved['id'] for r in store.list_all('housekeeping_and_maintenance', tenant_id=TENANT))
-    record = {'setting': 'sample', 'reference': 'sample', 'status': 'open', 'folio_reference': 'sample', 'charge_type': 'room', 'amount': 1, 'currency': 'sample', 'tax_rate_percent': 1, 'total_amount': 1, 'notes': 'sample'}
+    record = {'setting': 'sample', 'reference': 'sample', 'status': 'open', 'folio_reference': 'sample', 'charge_type': 'room', 'amount': 1.0, 'currency': 'sample', 'tax_rate_percent': 1.0, 'total_amount': 1.0, 'notes': 'sample'}
     saved = store.save('operations_billing', record, tenant_id=TENANT)
     assert saved['id'] is not None, 'no id assigned for operations_billing'
     fetched = store.get('operations_billing', saved['id'], tenant_id=TENANT)
@@ -57,7 +57,7 @@ def test_every_model_round_trips():
     for key, value in record.items():
         assert fetched[key] == value, (key, fetched[key], value)
     assert any(r['id'] == saved['id'] for r in store.list_all('operations_billing', tenant_id=TENANT))
-    record = {'reference': 'sample', 'status': 'open', 'dashboard_name': 'sample', 'widget': 'occupancy', 'window_days': 1, 'operator_role': 'operator', 'occupancy_percent': 1, 'open_work_orders': 1, 'notes': 'sample'}
+    record = {'reference': 'sample', 'status': 'open', 'dashboard_name': 'sample', 'widget': 'occupancy', 'window_days': 1, 'operator_role': 'operator', 'occupancy_percent': 1.0, 'open_work_orders': 1, 'notes': 'sample'}
     saved = store.save('operations_oversight_dashboard', record, tenant_id=TENANT)
     assert saved['id'] is not None, 'no id assigned for operations_oversight_dashboard'
     fetched = store.get('operations_oversight_dashboard', saved['id'], tenant_id=TENANT)

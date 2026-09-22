@@ -42,7 +42,7 @@ def test_health():
 
 def test_kernel_jobs_roster():
     """GET /v1/jobs publishes every kernel JD; distinctive routes answer."""
-    resp = client.get("/v1/jobs")
+    resp = client.get("/v1/jobs", headers=AUTH)
     assert resp.status_code == 200
     jobs = resp.json()["jobs"]
     by_kernel = {j["kernel"]: j for j in jobs}
@@ -56,21 +56,21 @@ def test_kernel_jobs_roster():
     assert by_kernel["STORE_MANAGER"]["title"] == "Store registrar"
     for job in jobs:
         assert job["mandate"] and job["http_routes"] and job["agent"]
-    catalog = client.get("/v1/catalog")
+    catalog = client.get("/v1/catalog", headers=AUTH)
     assert catalog.status_code == 200
     assert catalog.json()["kernel"] == "COLLECTOR"
-    inventory = client.get("/v1/inventory")
+    inventory = client.get("/v1/inventory", headers=AUTH)
     assert inventory.status_code == 200
     assert inventory.json()["kernel"] == "CLONER"
     assert "lock" in inventory.json()
-    caps_resp = client.get("/v1/capabilities")
+    caps_resp = client.get("/v1/capabilities", headers=AUTH)
     assert caps_resp.status_code == 200
     assert isinstance(caps_resp.json()["items"], list)
-    gates = client.get("/v1/gates")
+    gates = client.get("/v1/gates", headers=AUTH)
     assert gates.status_code == 200
     assert gates.json()["kernel"] == "TESTER"
     assert gates.json()["runs_over_http"] is False
-    prov = client.get("/v1/provenance")
+    prov = client.get("/v1/provenance", headers=AUTH)
     assert prov.status_code == 200
     assert prov.json()["kernel"] == "STORE_MANAGER"
 
@@ -91,6 +91,16 @@ def test_every_capability_route_answers():
         else:
             if not isinstance(body, dict):
                 failures.append('property_and_room_registry: JSON body is not a dict')
+            # A connector with no credentials answers as a DECLARED
+            # STUB -- ok:true, naming what is unavailable. That IS the
+            # right answer before the operator configures it. Judged
+            # only when THIS response declares itself a stub at the top
+            # level; a stubbed block nested inside a capability's result
+            # is that capability's business, and ok:false stays allowed.
+            elif 'blocks_unavailable' in body:
+                unavailable = body.get('blocks_unavailable')
+                if body.get('ok') is not True or not unavailable:
+                    failures.append('property_and_room_registry: declared stub must be ok:true' + ' and name blocks_unavailable')
             listed = client.get("/v1/property_and_room_registry", headers=AUTH)
             if listed.status_code != 200:
                 failures.append('property_and_room_registry list: HTTP ' + str(listed.status_code))
@@ -107,6 +117,16 @@ def test_every_capability_route_answers():
         else:
             if not isinstance(body, dict):
                 failures.append('front_desk_and_guest_stay: JSON body is not a dict')
+            # A connector with no credentials answers as a DECLARED
+            # STUB -- ok:true, naming what is unavailable. That IS the
+            # right answer before the operator configures it. Judged
+            # only when THIS response declares itself a stub at the top
+            # level; a stubbed block nested inside a capability's result
+            # is that capability's business, and ok:false stays allowed.
+            elif 'blocks_unavailable' in body:
+                unavailable = body.get('blocks_unavailable')
+                if body.get('ok') is not True or not unavailable:
+                    failures.append('front_desk_and_guest_stay: declared stub must be ok:true' + ' and name blocks_unavailable')
             listed = client.get("/v1/front_desk_and_guest_stay", headers=AUTH)
             if listed.status_code != 200:
                 failures.append('front_desk_and_guest_stay list: HTTP ' + str(listed.status_code))
@@ -123,11 +143,21 @@ def test_every_capability_route_answers():
         else:
             if not isinstance(body, dict):
                 failures.append('housekeeping_and_maintenance: JSON body is not a dict')
+            # A connector with no credentials answers as a DECLARED
+            # STUB -- ok:true, naming what is unavailable. That IS the
+            # right answer before the operator configures it. Judged
+            # only when THIS response declares itself a stub at the top
+            # level; a stubbed block nested inside a capability's result
+            # is that capability's business, and ok:false stays allowed.
+            elif 'blocks_unavailable' in body:
+                unavailable = body.get('blocks_unavailable')
+                if body.get('ok') is not True or not unavailable:
+                    failures.append('housekeeping_and_maintenance: declared stub must be ok:true' + ' and name blocks_unavailable')
             listed = client.get("/v1/housekeeping_and_maintenance", headers=AUTH)
             if listed.status_code != 200:
                 failures.append('housekeeping_and_maintenance list: HTTP ' + str(listed.status_code))
 
-    payload = {'reference': 'sample', 'status': 'open', 'guest_name': 'sample', 'recency_days': 1, 'frequency': 1, 'monetary': 1, 'segment': 'champion', 'delivery_channel': 'mcp', 'offer_code': 'id-1', 'notes': 'sample'}
+    payload = {'reference': 'sample', 'status': 'open', 'guest_name': 'sample', 'recency_days': 1, 'frequency': 1, 'monetary': 1.0, 'segment': 'champion', 'delivery_channel': 'mcp', 'offer_code': 'id-1', 'notes': 'sample'}
     resp = client.post("/v1/guest_engagement_and_segmentation", json=payload, headers=AUTH)
     if resp.status_code != 200:
         failures.append('guest_engagement_and_segmentation: HTTP ' + str(resp.status_code) + ': ' + resp.text[:200])
@@ -139,6 +169,16 @@ def test_every_capability_route_answers():
         else:
             if not isinstance(body, dict):
                 failures.append('guest_engagement_and_segmentation: JSON body is not a dict')
+            # A connector with no credentials answers as a DECLARED
+            # STUB -- ok:true, naming what is unavailable. That IS the
+            # right answer before the operator configures it. Judged
+            # only when THIS response declares itself a stub at the top
+            # level; a stubbed block nested inside a capability's result
+            # is that capability's business, and ok:false stays allowed.
+            elif 'blocks_unavailable' in body:
+                unavailable = body.get('blocks_unavailable')
+                if body.get('ok') is not True or not unavailable:
+                    failures.append('guest_engagement_and_segmentation: declared stub must be ok:true' + ' and name blocks_unavailable')
             listed = client.get("/v1/guest_engagement_and_segmentation", headers=AUTH)
             if listed.status_code != 200:
                 failures.append('guest_engagement_and_segmentation list: HTTP ' + str(listed.status_code))
@@ -155,11 +195,21 @@ def test_every_capability_route_answers():
         else:
             if not isinstance(body, dict):
                 failures.append('document_and_knowledge_answers: JSON body is not a dict')
+            # A connector with no credentials answers as a DECLARED
+            # STUB -- ok:true, naming what is unavailable. That IS the
+            # right answer before the operator configures it. Judged
+            # only when THIS response declares itself a stub at the top
+            # level; a stubbed block nested inside a capability's result
+            # is that capability's business, and ok:false stays allowed.
+            elif 'blocks_unavailable' in body:
+                unavailable = body.get('blocks_unavailable')
+                if body.get('ok') is not True or not unavailable:
+                    failures.append('document_and_knowledge_answers: declared stub must be ok:true' + ' and name blocks_unavailable')
             listed = client.get("/v1/document_and_knowledge_answers", headers=AUTH)
             if listed.status_code != 200:
                 failures.append('document_and_knowledge_answers list: HTTP ' + str(listed.status_code))
 
-    payload = {'setting': 'sample', 'reference': 'sample', 'status': 'open', 'folio_reference': 'sample', 'charge_type': 'room', 'amount': 1, 'currency': 'sample', 'tax_rate_percent': 1, 'total_amount': 1, 'notes': 'sample'}
+    payload = {'setting': 'sample', 'reference': 'sample', 'status': 'open', 'folio_reference': 'sample', 'charge_type': 'room', 'amount': 1.0, 'currency': 'sample', 'tax_rate_percent': 1.0, 'total_amount': 1.0, 'notes': 'sample'}
     resp = client.post("/v1/operations_billing", json=payload, headers=AUTH)
     if resp.status_code != 200:
         failures.append('operations_billing: HTTP ' + str(resp.status_code) + ': ' + resp.text[:200])
@@ -171,11 +221,21 @@ def test_every_capability_route_answers():
         else:
             if not isinstance(body, dict):
                 failures.append('operations_billing: JSON body is not a dict')
+            # A connector with no credentials answers as a DECLARED
+            # STUB -- ok:true, naming what is unavailable. That IS the
+            # right answer before the operator configures it. Judged
+            # only when THIS response declares itself a stub at the top
+            # level; a stubbed block nested inside a capability's result
+            # is that capability's business, and ok:false stays allowed.
+            elif 'blocks_unavailable' in body:
+                unavailable = body.get('blocks_unavailable')
+                if body.get('ok') is not True or not unavailable:
+                    failures.append('operations_billing: declared stub must be ok:true' + ' and name blocks_unavailable')
             listed = client.get("/v1/operations_billing", headers=AUTH)
             if listed.status_code != 200:
                 failures.append('operations_billing list: HTTP ' + str(listed.status_code))
 
-    payload = {'reference': 'sample', 'status': 'open', 'dashboard_name': 'sample', 'widget': 'occupancy', 'window_days': 1, 'operator_role': 'operator', 'occupancy_percent': 1, 'open_work_orders': 1, 'notes': 'sample'}
+    payload = {'reference': 'sample', 'status': 'open', 'dashboard_name': 'sample', 'widget': 'occupancy', 'window_days': 1, 'operator_role': 'operator', 'occupancy_percent': 1.0, 'open_work_orders': 1, 'notes': 'sample'}
     resp = client.post("/v1/operations_oversight_dashboard", json=payload, headers=AUTH)
     if resp.status_code != 200:
         failures.append('operations_oversight_dashboard: HTTP ' + str(resp.status_code) + ': ' + resp.text[:200])
@@ -187,6 +247,16 @@ def test_every_capability_route_answers():
         else:
             if not isinstance(body, dict):
                 failures.append('operations_oversight_dashboard: JSON body is not a dict')
+            # A connector with no credentials answers as a DECLARED
+            # STUB -- ok:true, naming what is unavailable. That IS the
+            # right answer before the operator configures it. Judged
+            # only when THIS response declares itself a stub at the top
+            # level; a stubbed block nested inside a capability's result
+            # is that capability's business, and ok:false stays allowed.
+            elif 'blocks_unavailable' in body:
+                unavailable = body.get('blocks_unavailable')
+                if body.get('ok') is not True or not unavailable:
+                    failures.append('operations_oversight_dashboard: declared stub must be ok:true' + ' and name blocks_unavailable')
             listed = client.get("/v1/operations_oversight_dashboard", headers=AUTH)
             if listed.status_code != 200:
                 failures.append('operations_oversight_dashboard list: HTTP ' + str(listed.status_code))
@@ -203,6 +273,16 @@ def test_every_capability_route_answers():
         else:
             if not isinstance(body, dict):
                 failures.append('external_integration_adapter: JSON body is not a dict')
+            # A connector with no credentials answers as a DECLARED
+            # STUB -- ok:true, naming what is unavailable. That IS the
+            # right answer before the operator configures it. Judged
+            # only when THIS response declares itself a stub at the top
+            # level; a stubbed block nested inside a capability's result
+            # is that capability's business, and ok:false stays allowed.
+            elif 'blocks_unavailable' in body:
+                unavailable = body.get('blocks_unavailable')
+                if body.get('ok') is not True or not unavailable:
+                    failures.append('external_integration_adapter: declared stub must be ok:true' + ' and name blocks_unavailable')
             listed = client.get("/v1/external_integration_adapter", headers=AUTH)
             if listed.status_code != 200:
                 failures.append('external_integration_adapter list: HTTP ' + str(listed.status_code))
@@ -293,7 +373,7 @@ def test_every_capability_route_accepts_payload():
                 if missing.status_code != 404:
                     failures.append('housekeeping_and_maintenance missing id: HTTP ' + str(missing.status_code) + ' (expected 404)')
 
-    payload = {'reference': 'sample', 'status': 'open', 'guest_name': 'sample', 'recency_days': 1, 'frequency': 1, 'monetary': 1, 'segment': 'champion', 'delivery_channel': 'mcp', 'offer_code': 'id-1', 'notes': 'sample'}
+    payload = {'reference': 'sample', 'status': 'open', 'guest_name': 'sample', 'recency_days': 1, 'frequency': 1, 'monetary': 1.0, 'segment': 'champion', 'delivery_channel': 'mcp', 'offer_code': 'id-1', 'notes': 'sample'}
     resp = client.post("/v1/guest_engagement_and_segmentation", json=payload, headers=AUTH)
     if resp.status_code != 200:
         failures.append('guest_engagement_and_segmentation: HTTP ' + str(resp.status_code) + ': ' + resp.text[:200])
@@ -345,7 +425,7 @@ def test_every_capability_route_accepts_payload():
                 if missing.status_code != 404:
                     failures.append('document_and_knowledge_answers missing id: HTTP ' + str(missing.status_code) + ' (expected 404)')
 
-    payload = {'setting': 'sample', 'reference': 'sample', 'status': 'open', 'folio_reference': 'sample', 'charge_type': 'room', 'amount': 1, 'currency': 'sample', 'tax_rate_percent': 1, 'total_amount': 1, 'notes': 'sample'}
+    payload = {'setting': 'sample', 'reference': 'sample', 'status': 'open', 'folio_reference': 'sample', 'charge_type': 'room', 'amount': 1.0, 'currency': 'sample', 'tax_rate_percent': 1.0, 'total_amount': 1.0, 'notes': 'sample'}
     resp = client.post("/v1/operations_billing", json=payload, headers=AUTH)
     if resp.status_code != 200:
         failures.append('operations_billing: HTTP ' + str(resp.status_code) + ': ' + resp.text[:200])
@@ -371,7 +451,7 @@ def test_every_capability_route_accepts_payload():
                 if missing.status_code != 404:
                     failures.append('operations_billing missing id: HTTP ' + str(missing.status_code) + ' (expected 404)')
 
-    payload = {'reference': 'sample', 'status': 'open', 'dashboard_name': 'sample', 'widget': 'occupancy', 'window_days': 1, 'operator_role': 'operator', 'occupancy_percent': 1, 'open_work_orders': 1, 'notes': 'sample'}
+    payload = {'reference': 'sample', 'status': 'open', 'dashboard_name': 'sample', 'widget': 'occupancy', 'window_days': 1, 'operator_role': 'operator', 'occupancy_percent': 1.0, 'open_work_orders': 1, 'notes': 'sample'}
     resp = client.post("/v1/operations_oversight_dashboard", json=payload, headers=AUTH)
     if resp.status_code != 200:
         failures.append('operations_oversight_dashboard: HTTP ' + str(resp.status_code) + ': ' + resp.text[:200])

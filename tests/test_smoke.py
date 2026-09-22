@@ -85,7 +85,7 @@ def test_every_capability_handle_returns_mapping():
         failures.append('housekeeping_and_maintenance handle() must return a dict, got ' + type(out).__name__)
     from app.actions import guest_engagement_and_segmentation
     try:
-        out = guest_engagement_and_segmentation.handle({'reference': 'sample', 'status': 'open', 'guest_name': 'sample', 'recency_days': 1, 'frequency': 1, 'monetary': 1, 'segment': 'champion', 'delivery_channel': 'mcp', 'offer_code': 'id-1', 'notes': 'sample'})
+        out = guest_engagement_and_segmentation.handle({'reference': 'sample', 'status': 'open', 'guest_name': 'sample', 'recency_days': 1, 'frequency': 1, 'monetary': 1.0, 'segment': 'champion', 'delivery_channel': 'mcp', 'offer_code': 'id-1', 'notes': 'sample'})
     except Exception as exc:
         out = {'ok': False, 'error': type(exc).__name__ + ': ' + str(exc)}
     if not isinstance(out, dict):
@@ -99,14 +99,14 @@ def test_every_capability_handle_returns_mapping():
         failures.append('document_and_knowledge_answers handle() must return a dict, got ' + type(out).__name__)
     from app.actions import operations_billing
     try:
-        out = operations_billing.handle({'setting': 'sample', 'reference': 'sample', 'status': 'open', 'folio_reference': 'sample', 'charge_type': 'room', 'amount': 1, 'currency': 'sample', 'tax_rate_percent': 1, 'total_amount': 1, 'notes': 'sample'})
+        out = operations_billing.handle({'setting': 'sample', 'reference': 'sample', 'status': 'open', 'folio_reference': 'sample', 'charge_type': 'room', 'amount': 1.0, 'currency': 'sample', 'tax_rate_percent': 1.0, 'total_amount': 1.0, 'notes': 'sample'})
     except Exception as exc:
         out = {'ok': False, 'error': type(exc).__name__ + ': ' + str(exc)}
     if not isinstance(out, dict):
         failures.append('operations_billing handle() must return a dict, got ' + type(out).__name__)
     from app.actions import operations_oversight_dashboard
     try:
-        out = operations_oversight_dashboard.handle({'reference': 'sample', 'status': 'open', 'dashboard_name': 'sample', 'widget': 'occupancy', 'window_days': 1, 'operator_role': 'operator', 'occupancy_percent': 1, 'open_work_orders': 1, 'notes': 'sample'})
+        out = operations_oversight_dashboard.handle({'reference': 'sample', 'status': 'open', 'dashboard_name': 'sample', 'widget': 'occupancy', 'window_days': 1, 'operator_role': 'operator', 'occupancy_percent': 1.0, 'open_work_orders': 1, 'notes': 'sample'})
     except Exception as exc:
         out = {'ok': False, 'error': type(exc).__name__ + ': ' + str(exc)}
     if not isinstance(out, dict):
@@ -154,7 +154,7 @@ def test_every_capability_executes_end_to_end():
     elif '\"status\": \"error\"' in _json.dumps(out, default=str) or '\"status\": \"failed\"' in _json.dumps(out, default=str):
         failures.append('housekeeping_and_maintenance reported ok around a failed block call: ' + _json.dumps(out, default=str)[:300])
     from app.actions import guest_engagement_and_segmentation
-    out = guest_engagement_and_segmentation.handle({'reference': 'sample', 'status': 'open', 'guest_name': 'sample', 'recency_days': 1, 'frequency': 1, 'monetary': 1, 'segment': 'champion', 'delivery_channel': 'mcp', 'offer_code': 'id-1', 'notes': 'sample'})
+    out = guest_engagement_and_segmentation.handle({'reference': 'sample', 'status': 'open', 'guest_name': 'sample', 'recency_days': 1, 'frequency': 1, 'monetary': 1.0, 'segment': 'champion', 'delivery_channel': 'mcp', 'offer_code': 'id-1', 'notes': 'sample'})
     if not isinstance(out, dict):
         failures.append('guest_engagement_and_segmentation returned a non-dict: ' + repr(out)[:120])
     elif out.get("ok") is False:
@@ -170,7 +170,7 @@ def test_every_capability_executes_end_to_end():
     elif '\"status\": \"error\"' in _json.dumps(out, default=str) or '\"status\": \"failed\"' in _json.dumps(out, default=str):
         failures.append('document_and_knowledge_answers reported ok around a failed block call: ' + _json.dumps(out, default=str)[:300])
     from app.actions import operations_billing
-    out = operations_billing.handle({'setting': 'sample', 'reference': 'sample', 'status': 'open', 'folio_reference': 'sample', 'charge_type': 'room', 'amount': 1, 'currency': 'sample', 'tax_rate_percent': 1, 'total_amount': 1, 'notes': 'sample'})
+    out = operations_billing.handle({'setting': 'sample', 'reference': 'sample', 'status': 'open', 'folio_reference': 'sample', 'charge_type': 'room', 'amount': 1.0, 'currency': 'sample', 'tax_rate_percent': 1.0, 'total_amount': 1.0, 'notes': 'sample'})
     if not isinstance(out, dict):
         failures.append('operations_billing returned a non-dict: ' + repr(out)[:120])
     elif out.get("ok") is False:
@@ -178,7 +178,7 @@ def test_every_capability_executes_end_to_end():
     elif '\"status\": \"error\"' in _json.dumps(out, default=str) or '\"status\": \"failed\"' in _json.dumps(out, default=str):
         failures.append('operations_billing reported ok around a failed block call: ' + _json.dumps(out, default=str)[:300])
     from app.actions import operations_oversight_dashboard
-    out = operations_oversight_dashboard.handle({'reference': 'sample', 'status': 'open', 'dashboard_name': 'sample', 'widget': 'occupancy', 'window_days': 1, 'operator_role': 'operator', 'occupancy_percent': 1, 'open_work_orders': 1, 'notes': 'sample'})
+    out = operations_oversight_dashboard.handle({'reference': 'sample', 'status': 'open', 'dashboard_name': 'sample', 'widget': 'occupancy', 'window_days': 1, 'operator_role': 'operator', 'occupancy_percent': 1.0, 'open_work_orders': 1, 'notes': 'sample'})
     if not isinstance(out, dict):
         failures.append('operations_oversight_dashboard returned a non-dict: ' + repr(out)[:120])
     elif out.get("ok") is False:

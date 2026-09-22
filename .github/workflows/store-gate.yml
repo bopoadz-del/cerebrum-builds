@@ -1,24 +1,18 @@
-# DROP-IN for the private cerebrum-builds store (owner creates that repo).
-# Copy to .github/workflows/store-gate.yml there. Not live on CerebrumDev.ai.
+# The Store acceptance gate for every build branch.
 #
 # FORBIDDEN: do not run this gate on a Render worker (no Docker daemon).
 # This job needs `docker build` + `docker run` on a host that already has Docker
 # (GitHub-hosted ubuntu-latest, or an equivalent self-hosted builder).
 #
-# N3 12-line floor (exact names). k/13 is the only green.
-#   no_token_401
-#   missing_field_422
-#   enum_422
-#   ui_served_200
-#   rag_roundtrip_hit
-#   single_persistence_root
-#   ci_present_and_full_suite
-#   handler_bodies_distinct
-#   health_fail_closed
-#   openapi_committed
-#   docker_health_200
-#   cross_tenant_404
-#   authorship_floor
+# ONE SOURCE. This file used to carry its own list of 13 check names while the
+# Factory's acceptance floor grew to 21, so a platform could be scored 13/13
+# here and refused by the Factory, which requires k/N of ITS floor. The gate
+# now keeps no list at all: it runs the product's own scripts/acceptance.py --
+# which the Factory renders from its floor -- and reports the
+# "ACCEPTANCE: k/N" that script prints. Green only when k == N.
+#
+# It also MEASURES what only a gate can: the image is booted once against a
+# real Postgres to feed postgres_boot_200, instead of leaving it unmeasured.
 
 name: Store acceptance gate
 
@@ -36,14 +30,59 @@ permissions:
 
 jobs:
   store-gate:
-    name: acceptance.py in Docker (k/13)
+    name: acceptance.py in Docker (k/N)
     runs-on: ubuntu-latest
     timeout-minutes: 30
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_PASSWORD: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 12
     steps:
       - uses: actions/checkout@v4
 
       - name: Build artifact image
         run: docker build -t cerebrum-artifact:${{ github.sha }} .
+
+      - name: Boot the image on Postgres (measures postgres_boot_200)
+        # The operator's DATABASE_URL, as a host hands it out. The product
+        # boots with it; /health is read inside the container. Whatever it
+        # answers is passed on as STORE_POSTGRES_BOOT -- a 503, or no answer,
+        # fails the check honestly.
+        run: |
+          set -uo pipefail
+          PROBE="cerebrum-pg-${{ github.sha }}"
+          docker run -d --name "$PROBE" \
+            --add-host=host.docker.internal:host-gateway \
+            -e DATABASE_URL=postgresql://postgres:postgres@host.docker.internal:5432/postgres \
+            -e PLATFORM_TOKEN=dev-local-token \
+            -e STORAGE_PATH=/app/storage \
+            cerebrum-artifact:${{ github.sha }} >/dev/null
+          code=0
+          for i in $(seq 1 60); do
+            code=$(docker exec "$PROBE" python3 -c "
+          import urllib.request, urllib.error
+          try:
+              print(urllib.request.urlopen('http://127.0.0.1:8000/health', timeout=3).status)
+          except urllib.error.HTTPError as exc:
+              print(exc.code)
+          except Exception:
+              print(0)
+          " 2>/dev/null || echo 0)
+            if [ "$code" != "0" ]; then break; fi
+            sleep 2
+          done
+          echo "postgres boot: /health answered $code"
+          if [ "$code" != "200" ]; then docker logs "$PROBE" 2>&1 | tail -40 || true; fi
+          docker rm -f "$PROBE" >/dev/null 2>&1 || true
+          echo "STORE_POSTGRES_BOOT=$code" >> "$GITHUB_ENV"
 
       - name: Run scripts/acceptance.py inside the image
         run: |
@@ -51,10 +90,7 @@ jobs:
           CONTAINER="cerebrum-gate-${{ github.sha }}"
           # The image ENTRYPOINT boots the server (alembic + uvicorn); the
           # acceptance script probes it over HTTP. Run detached, wait for
-          # /health, then exec the script - a foreground `docker run image
-          # python scripts/acceptance.py` passes the script as ARGS to the
-          # entrypoint, which ignores them: the script never runs and the
-          # step hangs until the workflow timeout.
+          # /health, then exec the script.
           docker run -d --name "$CONTAINER" \
             -e PLATFORM_TOKEN=dev-local-token \
             -e STORAGE_PATH=/app/storage \
@@ -75,15 +111,14 @@ jobs:
             exit 1
           fi
           docker exec -e PLATFORM_TOKEN=dev-local-token \
-            -e STORE_DOCKER_HEALTH=200 "$CONTAINER" \
-            python3 scripts/acceptance.py | tee acceptance.out
+            -e STORE_DOCKER_HEALTH=200 \
+            -e STORE_POSTGRES_BOOT="${STORE_POSTGRES_BOOT:-0}" \
+            "$CONTAINER" python3 scripts/acceptance.py | tee acceptance.out
 
-      - name: Parse k/13 and write result
-        # always(): acceptance.py exits non-zero on any k<12, which is honest -
-        # but without this the parse step is SKIPPED, store_gate.json is never
-        # written, and "Write commit status" falls back to 0/12. A real 11/12
-        # was being published as 0/12: the gate reporting on its own wiring
-        # instead of the platform.
+      - name: Parse k/N and write result
+        # always(): acceptance.py exits non-zero when k < N, which is honest --
+        # but without this the result is never written and the status would
+        # report the gate's wiring instead of the platform.
         if: always()
         run: |
           python3 <<'PY'
@@ -93,64 +128,40 @@ jobs:
           import sys
           from pathlib import Path
 
-          FLOOR = (
-              "no_token_401",
-              "missing_field_422",
-              "enum_422",
-              "ui_served_200",
-              "rag_roundtrip_hit",
-              "single_persistence_root",
-              "ci_present_and_full_suite",
-              "handler_bodies_distinct",
-              "health_fail_closed",
-              "openapi_committed",
-              "docker_health_200",
-              "cross_tenant_404",
-              "authorship_floor",
-          )
-          LINE = re.compile(
-              r"^(PASS|FAIL|SKIP)\s+(\S+)\s*(?:—|-|:)?\s*(.*)$",
-              re.IGNORECASE,
-          )
-          text = Path("acceptance.out").read_text(encoding="utf-8")
-          seen = {}
+          out = Path("acceptance.out")
+          text = out.read_text(encoding="utf-8") if out.is_file() else ""
+          LINE = re.compile(r"^(PASS|FAIL|SKIP)\s+(\S+)\s*(?:—|-|:)?\s*(.*)$", re.IGNORECASE)
+          lines = []
           for raw in text.splitlines():
               m = LINE.match(raw.strip())
-              if not m:
-                  continue
-              status, name, detail = m.group(1).upper(), m.group(2), m.group(3).strip()
-              if name in FLOOR and name not in seen:
-                  seen[name] = {"name": name, "status": status, "detail": detail}
-          lines = [
-              seen.get(
-                  name,
-                  {"name": name, "status": "FAIL", "detail": "harness omitted this line"},
-              )
-              for name in FLOOR
-          ]
-          satisfied = sum(1 for line in lines if line["status"] in {"PASS", "SKIP"})
-          total = len(FLOOR)
-          ok = satisfied == total and all(line["status"] in {"PASS", "SKIP"} for line in lines)
+              if m:
+                  lines.append({"name": m.group(2), "status": m.group(1).upper(), "detail": m.group(3).strip()})
+          # The product's own verdict: the LAST "ACCEPTANCE: k/N" line.
+          scores = re.findall(r"^ACCEPTANCE:\s*(\d+)\s*/\s*(\d+)\s*$", text, re.MULTILINE)
+          if scores:
+              passed, total = (int(x) for x in scores[-1])
+              ok = total > 0 and passed == total
+              score = f"{passed}/{total}"
+          else:
+              passed, total, ok = 0, 0, False
+              score = "no score"
           report = {
-              "schema": "store_gate.v1",
-              "passed": satisfied,
+              "schema": "store_gate.v2",
+              "passed": passed,
               "total": total,
               "ok": ok,
-              "score": f"{satisfied}/{total}",
+              "score": score,
               "lines": lines,
-              "checks": list(FLOOR),
+              "checks": [line["name"] for line in lines],
               "sha": os.environ.get("GITHUB_SHA", ""),
               "via": "scripts/acceptance.py-in-docker",
           }
-          Path("store_gate.json").write_text(
-              json.dumps(report, indent=2, sort_keys=True) + "\n",
-              encoding="utf-8",
-          )
-          print(f"STORE_GATE {satisfied}/{total} ok={ok}")
+          Path("store_gate.json").write_text(json.dumps(report, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+          print(f"STORE_GATE {score} ok={ok}")
           sys.exit(0 if ok else 1)
           PY
 
-      - name: Upload k/13 artifact
+      - name: Upload k/N artifact
         if: always()
         uses: actions/upload-artifact@v4
         with:
@@ -170,7 +181,7 @@ jobs:
             score=$(python3 -c "import json; print(json.load(open('store_gate.json'))['score'])")
             ok=$(python3 -c "import json; print('true' if json.load(open('store_gate.json'))['ok'] else 'false')")
           else
-            score="0/13"
+            score="no score (the image or the script did not run)"
             ok="false"
           fi
           if [ "$ok" = "true" ]; then state=success; else state=failure; fi

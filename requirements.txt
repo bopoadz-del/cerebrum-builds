@@ -18,3 +18,16 @@ starlette>=0.37
 # app/db.py maps postgres:// and postgresql:// onto psycopg (v3), and
 # alembic/env.py uses that same normalised URL for migrations.
 psycopg[binary]>=3.1
+
+# Vendored block dependencies (refreshed by the factory).
+Pint  # action: pint in formula_executor.py
+aiofiles  # module: aiofiles in storage.py
+aiohttp  # action: aiohttp in webhook.py
+aiosmtplib  # action: aiosmtplib in notification.py
+cryptography  # action: cryptography in google_drive.py
+httpx  # action: httpx in formula_executor.py, google_drive.py, knowledge.py
+numpy  # module: numpy in formula_executor.py, vector_search.py
+psycopg2-binary  # action: psycopg2 in database.py
+redis  # action: redis in queue.py
+scikit-learn  # module: sklearn in vector_search.py
+sympy  # action: sympy in formula_executor.py

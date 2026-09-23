@@ -4,22 +4,6 @@
 Authorship floor is the LAST line. HTTP 200 ok:false is not a pass.
 RAG skip policy: SKIP:no-rag-surface only when the product has no RAG
 route or rag capability. Steward must plant + hit.
-
-Measurement provenance (honesty rule for this file):
-
-* ``docker_health_200`` and ``postgres_boot_200`` are measurements only the
-  gate host can take -- it owns the container probe and the Postgres boot.
-  This script reports what the host measured and FAILS LOUD when the host
-  measured nothing. It never fabricates either number.
-* ``bench_p95``, ``backup_restore_roundtrip`` and ``one_live_connector`` are
-  measurements this script CAN take from inside the image, so it takes them
-  when the host did not: it runs ``scripts/bench.py``, it performs a real
-  backup → wipe → restore drill against a scratch STORAGE_PATH with rows
-  asserted on both sides, and it drives ``app.notify.deliver`` down a real
-  SMTP socket to a local sink and asserts the message arrived. A host that
-  supplies ``STORE_BENCH_P95_MS`` / ``STORE_BACKUP_RESTORE`` /
-  ``STORE_LIVE_CONNECTOR`` still wins -- but an unset variable now means
-  "this script measured it", not "nobody looked".
 """
 
 from __future__ import annotations
@@ -29,9 +13,7 @@ import hashlib
 import json
 import os
 import re
-import subprocess
 import sys
-import tempfile
 import uuid
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
@@ -662,185 +644,21 @@ def check_postgres_boot_200(http: _Http) -> Tuple[str, str]:
             "decide the backend or the two disagree",
         )
     measured = (os.environ.get("STORE_POSTGRES_BOOT") or "").strip()
-    if measured == "200":
-        resp = http.request("get", "/health")
-        if resp.status_code != 200:
-            return "FAIL", "postgres boot env=200 but /health is %s" % resp.status_code
-        return "PASS", "store.py routes through app.db; boots on Postgres"
-    # The gate owns the Postgres boot (it has the server). When it did not
-    # measure, take the measurement this script can take: with a
-    # DATABASE_URL configured, the platform must actually boot against that
-    # database -- a set variable that the platform cannot dial is the
-    # failure the check exists to catch. With no DATABASE_URL there is
-    # nothing here to measure, and the check says exactly that.
-    if not (os.environ.get("DATABASE_URL") or "").strip():
-        return (
-            "FAIL",
-            "STORE_POSTGRES_BOOT=%r and DATABASE_URL unset "
-            "(gate must boot it on Postgres)" % measured,
-        )
-    probe = (
-        "from fastapi.testclient import TestClient\n"
-        "from app.main import app\n"
-        "with TestClient(app) as client:\n"
-        "    print('POSTGRES_HEALTH', client.get('/health').status_code)\n"
-    )
-    env = {**os.environ, "PYTHONPATH": str(ROOT)}
-    try:
-        proc = subprocess.run(
-            [sys.executable, "-c", probe],
-            cwd=str(ROOT),
-            capture_output=True,
-            text=True,
-            timeout=300,
-            env=env,
-        )
-    except Exception as exc:  # noqa: BLE001 - a failed measurement is a failed check
-        return "FAIL", "Postgres boot raised %s: %s" % (type(exc).__name__, exc)
-    text = (proc.stdout or "") + "\n" + (proc.stderr or "")
-    if "POSTGRES_HEALTH 200" not in text:
-        tail = " | ".join(line for line in text.strip().splitlines()[-3:])
-        return "FAIL", "DATABASE_URL set but the platform did not boot on it: %s" % tail[:220]
-    return "PASS", "store.py routes through app.db; boots on the configured DATABASE_URL"
-
-
-def _smtp_live_roundtrip() -> Tuple[bool, str]:
-    """A real socket round-trip through app.notify.deliver, to a local sink.
-
-    This is the platform's own delivery path (smtplib, the configured-from-
-    environment relay, the message it builds), not a fake caller. The sink
-    only stands in for the receiving MTA; if the message does not arrive, the
-    delivery path is broken and the drill says so.
-    """
-    import socket
-    import socketserver
-    import threading
-
-    class _Sink(socketserver.ThreadingTCPServer):
-        allow_reuse_address = True
-        daemon_threads = True
-
-        def __init__(self, address):
-            super().__init__(address, _SinkHandler)
-            self.messages: List[str] = []
-
-    class _SinkHandler(socketserver.StreamRequestHandler):
-        """Minimal RFC 5321 dialogue: enough for smtplib.send_message.
-
-        Greeting, multiline EHLO, MAIL/RCPT, DATA terminated by a lone dot,
-        QUIT. STARTTLS is refused by name, so the drill connects with
-        SMTP_STARTTLS=0 and the message body is what lands in ``messages``.
-        """
-
-        def handle(self) -> None:
-            self.wfile.write(b"220 localhost acceptance sink\r\n")
-            buffer: List[bytes] = []
-            in_data = False
-            while True:
-                line = self.rfile.readline()
-                if not line:
-                    return
-                if in_data:
-                    if line.strip() == b".":
-                        in_data = False
-                        self.server.messages.append(
-                            b"".join(buffer).decode("utf-8", "replace")
-                        )
-                        buffer = []
-                        self.wfile.write(b"250 OK queued\r\n")
-                    else:
-                        buffer.append(line)
-                    continue
-                command = line.strip().upper()
-                if command.startswith(b"EHLO"):
-                    self.wfile.write(b"250-localhost\r\n250 SIZE 10485760\r\n")
-                elif command.startswith(b"HELO"):
-                    self.wfile.write(b"250 localhost\r\n")
-                elif command.startswith(b"DATA"):
-                    self.wfile.write(b"354 End data with <CR><LF>.<CR><LF>\r\n")
-                    in_data = True
-                elif command.startswith(b"QUIT"):
-                    self.wfile.write(b"221 Bye\r\n")
-                    return
-                elif command.startswith(b"MAIL") or command.startswith(b"RCPT"):
-                    self.wfile.write(b"250 OK\r\n")
-                elif command.startswith(b"RSET") or command.startswith(b"NOOP"):
-                    self.wfile.write(b"250 OK\r\n")
-                elif command.startswith(b"STARTTLS"):
-                    self.wfile.write(b"502 STARTTLS not offered\r\n")
-                else:
-                    self.wfile.write(b"250 OK\r\n")
-
-    server = _Sink(("127.0.0.1", 0))
-    port = int(server.server_address[1])
-    thread = threading.Thread(target=server.serve_forever, daemon=True)
-    thread.start()
-    keys = (
-        "SMTP_HOST",
-        "SMTP_PORT",
-        "SMTP_STARTTLS",
-        "SMTP_FROM",
-        "SMTP_USER",
-        "SMTP_PASS",
-        "GUEST_WEBHOOK_URL",
-    )
-    saved = {key: os.environ.get(key) for key in keys}
-    subject = "acceptance live-connector drill"
-    try:
-        os.environ.update(
-            {
-                "SMTP_HOST": "127.0.0.1",
-                "SMTP_PORT": str(port),
-                "SMTP_STARTTLS": "0",
-                "SMTP_FROM": "acceptance@localhost",
-            }
-        )
-        for key in ("SMTP_USER", "SMTP_PASS", "GUEST_WEBHOOK_URL"):
-            os.environ.pop(key, None)
-        from app.notify import deliver
-
-        result = deliver(
-            to="guest@example.com",
-            subject=subject,
-            body="acceptance drill: one live connector round-trip",
-        )
-        # smtplib closes the socket on context exit; the sink records on DATA.
-        for _ in range(50):
-            if server.messages:
-                break
-            import time
-
-            time.sleep(0.02)
-    except Exception as exc:  # noqa: BLE001 - a failed drill is a failed check
-        return False, "%s: %s" % (type(exc).__name__, exc)
-    finally:
-        server.shutdown()
-        server.server_close()
-        for key, value in saved.items():
-            if value is None:
-                os.environ.pop(key, None)
-            else:
-                os.environ[key] = value
-    if not isinstance(result, dict) or result.get("ok") is not True:
-        return False, "deliver refused the drill: %s" % str(result)[:160]
-    if result.get("transport") != "smtp":
-        return False, "deliver used %r, not the configured SMTP path" % result.get("transport")
-    arrived = [message for message in server.messages if subject in message]
-    if not arrived:
-        return False, "smtplib reported success but the sink received no message"
-    return True, "smtp 127.0.0.1:%d accepted %d message(s)" % (port, len(arrived))
+    if measured != "200":
+        return "FAIL", "STORE_POSTGRES_BOOT=%r (gate must boot it on Postgres)" % measured
+    resp = http.request("get", "/health")
+    if resp.status_code != 200:
+        return "FAIL", "postgres boot env=200 but /health is %s" % resp.status_code
+    return "PASS", "store.py routes through app.db; boots on Postgres"
 
 
 def check_one_live_connector() -> Tuple[str, str]:
     measured = (os.environ.get("STORE_LIVE_CONNECTOR") or "").strip()
-    if measured:
-        if measured.lower() in ("0", "false", "mocked", "no"):
-            return "FAIL", "the only observed delivery was mocked (%s)" % measured
-        return "PASS", "live delivery observed: %s" % measured
-    ok, detail = _smtp_live_roundtrip()
-    if not ok:
-        return "FAIL", "no live delivery observed: %s" % detail
-    return "PASS", "live delivery measured in-image: %s" % detail
+    if not measured:
+        return "FAIL", "STORE_LIVE_CONNECTOR unset: no real delivery was observed"
+    if measured.lower() in ("0", "false", "mocked", "no"):
+        return "FAIL", "the only observed delivery was mocked (%s)" % measured
+    return "PASS", "live delivery observed: %s" % measured
 
 
 def check_metrics_served(http: _Http) -> Tuple[str, str]:
@@ -870,161 +688,26 @@ def check_metrics_served(http: _Http) -> Tuple[str, str]:
     return "PASS", "/metrics serves a request count and latency"
 
 
-def _scratch_value(column: str, cls: Any) -> Any:
-    """A value the column accepts, from the model's own declared type."""
-    constraints = (getattr(cls, "CONSTRAINTS", {}) or {}).get(column) or {}
-    allowed = constraints.get("allowed_values") or []
-    if allowed:
-        return allowed[0]
-    declared = ""
-    annotations = getattr(cls, "__annotations__", {}) or {}
-    raw = annotations.get(column)
-    if raw is not None:
-        declared = str(raw).lower()
-    if declared in ("int", "float") or "int" in declared or "float" in declared:
-        low = constraints.get("min")
-        return low if isinstance(low, (int, float)) else 1
-    return "sample"
-
-
-def _backup_restore_drill() -> Tuple[bool, str]:
-    """backup → wipe → restore on a scratch root, rows asserted both sides.
-
-    Run against a temporary STORAGE_PATH so the drill cannot damage the
-    acceptance database: the point is that the shipped backup/restore code
-    moves rows, which is what the mounted-disk deployment depends on.
-    """
-    if not (ROOT / "app" / "backup.py").is_file():
-        return False, "no app/backup.py"
-    from app import store
-
-    entity = next(iter(store.COLUMNS), "")
-    if not entity:
-        return False, "store.COLUMNS is empty: nothing to back up"
-    keys = ("STORAGE_PATH", "BACKUP_DIR")
-    saved = {key: os.environ.get(key) for key in keys}
-    with tempfile.TemporaryDirectory(prefix="acceptance-drill-") as tmp:
-        after = -1
-        try:
-            os.environ["STORAGE_PATH"] = tmp
-            os.environ["BACKUP_DIR"] = str(Path(tmp) / "backups")
-            from app import migrations
-
-            migrations.upgrade_head()
-            models = _models()
-            cls = models.get(entity)
-            record = {
-                column: _scratch_value(column, cls) if cls is not None else "sample"
-                for column in store.COLUMNS[entity]
-            }
-            store.save(entity, record, tenant_id="local")
-            before = len(store.list_all(entity, tenant_id="local"))
-            if before < 1:
-                return False, "the scratch database did not accept a row"
-            from app import backup
-
-            archive = backup.create_backup()
-            if not Path(archive).is_file() or Path(archive).stat().st_size == 0:
-                return False, "create_backup produced no archive"
-            backup.wipe_database()
-            # The wiped database has no tables, so a read there answers with a
-            # sqlite error rather than 0 rows -- that IS the wiped state.
-            try:
-                wiped = len(store.list_all(entity, tenant_id="local"))
-            except Exception:
-                wiped = 0
-            if wiped != 0:
-                return False, "wipe left %d row(s) behind" % wiped
-            backup.restore_backup(archive)
-            restored = store.list_all(entity, tenant_id="local")
-            after = len(restored)
-            if after and not any(
-                str(row.get("reference")) == str(record.get("reference"))
-                for row in restored
-                if isinstance(row, dict)
-            ):
-                return False, "the restored row is not the row that was written"
-        except Exception as exc:  # noqa: BLE001 - a failed drill is a failed check
-            return False, "%s: %s" % (type(exc).__name__, exc)
-        finally:
-            for key, value in saved.items():
-                if value is None:
-                    os.environ.pop(key, None)
-                else:
-                    os.environ[key] = value
-    if after != before:
-        return False, "restored %d row(s), wrote %d" % (after, before)
-    return True, "%d row(s) survived backup → wipe → restore" % after
-
-
 def check_backup_restore_roundtrip() -> Tuple[str, str]:
     measured = (os.environ.get("STORE_BACKUP_RESTORE") or "").strip().lower()
     if measured in ("ok", "pass", "1", "true"):
         return "PASS", "backup restored with rows intact"
-    if measured:
-        return "FAIL", "STORE_BACKUP_RESTORE=%r: a backup nobody restored is a file" % measured
     if not (ROOT / "app" / "backup.py").is_file():
         return "FAIL", "no app/backup.py"
-    try:
-        from app.db import database_url
-
-        configured = database_url()
-    except Exception:
-        configured = ""
-    if configured:
-        # On Postgres the drill belongs to scripts/backup.sh (pg_dump/psql)
-        # against a server this script does not own: drilling the SQLite path
-        # here would report on a backend the operator is not running.
-        return (
-            "FAIL",
-            "STORE_BACKUP_RESTORE unset and DATABASE_URL is set: restore the "
-            "pg_dump this platform's scripts/backup.sh produces, or unset "
-            "DATABASE_URL for the SQLite drill",
-        )
-    ok, detail = _backup_restore_drill()
-    if not ok:
-        return "FAIL", "backup drill failed: %s" % detail
-    return "PASS", "measured in-image: %s" % detail
+    return "FAIL", "STORE_BACKUP_RESTORE=%r: a backup nobody restored is a file" % measured
 
 
-def check_bench_p95(http: _Http) -> Tuple[str, str]:
+def check_bench_p95() -> Tuple[str, str]:
     measured = (os.environ.get("STORE_BENCH_P95_MS") or "").strip()
-    if measured:
-        try:
-            value = float(measured)
-        except ValueError:
-            return "FAIL", "STORE_BENCH_P95_MS=%r is not a number" % measured
-        if value >= 500.0:
-            return "FAIL", "p95 %.0fms over the 500ms budget" % value
-        return "PASS", "p95 %.0fms under 500ms" % value
-    # A p95 over an unhealthy endpoint measures nothing. /health first, then
-    # the number -- the budget is about a platform that answers.
-    health = http.request("get", "/health")
-    if health.status_code != 200:
-        return "FAIL", "bench skipped: /health is %s, so a p95 would measure nothing" % health.status_code
-    script = ROOT / "scripts" / "bench.py"
-    if not script.is_file():
-        return "FAIL", "scripts/bench.py missing: p95 was not measured"
-    env = {**os.environ, "PYTHONPATH": str(ROOT)}
+    if not measured:
+        return "FAIL", "STORE_BENCH_P95_MS unset: p95 was not measured"
     try:
-        proc = subprocess.run(
-            [sys.executable, str(script)],
-            cwd=str(ROOT),
-            capture_output=True,
-            text=True,
-            timeout=300,
-            env=env,
-        )
-    except Exception as exc:  # noqa: BLE001 - a failed measurement is a failed check
-        return "FAIL", "scripts/bench.py raised %s: %s" % (type(exc).__name__, exc)
-    text = (proc.stdout or "") + "\n" + (proc.stderr or "")
-    match = re.search(r"STORE_BENCH_P95_MS=([0-9.]+)", text)
-    if not match:
-        return "FAIL", "scripts/bench.py printed no p95 (exit %s)" % proc.returncode
-    value = float(match.group(1))
+        value = float(measured)
+    except ValueError:
+        return "FAIL", "STORE_BENCH_P95_MS=%r is not a number" % measured
     if value >= 500.0:
         return "FAIL", "p95 %.0fms over the 500ms budget" % value
-    return "PASS", "measured in-image: p95 %.0fms under 500ms" % value
+    return "PASS", "p95 %.0fms under 500ms" % value
 
 
 def check_audit_clean() -> Tuple[str, str]:
@@ -1174,41 +857,71 @@ def check_authorship_floor() -> Tuple[str, str]:
     return "FAIL", "authored=%s below need≥%s" % (authored, need)
 
 
+DEPLOY_TIME_PLACEHOLDER = "set-at-deploy"
+
+
+def _stand_in_for_deploy_time_settings(root):
+    """Give every setting the product REQUIRES, and the build cannot have, a
+    stand-in -- so importing the product does not KeyError on a credential its
+    operator supplies at deploy time. Returns the names stood in for."""
+    import ast as _ast
+    import os as _os
+    from pathlib import Path as _Path
+
+    root = _Path(root)
+    examples = {}
+    env_example = root / ".env.example"
+    if env_example.is_file():
+        for raw in env_example.read_text(encoding="utf-8", errors="replace").splitlines():
+            line = raw.strip()
+            if not line or line.startswith("#") or "=" not in line:
+                continue
+            key, _, value = line.partition("=")
+            value = value.split(" #", 1)[0].strip().strip("'\"")
+            if key.strip():
+                examples[key.strip()] = value
+
+    def _is_environ(node):
+        if isinstance(node, _ast.Attribute) and node.attr == "environ":
+            return isinstance(node.value, _ast.Name) and node.value.id == "os"
+        return isinstance(node, _ast.Name) and node.id == "environ"
+
+    required = set()
+    app_dir = root / "app"
+    if app_dir.is_dir():
+        for path in app_dir.rglob("*.py"):
+            if "__pycache__" in path.parts:
+                continue
+            try:
+                tree = _ast.parse(path.read_text(encoding="utf-8", errors="replace"))
+            except (SyntaxError, ValueError):
+                continue
+            for node in _ast.walk(tree):
+                if (
+                    isinstance(node, _ast.Subscript)
+                    and isinstance(node.ctx, _ast.Load)
+                    and _is_environ(node.value)
+                    and isinstance(node.slice, _ast.Constant)
+                    and isinstance(node.slice.value, str)
+                ):
+                    required.add(node.slice.value)
+
+    stood_in = []
+    for name in sorted(required):
+        if name not in _os.environ:
+            _os.environ[name] = examples.get(name) or DEPLOY_TIME_PLACEHOLDER
+            stood_in.append(name)
+    return stood_in
+
+
 def main() -> int:
     os.chdir(ROOT)
     sys.path.insert(0, str(ROOT))
-    # A DEPLOYED platform has its storage root: the Dockerfile creates
-    # STORAGE_PATH (/app/data) before the entrypoint migrates. Measuring the
-    # deployment without it made /health answer 503 for the disk check -- a
-    # true reading of a half-configured deployment, and a false one about the
-    # product, which then failed bench_p95 for a reason it does not own. The
-    # root is created here so every check measures the platform the operator
-    # actually runs; the fail-closed disk probe still uses its own missing path.
-    # A DEPLOYED platform has its storage root configured and created: the
-    # Dockerfile sets STORAGE_PATH=/app/data and mkdirs it before the
-    # entrypoint migrates. Measuring the deployment without it made /health
-    # answer 503 for a missing disk -- a true reading of a half-configured
-    # deployment and a false one about the product, which then failed
-    # bench_p95 for a reason it does not own. The root is set and created
-    # here so every check measures the platform the operator actually runs;
-    # the fail-closed disk probe still points at its own missing path.
-    if not (os.environ.get("STORAGE_PATH") or "").strip():
-        os.environ["STORAGE_PATH"] = str(ROOT / "data")
-    try:
-        Path(os.environ["STORAGE_PATH"]).mkdir(parents=True, exist_ok=True)
-    except OSError:
-        pass
-    # A product that cannot boot must still produce a readable report: the
-    # gate reads named PASS/FAIL lines, and a traceback on stderr is a
-    # report nobody can act on. The client-dependent checks then fail with
-    # the boot error as their detail, and the checks that do not need a
-    # live app (tree, migrations, drills) still run.
-    boot_error = ""
-    try:
-        http, cm = _client()
-    except Exception as exc:  # noqa: BLE001 - reported as FAIL below
-        http, cm = None, None
-        boot_error = "%s: %s" % (type(exc).__name__, exc)
+    # Before anything imports ``app``: a credential the operator supplies at
+    # deploy time must not fail acceptance on the build box. Shared, word for
+    # word, with tests/conftest.py.
+    _stand_in_for_deploy_time_settings(ROOT)
+    http, cm = _client()
     results: List[Tuple[str, str, str]] = []
     try:
         # Generated from the floor, not written out here. A hand-kept list
@@ -1226,19 +939,6 @@ def main() -> int:
                 )
                 continue
             if "http" in _inspect.signature(_fn).parameters:
-                if http is None:
-                    runners.append(
-                        (
-                            _name,
-                            (
-                                lambda n=_name: (
-                                    "FAIL",
-                                    "the platform did not boot: %s" % boot_error,
-                                )
-                            ),
-                        )
-                    )
-                    continue
                 runners.append((_name, (lambda f=_fn: f(http))))
             else:
                 runners.append((_name, _fn))

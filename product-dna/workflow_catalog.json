@@ -1,0 +1,60 @@
+{
+  "schema_version": "1.0.0",
+  "workflows": [
+    {
+      "description": "Default linear workflow over planned capabilities.",
+      "name": "Capability sequence",
+      "steps": [
+        {
+          "capability_id": "lead_intake_and_dial_queue",
+          "role": "execute"
+        },
+        {
+          "capability_id": "call_state_machine",
+          "role": "execute"
+        },
+        {
+          "capability_id": "project_knowledge_grounding",
+          "role": "execute"
+        },
+        {
+          "capability_id": "voice_gateway",
+          "role": "execute"
+        },
+        {
+          "capability_id": "warm_transfer",
+          "role": "execute"
+        },
+        {
+          "capability_id": "qualification_and_broker_summary",
+          "role": "execute"
+        },
+        {
+          "capability_id": "outcome_capture_and_ledger",
+          "role": "execute"
+        },
+        {
+          "capability_id": "crm_destination_placeholder",
+          "role": "execute"
+        },
+        {
+          "capability_id": "notification",
+          "role": "execute"
+        },
+        {
+          "capability_id": "local_drive",
+          "role": "execute"
+        },
+        {
+          "capability_id": "google_drive",
+          "role": "execute"
+        },
+        {
+          "capability_id": "mcp_adapter",
+          "role": "execute"
+        }
+      ],
+      "workflow_id": "real_estate.capability_sequence"
+    }
+  ]
+}

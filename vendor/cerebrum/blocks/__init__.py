@@ -8,20 +8,27 @@ latent ModuleNotFoundError in the customer's environment.
 import importlib
 
 _BLOCK_DEFS = {
-    "analytics": ("vendor.cerebrum.blocks.analytics", "AnalyticsBlock"),
-    "audit": ("vendor.cerebrum.blocks.audit", "AuditBlock"),
-    "dashboard": ("vendor.cerebrum.blocks.dashboard", "DashboardBlock"),
+    "agent_state_sync": ("vendor.cerebrum.blocks.agent_state_sync", "AgentStateSyncBlock"),
+    "audit_chain": ("vendor.cerebrum.blocks.audit_chain", "AuditChainBlock"),
     "database": ("vendor.cerebrum.blocks.database", "DatabaseBlock"),
     "event_bus": ("vendor.cerebrum.blocks.event_bus", "EventBusBlock"),
+    "evidence_or_refuse": ("vendor.cerebrum.blocks.evidence_or_refuse", "EvidenceOrRefuseBlock"),
     "formula_executor": ("vendor.cerebrum.blocks.formula_executor", "FormulaExecutorBlock"),
+    "google_drive": ("vendor.cerebrum.blocks.google_drive", "GoogleDriveBlock"),
+    "ingestion_provenance": ("vendor.cerebrum.blocks.ingestion_provenance", "IngestionProvenanceBlock"),
     "knowledge": ("vendor.cerebrum.blocks.knowledge", "KnowledgeBlock"),
-    "memory": ("vendor.cerebrum.blocks.memory", "MemoryBlock"),
+    "llm_enhancer": ("vendor.cerebrum.blocks.llm_enhancer", "LLMEnhancerBlock"),
+    "local_drive": ("vendor.cerebrum.blocks.local_drive", "LocalDriveBlock"),
+    "mcp_adapter": ("vendor.cerebrum.blocks.mcp_adapter", "MCPAdapterBlock"),
+    "mock_connector_bus": ("vendor.cerebrum.blocks.mock_connector_bus", "MockConnectorBusBlock"),
     "notification": ("vendor.cerebrum.blocks.notification", "NotificationBlock"),
+    "orchestrator": ("vendor.cerebrum.blocks.orchestrator", "OrchestratorBlock"),
     "queue": ("vendor.cerebrum.blocks.queue", "QueueBlock"),
     "recommendation_template": ("vendor.cerebrum.blocks.recommendation_template", "RecommendationTemplateBlock"),
-    "team": ("vendor.cerebrum.blocks.team", "TeamBlock"),
+    "storage": ("vendor.cerebrum.blocks.storage", "StorageBlock"),
     "validation": ("vendor.cerebrum.blocks.validation", "ValidationBlock"),
     "vector_search": ("vendor.cerebrum.blocks.vector_search", "VectorSearchBlock"),
+    "webhook": ("vendor.cerebrum.blocks.webhook", "WebhookBlock"),
     "workflow": ("vendor.cerebrum.blocks.workflow", "WorkflowBlock"),
 }
 

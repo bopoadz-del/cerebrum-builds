@@ -1,0 +1,47 @@
+{
+  "schema": "security_findings.v1",
+  "product_id": "real-estate",
+  "role": "SECURITY specialist pass over the frozen tree, after INFRA/BACKEND/DEVOPS",
+  "how": "an independent read-only reviewer attacked the tree (tenancy per route, cross-tenant reads, egress, traversal, secrets, edge validation) and every finding was re-verified here by hand before being fixed; the fixes carry regression tests in tests/test_tenancy_and_security.py",
+  "findings": [
+    {
+      "id": "mcp_tenant_dropped",
+      "severity": "major",
+      "what": "app/actions/mcp_adapter.py dispatched the inner capability with the arguments only, so the handler never saw the authenticated tenant and fell back to a hard-coded \"local\" (app/actions/{project_knowledge_grounding,voice_gateway,mcp_adapter,outcome_capture_and_ledger,local_drive}.py). A caller with a second brokerage's token could reach the first tenant's corpus, ledger chain and drive root through POST /v1/mcp tools/call.",
+      "fix": "the adapter now forwards the principal's tenant into the inner handler ({**clean, \"tenant_id\": tenant_id}) exactly as the HTTP envelope does, and all five handlers refuse with \"tenant_id is required\" instead of inventing one",
+      "tests": [
+        "tests/test_tenancy_and_security.py::test_the_mcp_surface_runs_a_tool_as_the_calling_tenant",
+        "tests/test_tenancy_and_security.py::test_a_handler_refuses_rather_than_inventing_a_tenant"
+      ]
+    },
+    {
+      "id": "egress_redirect_bypass",
+      "severity": "major",
+      "what": "app/domain.webhook_delivery checked the caller's URL with check_egress and then used urllib.request.urlopen, which follows 3xx by default: a public host answering 302 Location: http://169.254.169.254/... moved the platform onto the link-local network after the guard had approved the first hop.",
+      "fix": "the delivery uses an opener with a guarded redirect handler that re-applies check_egress to every hop and refuses the delivery when a hop is refused",
+      "tests": [
+        "tests/test_tenancy_and_security.py::test_a_redirect_to_a_private_address_is_refused_not_followed"
+      ]
+    },
+    {
+      "id": "unbounded_body_before_the_cap",
+      "severity": "major",
+      "what": "app/auth.json_object read the whole body with await request.body() and only then compared its length to MAX_BODY_BYTES, so a large body was buffered before being refused (and the public Twilio webhooks read their body before authentication).",
+      "fix": "the declared Content-Length is refused up front and the body is read chunk by chunk, stopping at the cap; the raw bytes are cached so a route that reads its body twice (a webhook that resolves its tenant from the form and then parses it) does not meet \"Stream consumed\"",
+      "tests": [
+        "tests/test_tenancy_and_security.py::test_an_oversized_body_is_refused_by_its_declared_length"
+      ]
+    }
+  ],
+  "held": [
+    "no token -> 401 on every /v1 route; another tenant's record -> 404 (never 403, never the record); a tenant named in a payload -> 422",
+    "local_drive and storage refuse a relative path that escapes the tenant root, and absolute paths outside it",
+    "the egress guard refuses file://, http://127.0.0.1, ::1 and 169.254.169.254 for the URL the caller supplies (the redirect hop was the hole, now closed)",
+    "no credential literal in app/**: the platform ships with no Twilio, Google, CRM or model credentials, and each one is named as a setting in README.md",
+    "malformed JSON, a non-object body, an over-long field name, a wrong type and an out-of-vocabulary value are all refused with 422 naming the field"
+  ],
+  "not_run": [
+    "the reviewer could not execute Python (read-only sandbox unavailable), so its findings were static traces; each was reproduced here by hand and the fixes are covered by tests that were run",
+    "no container build was possible on this host: docker_health_200 and postgres_boot_200 stay unmeasured until the Store gate boots the image. The Postgres code path was exercised by hand (DATABASE_URL set -> engine dials psycopg v3 -> connection refused by the bogus host, instead of ModuleNotFoundError: psycopg2)"
+  ]
+}

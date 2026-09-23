@@ -1,0 +1,46 @@
+{
+  "activation": {
+    "default_enabled": true,
+    "mode": "hybrid",
+    "put_off_by": [
+      "disable:real_estate.hat.mcp_adapter"
+    ],
+    "triggers": [
+      {
+        "type": "intent",
+        "value": "mcp_adapter"
+      },
+      {
+        "type": "capability",
+        "value": "mcp_adapter"
+      }
+    ]
+  },
+  "agent_id": "real_estate.hat.mcp_adapter",
+  "allowed_actions": [
+    "real_estate.mcp_adapter"
+  ],
+  "block_ids": [
+    "mcp_adapter"
+  ],
+  "discipline": "mcp_adapter",
+  "display_name": "CallOps Mcp Adapter Hat",
+  "extends": "real_estate.base",
+  "handoffs": [],
+  "human_authority": true,
+  "kind": "hat",
+  "manifest_version": "1.0.0",
+  "memory": {
+    "pii_policy": "never_store_pii",
+    "save": [],
+    "scope": "tenant_project"
+  },
+  "strategy": "REUSE",
+  "summary": "Specialized hat for capability 'mcp_adapter' (strategy=REUSE). Adapted from TEKsystems retail hat pattern; estate/product-neutral.",
+  "tags": [
+    "hat",
+    "factory-generated",
+    "real_estate",
+    "mcp_adapter"
+  ]
+}

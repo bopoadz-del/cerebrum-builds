@@ -1,0 +1,75 @@
+{
+  "callbacks": {
+    "answered": {
+      "AccountSid": "ACfake00000000000000000000000000",
+      "CallDuration": "3",
+      "CallSid": "CAfake030000000000000000000000000000",
+      "CallStatus": "in-progress",
+      "Direction": "outbound-api",
+      "From": "+10000000000",
+      "SequenceNumber": "3",
+      "To": "+971500000000"
+    },
+    "busy": {
+      "AccountSid": "ACfake00000000000000000000000000",
+      "CallDuration": "0",
+      "CallSid": "CAfake060000000000000000000000000000",
+      "CallStatus": "busy",
+      "Direction": "outbound-api",
+      "From": "+10000000000",
+      "SequenceNumber": "6",
+      "To": "+971500000000"
+    },
+    "completed": {
+      "AccountSid": "ACfake00000000000000000000000000",
+      "CallDuration": "154",
+      "CallSid": "CAfake040000000000000000000000000000",
+      "CallStatus": "completed",
+      "Direction": "outbound-api",
+      "From": "+10000000000",
+      "SequenceNumber": "4",
+      "To": "+971500000000"
+    },
+    "failed": {
+      "AccountSid": "ACfake00000000000000000000000000",
+      "CallDuration": "0",
+      "CallSid": "CAfake050000000000000000000000000000",
+      "CallStatus": "failed",
+      "Direction": "outbound-api",
+      "From": "+10000000000",
+      "SequenceNumber": "5",
+      "To": "+971500000000"
+    },
+    "initiated": {
+      "AccountSid": "ACfake00000000000000000000000000",
+      "CallDuration": "0",
+      "CallSid": "CAfake010000000000000000000000000000",
+      "CallStatus": "initiated",
+      "Direction": "outbound-api",
+      "From": "+10000000000",
+      "SequenceNumber": "1",
+      "To": "+971500000000"
+    },
+    "no-answer": {
+      "AccountSid": "ACfake00000000000000000000000000",
+      "CallDuration": "0",
+      "CallSid": "CAfake070000000000000000000000000000",
+      "CallStatus": "no-answer",
+      "Direction": "outbound-api",
+      "From": "+10000000000",
+      "SequenceNumber": "7",
+      "To": "+971500000000"
+    },
+    "ringing": {
+      "AccountSid": "ACfake00000000000000000000000000",
+      "CallDuration": "0",
+      "CallSid": "CAfake020000000000000000000000000000",
+      "CallStatus": "ringing",
+      "Direction": "outbound-api",
+      "From": "+10000000000",
+      "SequenceNumber": "2",
+      "To": "+971500000000"
+    }
+  },
+  "recorded": "fake-Twilio harness: one payload per status the brief names"
+}

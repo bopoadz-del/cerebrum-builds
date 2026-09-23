@@ -1,0 +1,49 @@
+{
+  "activation": {
+    "default_enabled": true,
+    "mode": "hybrid",
+    "put_off_by": [
+      "disable:real_estate.hat.outcome_capture_and_ledger"
+    ],
+    "triggers": [
+      {
+        "type": "intent",
+        "value": "outcome_capture_and_ledger"
+      },
+      {
+        "type": "capability",
+        "value": "outcome_capture_and_ledger"
+      }
+    ]
+  },
+  "agent_id": "real_estate.hat.outcome_capture_and_ledger",
+  "allowed_actions": [
+    "real_estate.outcome_capture_and_ledger"
+  ],
+  "block_ids": [
+    "audit_chain",
+    "database",
+    "storage",
+    "agent_state_sync"
+  ],
+  "discipline": "outcome_capture_and_ledger",
+  "display_name": "CallOps Outcome Capture And Ledger Hat",
+  "extends": "real_estate.base",
+  "handoffs": [],
+  "human_authority": true,
+  "kind": "hat",
+  "manifest_version": "1.0.0",
+  "memory": {
+    "pii_policy": "never_store_pii",
+    "save": [],
+    "scope": "tenant_project"
+  },
+  "strategy": "REUSE",
+  "summary": "Specialized hat for capability 'outcome_capture_and_ledger' (strategy=REUSE). Adapted from TEKsystems retail hat pattern; estate/product-neutral.",
+  "tags": [
+    "hat",
+    "factory-generated",
+    "real_estate",
+    "outcome_capture_and_ledger"
+  ]
+}

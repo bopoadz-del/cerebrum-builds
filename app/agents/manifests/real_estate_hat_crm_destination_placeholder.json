@@ -1,0 +1,47 @@
+{
+  "activation": {
+    "default_enabled": true,
+    "mode": "hybrid",
+    "put_off_by": [
+      "disable:real_estate.hat.crm_destination_placeholder"
+    ],
+    "triggers": [
+      {
+        "type": "intent",
+        "value": "crm_destination_placeholder"
+      },
+      {
+        "type": "capability",
+        "value": "crm_destination_placeholder"
+      }
+    ]
+  },
+  "agent_id": "real_estate.hat.crm_destination_placeholder",
+  "allowed_actions": [
+    "real_estate.crm_destination_placeholder"
+  ],
+  "block_ids": [
+    "mock_connector_bus",
+    "webhook"
+  ],
+  "discipline": "crm_destination_placeholder",
+  "display_name": "CallOps Crm Destination Placeholder Hat",
+  "extends": "real_estate.base",
+  "handoffs": [],
+  "human_authority": true,
+  "kind": "hat",
+  "manifest_version": "1.0.0",
+  "memory": {
+    "pii_policy": "never_store_pii",
+    "save": [],
+    "scope": "tenant_project"
+  },
+  "strategy": "REUSE",
+  "summary": "Specialized hat for capability 'crm_destination_placeholder' (strategy=REUSE). Adapted from TEKsystems retail hat pattern; estate/product-neutral.",
+  "tags": [
+    "hat",
+    "factory-generated",
+    "real_estate",
+    "crm_destination_placeholder"
+  ]
+}

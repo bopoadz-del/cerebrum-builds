@@ -1,19 +1,41 @@
+# The reference deployment: one container, one persistent disk, one database
+# file on it. Set every setting README.md lists as operator-required before
+# the first real call.
+#
+# APP_ENV=production is the switch that makes the platform refuse to boot on
+# the development tokens (app/config.py: validate_boot). Without it a deploy
+# that forgot PLATFORM_TOKEN would serve traffic on "dev-local-token", which
+# is public knowledge.
 services:
   - type: web
-    name: cerebrum-hotel-booking
-    runtime: python
+    name: callops
+    runtime: docker
     plan: starter
-    buildCommand: pip install -r requirements.txt
-    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
     healthCheckPath: /health
     envVars:
+      - key: APP_ENV
+        value: production
       - key: STORAGE_PATH
         value: /var/data
-      - key: PYTHONUNBUFFERED
-        value: "1"
-      - key: OPERATOR_TOKEN
+      - key: BACKUP_DIR
+        value: /var/data/backups   # same disk as the database: a SPOF, named in docs/deploy.json
+      - key: PLATFORM_TOKEN
+        sync: false        # supply in the dashboard; never committed
+      - key: PLATFORM_TOKEN_B
         sync: false
-      - key: ADMIN_TOKEN
+      - key: PLATFORM_TENANT
+        value: psi
+      - key: CURRENCY
+        sync: false        # the brief states no country: the operator must
+      - key: VAT_RATE
         sync: false
-      - key: CORS_ALLOWLIST
+      - key: BROKER_COMMISSION_RATE
         sync: false
+      - key: BROKER_TRANSFER_NUMBER
+        sync: false
+      - key: SALES_CHANNEL_WEBHOOK
+        sync: false
+    disk:
+      name: callops-data
+      mountPath: /var/data
+      sizeGB: 1

@@ -1,0 +1,48 @@
+{
+  "activation": {
+    "default_enabled": true,
+    "mode": "hybrid",
+    "put_off_by": [
+      "disable:real_estate.hat.call_state_machine"
+    ],
+    "triggers": [
+      {
+        "type": "intent",
+        "value": "call_state_machine"
+      },
+      {
+        "type": "capability",
+        "value": "call_state_machine"
+      }
+    ]
+  },
+  "agent_id": "real_estate.hat.call_state_machine",
+  "allowed_actions": [
+    "real_estate.call_state_machine"
+  ],
+  "block_ids": [
+    "workflow",
+    "orchestrator",
+    "event_bus"
+  ],
+  "discipline": "call_state_machine",
+  "display_name": "CallOps Call State Machine Hat",
+  "extends": "real_estate.base",
+  "handoffs": [],
+  "human_authority": true,
+  "kind": "hat",
+  "manifest_version": "1.0.0",
+  "memory": {
+    "pii_policy": "never_store_pii",
+    "save": [],
+    "scope": "tenant_project"
+  },
+  "strategy": "REUSE",
+  "summary": "Specialized hat for capability 'call_state_machine' (strategy=REUSE). Adapted from TEKsystems retail hat pattern; estate/product-neutral.",
+  "tags": [
+    "hat",
+    "factory-generated",
+    "real_estate",
+    "call_state_machine"
+  ]
+}

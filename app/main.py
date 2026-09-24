@@ -48,7 +48,16 @@ async def lifespan(_app: FastAPI):
     yield
 
 
-app = FastAPI(title="CallOps", lifespan=lifespan)
+app = FastAPI(
+    title="CallOps",
+    version="1.0.0",
+    description=(
+        "Outbound AI voice-calling platform for a real-estate brokerage (PSI). "
+        "Optional CHADi pilot market egress under /v1/market/* when "
+        "DXB_DATA_MCP_URL / DLD_QUERY_URL / APIFY_TOKEN are set."
+    ),
+    lifespan=lifespan,
+)
 install_observability(app)
 # Floor: /metrics (request count + latency), SENTRY_DSN, auth rate limit.
 from app.observability import mount_observability
@@ -63,6 +72,17 @@ try:
     from app.rag_routes import router as rag_router
 
     app.include_router(rag_router)
+except ImportError:
+    pass
+# Market evidence (CHADi pilot) — explicit operator routes, not cite-or-refuse:
+#   GET  /v1/market/status
+#   POST /v1/market/dxb/snapshot|yield|compare
+#   POST /v1/market/dld/sales_stats
+#   POST /v1/market/apify/bayut_buy
+try:
+    from app.market_routes import router as market_router
+
+    app.include_router(market_router, prefix="/v1")
 except ImportError:
     pass
 # Phase 2 client ingestion (chunker + tenant-resolved routes).

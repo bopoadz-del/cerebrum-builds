@@ -29,11 +29,52 @@
    "name": "BROKER_TRANSFER_NUMBER",
    "reason": "the human broker's line for a warm transfer; no default, and with neither it nor a record broker_number the transfer is recorded as declined",
    "required": true
+  },
+  {
+   "name": "DXB_DATA_MCP_URL",
+   "reason": "optional CHADi pilot egress for official DLD area medians/yields via DXB Data MCP; unset = not_configured",
+   "required": false
+  },
+  {
+   "name": "DLD_QUERY_URL",
+   "reason": "optional CHADi pilot egress for DLD sales/Ejari (dld-mcp data plane; uvx --with 'mcp<2' dld-mcp); unset = not_configured",
+   "required": false
+  },
+  {
+   "name": "APIFY_TOKEN",
+   "reason": "optional CHADi pilot egress for capped Bayut for-sale harvest via memo23/apify-bayut-scraper; unset = not_configured",
+   "required": false
   }
  ],
  "product_id": "real-estate",
  "product_name": "CallOps",
  "schema": "blockers.v1",
+ "configured_egress": [
+  {
+   "name": "dxb_data",
+   "settings": ["DXB_DATA_MCP_URL"],
+   "routes": [
+    "POST /v1/market/dxb/snapshot",
+    "POST /v1/market/dxb/yield",
+    "POST /v1/market/dxb/compare"
+   ],
+   "state": "real client when DXB_DATA_MCP_URL is set; not_configured otherwise; never fabricates"
+  },
+  {
+   "name": "dld",
+   "settings": ["DLD_QUERY_URL"],
+   "mcp_command": "uvx --with 'mcp<2' dld-mcp",
+   "routes": ["POST /v1/market/dld/sales_stats"],
+   "state": "real client when DLD_QUERY_URL is set; not_configured otherwise; never fabricates"
+  },
+  {
+   "name": "apify_bayut",
+   "settings": ["APIFY_TOKEN"],
+   "actor": "memo23/apify-bayut-scraper",
+   "routes": ["POST /v1/market/apify/bayut_buy"],
+   "state": "real client when APIFY_TOKEN is set; not_configured otherwise; harvests capped; never fabricates"
+  }
+ ],
  "stubbed_integrations": [
   {
    "behaviour": "with any of them unset the gateway originates against the recorded fake-Twilio fixtures in tests/fixtures/twilio/ and refuses to open a socket; CI never dials",

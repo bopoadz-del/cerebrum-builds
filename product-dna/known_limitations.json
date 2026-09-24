@@ -1,10 +1,15 @@
 {
   "limitations": [
-    "Resident Engineer starts APPRENTICE \u2014 dual certification pending",
+    "Resident Engineer starts APPRENTICE — dual certification pending",
     "Minor repairs require predefined catalog contracts",
     "Product DNA deployment_topology/test_catalog are empty until Factory owns that data",
     "Entity model stubs populated for estate vertical; work_order/budget/staff tables deferred",
-    "Migration 0001 still uses create_all \u2014 residual G5 gap documented in 0001 revision"
+    "Migration 0001 still uses create_all — residual G5 gap documented in 0001 revision",
+    "Twilio Programmable Voice remains stubbed until TWILIO_ACCOUNT_SID / TWILIO_AUTH_TOKEN / TWILIO_CALLER_NUMBER are set",
+    "CRM destination is a placeholder — no Salesforce/HubSpot/Zoho destination was named",
+    "CURRENCY and BROKER_COMMISSION_PERCENT are refused by name until the operator sets them (no invention)",
+    "Property market connectors (dxb_data, dld, apify_bayut) are not_configured until DXB_DATA_MCP_URL / DLD_QUERY_URL / APIFY_TOKEN are set; live egress is pilot-box only — CI stays offline",
+    "Market evidence is explicit /v1/market/* routes only — not injected into project_knowledge_grounding cite-or-refuse"
   ],
   "schema_version": "1.0.0"
 }

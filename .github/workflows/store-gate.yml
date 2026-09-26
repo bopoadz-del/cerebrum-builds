@@ -76,7 +76,13 @@ jobs:
           except Exception:
               print(0)
           " 2>/dev/null || echo 0)
-            if [ "$code" != "0" ]; then break; fi
+            # Break on 200 ONLY. /health is fail-closed and answers 503 while
+            # startup (migrations, Alembic head) is still running, so the
+            # first non-zero answer is the transient, not the verdict. Run
+            # 35853121403 recorded 503 at 11:12:57 and the same container
+            # answered 200 at 11:13:01. Keep polling through 503 and 0 for
+            # the full budget; the last answer is the one passed on.
+            if [ "$code" = "200" ]; then break; fi
             sleep 2
           done
           echo "postgres boot: /health answered $code"
